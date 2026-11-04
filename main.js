@@ -108,42 +108,7 @@
     solve(b.textContent);
   }));
 
-  /* ---------- Demo del bot de WhatsApp (charla de ejemplo) ---------- */
-  const chat = $("#chat");
-  const waStatus = $("#wa-status");
-  const script = [
-    ["in", "Hola! Hacen envíos a Córdoba?"],
-    ["out", "¡Hola! 😊 Sí, enviamos a todo el país. ¿Qué producto estás buscando?"],
-    ["in", "Las zapatillas negras, talle 42"],
-    ["out", "Tengo talle 42 en stock. ¿Me pasás tu nombre y localidad así te armo el pedido?"],
-    ["in", "Lucía, Villa Carlos Paz"],
-    ["sys", "✓ Datos guardados · pedido armado"],
-    ["out", "¡Gracias, Lucía! Te paso con Martín del equipo para cerrar el envío 👋"],
-  ];
-  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
-  async function runChat() {
-    while (true) {
-      chat.innerHTML = "";
-      for (const [kind, text] of script) {
-        if (kind === "out") {
-          waStatus.textContent = "escribiendo…";
-          const t = document.createElement("div");
-          t.className = "typing"; t.innerHTML = "<span></span><span></span><span></span>";
-          chat.appendChild(t);
-          await wait(reduced ? 200 : 1100);
-          t.remove();
-          waStatus.textContent = "en línea";
-        } else await wait(reduced ? 200 : 900);
-        const m = document.createElement("div");
-        m.className = `msg ${kind}`;
-        m.textContent = text;
-        chat.appendChild(m);
-        while (chat.scrollHeight > chat.clientHeight && chat.children.length > 1) chat.firstElementChild.remove();
-      }
-      await wait(4500);
-    }
-  }
-  onView(chat, runChat, 0.2);
+  /* ---------- Demo del bot de WhatsApp: ahora es una animación de CSS (styles.css, .chat .msg); no usa temporizadores y no se traba. */
 
   /* ---------- Calculadora ---------- */
   // Calcula siempre en dólares; en pesos solo cambia cómo se muestra y el rango del costo.

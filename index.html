@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Instrument+Serif:ital@1&family=Michroma&family=Martian+Mono:wght@500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=202611050940">
+<link rel="stylesheet" href="styles.css?v=202611051000">
 <script>document.documentElement.classList.remove('no-js')</script>
 </head>
 <body>
@@ -54,7 +54,7 @@
       <div>
         <div class="phone" aria-label="Demo de un bot de WhatsApp">
           <div class="phone-bar"><span class="av">MyM</span><div>Tu negocio<small id="wa-status">en línea</small></div></div>
-          <div class="chat" id="chat" aria-live="polite"></div>
+          <div class="chat" id="chat"><div class="msg in c1">Hola! Hacen envíos a Córdoba?</div><div class="msg out c2">¡Hola! 😊 Sí, enviamos a todo el país. ¿Qué producto estás buscando?</div><div class="msg in c3">Las zapatillas negras, talle 42</div><div class="msg out c4">Tengo talle 42 en stock. ¿Me pasás tu nombre y localidad así te armo el pedido?</div><div class="msg in c5">Lucía, Villa Carlos Paz</div><div class="msg sys c6">✓ Datos guardados · pedido armado</div><div class="msg out c7">¡Gracias, Lucía! Te paso con Martín del equipo para cerrar el envío 👋🏻</div></div>
         </div>
         <p class="demo-note">Charla de ejemplo de un bot de WhatsApp</p>
       </div>
@@ -82,10 +82,11 @@
         <article class="svc card rv">
           <!-- Animación: las tareas entran a mano, pasan por el sistema y salen hechas -->
           <div class="svc-art art-flujo" aria-hidden="true">
-            <div class="fl-col fl-in"><span class="fl-t t1">📄 Factura</span><span class="fl-t t2">📊 Planilla</span><span class="fl-t t3">✉️ Mail</span></div>
+            <div class="fl-col"><span class="fl-t t1">📄 Factura</span><span class="fl-t t2">📊 Planilla</span><span class="fl-t t3">✉️ Mail</span></div>
+            <span class="fl-fle"><i></i></span>
             <div class="fl-sis"><i class="fl-eng">⚙️</i><b>Sistema</b><span class="fl-bar"><i></i></span></div>
-            <div class="fl-col fl-out"><span class="fl-ok o1">✓ Cargada</span><span class="fl-ok o2">✓ Al día</span><span class="fl-ok o3">✓ Avisado</span></div>
-            <i class="fl-dot d1"></i><i class="fl-dot d2"></i>
+            <span class="fl-fle"><i></i></span>
+            <div class="fl-col"><span class="fl-ok o1">✓ Cargada</span><span class="fl-ok o2">✓ Al día</span><span class="fl-ok o3">✓ Avisado</span></div>
           </div>
           <span class="num">01</span>
           <h3>Automatización de procesos</h3>
@@ -166,25 +167,25 @@
       </div>
       <div class="pains">
         <article class="pain card rv">
-          <img class="pain-foto" src="img/foto-ventas.webp" alt="" width="640" height="460" loading="lazy" decoding="async">
+          <div class="pa pa-ventas" aria-hidden="true"><span class="pv in">¿Tienen stock? <i>22:41</i></span><span class="pv-reloj">⏱ 10 horas después</span><span class="pv out">¡Sí! Perdón la demora <i>09:15</i></span><span class="pv in tarde">Ya compré en otro lado 😕</span></div>
           <span class="tag">Ventas</span>
           <blockquote>"Contestamos el WhatsApp a la mañana y el cliente ya le compró a otro."</blockquote>
           <p class="fix"><b>→ Bot de WhatsApp</b> que contesta en segundos, a cualquier hora, para que ninguna consulta se enfríe.</p>
         </article>
         <article class="pain card rv">
-          <img class="pain-foto" src="img/foto-admin.webp" alt="" width="640" height="460" loading="lazy" decoding="async">
+          <div class="pa pa-admin" aria-hidden="true"><div class="ph"><b>planilla_1.xlsx</b><i></i><i></i><i class="sel"></i><i></i><i></i><i></i></div><span class="pa-cp">Copiar → Pegar</span><div class="ph"><b>planilla_2.xlsx</b><i></i><i></i><i class="peg"></i><i></i><i></i><i></i></div></div>
           <span class="tag">Administración</span>
           <blockquote>"Pasamos los datos de una planilla a otra todo el día."</blockquote>
           <p class="fix"><b>→ Automatización:</b> los datos se cargan solos donde tienen que ir, sin copiar y pegar.</p>
         </article>
         <article class="pain card rv">
-          <img class="pain-foto" src="img/foto-gestion.webp" alt="" width="640" height="460" loading="lazy" decoding="async">
+          <div class="pa pa-gestion" aria-hidden="true"><span class="pg g1">📊 ventas.xlsx</span><span class="pg g2">📦 stock_final(2).xlsx</span><span class="pg g3">💵 caja.pdf</span><span class="pg g4">🧾 pedidos.xlsx</span><span class="pg g5">👥 clientes.docx</span><span class="pg-q">¿Cómo venimos?</span></div>
           <span class="tag">Gestión</span>
           <blockquote>"Para saber cómo venimos tengo que abrir cinco archivos."</blockquote>
           <p class="fix"><b>→ Software a medida:</b> creamos la herramienta que resuelve eso que hoy te traba.</p>
         </article>
         <article class="pain card rv">
-          <img class="pain-foto" src="img/foto-online.webp" alt="" width="640" height="460" loading="lazy" decoding="async">
+          <div class="pa pa-online" aria-hidden="true"><div class="po-bus"><span>🔍</span>tu negocio en tu zona<i class="po-cur"></i></div><div class="po-res"><b>No encontramos tu negocio</b><span class="po-vieja">🕸️ «Página en construcción» · actualizada en 2019</span></div></div>
           <span class="tag">Presencia online</span>
           <blockquote>"Nos buscan en Google y no aparecemos, o aparece una página vieja."</blockquote>
           <p class="fix"><b>→ Web o landing de ventas</b> que vende en automático por vos, las 24 horas.</p>
@@ -526,6 +527,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="config.js?v=202611041700"></script>
-<script src="main.js?v=202611050900"></script>
+<script src="main.js?v=202611051000"></script>
 </body>
 </html>

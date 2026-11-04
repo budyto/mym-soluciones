@@ -521,3 +521,64 @@ body::after { content: ""; position: fixed; inset: -20vmax; z-index: -2; pointer
 .sw-barras i:nth-child(4) { height: 80%; animation-delay: .9s; } .sw-barras i:nth-child(5) { height: 55%; animation-delay: 1.2s; } .sw-barras i:nth-child(6) { height: 90%; animation-delay: 1.5s; } .sw-barras i:nth-child(7) { height: 70%; animation-delay: 1.8s; }
 @keyframes swBarra { to { transform: scaleY(.55); } }
 .sw-barras i { transform-origin: bottom; }
+
+/* 5/11/2026 (2): arreglos que pidió Budy */
+/* Automatización: en fila, sin posiciones absolutas, para que nada se pise a ningún ancho */
+.art-flujo { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 0 12px; height: 170px; }
+.art-flujo .fl-col { position: static; height: auto; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.art-flujo .fl-t, .art-flujo .fl-ok { position: static; margin: 0; width: auto; font-size: 12px; padding: 6px 9px; }
+.fl-fle { width: 22px; height: 3px; border-radius: 3px; background: rgba(47, 107, 255, .2); position: relative; overflow: hidden; flex: none; }
+.fl-fle i { position: absolute; inset: 0; width: 40%; border-radius: 3px; background: var(--deg); animation: barra 1.4s linear infinite; }
+.art-flujo .fl-sis { width: 92px; height: 92px; flex: none; }
+@keyframes flEntra { 0% { opacity: .25; transform: translateX(-8px); } 10%, 40% { opacity: 1; transform: none; } 55%, 100% { opacity: .25; transform: translateX(6px); } }
+@keyframes flSale { 0%, 45% { opacity: .2; transform: scale(.94); } 58%, 90% { opacity: 1; transform: none; } 100% { opacity: .2; } }
+@media (max-width: 400px) { .art-flujo { gap: 6px; padding: 0 6px; } .art-flujo .fl-t, .art-flujo .fl-ok { font-size: 10.5px; padding: 5px 7px; } .art-flujo .fl-sis { width: 74px; height: 74px; border-radius: 20px; } .fl-fle { width: 12px; } }
+
+/* Chat del hero: los mensajes ya están en la página y aparecen con CSS, en un ciclo de 20 s. No se traba. */
+.chat { height: auto; min-height: 0; justify-content: flex-start; }
+.chat .msg { animation: none; }
+.chat .msg.c1 { animation: chat1 20s ease infinite; }
+@keyframes chat1 { 0%, 1.5% { opacity: 0; transform: translateY(8px) scale(.98); } 4.0%, 90% { opacity: 1; transform: none; } 95%, 100% { opacity: 0; transform: none; } }
+.chat .msg.c2 { animation: chat2 20s ease infinite; }
+@keyframes chat2 { 0%, 8.0% { opacity: 0; transform: translateY(8px) scale(.98); } 10.5%, 90% { opacity: 1; transform: none; } 95%, 100% { opacity: 0; transform: none; } }
+.chat .msg.c3 { animation: chat3 20s ease infinite; }
+@keyframes chat3 { 0%, 17.0% { opacity: 0; transform: translateY(8px) scale(.98); } 19.5%, 90% { opacity: 1; transform: none; } 95%, 100% { opacity: 0; transform: none; } }
+.chat .msg.c4 { animation: chat4 20s ease infinite; }
+@keyframes chat4 { 0%, 24.0% { opacity: 0; transform: translateY(8px) scale(.98); } 26.5%, 90% { opacity: 1; transform: none; } 95%, 100% { opacity: 0; transform: none; } }
+.chat .msg.c5 { animation: chat5 20s ease infinite; }
+@keyframes chat5 { 0%, 33.0% { opacity: 0; transform: translateY(8px) scale(.98); } 35.5%, 90% { opacity: 1; transform: none; } 95%, 100% { opacity: 0; transform: none; } }
+.chat .msg.c6 { animation: chat6 20s ease infinite; }
+@keyframes chat6 { 0%, 38.0% { opacity: 0; transform: translateY(8px) scale(.98); } 40.5%, 90% { opacity: 1; transform: none; } 95%, 100% { opacity: 0; transform: none; } }
+.chat .msg.c7 { animation: chat7 20s ease infinite; }
+@keyframes chat7 { 0%, 43.0% { opacity: 0; transform: translateY(8px) scale(.98); } 45.5%, 90% { opacity: 1; transform: none; } 95%, 100% { opacity: 0; transform: none; } }
+.reduced .chat .msg { animation: none !important; opacity: 1; transform: none; }
+
+/* «Así nos llegan»: un dibujo de cada problema */
+.pa { height: 150px; border-radius: 16px; background: linear-gradient(160deg, var(--fondo), var(--fondo-2)); margin-bottom: 4px; padding: 12px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center; gap: 6px; font-size: 11.5px; }
+.pv { max-width: 86%; padding: 6px 10px; border-radius: 12px; line-height: 1.3; }
+.pv i { font-style: normal; font-size: 10px; opacity: .6; margin-left: 4px; }
+.pv.in { align-self: flex-start; background: #fff; box-shadow: var(--sombra-s); }
+.pv.out { align-self: flex-end; background: var(--azul); color: #fff; }
+.pv.tarde { color: #a3202f; font-weight: 700; animation: latido 2.4s ease-in-out infinite; }
+.pv-reloj { align-self: center; font: 500 10px var(--mono); letter-spacing: .06em; color: #a3202f; background: rgba(212, 58, 74, .1); padding: 3px 9px; border-radius: 999px; }
+@keyframes latido { 50% { transform: scale(1.04); } }
+.pa-admin { flex-direction: row; align-items: center; justify-content: center; gap: 8px; }
+.ph { width: 40%; background: #fff; border-radius: 10px; box-shadow: var(--sombra-s); padding: 7px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+.ph b { grid-column: 1 / -1; font-size: 9.5px; font-weight: 700; color: #1a7f37; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ph i { height: 10px; border-radius: 3px; background: var(--fondo-2); }
+.ph i.sel { background: rgba(47, 107, 255, .35); outline: 2px solid var(--azul); animation: latido 1.6s ease-in-out infinite; }
+.ph i.peg { animation: pegar 3.2s ease-in-out infinite; }
+@keyframes pegar { 0%, 45% { background: var(--fondo-2); } 55%, 100% { background: rgba(47, 107, 255, .35); } }
+.pa-cp { font: 500 9.5px var(--mono); color: var(--gris); text-align: center; white-space: nowrap; animation: latido 1.6s ease-in-out infinite; }
+.pa-gestion { display: block; }
+.pg { position: absolute; background: #fff; box-shadow: var(--sombra-s); border-radius: 8px; padding: 4px 8px; font-size: 10.5px; font-weight: 600; white-space: nowrap; animation: flota 5s ease-in-out infinite; }
+.pg.g1 { left: 6%; top: 12%; } .pg.g2 { right: 5%; top: 26%; animation-delay: .8s; } .pg.g3 { left: 10%; top: 48%; animation-delay: 1.6s; }
+.pg.g4 { right: 9%; top: 64%; animation-delay: 2.4s; } .pg.g5 { left: 18%; bottom: 7%; animation-delay: 3.2s; }
+.pg-q { position: absolute; left: 50%; top: 40%; transform: translateX(-50%); font-weight: 900; font-size: 13px; color: var(--azul); background: rgba(47, 107, 255, .1); border-radius: 999px; padding: 4px 10px; white-space: nowrap; }
+@keyframes flota { 50% { transform: translateY(-5px) rotate(-1.5deg); } }
+.po-bus { background: #fff; border-radius: 999px; box-shadow: var(--sombra-s); padding: 8px 12px; display: flex; align-items: center; gap: 6px; color: var(--ink); font-weight: 600; }
+.po-cur { width: 1.5px; height: 13px; background: var(--azul); animation: cursor 1s steps(1) infinite; }
+@keyframes cursor { 50% { opacity: 0; } }
+.po-res { background: #fff; border-radius: 12px; padding: 9px 12px; display: grid; gap: 4px; box-shadow: var(--sombra-s); }
+.po-res b { font-size: 12px; color: #a3202f; }
+.po-vieja { font-size: 10.5px; color: var(--ink-3); text-decoration: line-through; }
