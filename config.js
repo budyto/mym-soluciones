@@ -1,7 +1,7 @@
 // Configuración de la web. Cambiá estos valores y listo.
 window.SITE = {
   // Número de WhatsApp en formato internacional, sin + ni espacios (ej: 5491112345678)
-  whatsapp: "5491170591714",
+  whatsapp: "5491133662080",
   whatsappText: "Hola! Quiero agendar un diagnóstico gratis.",
 
   // El server de MyM, donde corre el robot del WhatsApp de MyM Soluciones (ventas-sol.js de AppMyM).

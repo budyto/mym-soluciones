@@ -4,29 +4,27 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MyM Soluciones — Tu empresa en modo automático</title>
-<meta name="description" content="Bots de IA para WhatsApp, agentes de voz, cobranza, turnos y sistemas a medida. Diagnóstico gratis en 30 minutos.">
-<meta name="theme-color" content="#010102">
+<meta name="description" content="Automatizamos empresas: software a medida, bots de WhatsApp, páginas web y landings de ventas. Diagnóstico gratis.">
+<meta name="theme-color" content="#f4f7ff">
 <meta property="og:title" content="MyM Soluciones — Tu empresa en modo automático">
+<meta property="og:description" content="Software a medida, bots de WhatsApp, páginas web y landings de ventas. Diagnóstico gratis.">
 <meta property="og:image" content="https://mymsoluciones.online/img/og.jpg">
 <link rel="icon" href="img/favicon.png" type="image/png">
 <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
-<meta name="theme-color" content="#000000">
-<meta property="og:description" content="Bots de WhatsApp, agentes de voz y sistemas a medida para empresas que quieren vender y operar sin fricción.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300;400;600;700&family=Host+Grotesk:wght@400;500;600&family=Martian+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=202610291715">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Instrument+Serif:ital@1&family=Michroma&family=Martian+Mono:wght@500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="resenas/resenas.css?v=1">
+<link rel="stylesheet" href="styles.css?v=202611041700">
 <script>document.documentElement.classList.remove('no-js')</script>
 </head>
 <body>
 
 <header class="nav" id="nav">
   <div class="wrap">
-    <a href="#top" class="logo" aria-label="MyM Soluciones, inicio"><img src="img/logo-mym.webp" alt="MyM Soluciones" width="110" height="48"></a>
+    <a href="#top" class="logo" aria-label="MyM Soluciones, inicio"><span class="logo-mym deg">M<small>y</small>M</span><span class="logo-sol">SOLUCIONES</span></a>
     <nav class="nav-links" aria-label="Principal">
-      <a href="#demos">Demos</a>
-      <a href="#sistemas">Sistemas</a>
+      <a href="#servicios">Servicios</a>
       <a href="#casos">Casos</a>
       <a href="#paquetes">Paquetes</a>
       <a href="#proceso">Proceso</a>
@@ -38,92 +36,123 @@
 
 <main id="top">
 
-  <!-- HERO: 4 variantes que rotan en cada visita (ver main.js). ?hero=1..4 fuerza una. -->
-  <section class="hero" id="hero" data-variant="1">
-    <div class="hero-stage">
-      <div class="hero-grid"></div>
-      <div class="hero-glow"></div>
-
-      <!-- Texto compartido por las variantes 1, 2 y 3 -->
-      <div class="hero-copy">
-        <span class="eyebrow">Implementadora de IA a medida</span>
-        <h1 style="margin-top:22px">Tu empresa no duerme.<br><span class="em accent">Tus sistemas tampoco.</span></h1>
-        <p class="lead">Bots de WhatsApp, agentes de voz y software a medida para responder consultas, preparar pedidos y enviar recordatorios de pago. Definimos con vos qué automatizar y cuándo debe intervenir tu equipo.</p>
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="wrap">
+      <div>
+        <span class="eyebrow">Automatizamos empresas</span>
+        <h1>Tu empresa<br><span class="em">en modo automático.</span></h1>
+        <p class="lead"><b>Software a medida</b>, <b>bots de WhatsApp</b>, <b>páginas web</b> y <b>landings de ventas</b>. Lo que hoy tu equipo hace a mano, que se haga solo. Definimos con vos qué automatizar y cuándo interviene una persona.</p>
         <div class="hero-cta">
-          <a href="#contacto" class="btn btn-primary">Agendá un diagnóstico <span class="arr">→</span></a>
-          <a href="#demos" class="btn">Ver demos en vivo</a>
+          <a href="#contacto" class="btn btn-primary">Pedí tu diagnóstico gratis <span class="arr">→</span></a>
+          <a href="#servicios" class="btn">Qué hacemos</a>
         </div>
+        <ul class="hero-chips" aria-label="Servicios">
+          <li>Automatización</li><li>Software a medida</li><li>Bots de WhatsApp</li><li>Webs y landings</li>
+        </ul>
       </div>
-
-      <!-- 1 · Un día en tu empresa -->
-      <div class="v v1" data-v="1" aria-hidden="true">
-        <div class="v1-inner">
-          <div class="clock-wrap">
-            <span class="clock-label">Un día en tu empresa</span>
-            <div class="clock" id="clock">09:00</div>
-            <div class="clock-bar"><span id="clock-bar"></span></div>
-          </div>
-          <ol class="feed">
-            <li data-m="14"><time>09:14</time><b>WhatsApp</b><span>Respondió 43 consultas antes de que abras.</span></li>
-            <li data-m="122"><time>11:02</time><b>Documentos</b><span>Leyó 18 facturas y las cargó al sistema.</span></li>
-            <li data-m="270"><time>13:30</time><b>Turnos</b><span>Confirmó 12 turnos y cobró las señas.</span></li>
-            <li data-m="465"><time>16:45</time><b>Voz</b><span>Llamó a 31 clientes con cuotas vencidas.</span></li>
-            <li data-m="620"><time>19:20</time><b>CRM</b><span>Te marcó los 5 leads para llamar mañana.</span></li>
-            <li data-m="1031"><time>02:11</time><b>Ventas</b><span>Cerró una venta mientras dormías.</span></li>
-          </ol>
+      <div>
+        <div class="phone" aria-label="Demo de un bot de WhatsApp">
+          <div class="phone-bar"><span class="av">MyM</span><div>Tu negocio<small id="wa-status">en línea</small></div></div>
+          <div class="chat" id="chat" aria-live="polite"></div>
         </div>
-        <div class="v-end v1-end">
-          <div class="big">Hoy tu equipo<br><span class="em accent">no tocó nada de esto.</span></div>
-          <p>Y mañana lo hace de nuevo.</p>
-        </div>
+        <p class="demo-note">Charla de ejemplo de un bot de WhatsApp</p>
       </div>
+    </div>
+  </section>
 
-      <!-- 2 · El caos que se ordena -->
-      <div class="v v2" data-v="2" aria-hidden="true">
-        <div class="board">
-          <div class="board-head"><span class="eyebrow">Tu operación · hoy</span><span class="live">TODO BAJO CONTROL</span></div>
-          <div class="tiles">
-            <div class="tile"><b>WhatsApp</b><span>23 mensajes sin leer</span><em></em></div>
-            <div class="tile"><b>Llamada perdida</b><span>11:42 · número desconocido</span><em></em></div>
-            <div class="tile"><b>factura_0034.pdf</b><span>sin cargar</span><em></em></div>
-            <div class="tile"><b>stock_final(2).xlsx</b><span>¿cuál es la última?</span><em></em></div>
-            <div class="tile"><b>Turno</b><span>lunes 10:00 sin confirmar</span><em></em></div>
-            <div class="tile"><b>Cuota vencida</b><span>M. Gómez · 12 días</span><em></em></div>
-            <div class="tile"><b>Lead de Instagram</b><span>preguntó precio ayer</span><em></em></div>
-            <div class="tile"><b>Transferencia</b><span>¿llegó o no llegó?</span><em></em></div>
-            <div class="tile"><b>Mail</b><span>presupuesto urgente</span><em></em></div>
-            <div class="tile"><b>Seña</b><span>pendiente de cobro</span><em></em></div>
-            <div class="tile"><b>Reclamo #482</b><span>envío demorado</span><em></em></div>
-            <div class="tile"><b>Lead</b><span>sin seguimiento hace 5 días</span><em></em></div>
-          </div>
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track">
+      <span>Automatización de procesos</span><span>Software a medida</span><span>Bots de WhatsApp</span><span>Páginas web</span><span>Landings de ventas</span><span>Diagnóstico gratis</span>
+      <span>Automatización de procesos</span><span>Software a medida</span><span>Bots de WhatsApp</span><span>Páginas web</span><span>Landings de ventas</span><span>Diagnóstico gratis</span>
+    </div>
+  </div>
+
+  <!-- SERVICIOS -->
+  <section class="sec" id="servicios">
+    <div class="wrap">
+      <div class="sec-head split">
+        <div>
+          <span class="eyebrow">Qué hacemos</span>
+          <h2>Cuatro formas de<br><span class="em">trabajar menos a mano.</span></h2>
         </div>
-        <div class="v-end v2-end">
-          <div class="big">Del caos <span class="em accent">al tablero.</span></div>
-          <p>Consultas, pedidos y pendientes en un mismo lugar, con responsables y seguimiento.</p>
-        </div>
+        <p class="lead">Cada solución se conecta con lo que ya usás: WhatsApp, Google, Mercado Pago, tus planillas o tu sistema de gestión.</p>
       </div>
-
-      <!-- 3 · La voz -->
-      <div class="v v3" data-v="3" aria-hidden="true">
-        <div class="orb-xl"><div class="orb-xl-c"></div></div>
-        <div class="v3-lines">
-          <p class="ai"><span>Agente</span>Hola Laura, te llamo de la clínica para confirmar tu turno de mañana a las 10.</p>
-          <p class="hu"><span>Paciente</span>Uy, ¿lo puedo pasar a la tarde?</p>
-          <p class="ai"><span>Agente</span>Sí, tengo 16:30 con la misma doctora. ¿Te lo cambio?</p>
-          <p class="hu"><span>Paciente</span>Dale, perfecto.</p>
-          <p class="sys"><span>Sistema</span>Turno movido · agenda actualizada · recordatorio enviado</p>
-        </div>
-        <div class="v-end v3-end">
-          <div class="big">Una voz que atiende,<br><span class="em accent">llama y cobra.</span></div>
-          <p>En español, 24/7, sin tiempo de espera.</p>
-        </div>
+      <div class="svcs">
+        <article class="svc card rv">
+          <div class="svc-art" aria-hidden="true"><div class="art-auto"><b>A mano</b><i></i><b>Sistema</b><i></i><b class="ok">✓</b></div></div>
+          <span class="num">01</span>
+          <h3>Automatización de procesos</h3>
+          <p>Las tareas que se repiten todos los días —cargar datos, pasar información de un lado a otro, avisar, armar reportes— hechas solas y con aviso cuando algo necesita a una persona.</p>
+          <ul><li>Carga de datos</li><li>Avisos</li><li>Reportes</li><li>Integraciones</li></ul>
+        </article>
+        <article class="svc card rv">
+          <div class="svc-art" aria-hidden="true"><div class="art-win"><div class="bar"><i></i><i></i><i></i></div><div class="art-code deg">&lt;/&gt;</div></div></div>
+          <span class="num">02</span>
+          <h3>Software a medida</h3>
+          <p>Un sistema hecho para cómo trabaja tu empresa: paneles, gestión de stock, pedidos o clientes, y tableros para ver la operación sin abrir planillas.</p>
+          <ul><li>Paneles de gestión</li><li>Tableros</li><li>Base de datos propia</li></ul>
+        </article>
+        <article class="svc card rv">
+          <div class="svc-art" aria-hidden="true"><div class="art-chat"><span></span><span></span><span></span><span></span></div></div>
+          <span class="num">03</span>
+          <h3>Bots de WhatsApp</h3>
+          <p>Responde las consultas de tus clientes a cualquier hora con tus precios y horarios, toma los datos, agenda y pasa la charla a una persona cuando hace falta.</p>
+          <ul><li>API oficial de WhatsApp</li><li>Consultas</li><li>Agenda</li><li>Derivación a una persona</li></ul>
+        </article>
+        <article class="svc card rv">
+          <div class="svc-art" aria-hidden="true"><div class="art-win"><div class="bar"><i></i><i></i><i></i></div><div class="art-web"><span></span><span></span><span></span><span></span></div></div></div>
+          <span class="num">04</span>
+          <h3>Páginas web y landings</h3>
+          <p>Tu página para que te encuentren y landings de ventas pensadas para que el que entra te escriba: rápidas, claras y conectadas a tu WhatsApp.</p>
+          <ul><li>Webs institucionales</li><li>Landings de ventas</li><li>Catálogos</li></ul>
+        </article>
       </div>
+    </div>
+  </section>
 
-      <!-- 4 · Escribí tu problema -->
-      <div class="v v4" data-v="4">
-        <div class="v4-inner">
-          <span class="eyebrow">Diagnóstico instantáneo</span>
-          <h1>Contanos qué te frena.<br><span class="em accent">Te decimos qué te armaríamos.</span></h1>
+  <!-- DOLORES -->
+  <section class="sec" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head split">
+        <div>
+          <span class="eyebrow">Así nos llegan</span>
+          <h2>Nadie viene pidiendo un sistema.<br><span class="em">Vienen contando un problema.</span></h2>
+        </div>
+        <p class="lead">Si alguna de estas frases se dice en tu empresa, hay horas de trabajo que se pueden hacer solas.</p>
+      </div>
+      <div class="pains">
+        <article class="pain card rv">
+          <span class="tag">Ventas</span>
+          <blockquote>"Contestamos el WhatsApp a la mañana y el cliente ya le compró a otro."</blockquote>
+          <p class="fix"><b>→ Bot de WhatsApp</b> que responde al instante con tus precios y horarios.</p>
+        </article>
+        <article class="pain card rv">
+          <span class="tag">Administración</span>
+          <blockquote>"Pasamos los datos de una planilla a otra todo el día."</blockquote>
+          <p class="fix"><b>→ Automatización</b> que mueve la información sola y te avisa si algo no cierra.</p>
+        </article>
+        <article class="pain card rv">
+          <span class="tag">Gestión</span>
+          <blockquote>"Para saber cómo venimos tengo que abrir cinco archivos."</blockquote>
+          <p class="fix"><b>→ Software a medida</b> con un tablero que muestra el día en un solo lugar.</p>
+        </article>
+        <article class="pain card rv">
+          <span class="tag">Presencia online</span>
+          <blockquote>"Nos buscan en Google y no aparecemos, o aparece una página vieja."</blockquote>
+          <p class="fix"><b>→ Web o landing de ventas</b> que lleva a la gente directo a tu WhatsApp.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTANOS QUÉ TE FRENA -->
+  <section class="sec" id="diagnostico" style="padding-top:0">
+    <div class="wrap">
+      <div class="ask-box card rv">
+        <div>
+          <span class="eyebrow">Probalo ahora</span>
+          <h2 style="margin-top:18px">Contanos qué te frena.<br><span class="em">Te decimos qué armaríamos.</span></h2>
           <form class="ask" id="ask">
             <label for="ask-input" class="sr">Describí tu problema</label>
             <textarea id="ask-input" rows="2" placeholder="Ej: contestamos tarde los WhatsApp y perdemos ventas"></textarea>
@@ -131,217 +160,12 @@
           </form>
           <div class="ask-chips">
             <button type="button">Perdemos ventas por WhatsApp</button>
-            <button type="button">Tenemos muchas cuotas atrasadas</button>
-            <button type="button">Dar turnos nos lleva el día</button>
-            <button type="button">Cargamos facturas a mano</button>
+            <button type="button">Cargamos todo a mano en planillas</button>
+            <button type="button">No tenemos página web</button>
+            <button type="button">Necesitamos un sistema propio</button>
           </div>
-          <div class="answer" id="answer" aria-live="polite" hidden></div>
         </div>
-      </div>
-
-      <div class="scroll-hint">SCROLL<span></span></div>
-    </div>
-  </section>
-  <div class="ticker" aria-hidden="true">
-    <div class="ticker-track">
-      <span>Bots de WhatsApp</span><span>Agentes de voz</span><span>Cobranza automática</span><span>Turnos y agenda</span><span>CRM con IA</span><span>Lectura de documentos</span><span>Dashboards</span><span>E-commerce</span><span>Contenido con IA</span>
-      <span>Bots de WhatsApp</span><span>Agentes de voz</span><span>Cobranza automática</span><span>Turnos y agenda</span><span>CRM con IA</span><span>Lectura de documentos</span><span>Dashboards</span><span>E-commerce</span><span>Contenido con IA</span>
-    </div>
-  </div>
-
-  <!-- DOLORES -->
-  <section class="sec">
-    <div class="wrap">
-      <div class="sec-head split">
-        <div>
-          <span class="eyebrow">Así nos llegan</span>
-          <h2 style="margin-top:20px">Nadie viene pidiendo IA.<br><span class="em">Vienen contando un problema.</span></h2>
-        </div>
-        <p class="lead">Si alguna de estas frases se dice en tu empresa, hay horas de trabajo que una máquina puede hacer mejor, más rápido y a las 3 de la mañana.</p>
-      </div>
-      <div class="pains">
-        <article class="pain rv">
-          <span class="tag">Comercio</span>
-          <blockquote>"Contestamos el WhatsApp a la mañana y el cliente ya le compró a otro."</blockquote>
-          <p class="fix"><b>→ Bot de ventas</b> que responde en segundos, con tu stock y tus precios.</p>
-        </article>
-        <article class="pain rv">
-          <span class="tag">Créditos</span>
-          <blockquote>"Cada solicitud son veinte papeles sueltos y alguien cargándolos a mano."</blockquote>
-          <p class="fix"><b>→ Lectura de documentos</b> y precalificación automática.</p>
-        </article>
-        <article class="pain rv">
-          <span class="tag">Salud y servicios</span>
-          <blockquote>"Entre dar el turno, confirmarlo y cobrar la seña se nos va el día."</blockquote>
-          <p class="fix"><b>→ Agente de turnos</b> por WhatsApp y por teléfono.</p>
-        </article>
-        <article class="pain rv">
-          <span class="tag">Cobranza</span>
-          <blockquote>"Tenemos 400 cuotas vencidas y dos personas llamando una por una."</blockquote>
-          <p class="fix"><b>→ Agente de voz</b> que envía recordatorios y links de pago, y deriva acuerdos especiales a tu equipo.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- DEMOS -->
-  <section class="sec" id="demos" style="padding-top:0">
-    <div class="wrap">
-      <div class="sec-head">
-        <span class="eyebrow">Demos en vivo</span>
-        <h2>No te lo contamos.<br><span class="em">Miralo funcionar.</span></h2>
-      </div>
-      <div class="demos">
-        <article class="demo">
-          <div class="demo-head">
-            <div><h3>Vendedor IA en WhatsApp</h3><p>Responde, recomienda, cobra y deriva a una persona si hace falta.</p></div>
-            <span class="live">EN VIVO</span>
-          </div>
-          <div class="phone">
-            <div class="phone-bar"><span class="av"></span><div>Tu negocio<small id="wa-status">en línea</small></div></div>
-            <div class="chat" id="chat" aria-live="polite"></div>
-          </div>
-        </article>
-
-        <article class="demo">
-          <div class="demo-head">
-            <div><h3>Agente de voz</h3><p>Llama a clientes, confirma turnos y gestiona cobranza con voz natural.</p></div>
-            <span class="live">LLAMADA</span>
-          </div>
-          <div class="voice">
-            <div class="orb-wrap"><div class="orb" id="orb"></div><div class="orb-core"></div></div>
-            <div class="wave" id="wave"></div>
-            <div class="call-meta"><span id="call-who">Saliente · Cuota 4/12</span><span id="call-time">00:00</span></div>
-            <div class="transcript" id="transcript" aria-live="polite"></div>
-          </div>
-        </article>
-
-        <article class="demo wide dash-demo" id="dash">
-          <div class="dash-bg" aria-hidden="true"></div>
-          <div class="demo-head">
-            <div><h3>Todo termina en un tablero</h3><p>Cada conversación, llamada y venta queda medida en tiempo real. Y te llega el resumen diario por WhatsApp.</p></div>
-            <span class="live">EN VIVO</span>
-          </div>
-          <div class="dash">
-            <div class="dash-main">
-              <div class="kpis">
-                <div class="kpi"><small>Conversaciones atendidas</small><div class="kv" data-key="conv" data-count="1284">0</div><span class="d">↑ 100% en &lt; 10 s</span><svg class="spark" viewBox="0 0 100 28" preserveAspectRatio="none"><path/></svg></div>
-                <div class="kpi"><small>Ventas cerradas por IA</small><div class="kv" data-key="ventas" data-count="96">0</div><span class="d">↑ sin intervención</span><svg class="spark" viewBox="0 0 100 28" preserveAspectRatio="none"><path/></svg></div>
-                <div class="kpi"><small>Cobranza recuperada</small><div class="kv" data-key="cobro" data-count="3.4" data-prefix="$" data-suffix="M" data-dec="1">0</div><span class="d">↑ por agente de voz</span><svg class="spark" viewBox="0 0 100 28" preserveAspectRatio="none"><path/></svg></div>
-                <div class="kpi"><small>Horas de equipo liberadas</small><div class="kv" data-key="horas" data-count="212" data-suffix=" h">0</div><span class="d">↑ este mes</span><svg class="spark" viewBox="0 0 100 28" preserveAspectRatio="none"><path/></svg></div>
-              </div>
-              <div class="chart">
-                <div class="chart-top"><span>Ventas por hora · hoy</span><b id="chart-now">$0</b></div>
-                <div class="plot">
-                <svg viewBox="0 0 600 160" preserveAspectRatio="none" aria-label="Ventas por hora, actualizándose en vivo">
-                  <defs><linearGradient id="g-area" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#d4af37" stop-opacity=".35"/><stop offset="1" stop-color="#d4af37" stop-opacity="0"/></linearGradient></defs>
-                  <line class="gl" x1="0" x2="600" y1="40" y2="40"/><line class="gl" x1="0" x2="600" y1="80" y2="80"/><line class="gl" x1="0" x2="600" y1="120" y2="120"/>
-                  <path class="ar" id="chart-area" d=""/>
-                  <path class="ln" id="chart-line" d=""/>
-                </svg>
-                <span class="chart-dot" id="chart-dot"></span>
-                </div>
-              </div>
-            </div>
-            <aside class="feed-live">
-              <div class="feed-live-head"><span>Actividad</span><span class="live">AHORA</span></div>
-              <ul id="activity" aria-live="off"></ul>
-            </aside>
-          </div>
-          <div class="integr">
-            <span class="integr-label">Se conecta con</span>
-            <div class="integr-track"><div>
-              <span>WhatsApp Business</span><span>Mercado Pago</span><span>Google Calendar</span><span>Google Sheets</span><span>Gmail</span><span>Instagram</span><span>Tiendanube</span><span>HubSpot</span><span>Excel</span><span>Tu sistema</span>
-              <span>WhatsApp Business</span><span>Mercado Pago</span><span>Google Calendar</span><span>Google Sheets</span><span>Gmail</span><span>Instagram</span><span>Tiendanube</span><span>HubSpot</span><span>Excel</span><span>Tu sistema</span>
-            </div></div>
-          </div>
-          <p class="roi-note">Datos de ejemplo para la demo.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- SISTEMAS -->
-  <section class="sec" id="sistemas" style="padding-top:0">
-    <div class="wrap">
-      <div class="sec-head split">
-        <div>
-          <span class="eyebrow">Qué construimos</span>
-          <h2 style="margin-top:20px">Sistemas, no <span class="em">herramientas sueltas.</span></h2>
-        </div>
-        <p class="lead">Cada uno se conecta a lo que ya usás: WhatsApp, Mercado Pago, Google, tu planilla o tu sistema de gestión.</p>
-      </div>
-      <div class="bento">
-        <article class="svc xl rv">
-          <div class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 12a9 9 0 0 1-13.5 7.8L3 21l1.2-4.5A9 9 0 1 1 21 12Z"/></svg></div>
-          <span class="num">01</span>
-          <h3>Bot de IA para WhatsApp</h3>
-          <p>Atiende 24/7 con tu catálogo, precios y políticas. Califica al cliente, toma el pedido, manda el link de pago y pasa a una persona cuando conviene.</p>
-          <ul><li>Ventas</li><li>Soporte</li><li>Catálogo</li><li>Derivación humana</li></ul>
-        </article>
-        <article class="svc xl rv">
-          <div class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v18M8 7v10M4 10v4M16 7v10M20 10v4"/></svg></div>
-          <span class="num">02</span>
-          <h3>Agente de voz (llamadas)</h3>
-          <p>Recibe y hace llamadas con voz natural en español rioplatense: confirma turnos, hace cobranza amable, encuestas y seguimiento de leads.</p>
-          <ul><li>Entrantes</li><li>Salientes</li><li>Transcripción</li><li>Resumen al CRM</li></ul>
-        </article>
-        <article class="svc rv">
-          <div class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M7 15h4"/></svg></div>
-          <span class="num">03</span>
-          <h3>Cobranza automática</h3>
-          <p>Recordatorios escalonados, link de pago y conciliación. Sabés quién pagó sin abrir el banco.</p>
-          <ul><li>Mercado Pago</li><li>Cuotas</li></ul>
-        </article>
-        <article class="svc rv">
-          <div class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></div>
-          <span class="num">04</span>
-          <h3>Turnos y agenda</h3>
-          <p>Reserva, solicitud de seña, confirmación y recordatorio, con derivación a tu equipo para excepciones.</p>
-          <ul><li>Salud</li><li>Belleza</li><li>Canchas</li></ul>
-        </article>
-        <article class="svc rv">
-          <div class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0M17 11l2 2 4-4"/></svg></div>
-          <span class="num">05</span>
-          <h3>CRM con IA</h3>
-          <p>WhatsApp, Instagram y mail en una bandeja. La IA te dice a quién llamar primero.</p>
-          <ul><li>Scoring</li><li>Inbox unificado</li></ul>
-        </article>
-        <article class="svc rv">
-          <div class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg></div>
-          <span class="num">06</span>
-          <h3>Lectura de documentos</h3>
-          <p>Facturas, DNI, recibos y comprobantes: la IA los lee y carga los datos donde van.</p>
-          <ul><li>OCR + IA</li><li>Validación</li></ul>
-        </article>
-        <article class="svc rv">
-          <div class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/></svg></div>
-          <span class="num">07</span>
-          <h3>Dashboards y reportes</h3>
-          <p>Ventas, caja y operación en un tablero. Y un resumen diario que te llega solo.</p>
-          <ul><li>Tiempo real</li><li>Alertas</li></ul>
-        </article>
-        <article class="svc rv">
-          <div class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></svg></div>
-          <span class="num">08</span>
-          <h3>E-commerce con vendedor IA</h3>
-          <p>Tienda online con panel de admin y un bot que vende por WhatsApp desde el catálogo.</p>
-          <ul><li>Catálogo</li><li>Admin</li><li>Pedidos</li></ul>
-        </article>
-        <article class="svc xl rv">
-          <div class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
-          <span class="num">09</span>
-          <h3>Asistente interno con tu conocimiento</h3>
-          <p>Un asistente que responde con tus manuales, listas de precios y procesos. Tu equipo nuevo deja de preguntar lo mismo cada día.</p>
-          <ul><li>Base de conocimiento</li><li>Permisos</li><li>Slack / WhatsApp</li></ul>
-        </article>
-        <article class="svc xl rv">
-          <div class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m10 9 5 3-5 3z"/></svg></div>
-          <span class="num">10</span>
-          <h3>Contenido con IA</h3>
-          <p>Videos cortos, posteos y fotos de producto generados a partir de tu catálogo. Volumen de agencia, costo de herramienta.</p>
-          <ul><li>Reels</li><li>Fotos de producto</li><li>Copys</li></ul>
-        </article>
+        <div class="answer answer-empty" id="answer" aria-live="polite">Escribí tu problema o tocá un ejemplo, y acá te mostramos la solución.</div>
       </div>
     </div>
   </section>
@@ -352,38 +176,38 @@
       <div class="sec-head split">
         <div>
           <span class="eyebrow">Casos</span>
-          <h2 style="margin-top:20px">Sistemas que hoy usa <span class="em accent">gente real.</span></h2>
+          <h2>Sistemas que hoy usa<br><span class="em">gente real.</span></h2>
         </div>
-        <p class="lead">Proyectos en producción. Algunos clientes prefieren no figurar con nombre; los resultados sí se pueden mostrar en la reunión.</p>
+        <p class="lead">Proyectos en producción. Algunos clientes prefieren no figurar con nombre; los detalles se pueden ver en la reunión.</p>
       </div>
       <div class="cases">
-        <article class="case rv">
+        <article class="case card rv">
           <div class="case-top"><span class="kind">E-commerce · WhatsApp</span><span class="pill">En producción</span></div>
           <h3>Tiendas de calzado deportivo con pedidos por WhatsApp</h3>
           <div class="who">Retail deportivo · Argentina</div>
-          <p>Catálogo por marca y modelo, talles y stock, y el pedido llega armado al WhatsApp del vendedor. Sin carrito que se abandona.</p>
-          <div class="stack"><span>HTML/JS</span><span>WhatsApp</span><span>Netlify</span></div>
+          <p>Catálogo por marca y modelo, talles y stock, y el pedido llega armado al WhatsApp del vendedor.</p>
+          <div class="stack"><span>Web</span><span>Catálogo</span><span>WhatsApp</span></div>
         </article>
-        <article class="case rv">
-          <div class="case-top"><span class="kind">Fintech · Software a medida</span><span class="pill">Créditos</span></div>
+        <article class="case card rv">
+          <div class="case-top"><span class="kind">Software a medida</span><span class="pill">Web app</span></div>
           <h3>Plataforma de créditos e inversiones</h3>
           <div class="who">Financiera · Argentina</div>
-          <p>Solicitud online, simulador de cuotas y panel de seguimiento. Base lista para sumar lectura de documentos y cobranza con agente de voz.</p>
+          <p>Solicitud online, simulador de cuotas y panel de seguimiento, todo en un sistema propio.</p>
           <div class="stack"><span>Web app</span><span>Simulador</span><span>Panel</span></div>
         </article>
-        <article class="case rv">
+        <article class="case card rv">
           <div class="case-top"><span class="kind">E-commerce · Admin</span><span class="pill">Tienda + panel</span></div>
           <h3>Tienda de belleza con panel de administración</h3>
           <div class="who">Cosmética · Argentina</div>
           <p>Tienda, panel de admin y base de datos propia. El dueño carga productos y ve pedidos sin depender de nadie.</p>
-          <div class="stack"><span>Supabase</span><span>Netlify</span><span>Admin</span></div>
+          <div class="stack"><span>Tienda</span><span>Base de datos</span><span>Admin</span></div>
         </article>
-        <article class="case rv">
-          <div class="case-top"><span class="kind">Gestión · Dashboard</span><span class="pill">Tiempo real</span></div>
+        <article class="case card rv">
+          <div class="case-top"><span class="kind">Gestión · Tableros</span><span class="pill">Tiempo real</span></div>
           <h3>Concesionaria y tableros de gestión</h3>
           <div class="who">Motos y electro · Argentina</div>
           <p>Stock, ventas y financiación en un mismo lugar, con tableros que muestran la operación del día sin abrir planillas.</p>
-          <div class="stack"><span>Dashboard</span><span>Stock</span><span>Ventas</span></div>
+          <div class="stack"><span>Tableros</span><span>Stock</span><span>Ventas</span></div>
         </article>
       </div>
     </div>
@@ -394,56 +218,49 @@
     <div class="wrap">
       <div class="sec-head">
         <span class="eyebrow">Reseñas</span>
-        <h2>Lo que dicen <span class="em">nuestros clientes.</span></h2>
+        <h2>Lo que dicen<br><span class="em">nuestros clientes.</span></h2>
       </div>
       <div class="res-grid" id="resenas-lista"></div>
     </div>
   </section>
 
-  <!-- PAQUETES (29/10/2026): precios cerrados para la campaña de 15 días del grupo -->
+  <!-- PAQUETES: precios cerrados (29/10/2026). El 4/11/2026 se sacaron "Cobros y recordatorios" y "Los 3 juntos":
+       la cobranza es de Mis Créditos, no de Soluciones. -->
   <section class="sec" id="paquetes" style="padding-top:0">
     <div class="wrap">
       <div class="sec-head">
         <span class="eyebrow">Paquetes</span>
         <h2>Precio cerrado.<br><span class="em">Funcionando en 72 horas.</span></h2>
-        <p class="lead">Plantillas ya armadas para tu rubro: las adaptamos a tu negocio y en 72 horas hábiles desde que tenemos tus datos y accesos está andando. Instalación y primer mes al empezar.</p>
+        <p class="lead">Plantillas ya armadas: las adaptamos a tu negocio y en 72 horas hábiles desde que tenemos tus datos y accesos está andando. Instalación y primer mes al empezar.</p>
       </div>
       <div class="paqs">
-        <article class="paq">
-          <div class="paq-head"><h3>Bot de WhatsApp</h3></div>
-          <div class="paq-precio">US$&nbsp;350</div>
+        <article class="paq card rv">
+          <h3>Bot de WhatsApp</h3>
+          <div class="paq-precio deg">US$&nbsp;350</div>
           <div class="paq-mes">de instalación + IVA<br>después US$&nbsp;100 por mes + IVA</div>
           <p>Responde al instante, a cualquier hora, y agenda.</p>
           <ul><li>Responde con tus precios y horarios</li><li>Califica al cliente y agenda turnos o visitas</li><li>Pasa la charla a una persona cuando hace falta</li><li>API oficial de WhatsApp Business</li></ul>
-          <a href="#contacto" class="btn" data-wa data-wa-text="Hola! Quiero el paquete Bot de WhatsApp de MyM Soluciones.">Lo quiero</a>
+          <a href="#contacto" class="btn btn-primary" data-wa data-wa-text="Hola! Quiero el paquete Bot de WhatsApp de MyM Soluciones.">Lo quiero</a>
         </article>
-        <article class="paq">
-          <div class="paq-head"><h3>Cobros y recordatorios</h3></div>
-          <div class="paq-precio">US$&nbsp;300</div>
-          <div class="paq-mes">de instalación + IVA<br>después US$&nbsp;80 por mes + IVA</div>
-          <p>Que nadie se olvide de pagar ni de venir.</p>
-          <ul><li>Recordatorios de turnos y vencimientos</li><li>Link de pago de Mercado Pago</li><li>Aviso cuando alguien paga</li><li>Mensajes solo a quien aceptó recibirlos</li></ul>
-          <a href="#contacto" class="btn" data-wa data-wa-text="Hola! Quiero el paquete Cobros y recordatorios de MyM Soluciones.">Lo quiero</a>
-        </article>
-        <article class="paq">
-          <div class="paq-head"><h3>Seguimiento de clientes</h3></div>
-          <div class="paq-precio">US$&nbsp;300</div>
+        <article class="paq card rv">
+          <h3>Seguimiento de clientes</h3>
+          <div class="paq-precio deg">US$&nbsp;300</div>
           <div class="paq-mes">de instalación + IVA<br>después US$&nbsp;80 por mes + IVA</div>
           <p>Ningún interesado queda sin respuesta.</p>
           <ul><li>Seguimiento automático a los 1, 3 y 7 días</li><li>Planilla o CRM con cada contacto y su estado</li><li>Aviso cuando alguien está listo para comprar</li><li>Resumen semanal de lo que entró</li></ul>
-          <a href="#contacto" class="btn" data-wa data-wa-text="Hola! Quiero el paquete Seguimiento de clientes de MyM Soluciones.">Lo quiero</a>
+          <a href="#contacto" class="btn btn-primary" data-wa data-wa-text="Hola! Quiero el paquete Seguimiento de clientes de MyM Soluciones.">Lo quiero</a>
         </article>
-        <article class="paq paq-top">
-          <div class="paq-head"><h3>Los 3 juntos</h3><span class="paq-pill">Más conveniente</span></div>
-          <div class="paq-precio">US$&nbsp;800</div>
-          <div class="paq-mes">de instalación + IVA<br>después US$&nbsp;200 por mes + IVA</div>
-          <p>Atender, cobrar y seguir a cada cliente, todo automático.</p>
-          <ul><li>Bot de WhatsApp</li><li>Cobros y recordatorios</li><li>Seguimiento de clientes</li><li>Una sola puesta en marcha</li></ul>
-          <a href="#contacto" class="btn btn-primary" data-wa data-wa-text="Hola! Quiero el paquete Los 3 juntos de MyM Soluciones.">Lo quiero</a>
+        <article class="paq paq-medida card rv">
+          <span class="eyebrow">A medida</span>
+          <h3>Software, automatizaciones, webs y landings</h3>
+          <div class="paq-mes">Se cotiza en el diagnóstico gratis</div>
+          <p>Cada proyecto es distinto: lo definimos con vos y te pasamos alcance y fechas por escrito antes de empezar.</p>
+          <ul><li>Software a medida</li><li>Automatización de procesos</li><li>Páginas web</li><li>Landings de ventas</li></ul>
+          <a href="#contacto" class="btn btn-primary">Pedí tu diagnóstico <span class="arr">→</span></a>
         </article>
       </div>
-      <article class="paq-anual"><div><span class="eyebrow">Pago anual</span><h3>Pagás 10 meses de abono y usás 12</h3><p>Bot de WhatsApp US$&nbsp;1.000, Cobros y recordatorios US$&nbsp;800, Seguimiento de clientes US$&nbsp;800 y los 3 juntos US$&nbsp;2.000 + IVA por el año, más la instalación. Si das de baja antes, te devolvemos los meses que no usaste.</p></div><a href="#contacto" class="btn btn-primary" data-wa data-wa-text="Hola! Quiero un paquete de MyM Soluciones con pago anual.">Quiero el pago anual</a></article>
-      <p class="paq-nota">Precios en dólares + IVA, al tipo de cambio oficial del Banco Nación del día. El abono incluye hosting, mantenimiento y soporte, sin permanencia. Los consumos de terceros (mensajes de WhatsApp de Meta y la IA) van aparte, a cargo de cada negocio. ¿Necesitás algo a medida? Lo vemos en el diagnóstico gratis.</p>
+      <article class="paq-anual card rv"><div><span class="eyebrow">Pago anual</span><h3>Pagás 10 meses de abono y usás 12</h3><p>Bot de WhatsApp US$&nbsp;1.000 y Seguimiento de clientes US$&nbsp;800 + IVA por el año, más la instalación. Si das de baja antes, te devolvemos los meses que no usaste.</p></div><a href="#contacto" class="btn" data-wa data-wa-text="Hola! Quiero un paquete de MyM Soluciones con pago anual.">Quiero el pago anual</a></article>
+      <p class="paq-nota">Precios en dólares + IVA, al tipo de cambio oficial del Banco Nación del día. El abono incluye hosting, mantenimiento y soporte, sin permanencia. Los consumos de terceros (mensajes de WhatsApp de Meta y la IA) van aparte, a cargo de cada negocio.</p>
     </div>
   </section>
 
@@ -452,26 +269,25 @@
     <div class="wrap">
       <div class="sec-head">
         <span class="eyebrow">Cómo trabajamos</span>
-        <h2>Un alcance claro.<br><span class="em">Un plan para implementarlo.</span></h2>
+        <h2>Un alcance claro.<br><span class="em">Un plan para hacerlo.</span></h2>
       </div>
-      <div class="steps" id="steps">
-        <div class="bar" id="steps-bar"></div>
-        <div class="step"><div class="dot">01</div><span class="when">30 minutos · gratis</span><h3>Diagnóstico</h3><p>Nos contás qué no funciona. Salís sabiendo si la IA lo resuelve, cuánto tarda y qué hace falta.</p></div>
-        <div class="step"><div class="dot">02</div><span class="when">Paquete: 72 horas · A medida: según alcance</span><h3>Prototipo</h3><p>Lo ves funcionar con tus datos antes de comprometer el proyecto completo.</p></div>
-        <div class="step"><div class="dot">03</div><span class="when">Con validación de tu equipo</span><h3>Implementación</h3><p>Lo conectamos a tus sistemas, lo probamos con tu equipo y lo ponemos en producción.</p></div>
-        <div class="step"><div class="dot">04</div><span class="when">Mes a mes</span><h3>Operación y mejora</h3><p>Monitoreo, ajustes y nuevas automatizaciones. El sistema mejora con el uso.</p></div>
+      <div class="steps">
+        <div class="step card rv"><div class="dot">01</div><span class="when">Gratis</span><h3>Diagnóstico</h3><p>Nos contás cómo trabajás y dónde se traba. Salís sabiendo qué se puede automatizar y qué hace falta.</p></div>
+        <div class="step card rv"><div class="dot">02</div><span class="when">Alcance por escrito</span><h3>Propuesta</h3><p>Qué vamos a hacer, qué necesitamos de tu lado y las fechas, antes de empezar.</p></div>
+        <div class="step card rv"><div class="dot">03</div><span class="when">Con tu equipo</span><h3>Implementación</h3><p>Lo armamos, lo conectamos a lo que ya usás y lo probamos con tu equipo antes de largarlo.</p></div>
+        <div class="step card rv"><div class="dot">04</div><span class="when">Mes a mes</span><h3>Soporte y mejoras</h3><p>Seguimiento, ajustes y nuevas automatizaciones a medida que tu empresa crece.</p></div>
       </div>
     </div>
   </section>
 
-  <!-- ROI -->
+  <!-- CALCULADORA -->
   <section class="sec" id="roi" style="padding-top:0">
     <div class="wrap">
       <div class="sec-head">
         <span class="eyebrow">Calculadora</span>
-        <h2>¿Cuánto te cuesta <span class="em">hacerlo a mano?</span></h2>
+        <h2>¿Cuánto te cuesta<br><span class="em">hacerlo a mano?</span></h2>
       </div>
-      <div class="roi">
+      <div class="roi card rv">
         <div class="roi-in">
           <div class="cur" role="group" aria-label="Moneda">
             <span>Moneda</span>
@@ -505,23 +321,24 @@
             <div><b id="roi-hours">0 h</b><span>liberadas por mes</span></div>
             <div><b id="roi-month">US$ 0</b><span>por mes</span></div>
           </div>
-          <a href="#contacto" class="btn btn-primary" id="roi-cta">Quiero bajar ese número <span class="arr">→</span></a>
+          <a href="#contacto" class="btn" id="roi-cta">Quiero bajar ese número <span class="arr">→</span></a>
           <p class="roi-note">Estimación orientativa. En el diagnóstico la hacemos con tus números reales.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- FAQ -->
+  <!-- PREGUNTAS -->
   <section class="sec" style="padding-top:0">
     <div class="wrap">
-      <div class="sec-head"><span class="eyebrow">Preguntas</span><h2>Lo que todos <span class="em">preguntan primero.</span></h2></div>
+      <div class="sec-head"><span class="eyebrow">Preguntas</span><h2>Lo que todos<br><span class="em">preguntan primero.</span></h2></div>
       <div class="faq">
         <details><summary>¿Necesito saber de tecnología?</summary><p>No. Vos nos contás cómo trabaja tu equipo y dónde se traba. La parte técnica es nuestra.</p></details>
-        <details><summary>¿El bot puede equivocarse con un cliente?</summary><p>Usamos información aprobada por tu negocio y definimos reglas de derivación a una persona. Puede cometer errores: acordamos qué acciones requieren confirmación humana y cómo revisar las conversaciones.</p></details>
-        <details><summary>¿Funciona con el WhatsApp que ya uso?</summary><p>Revisamos tu configuración actual y los requisitos de la integración oficial antes de confirmar cómo conectar tu número y cómo intervendrá tu equipo.</p></details>
-        <details><summary>¿Cuánto cuesta?</summary><p>Los paquetes tienen precio cerrado: Bot de WhatsApp US$ 350 + US$ 100 por mes, Cobros y recordatorios US$ 300 + US$ 80, Seguimiento de clientes US$ 300 + US$ 80, y los 3 juntos US$ 800 + US$ 200 por mes, todo + IVA. <a href="#paquetes">Mirá qué trae cada uno</a>. Un sistema a medida se cotiza en el diagnóstico gratis.</p></details>
-        <details><summary>¿Cuánto tarda?</summary><p>Después del relevamiento definimos el alcance y un cronograma. El plazo depende de las integraciones, la disponibilidad de información y accesos, y las pruebas con tu equipo. Antes de empezar acordamos entregables y fechas.</p></details>
+        <details><summary>¿Qué hacen exactamente?</summary><p>Automatizamos tareas de empresas, hacemos software a medida, bots de WhatsApp, páginas web y landings de ventas. En el diagnóstico gratis vemos cuál te sirve a vos.</p></details>
+        <details><summary>¿El bot puede equivocarse con un cliente?</summary><p>Usamos información aprobada por tu negocio y definimos reglas para pasar la charla a una persona. Puede cometer errores: acordamos qué acciones requieren confirmación humana y cómo revisar las conversaciones.</p></details>
+        <details><summary>¿Funciona con el WhatsApp que ya uso?</summary><p>Revisamos tu configuración actual y los requisitos de la integración oficial antes de confirmar cómo conectar tu número y cómo interviene tu equipo.</p></details>
+        <details><summary>¿Cuánto cuesta?</summary><p>Los paquetes tienen precio cerrado: Bot de WhatsApp US$ 350 + US$ 100 por mes y Seguimiento de clientes US$ 300 + US$ 80 por mes, todo + IVA. <a href="#paquetes">Mirá qué trae cada uno</a>. El software a medida, las automatizaciones, las webs y las landings se cotizan en el diagnóstico gratis.</p></details>
+        <details><summary>¿Cuánto tarda?</summary><p>Los paquetes, 72 horas hábiles desde que tenemos tus datos y accesos. Lo demás depende del alcance, las integraciones y las pruebas con tu equipo: antes de empezar acordamos entregables y fechas.</p></details>
       </div>
     </div>
   </section>
@@ -531,14 +348,15 @@
     <div class="wrap contact">
       <div>
         <span class="eyebrow">Diagnóstico gratis</span>
-        <h2 style="margin-top:20px">Llegá con el problema.<br><span class="em accent">Del resto nos ocupamos.</span></h2>
+        <h2>Llegá con el problema.<br><span class="em">Del resto nos ocupamos.</span></h2>
         <div class="promise">
-          <div><i>01</i><p><b>Si la IA lo resuelve o no.</b><span>Y si no, te lo decimos ahí mismo.</span></p></div>
-          <div><i>02</i><p><b>Un plazo concreto.</b><span>Para tu caso, no un rango de folleto.</span></p></div>
+          <div><i>01</i><p><b>Qué se puede automatizar.</b><span>Y si no conviene, te lo decimos ahí mismo.</span></p></div>
+          <div><i>02</i><p><b>Un alcance y fechas concretas.</b><span>Para tu caso, no un rango de folleto.</span></p></div>
           <div><i>03</i><p><b>Qué hace falta de tu lado.</b><span>Sistemas, personas y tiempo. Sin sorpresas.</span></p></div>
         </div>
+        <a href="#" class="contact-wa btn" data-wa><svg width="26" height="26" viewBox="0 0 24 24" fill="#25d366" aria-hidden="true"><path d="M17.5 14.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.4-.5c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5 2.5 1 3 .8 3.6.7.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4ZM12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Z"/></svg><span><small>WhatsApp</small><b data-wa-num>11 3366-2080</b></span></a>
       </div>
-      <form class="lead-form" id="lead-form" novalidate>
+      <form class="lead-form card" id="lead-form" novalidate>
         <div class="row">
           <label>Nombre<input name="nombre" required autocomplete="name"></label>
           <label>WhatsApp<input name="whatsapp" type="tel" required autocomplete="tel" placeholder="+54 9 ..."></label>
@@ -547,13 +365,13 @@
           <label>Empresa<input name="empresa" autocomplete="organization"></label>
           <label>Rubro
             <select name="rubro">
-              <option>Comercio / E-commerce</option><option>Créditos / Finanzas</option><option>Salud</option><option>Inmobiliaria</option><option>Servicios</option><option>Otro</option>
+              <option>Comercio / E-commerce</option><option>Servicios</option><option>Salud</option><option>Inmobiliaria</option><option>Industria / Distribución</option><option>Otro</option>
             </select>
           </label>
         </div>
         <label>¿Qué te gustaría resolver?<textarea name="problema" required placeholder="Ej: contestamos tarde los WhatsApp y perdemos ventas"></textarea></label>
         <input class="hp" name="web" tabindex="-1" autocomplete="off" aria-hidden="true">
-        <button class="btn btn-primary" type="submit">Pedir diagnóstico <span class="arr">→</span></button>
+        <button class="btn btn-primary" type="submit">Pedir diagnóstico gratis <span class="arr">→</span></button>
         <p class="form-msg" id="form-msg" role="status"></p>
       </form>
     </div>
@@ -563,19 +381,28 @@
 <footer>
   <div class="wrap">
     <div class="foot">
-      <div><a href="#top" class="logo logo-pie"><img src="img/logo-mym-completo.webp" alt="MyM Soluciones · Tu empresa en modo automático" width="220" height="120" loading="lazy"></a><p>Sistemas de IA a medida para empresas que quieren vender y operar sin fricción.</p>
-        <!-- Redes: logos oficiales. Para sumar Instagram, TikTok, YouTube, LinkedIn o WhatsApp, copiá un <a class="red red-..."> con su SVG oficial y su link. -->
+      <div>
+        <a href="#top" class="logo-full" aria-label="MyM Soluciones · Tu empresa en modo automático">
+          <span class="logo-mym deg">M<small>y</small>M</span>
+          <span class="logo-sol">SOLUCIONES</span>
+          <span class="logo-line"></span>
+          <span class="logo-tag">TU EMPRESA EN MODO AUTOMÁTICO</span>
+        </a>
+        <p>Automatización, software a medida, bots de WhatsApp, páginas web y landings de ventas.</p>
         <div class="redes" aria-label="Redes sociales de MyM Soluciones">
+          <a class="red red-instagram" href="https://www.instagram.com/mymsoluciones369/" target="_blank" rel="noopener" aria-label="MyM Soluciones en Instagram (se abre en una pestaña nueva)">
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><defs><linearGradient id="ig" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#feda75"/><stop offset=".35" stop-color="#fa7e1e"/><stop offset=".6" stop-color="#d62976"/><stop offset="1" stop-color="#4f5bd5"/></linearGradient></defs><path fill="url(#ig)" d="M12 2.2c3.2 0 3.6 0 4.8.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-1.2-.1-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.8c.1-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2Zm0 4.7a5.1 5.1 0 1 0 0 10.2 5.1 5.1 0 0 0 0-10.2Zm0 8.4a3.3 3.3 0 1 1 0-6.6 3.3 3.3 0 0 1 0 6.6Zm5.3-9.8a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4Z"/></svg>
+          </a>
           <a class="red red-facebook" href="https://www.facebook.com/solucionesmym01/" target="_blank" rel="noopener" aria-label="MyM Soluciones en Facebook (se abre en una pestaña nueva)">
             <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="#0866FF" d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/><path fill="#fff" d="M15.737 15.711l.673-3.667h-3.919v-1.297c0-.757.116-1.332.374-1.752.17-.277.398-.485.679-.622.416-.213.968-.309 1.675-.309.271 0 .515.003.733.009.264.007.483.018.653.036V4.784a8.68 8.68 0 0 0-1.141-.195c-.513-.061-1.067-.103-1.468-.103-4.01 0-5.858 1.893-5.858 5.978v1.58H6.627v3.667h2.474v7.98c.928.23 1.898.353 2.899.353.493 0 .979-.03 1.457-.088v-8.245h3.28Z"/></svg>
           </a>
         </div>
       </div>
-      <div><h4>Sistemas</h4><ul><li><a href="#sistemas">Bots de WhatsApp</a></li><li><a href="#sistemas">Agentes de voz</a></li><li><a href="#sistemas">Cobranza</a></li><li><a href="#sistemas">Software a medida</a></li></ul></div>
-      <div><h4>Agencia</h4><ul><li><a href="#casos">Casos</a></li><li><a href="#proceso">Proceso</a></li><li><a href="#roi">Calculadora</a></li></ul></div>
-      <div><h4>Contacto</h4><ul><li><a href="#" data-wa>WhatsApp</a></li><li><a href="mailto:info@mymsoluciones.online" id="mail-link">info@mymsoluciones.online</a></li><li>Argentina · Remoto</li><li><a href="https://wa.me/5491170591714?text=Quiero%20revocar%20mi%20contrataci%C3%B3n%20de%20MyM%20Soluciones%20(bot%C3%B3n%20de%20arrepentimiento)." target="_blank" rel="noopener">Botón de arrepentimiento</a></li></ul></div>
+      <div><h4>Servicios</h4><ul><li><a href="#servicios">Automatización</a></li><li><a href="#servicios">Software a medida</a></li><li><a href="#servicios">Bots de WhatsApp</a></li><li><a href="#servicios">Webs y landings</a></li></ul></div>
+      <div><h4>Empresa</h4><ul><li><a href="#casos">Casos</a></li><li><a href="#paquetes">Paquetes</a></li><li><a href="#proceso">Proceso</a></li><li><a href="#roi">Calculadora</a></li></ul></div>
+      <div><h4>Contacto</h4><ul><li><a href="#" data-wa>WhatsApp 11 3366-2080</a></li><li><a href="https://www.instagram.com/mymsoluciones369/" target="_blank" rel="noopener">@mymsoluciones369</a></li><li><a href="mailto:info@mymsoluciones.online">info@mymsoluciones.online</a></li><li>Argentina · Remoto</li><li><a href="#" data-wa data-wa-text="Quiero revocar mi contratación de MyM Soluciones (botón de arrepentimiento).">Botón de arrepentimiento</a></li></ul></div>
     </div>
-    <div class="foot-bottom"><span>© <span id="year"></span> MyM Soluciones</span><span>Hecho con IA, revisado por humanos.</span></div>
+    <div class="foot-bottom"><span>© <span id="year"></span> MyM Soluciones</span><span class="grupo">Parte del <b>grupo MyM</b></span></div>
   </div>
 </footer>
 
@@ -583,12 +410,9 @@
   <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff"><path d="M17.5 14.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.4-.5c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5 2.5 1 3 .8 3.6.7.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4ZM12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Z"/></svg>
 </a>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="config.js?v=202610221649"></script>
-<script src="main.js?v=202610291710"></script>
+<script src="config.js?v=202611041700"></script>
+<script src="main.js?v=202611041710"></script>
 <script src="resenas/resenas.js?v=1"></script>
 </body>
 </html>
-
