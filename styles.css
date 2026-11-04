@@ -325,6 +325,8 @@ input[type=range]::-moz-range-thumb { width: 18px; height: 18px; border-radius: 
 .lead-form .btn { justify-self: start; }
 .hp { position: absolute; left: -9999px; }
 .form-msg { margin: 0; font-size: 14px; font-weight: 600; }
+.form-nota { margin: 0; font-size: 13px; color: var(--ink-3); }
+.form-nota a { color: var(--azul); font-weight: 700; }
 .form-msg.ok { color: #00866f; } .form-msg.err { color: #d43a4a; }
 
 /* ============ Pie ============ */
