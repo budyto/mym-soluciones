@@ -250,6 +250,10 @@ h3 { font-size: 21px; font-weight: 800; letter-spacing: -0.015em; line-height: 1
 .paq li { display: flex; gap: 10px; }
 .paq li::before { content: "✓"; flex: none; width: 22px; height: 22px; border-radius: 7px; background: var(--agua); color: #fff; font-size: 13px; font-weight: 900; display: grid; place-items: center; margin-top: 1px; }
 .paq .btn { margin-top: auto; }
+.paq-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.paq-pill { font-size: 12px; font-weight: 800; color: #fff; background: var(--deg); padding: 5px 11px; border-radius: 999px; white-space: nowrap; }
+.paq-top { outline: 2px solid var(--azul); outline-offset: -2px; }
+.paq-desde { font-size: 16px; font-weight: 700; color: var(--ink-2); letter-spacing: 0; }
 .paq-medida { background: var(--ink); color: #fff; }
 .paq-medida h3 { color: #fff; margin-top: 4px; }
 .paq-medida .paq-mes, .paq-medida ul { color: #b9c4dd; }

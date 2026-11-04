@@ -65,7 +65,7 @@
   ];
   const FALLBACK = { kind: "A medida", title: "Lo vemos juntos en el diagnóstico",
     desc: "Tu caso no entra en una caja, y está bien: es justo lo que hacemos. En el diagnóstico gratis te decimos qué se puede automatizar y qué hace falta.",
-    steps: ["Diagnóstico gratis", "Alcance y fechas por escrito", "Implementación y pruebas con tu equipo"] };
+    steps: ["Diagnóstico gratis", "Alcance y precio por escrito", "Implementación y pruebas con tu equipo"] };
   const norm = (s) => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
   const askForm = $("#ask"), askInput = $("#ask-input"), answer = $("#answer");
 
@@ -212,7 +212,7 @@
       btn.disabled = false;
       if (error) { msg.className = "form-msg err"; msg.textContent = "No pudimos enviarlo. Escribinos por WhatsApp."; return; }
       form.reset();
-      msg.className = "form-msg ok"; msg.textContent = "¡Listo! Te escribimos por WhatsApp en menos de 24 h.";
+      msg.className = "form-msg ok"; msg.textContent = "¡Listo! Te escribimos por WhatsApp.";
     } else {
       // Sin Supabase configurado: abre WhatsApp con el pedido armado
       const text = `Hola! Soy ${lead.nombre}${lead.empresa ? ` de ${lead.empresa}` : ""} (${lead.rubro}).\nQuiero resolver: ${lead.problema}`;
