@@ -9,34 +9,35 @@
      Habla con /resenas/api.php. Cómo se entra lo dice la web (api.php?config): con Google, o con la
      misma sesión del panel /admin (en miscreditos.app va adentro de /admin, en una pestaña). -->
 <style>
-  :root { --bg:#0a0a0a; --s1:#131313; --s2:#1b1b1b; --line:#2a2a2a; --ink:#f5f5f5; --ink-3:#a3a3a3; --gold:#efca70; --err:#ff8a7a; --ok:#3ccf7a; }
+  /* 4/11/2026: identidad clara de MyM Soluciones, la misma de la web (antes negro y dorado). --gold queda con su nombre pero ahora es el azul. */
+  :root { --bg:#f4f7ff; --s1:#ffffff; --s2:#eef3ff; --line:#dbe4f7; --ink:#0e1a33; --ink-3:#4a5878; --gold:#2f6bff; --err:#d43a4a; --ok:#00866f; --deg:linear-gradient(120deg,#2f6bff,#00c2a8); }
   * { box-sizing: border-box; }
   [hidden] { display: none !important; }
   body.embebido h1, body.embebido .sub, body.embebido #salir { display: none; }
-  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
+  body { margin: 0; background: linear-gradient(180deg,#f4f7ff,#e6eeff) fixed var(--bg); color: var(--ink); font: 15px/1.5 "Archivo", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; }
   .wrap { max-width: 920px; margin: 0 auto; padding: 22px 16px 60px; }
-  h1 { font-size: 20px; margin: 0 0 4px; } .sub { color: var(--ink-3); margin: 0 0 20px; font-size: 14px; }
+  h1 { font-size: 22px; margin: 0 0 4px; font-weight: 900; letter-spacing: -.02em; } .sub { color: var(--ink-3); margin: 0 0 20px; font-size: 14px; }
   input, textarea, select, button { font: inherit; }
-  input[type=text], input[type=password], textarea, select { width: 100%; background: var(--s1); border: 1px solid var(--line); color: var(--ink); border-radius: 10px; padding: 10px 12px; }
+  input[type=text], input[type=password], textarea, select { width: 100%; background: var(--bg); border: 1.5px solid var(--line); color: var(--ink); border-radius: 10px; padding: 10px 12px; }
   textarea { min-height: 100px; resize: vertical; }
   input:focus, textarea:focus, select:focus { outline: none; border-color: var(--gold); }
-  .btn { background: var(--gold); color: #141414; border: 0; border-radius: 10px; padding: 10px 16px; font-weight: 600; cursor: pointer; white-space: nowrap; }
-  .btn.gris { background: var(--s2); color: var(--ink); border: 1px solid var(--line); }
-  .btn.rojo { background: none; color: var(--err); border: 1px solid rgba(255,138,122,.35); }
+  .btn { background: var(--deg); color: #fff; border: 0; border-radius: 999px; padding: 10px 16px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+  .btn.gris { background: #fff; color: var(--ink); border: 1px solid var(--line); }
+  .btn.rojo { background: #fff; color: var(--err); border: 1px solid rgba(212,58,74,.35); }
   .btn:disabled { opacity: .5; cursor: default; }
   .entrar { display: flex; gap: 10px; max-width: 420px; }
   .msg { min-height: 20px; font-size: 14px; color: var(--err); margin: 8px 0; } .msg.ok { color: var(--ok); }
   .barra { display: flex; gap: 10px; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
   ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-  li { display: grid; grid-template-columns: 56px 1fr auto; gap: 14px; align-items: center; background: var(--s1); border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
+  li { display: grid; grid-template-columns: 56px 1fr auto; gap: 14px; align-items: center; background: var(--s1); border: 1px solid var(--line); border-radius: 18px; padding: 12px; box-shadow: 0 10px 30px rgba(14,26,51,.06); }
   li.oculta { opacity: .55; }
-  .av { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; background: var(--gold); color: #141414; display: grid; place-items: center; font-weight: 700; font-size: 20px; }
+  .av { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; background: var(--deg); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 20px; }
   .txt { min-width: 0; } .txt b { font-weight: 600; } .txt small { color: var(--ink-3); }
   .txt p { margin: 4px 0 0; color: var(--ink-3); font-size: 14px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-  .est { color: var(--gold); letter-spacing: 1px; }
+  .est { color: #f5a623; letter-spacing: 1px; }
   .chip { font-size: 11px; border: 1px solid var(--line); border-radius: 999px; padding: 1px 8px; color: var(--ink-3); margin-left: 6px; }
   .acc { display: flex; gap: 8px; } .acc .btn { padding: 7px 12px; font-size: 13px; }
-  form.ficha { background: var(--s1); border: 1px solid var(--line); border-radius: 14px; padding: 16px; display: grid; grid-template-columns: 120px 1fr; gap: 16px; margin-bottom: 18px; }
+  form.ficha { background: var(--s1); border: 1px solid var(--line); border-radius: 22px; box-shadow: 0 24px 60px rgba(14,26,51,.10); padding: 16px; display: grid; grid-template-columns: 120px 1fr; gap: 16px; margin-bottom: 18px; }
   .foto { display: flex; flex-direction: column; gap: 8px; align-items: center; }
   .foto .av { width: 104px; height: 104px; font-size: 34px; }
   .foto label { font-size: 13px; color: var(--gold); cursor: pointer; } .foto button { background: none; border: 0; color: var(--ink-3); font-size: 12px; cursor: pointer; }
@@ -51,6 +52,8 @@
     li { grid-template-columns: 48px 1fr; } .av { width: 48px; height: 48px; } .acc { grid-column: 1 / -1; }
   }
 </style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
 <div class="wrap">
@@ -205,7 +208,7 @@
       s.onload = () => {
         google.accounts.id.initialize({ client_id: cfg.googleClientId, auto_select: true,
           callback: (res) => { setClave(res.credential); cargar(); } });
-        google.accounts.id.renderButton($('#gboton'), { theme: 'filled_black', size: 'large', shape: 'pill', text: 'signin_with', locale: 'es' });
+        google.accounts.id.renderButton($('#gboton'), { theme: 'filled_blue', size: 'large', shape: 'pill', text: 'signin_with', locale: 'es' });
         if (!clave()) google.accounts.id.prompt();
       };
       document.head.appendChild(s);
