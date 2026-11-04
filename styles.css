@@ -234,6 +234,32 @@ h3 { font-size: 21px; font-weight: 800; letter-spacing: -0.015em; line-height: 1
 .stack { display: flex; gap: 6px; flex-wrap: wrap; margin-top: auto; padding-top: 10px; }
 .stack span { font-family: var(--mono); font-size: 11px; color: var(--ink-2); background: var(--fondo); border-radius: 8px; padding: 5px 9px; }
 
+/* ============ Trabajos ============ */
+.trabs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.trab { padding: 26px; display: flex; flex-direction: column; gap: 8px; }
+.trab-art { position: relative; border-radius: var(--r-s); background: linear-gradient(160deg, var(--fondo), var(--fondo-2)); padding: 22px 70px 30px 22px; margin-bottom: 12px; }
+.trab-pc { border-radius: 12px; overflow: hidden; background: #fff; box-shadow: var(--sombra-s); }
+.trab-pc .bar { display: flex; gap: 5px; padding: 8px 10px; border-bottom: 1px solid var(--fondo-2); }
+.trab-pc .bar i { width: 8px; height: 8px; border-radius: 50%; background: #ff6b6b; }
+.trab-pc .bar i:nth-child(2) { background: #ffc24b; } .trab-pc .bar i:nth-child(3) { background: #2bd47d; }
+.trab-pc img, .trab-cel img { display: block; width: 100%; height: auto; }
+.trab-cel { position: absolute; right: 16px; bottom: 14px; width: 26%; border-radius: 16px; overflow: hidden; border: 4px solid var(--ink); background: var(--ink); box-shadow: 0 16px 34px rgba(14, 26, 51, .28); }
+.trab .kind { font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--azul); }
+.trab h3 { font-size: 24px; font-weight: 900; letter-spacing: -0.02em; }
+.trab p { margin: 0; color: var(--ink-2); }
+.trab-link { margin-top: auto; padding-top: 6px; color: var(--azul); font-weight: 800; align-self: flex-start; }
+/* Si queda una tarjeta sola en la última fila, ocupa todo el ancho con la imagen al costado */
+@media (min-width: 641px) {
+  .trab:last-child:nth-child(odd) { grid-column: 1 / -1; display: grid; grid-template-columns: 1.1fr 1fr; grid-template-rows: 1fr auto auto auto auto 1fr; column-gap: 34px; row-gap: 8px; }
+  .trab:last-child:nth-child(odd) .trab-art { grid-column: 1; grid-row: 1 / -1; margin: 0; }
+  .trab:last-child:nth-child(odd) > :not(.trab-art) { grid-column: 2; }
+  .trab:last-child:nth-child(odd) .kind { grid-row: 2; }
+  .trab:last-child:nth-child(odd) h3 { grid-row: 3; }
+  .trab:last-child:nth-child(odd) p { grid-row: 4; }
+  .trab:last-child:nth-child(odd) .trab-link { grid-row: 5; }
+}
+.trab-link:hover .arr { display: inline-block; transform: translate(2px, -2px); }
+
 /* Reseñas: tarjetas blancas como el resto */
 .res-card { background: #fff !important; border: 0 !important; box-shadow: var(--sombra); border-radius: var(--r) !important; }
 .res-card blockquote { color: var(--ink-2) !important; }
@@ -371,7 +397,9 @@ footer { padding: 80px 0 40px; background: #fff; margin-top: 40px; }
   .hero-cta .btn { flex: 1 1 100%; }
   .sec { padding: 72px 0; }
   .sec-head { margin-bottom: 34px; }
-  .svcs, .pains, .cases, .paqs, .steps { grid-template-columns: 1fr; }
+  .svcs, .pains, .cases, .paqs, .steps, .trabs { grid-template-columns: 1fr; }
+  .trab { padding: 20px; }
+  .trab-art { padding: 14px 54px 20px 14px; }
   .svc, .paq, .case, .lead-form, .roi-in, .roi-out, .ask-box { padding: 24px; }
   .svc h3 { font-size: 24px; }
   .ask-box { gap: 28px; }
