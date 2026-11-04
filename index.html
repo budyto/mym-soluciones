@@ -8,13 +8,14 @@
 <meta name="theme-color" content="#f4f7ff">
 <meta property="og:title" content="MyM Soluciones — Tu empresa en modo automático">
 <meta property="og:description" content="Software a medida, bots de WhatsApp, páginas web y landings de ventas. Diagnóstico gratis.">
-<meta property="og:image" content="https://mymsoluciones.online/img/og.jpg">
-<link rel="icon" href="img/favicon.png" type="image/png">
-<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<meta property="og:image" content="https://mymsoluciones.online/img/og-2.jpg">
+<!-- Íconos con nombre nuevo: el CDN de Hostinger guarda las imágenes 7 días y seguía sirviendo el ícono negro y dorado. -->
+<link rel="icon" href="img/favicon-2.png" type="image/png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon-2.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Instrument+Serif:ital@1&family=Michroma&family=Martian+Mono:wght@500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=202611042030">
+<link rel="stylesheet" href="styles.css?v=202611050900">
 <script>document.documentElement.classList.remove('no-js')</script>
 </head>
 <body>
@@ -79,32 +80,75 @@
       </div>
       <div class="svcs">
         <article class="svc card rv">
-          <div class="svc-art" aria-hidden="true"><div class="art-auto"><b>A mano</b><i></i><b>Sistema</b><i></i><b class="ok">✓</b></div></div>
+          <!-- Animación: las tareas entran a mano, pasan por el sistema y salen hechas -->
+          <div class="svc-art art-flujo" aria-hidden="true">
+            <div class="fl-col fl-in"><span class="fl-t t1">📄 Factura</span><span class="fl-t t2">📊 Planilla</span><span class="fl-t t3">✉️ Mail</span></div>
+            <div class="fl-sis"><i class="fl-eng">⚙️</i><b>Sistema</b><span class="fl-bar"><i></i></span></div>
+            <div class="fl-col fl-out"><span class="fl-ok o1">✓ Cargada</span><span class="fl-ok o2">✓ Actualizada</span><span class="fl-ok o3">✓ Avisado</span></div>
+            <i class="fl-dot d1"></i><i class="fl-dot d2"></i>
+          </div>
           <span class="num">01</span>
           <h3>Automatización de procesos</h3>
           <p>Las tareas que se repiten todos los días —cargar datos, pasar información de un lado a otro, avisar, armar reportes— hechas solas y con aviso cuando algo necesita a una persona.</p>
           <ul><li>Carga de datos</li><li>Avisos</li><li>Reportes</li><li>Integraciones</li></ul>
         </article>
         <article class="svc card rv">
-          <div class="svc-art" aria-hidden="true"><div class="art-win"><div class="bar"><i></i><i></i><i></i></div><div class="art-code deg">&lt;/&gt;</div></div></div>
+          <!-- Animación: un panel propio con tablero (dibujo, sin datos reales) -->
+          <div class="svc-art art-soft" aria-hidden="true">
+            <div class="sw-win"><div class="bar"><i></i><i></i><i></i><span class="deg">&lt;/&gt;</span></div>
+              <div class="sw-body">
+                <div class="sw-side"><i class="on"></i><i></i><i></i><i></i></div>
+                <div class="sw-main">
+                  <div class="sw-kpis"><span></span><span></span><span></span></div>
+                  <div class="sw-barras"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                </div>
+              </div>
+            </div>
+          </div>
           <span class="num">02</span>
           <h3>Software a medida</h3>
           <p>Un sistema hecho para cómo trabaja tu empresa: paneles, gestión de stock, pedidos o clientes, y tableros para ver la operación sin abrir planillas.</p>
           <ul><li>Paneles de gestión</li><li>Tableros</li><li>Base de datos propia</li></ul>
         </article>
         <article class="svc card rv">
-          <div class="svc-art" aria-hidden="true"><div class="art-chat"><span></span><span></span><span></span><span></span></div></div>
+          <!-- Animación: una consulta, la respuesta con horarios, toma de datos, turno agendado y paso a una persona -->
+          <div class="svc-art art-bot" aria-hidden="true">
+            <div class="bt-tel">
+              <div class="bt-cab"><span class="bt-av"></span><b>Tu negocio</b><small>en línea</small></div>
+              <div class="bt-msgs">
+                <span class="bt m1 in">¿Qué horarios tienen?</span>
+                <span class="bt m2 out">¡Hola! 👋🏻 De lunes a sábado de 9 a 19. ¿Te agendo?</span>
+                <span class="bt m3 in">Sí, el jueves</span>
+                <span class="bt m4 sys">📅 Turno agendado · datos guardados</span>
+                <span class="bt m5 sys per">👤 Te paso con una persona del equipo</span>
+              </div>
+            </div>
+          </div>
           <span class="num">03</span>
           <h3>Bots de WhatsApp</h3>
           <p>Responde las consultas de tus clientes a cualquier hora con tus precios y horarios, toma los datos, agenda y pasa la charla a una persona cuando hace falta.</p>
           <ul><li>API oficial de WhatsApp</li><li>Consultas</li><li>Agenda</li><li>Derivación a una persona</li></ul>
         </article>
         <article class="svc card rv">
-          <div class="svc-art" aria-hidden="true"><div class="art-win"><div class="bar"><i></i><i></i><i></i></div><div class="art-web"><span></span><span></span><span></span><span></span></div></div></div>
+          <!-- Pasan las webs reales del portfolio -->
+          <a class="svc-art art-webs" href="#portfolio" aria-label="Ver el portfolio">
+            <div class="ws-win"><div class="bar"><i></i><i></i><i></i></div>
+              <div class="ws-pantalla">
+                <img src="img/trabajos/miscreditos-pc.webp" alt="" loading="lazy" decoding="async">
+                <img src="img/trabajos/shoes-sport-pc.webp" alt="" loading="lazy" decoding="async">
+                <img src="img/trabajos/mym-creditos-pc.webp" alt="" loading="lazy" decoding="async">
+                <img src="img/trabajos/electromym-pc.webp" alt="" loading="lazy" decoding="async">
+                <img src="img/trabajos/motos-mym-pc.webp" alt="" loading="lazy" decoding="async">
+                <img src="img/trabajos/ensaf-pc.webp" alt="" loading="lazy" decoding="async">
+                <img src="img/trabajos/mym-inversiones-pc.webp" alt="" loading="lazy" decoding="async">
+              </div>
+            </div>
+          </a>
           <span class="num">04</span>
           <h3>Páginas web y landings</h3>
           <p>Tu página para que te encuentren y landings de ventas pensadas para que el que entra te escriba: rápidas, claras y conectadas a tu WhatsApp.</p>
           <ul><li>Webs institucionales</li><li>Landings de ventas</li><li>Catálogos</li></ul>
+          <a class="trab-link" href="#portfolio">Ver ejemplos reales en el portfolio <span class="arr">→</span></a>
         </article>
       </div>
     </div>
@@ -122,24 +166,28 @@
       </div>
       <div class="pains">
         <article class="pain card rv">
+          <img class="pain-foto" src="img/foto-ventas.webp" alt="" width="640" height="460" loading="lazy" decoding="async">
           <span class="tag">Ventas</span>
           <blockquote>"Contestamos el WhatsApp a la mañana y el cliente ya le compró a otro."</blockquote>
-          <p class="fix"><b>→ Bot de WhatsApp</b> que responde al instante con tus precios y horarios.</p>
+          <p class="fix"><b>→ Bot de WhatsApp</b> que contesta en segundos, a cualquier hora, para que ninguna consulta se enfríe.</p>
         </article>
         <article class="pain card rv">
+          <img class="pain-foto" src="img/foto-admin.webp" alt="" width="640" height="460" loading="lazy" decoding="async">
           <span class="tag">Administración</span>
           <blockquote>"Pasamos los datos de una planilla a otra todo el día."</blockquote>
-          <p class="fix"><b>→ Automatización</b> que mueve la información sola y te avisa si algo no cierra.</p>
+          <p class="fix"><b>→ Automatización:</b> los datos se cargan solos donde tienen que ir, sin copiar y pegar.</p>
         </article>
         <article class="pain card rv">
+          <img class="pain-foto" src="img/foto-gestion.webp" alt="" width="640" height="460" loading="lazy" decoding="async">
           <span class="tag">Gestión</span>
           <blockquote>"Para saber cómo venimos tengo que abrir cinco archivos."</blockquote>
-          <p class="fix"><b>→ Software a medida</b> con un tablero que muestra el día en un solo lugar.</p>
+          <p class="fix"><b>→ Software a medida:</b> creamos la herramienta que resuelve eso que hoy te traba.</p>
         </article>
         <article class="pain card rv">
+          <img class="pain-foto" src="img/foto-online.webp" alt="" width="640" height="460" loading="lazy" decoding="async">
           <span class="tag">Presencia online</span>
           <blockquote>"Nos buscan en Google y no aparecemos, o aparece una página vieja."</blockquote>
-          <p class="fix"><b>→ Web o landing de ventas</b> que lleva a la gente directo a tu WhatsApp.</p>
+          <p class="fix"><b>→ Web o landing de ventas</b> que vende en automático por vos, las 24 horas.</p>
         </article>
       </div>
     </div>
@@ -162,6 +210,12 @@
             <button type="button">Cargamos todo a mano en planillas</button>
             <button type="button">No tenemos página web</button>
             <button type="button">Necesitamos un sistema propio</button>
+            <button type="button">Contestamos siempre las mismas preguntas</button>
+            <button type="button">Damos los turnos a mano</button>
+            <button type="button">Preguntan y no vuelven a escribir</button>
+            <button type="button">Queremos una landing para los anuncios</button>
+            <button type="button">No sabemos cómo venimos este mes</button>
+            <button type="button">Pasamos los pedidos a mano</button>
           </div>
         </div>
         <div class="answer answer-empty" id="answer" aria-live="polite">Escribí tu problema o tocá un ejemplo, y acá te mostramos la solución.</div>
@@ -410,7 +464,7 @@
           <div><i>02</i><p><b>Un alcance y un precio concretos.</b><span>Para tu caso, no un rango de folleto.</span></p></div>
           <div><i>03</i><p><b>Qué hace falta de tu lado.</b><span>Sistemas, personas y tiempo. Sin sorpresas.</span></p></div>
         </div>
-        <a href="#" class="contact-wa btn" data-wa><svg width="26" height="26" viewBox="0 0 24 24" fill="#25d366" aria-hidden="true"><path d="M17.5 14.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.4-.5c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5 2.5 1 3 .8 3.6.7.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4ZM12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Z"/></svg><span><small>WhatsApp</small><b data-wa-num>11 3366-2080</b></span></a>
+        <a href="#" class="contact-wa btn" data-wa><svg width="26" height="26" viewBox="0 0 24 24" fill="#25d366" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg><span><small>WhatsApp</small><b data-wa-num>11 3366-2080</b></span></a>
       </div>
       <form class="lead-form card" id="lead-form" novalidate>
         <div class="row">
@@ -453,22 +507,25 @@
           <a class="red red-facebook" href="https://www.facebook.com/solucionesmym01/" target="_blank" rel="noopener" aria-label="MyM Soluciones en Facebook (se abre en una pestaña nueva)">
             <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="#0866FF" d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/><path fill="#fff" d="M15.737 15.711l.673-3.667h-3.919v-1.297c0-.757.116-1.332.374-1.752.17-.277.398-.485.679-.622.416-.213.968-.309 1.675-.309.271 0 .515.003.733.009.264.007.483.018.653.036V4.784a8.68 8.68 0 0 0-1.141-.195c-.513-.061-1.067-.103-1.468-.103-4.01 0-5.858 1.893-5.858 5.978v1.58H6.627v3.667h2.474v7.98c.928.23 1.898.353 2.899.353.493 0 .979-.03 1.457-.088v-8.245h3.28Z"/></svg>
           </a>
+          <a class="red red-whatsapp" href="#" data-wa aria-label="MyM Soluciones en WhatsApp (se abre en una pestaña nueva)">
+            <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="#25D366" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+          </a>
         </div>
       </div>
       <div><h4>Servicios</h4><ul><li><a href="#servicios">Automatización</a></li><li><a href="#servicios">Software a medida</a></li><li><a href="#servicios">Bots de WhatsApp</a></li><li><a href="#servicios">Webs y landings</a></li></ul></div>
       <div><h4>Empresa</h4><ul><li><a href="#portfolio">Portfolio</a></li><li><a href="#paquetes">Paquetes</a></li><li><a href="#proceso">Proceso</a></li><li><a href="#roi">Calculadora</a></li></ul></div>
-      <div><h4>Contacto</h4><ul><li><a href="#" data-wa>WhatsApp 11 3366-2080</a></li><li><a href="https://www.instagram.com/mymsoluciones369/" target="_blank" rel="noopener">@mymsoluciones369</a></li><li><a href="mailto:info@mymsoluciones.online">info@mymsoluciones.online</a></li><li>Argentina · Remoto</li><li><a href="privacidad.html">Política de privacidad</a></li><li><a href="#" data-wa data-wa-text="Quiero revocar mi contratación de MyM Soluciones (botón de arrepentimiento).">Botón de arrepentimiento</a></li></ul></div>
+      <div><h4>Contacto</h4><ul><li><a href="#" data-wa>WhatsApp 11 3366-2080</a></li><li><a href="mailto:info@mymsoluciones.online">info@mymsoluciones.online</a></li><li>Argentina · Remoto</li><li><a href="privacidad.html">Política de privacidad</a></li><li><a href="#" data-wa data-wa-text="Quiero revocar mi contratación de MyM Soluciones (botón de arrepentimiento).">Botón de arrepentimiento</a></li></ul></div>
     </div>
     <div class="foot-bottom"><span>© <span id="year"></span> MyM Soluciones</span><span class="grupo">Parte del <b>grupo MyM</b></span></div>
   </div>
 </footer>
 
 <a class="wa-float" href="#" data-wa aria-label="Escribinos por WhatsApp">
-  <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff"><path d="M17.5 14.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.4-.5c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5 2.5 1 3 .8 3.6.7.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4ZM12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Z"/></svg>
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
 </a>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="config.js?v=202611041700"></script>
-<script src="main.js?v=202611041800"></script>
+<script src="main.js?v=202611050900"></script>
 </body>
 </html>
