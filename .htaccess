@@ -8,10 +8,12 @@
   </FilesMatch>
 </IfModule>
 
+# (4/11/2026) /resenas se dio de baja (Budy no quiere reseñas): Hostinger no borra lo que sale del repo,
+# así que la carpeta entera queda bloqueada. Se puede borrar a mano desde el administrador de archivos.
 # (2/11/2026) Archivos internos que no tienen que poder bajarse desde la web:
 # instrucciones (CLAUDE.md), esquemas SQL, datos de reseñas (incluye las ocultas) y archivos ocultos.
 <IfModule mod_alias.c>
   RedirectMatch 403 \.(md|sql)$
-  RedirectMatch 403 ^/resenas/data(/|$)
+  RedirectMatch 403 ^/resenas(/|$)
   RedirectMatch 403 (^|/)\.(?!well-known/)
 </IfModule>
