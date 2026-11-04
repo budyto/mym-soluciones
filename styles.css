@@ -23,9 +23,6 @@
   --r: 28px;
   --r-s: 18px;
   --wrap: 1180px;
-  /* Para las reseñas (resenas.css toma estas variables) */
-  --accent: var(--azul);
-  --accent-ink: #fff;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -260,10 +257,6 @@ h3 { font-size: 21px; font-weight: 800; letter-spacing: -0.015em; line-height: 1
 }
 .trab-link:hover .arr { display: inline-block; transform: translate(2px, -2px); }
 
-/* Reseñas: tarjetas blancas como el resto */
-.res-card { background: #fff !important; border: 0 !important; box-shadow: var(--sombra); border-radius: var(--r) !important; }
-.res-card blockquote { color: var(--ink-2) !important; }
-.res-card figcaption b { color: var(--ink) !important; }
 
 /* ============ Paquetes ============ */
 .paqs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
