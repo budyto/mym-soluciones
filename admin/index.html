@@ -41,6 +41,9 @@ h2{font:900 30px/1.1 "Archivo",sans-serif;letter-spacing:-.02em;margin:6px 0 4px
 .card b{font-size:17px}.card span{color:var(--gris);font-size:13.5px}
 .card.prin{background:var(--deg);color:#fff;border:0}.card.prin span{color:rgba(255,255,255,.88)}.card.prin .ic{background:rgba(255,255,255,.18)}
 .seccion{margin:30px 0 12px}
+.guia .pal{align-self:flex-start;font:500 11px "Martian Mono",monospace;letter-spacing:.1em;background:#eef3ff;color:var(--azul);border-radius:999px;padding:4px 10px}
+.guia .acc{display:flex;gap:8px;margin-top:10px}.guia .acc .btn{padding:8px 14px;font-size:13px}
+.guia.prox{border-style:dashed;opacity:.75}
 .pie{margin-top:36px;color:var(--gris);font-size:12.5px}
 </style></head>
 <body>
@@ -81,6 +84,10 @@ h2{font:900 30px/1.1 "Archivo",sans-serif;letter-spacing:-.02em;margin:6px 0 4px
       <a class="card" href="../" target="_blank" rel="noopener"><div class="ic">🌐</div><b>La web</b><span>mymsoluciones.online, como la ve un cliente.</span></a>
       <a class="card" href="https://grupomym.online/" target="_blank" rel="noopener"><div class="ic">🧭</div><b>Panel del grupo</b><span>Las empresas, los documentos y los pendientes.</span></a>
     </div>
+    <div class="seccion"><div class="eti">Guías de los reels</div><h2 style="font-size:22px">Lo que manda el «Comentá»</h2>
+      <p class="sub" style="margin:0">Cada reel pide comentar una palabra y el CRM le manda al que comenta el link a su guía.</p></div>
+    <div class="grid" id="guias"></div>
+
     <p class="pie">Sólo entran las cuentas autorizadas. Parte del grupo MyM.</p>
   </main>
 </div>
@@ -108,6 +115,22 @@ h2{font:900 30px/1.1 "Archivo",sans-serif;letter-spacing:-.02em;margin:6px 0 4px
       $('#numsMsg').hidden = true;
     } catch (e) { $('#numsMsg').hidden = false; $('#numsMsg').textContent = 'No se pudieron traer los números del WhatsApp: ' + e.message + '.'; }
   }
+
+  // Guías de los reels tutoriales. Cuando se publica una nueva en /guias/, se suma acá (link vacío = en preparación).
+  const GUIAS = [
+    { palabra: 'BOT', titulo: 'Tu WhatsApp contesta aunque estés durmiendo', reel: 'Reel 1 · mensaje de ausencia y de bienvenida', link: 'https://mymsoluciones.online/guias/bot.html' },
+    { palabra: 'TAREA', titulo: 'De Excel a un tablero', reel: 'Reel 2 · en preparación', link: '' },
+  ];
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  $('#guias').innerHTML = GUIAS.map((g) => `<div class="card guia${g.link ? '' : ' prox'}">
+      <span class="pal">Comentá ${esc(g.palabra)}</span><b>${esc(g.titulo)}</b><span>${esc(g.reel)}</span>
+      ${g.link ? `<div class="acc"><a class="btn" href="${esc(g.link)}" target="_blank" rel="noopener">Abrir</a>
+      <button class="btn gris" type="button" data-copiar="${esc(g.link)}">Copiar link</button></div>` : ''}</div>`).join('');
+  $('#guias').addEventListener('click', async (e) => {
+    const b = e.target.closest('[data-copiar]'); if (!b) return;
+    try { await navigator.clipboard.writeText(b.dataset.copiar); b.textContent = '¡Copiado!'; } catch { b.textContent = 'No se pudo copiar'; }
+    setTimeout(() => { b.textContent = 'Copiar link'; }, 2000);
+  });
 
   ACCESO.iniciar({
     alEntrar(u) {
