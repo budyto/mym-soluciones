@@ -7,9 +7,9 @@
 <title>WhatsApp · MyM Soluciones</title>
 <link rel="icon" href="../img/favicon.png" type="image/png">
 <!-- EL PANEL DEL WHATSAPP DE MyM SOLUCIONES (30/10/2026): las charlas del 11 3366-2080, que atiende
-     el robot de ventas en el server de MyM (ventas-sol.js de AppMyM). Se leen y se contestan con la
-     clave VENTAS_SOL_PANEL_CLAVE (una variable del servicio de MyM). La clave queda sólo en esta
-     pestaña (sessionStorage).
+     el robot de ventas en el server de MyM (ventas-sol.js de AppMyM). Desde el 12/11/2026 se entra
+     con Google (admin/acceso.js) y sólo las cuentas de VENTAS_SOL_PANEL_EMAILS; antes era una clave
+     compartida.
      31/10/2026 (Budy: "así se tienen que ver las dos"): copia la pantalla de WhatsApp del Boti de
      AppMyM (public/js/secciones/whatsapp.js): una barra arriba, lista a la izquierda con avatar de
      iniciales y la charla ocupando el resto, con la ficha como panel que se despliega adentro.
@@ -156,8 +156,7 @@
 <body>
 <form class="entrar" id="entrar" hidden>
   <h1>WhatsApp · <span>MyM Soluciones</span></h1>
-  <input type="password" id="clave" placeholder="Clave del panel" autocomplete="current-password" required>
-  <button class="btn" type="submit" style="justify-content:center;padding:10px">Entrar</button>
+  <button class="btn" type="submit" style="justify-content:center;padding:10px">Entrar con Google</button>
   <p class="muted" id="entrarmsg"></p>
 </form>
 <div id="panel" hidden>
@@ -185,6 +184,9 @@
   </div>
 </div>
 <script src="../config.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="acceso.js"></script>
 <script>
 (function () {
   const $ = (s) => document.querySelector(s);
@@ -199,20 +201,22 @@
   // Los textos de los motivos son de la pantalla (Budy: "no se entendía qué quería decir cada uno").
   const MOTIVOS = { diagnostico: 'Quiere el diagnóstico', precio: 'Pide precio especial', contratar: 'Quiere contratar', persona: 'Pidió hablar con una persona', consulta: 'Consulta sin respuesta' };
   let campos = Object.keys(CAMPOS), respuestas = [], resumen = {}, pausado = false;
-  let clave = '', charlas = [], abierta = null, filtro = 'todas', etapa = '', vistos = null, nuevos = 0, fichaSucia = '', fichaAbierta = false;
-  try { clave = sessionStorage.getItem('sol_clave') || ''; } catch (e) {}
+  let charlas = [], abierta = null, filtro = 'todas', etapa = '', vistos = null, nuevos = 0, fichaSucia = '', fichaAbierta = false;
 
+  // 12/11/2026: se entra con Google (acceso.js). Cada pedido lleva el token de Google y el server de MyM
+  // verifica la cuenta. Antes era una clave compartida guardada en la pestaña.
   async function pedir(ruta, op) {
-    const r = await fetch(API + ruta, { ...(op || {}), headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + clave } });
+    const r = await fetch(API + ruta, { ...(op || {}), headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + await ACCESO.token() } });
     const j = await r.json().catch(() => ({}));
-    if (r.status === 401) { salir('La clave no entra.'); throw new Error('clave incorrecta'); }
+    if (r.status === 401) { salir('El server no aceptó tu cuenta. Volvé a entrar.'); throw new Error('sin acceso'); }
     if (!r.ok) { const e = new Error(j.error || 'HTTP ' + r.status); e.status = r.status; throw e; }
     return j;
   }
   const post = (ruta, cuerpo) => pedir(ruta, { method: 'POST', body: JSON.stringify(cuerpo) });
   const ruta = (t, extra) => '/api/ventas-sol/charlas/' + encodeURIComponent(t) + (extra || '');
   function msg(t) { $('#wamsg').innerHTML = t ? '<span class="err">' + esc(t) + '</span>' : ''; }
-  function salir(m) { clave = ''; try { sessionStorage.removeItem('sol_clave'); } catch (e) {} $('#panel').hidden = true; $('#entrar').hidden = false; $('#entrarmsg').textContent = m || ''; }
+  function mostrarEntrada(m) { $('#panel').hidden = true; $('#entrar').hidden = false; $('#entrarmsg').textContent = m || ''; }
+  function salir(m) { ACCESO.salir(m); }
 
   const nombre = (c) => (c.datos || {}).nombre || c.nombre_perfil || '+' + c.telefono;
   const minDesde = (ts) => ts ? Math.max(0, Math.round((Date.now() - new Date(ts)) / 60000)) : null;
@@ -388,7 +392,7 @@
   // ---------- Eventos ----------
   function entrar() { $('#entrar').hidden = true; $('#panel').hidden = false; cargarResumen(); cargarRespuestas(); cargar(); }
   function filtrar(f, e) { filtro = f; etapa = e || ''; pintarCharlas(); }
-  $('#entrar').addEventListener('submit', (e) => { e.preventDefault(); clave = $('#clave').value; try { sessionStorage.setItem('sol_clave', clave); } catch (er) {} entrar(); });
+  $('#entrar').addEventListener('submit', (e) => { e.preventDefault(); $('#entrarmsg').textContent = 'Abriendo Google…'; ACCESO.entrar(); });
   $('#salir').addEventListener('click', () => salir(''));
   $('#wabuscar').addEventListener('input', pintarCharlas);
   $('#warecargar').addEventListener('click', () => { cargarResumen(); cargar(); if (abierta) abrir(abierta.telefono); });
@@ -465,7 +469,7 @@
     if (abierta && !(foco && foco.id === 'texto')) abrir(abierta.telefono);
   }
   setInterval(tick, 20000);
-  clave ? entrar() : salir('');
+  ACCESO.iniciar({ alEntrar: () => { if ($('#panel').hidden) entrar(); }, alSalir: mostrarEntrada });
 })();
 </script>
 </body>

@@ -1,5 +1,127 @@
 <!doctype html>
 <html lang="es-AR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex, nofollow">
 <title>Panel · MyM Soluciones</title>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;900&display=swap" rel="stylesheet"><style>/* 4/11/2026: identidad clara de MyM Soluciones */body{margin:0;background:linear-gradient(180deg,#f4f7ff,#e6eeff) fixed #f4f7ff;color:#0e1a33;font:16px/1.5 "Archivo",ui-sans-serif,system-ui,sans-serif}.w{max-width:420px;margin:14vh auto;padding:0 16px;display:grid;gap:12px}a{display:block;text-align:center;background:linear-gradient(120deg,#2f6bff,#00c2a8);color:#fff;border-radius:999px;padding:12px 16px;font-weight:600;text-decoration:none;box-shadow:0 12px 30px rgba(47,107,255,.25)}a.g{background:#fff;color:#0e1a33;border:1px solid #dbe4f7;box-shadow:none}h1{font-size:22px;font-weight:900;letter-spacing:-.02em;text-align:center}</style></head>
-<body><div class="w"><h1>Panel · MyM Soluciones</h1><a href="whatsapp.html">WhatsApp (11 3366-2080)</a></div></body></html>
+<link rel="icon" href="../img/favicon.png" type="image/png">
+<!-- Panel admin de MyM Soluciones. 12/11/2026 (Matías): se entra con Google y sólo matiasvale32@gmail.com
+     y dagiodes1@gmail.com (admin/acceso.js). Los números del WhatsApp los da el server de MyM, que vuelve a
+     verificar la cuenta en cada pedido. -->
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;900&family=Martian+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{--azul:#2f6bff;--agua:#00c2a8;--deg:linear-gradient(120deg,#2f6bff,#00c2a8);--ink:#0e1a33;--gris:#4a5878;--borde:#dbe4f7;--fondo:#f4f7ff}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;min-height:100vh;background:linear-gradient(180deg,#f4f7ff,#e6eeff) fixed #f4f7ff;color:var(--ink);font:15px/1.5 "Archivo",ui-sans-serif,system-ui,sans-serif}
+.eti{font:500 11px "Martian Mono",monospace;letter-spacing:.14em;color:var(--azul);text-transform:uppercase}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:var(--deg);color:#fff;border:0;border-radius:999px;padding:12px 22px;font:600 15px "Archivo",sans-serif;cursor:pointer;text-decoration:none;box-shadow:0 12px 30px rgba(47,107,255,.25)}
+.btn.gris{background:#fff;color:var(--ink);border:1px solid var(--borde);box-shadow:none}
+.btn svg{width:18px;height:18px}
+/* Entrada */
+.entrada{max-width:400px;margin:16vh auto;padding:36px 28px;background:#fff;border:1px solid var(--borde);border-radius:24px;box-shadow:0 20px 50px rgba(14,26,51,.08);text-align:center}
+.entrada h1{font:900 26px/1.15 "Archivo",sans-serif;letter-spacing:-.02em;margin:10px 0 6px}
+.entrada p{color:var(--gris);margin:0 0 22px}
+.entrada .msg{color:#d43a4a;margin:16px 0 0;font-size:14px;min-height:20px}
+/* Panel */
+.top{display:flex;align-items:center;gap:14px;max-width:1040px;margin:0 auto;padding:22px 20px 0}
+.top .logo{font:900 20px "Archivo",sans-serif;letter-spacing:-.02em}
+.top .logo span{background:var(--deg);-webkit-background-clip:text;background-clip:text;color:transparent}
+.top .grow{flex:1}
+.yo{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--gris)}
+.yo img{width:32px;height:32px;border-radius:50%}
+main{max-width:1040px;margin:0 auto;padding:22px 20px 48px}
+h2{font:900 30px/1.1 "Archivo",sans-serif;letter-spacing:-.02em;margin:6px 0 4px}
+.sub{color:var(--gris);margin:0 0 24px}
+.nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:26px}
+.num{background:#fff;border:1px solid var(--borde);border-radius:18px;padding:16px 18px}
+.num b{display:block;font:900 30px "Archivo",sans-serif;letter-spacing:-.02em}
+.num span{color:var(--gris);font-size:13px}
+.num.alerta b{color:#d43a4a}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.card{display:flex;flex-direction:column;gap:6px;background:#fff;border:1px solid var(--borde);border-radius:20px;padding:20px;text-decoration:none;color:var(--ink);transition:transform .15s,box-shadow .15s}
+.card:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(47,107,255,.14)}
+.card .ic{width:44px;height:44px;border-radius:14px;background:#eef3ff;display:grid;place-items:center;font-size:22px;margin-bottom:6px}
+.card b{font-size:17px}.card span{color:var(--gris);font-size:13.5px}
+.card.prin{background:var(--deg);color:#fff;border:0}.card.prin span{color:rgba(255,255,255,.88)}.card.prin .ic{background:rgba(255,255,255,.18)}
+.seccion{margin:30px 0 12px}
+.pie{margin-top:36px;color:var(--gris);font-size:12.5px}
+</style></head>
+<body>
+
+<section class="entrada" id="entrada" hidden>
+  <div class="eti">Panel interno</div>
+  <h1>MyM Soluciones</h1>
+  <p>Entrá con tu cuenta de Google autorizada.</p>
+  <button class="btn" id="google" type="button"><svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#fff" d="M44.5 20H24v8.5h11.8C34.7 33.9 30.1 37 24 37c-7.2 0-13-5.8-13-13s5.8-13 13-13c3.1 0 5.9 1.1 8.1 2.9l6.4-6.4C34.6 4.1 29.6 2 24 2 11.8 2 2 11.8 2 24s9.8 22 22 22c11 0 21-8 21-22 0-1.3-.2-2.7-.5-4z"/></svg>Entrar con Google</button>
+  <p class="msg" id="msg"></p>
+</section>
+
+<div id="panel" hidden>
+  <header class="top">
+    <div class="logo">MyM <span>Soluciones</span></div>
+    <div class="grow"></div>
+    <div class="yo"><img id="foto" alt="" hidden><span id="correo"></span></div>
+    <button class="btn gris" id="salir" type="button" style="padding:8px 16px;font-size:13px">Salir</button>
+  </header>
+  <main>
+    <div class="eti">Panel interno</div>
+    <h2 id="hola">Hola</h2>
+    <p class="sub">Lo que pasa hoy en el WhatsApp de Soluciones y los accesos de siempre.</p>
+
+    <div class="nums" id="nums">
+      <div class="num" id="nEsperando"><b>–</b><span>esperan una persona</span></div>
+      <div class="num"><b id="nHoy">–</b><span>charlas hoy</span></div>
+      <div class="num"><b id="nSemana">–</b><span>charlas en 7 días</span></div>
+      <div class="num"><b id="nNuevas">–</b><span>nuevas en 7 días</span></div>
+    </div>
+    <p class="sub" id="numsMsg" hidden></p>
+
+    <div class="grid">
+      <a class="card prin" href="whatsapp.html"><div class="ic">💬</div><b>WhatsApp 11 3366-2080</b><span>Leé y contestá las charlas del robot de ventas.</span></a>
+      <a class="card" href="https://crm.creditosmym.com/" target="_blank" rel="noopener"><div class="ic">📅</div><b>CRM de marketing</b><span>Calendario, piezas programadas y la bandeja de Instagram.</span></a>
+      <a class="card" href="https://www.instagram.com/mymsoluciones369/" target="_blank" rel="noopener"><div class="ic">📸</div><b>@mymsoluciones369</b><span>El perfil de Instagram.</span></a>
+      <a class="card" href="https://business.facebook.com/latest/home" target="_blank" rel="noopener"><div class="ic">📊</div><b>Meta Business Suite</b><span>Estadísticas, mensajes y anuncios.</span></a>
+      <a class="card" href="../" target="_blank" rel="noopener"><div class="ic">🌐</div><b>La web</b><span>mymsoluciones.online, como la ve un cliente.</span></a>
+      <a class="card" href="https://grupomym.online/" target="_blank" rel="noopener"><div class="ic">🧭</div><b>Panel del grupo</b><span>Las empresas, los documentos y los pendientes.</span></a>
+    </div>
+    <p class="pie">Sólo entran las cuentas autorizadas. Parte del grupo MyM.</p>
+  </main>
+</div>
+
+<script src="../config.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="acceso.js"></script>
+<script>
+(function () {
+  const $ = (s) => document.querySelector(s);
+  const API = String((window.SITE || {}).ventasApi || '').replace(/\/+$/, '');
+  const mostrarEntrada = (m) => { $('#panel').hidden = true; $('#entrada').hidden = false; $('#msg').textContent = m || ''; };
+
+  async function numeros() {
+    try {
+      const r = await fetch(API + '/api/ventas-sol/resumen', { headers: { Authorization: 'Bearer ' + await ACCESO.token() } });
+      if (!r.ok) throw new Error(r.status === 401 ? 'el server todavía no acepta el acceso con Google' : 'HTTP ' + r.status);
+      const m = (await r.json()).resumen || {};
+      $('#nEsperando b').textContent = m.esperando ?? 0;
+      $('#nEsperando').classList.toggle('alerta', (m.esperando || 0) > 0);
+      $('#nHoy').textContent = m.charlas_hoy ?? 0;
+      $('#nSemana').textContent = m.charlas_semana ?? 0;
+      $('#nNuevas').textContent = m.nuevas_semana ?? 0;
+      $('#numsMsg').hidden = true;
+    } catch (e) { $('#numsMsg').hidden = false; $('#numsMsg').textContent = 'No se pudieron traer los números del WhatsApp: ' + e.message + '.'; }
+  }
+
+  ACCESO.iniciar({
+    alEntrar(u) {
+      $('#entrada').hidden = true; $('#panel').hidden = false;
+      $('#hola').textContent = 'Hola, ' + String(u.nombre).split(' ')[0];
+      $('#correo').textContent = u.email;
+      if (u.foto) { $('#foto').src = u.foto; $('#foto').hidden = false; }
+      numeros();
+    },
+    alSalir: mostrarEntrada
+  });
+  $('#google').addEventListener('click', () => { $('#msg').textContent = ''; ACCESO.entrar(); });
+  $('#salir').addEventListener('click', () => ACCESO.salir(''));
+  setInterval(() => { if (!document.hidden && !$('#panel').hidden) numeros(); }, 60000);
+})();
+</script>
+</body></html>
