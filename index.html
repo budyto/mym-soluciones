@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Instrument+Serif:ital@1&family=Michroma&family=Martian+Mono:wght@500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=202611051100">
+<link rel="stylesheet" href="styles.css?v=202611131200">
 <script>document.documentElement.classList.remove('no-js')</script>
 </head>
 <body>
@@ -23,15 +23,17 @@
 <header class="nav" id="nav">
   <div class="wrap">
     <a href="#top" class="logo" aria-label="MyM Soluciones, inicio"><span class="logo-mym deg">M<small>y</small>M</span><span class="logo-sol">SOLUCIONES</span></a>
-    <nav class="nav-links" aria-label="Principal">
+    <nav class="nav-links" id="menu" aria-label="Principal">
       <a href="#servicios">Servicios</a>
       <a href="#portfolio">Portfolio</a>
       <a href="#paquetes">Paquetes</a>
       <a href="#proceso">Proceso</a>
       <a href="#roi">Calculadora</a>
       <a href="guias/">Guías</a>
+      <a href="#contacto" class="menu-diag">Diagnóstico gratis →</a>
     </nav>
     <a href="#contacto" class="btn btn-primary">Diagnóstico gratis <span class="arr">→</span></a>
+    <button class="nav-toggle" type="button" aria-label="Abrir el menú" aria-expanded="false" aria-controls="menu"><span></span><span></span><span></span></button>
   </div>
 </header>
 
@@ -585,6 +587,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script src="config.js?v=202611041700"></script>
-<script src="main.js?v=202611051100"></script>
+<script src="main.js?v=202611131200"></script>
 </body>
 </html>

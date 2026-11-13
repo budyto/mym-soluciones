@@ -619,3 +619,34 @@ body::after { content: ""; position: fixed; inset: -20vmax; z-index: -2; pointer
   .art-orq .fl-fle { display: none; }
   .oq-tel { width: 100%; }
 }
+
+/* ============ Menú del celular (13/11/2026) ============ */
+/* Debajo de 1000 px las secciones no entran en la barra: van en un panel que abre el botón ☰. */
+.nav-toggle { display: none; }
+@media (max-width: 1000px) {
+  .nav .btn { margin-left: auto; }
+  .nav-toggle { display: grid; align-content: center; gap: 5px; width: 44px; height: 44px; flex: none; padding: 0 12px; border-radius: 12px; border: 1px solid var(--line); background: #fff; cursor: pointer; }
+  .nav-toggle span { display: block; height: 2px; border-radius: 2px; background: var(--ink); transition: transform .2s, opacity .2s; }
+  .nav.abierto .nav-toggle span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav.abierto .nav-toggle span:nth-child(2) { opacity: 0; }
+  .nav.abierto .nav-toggle span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  .nav.abierto { background: rgba(244, 247, 255, .96); }
+  .nav.abierto .nav-links { display: flex; position: absolute; top: 100%; left: 16px; right: 16px; flex-direction: column; gap: 2px; background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 8px; box-shadow: 0 18px 40px rgba(14, 26, 51, .14); }
+  .nav.abierto .nav-links a { padding: 12px 14px; border-radius: 12px; font-size: 17px; color: var(--ink); }
+  .nav.abierto .nav-links a:hover { background: #eef3ff; }
+}
+@media (max-width: 640px) {
+  .nav .wrap { gap: 10px; }
+}
+/* En el celular chico no entran logo + botón + ☰: el diagnóstico pasa al menú (sigue en la portada y en el botón de WhatsApp). */
+.menu-diag { display: none; }
+@media (max-width: 1000px) {
+  .nav.abierto .nav-links a.menu-diag { display: block; margin-top: 4px; background: var(--deg); color: #fff; text-align: center; font-weight: 700; }
+}
+@media (max-width: 1000px) and (min-width: 481px) {
+  .nav.abierto .nav-links a.menu-diag { display: none; }
+}
+@media (max-width: 480px) {
+  .nav .btn { display: none; }
+  .nav-toggle { margin-left: auto; }
+}

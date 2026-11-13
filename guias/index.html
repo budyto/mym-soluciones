@@ -24,7 +24,11 @@ a{color:var(--azul)}
 .wrap{max-width:760px;margin:0 auto;padding:0 20px}
 .deg{background:var(--deg);-webkit-background-clip:text;background-clip:text;color:transparent}
 .eti{font:500 12px "Martian Mono",monospace;letter-spacing:.14em;color:var(--azul);text-transform:uppercase}
-header{padding:22px 0}
+header{padding:18px 0;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.menu{display:flex;flex-wrap:wrap;gap:4px 16px;font:600 15px "Archivo",sans-serif}
+.menu a{color:var(--gris);text-decoration:none}
+.menu a:hover,.menu a[aria-current]{color:var(--ink)}
+.menu a.diag{color:var(--azul)}
 .logo{display:inline-flex;align-items:baseline;gap:8px;text-decoration:none;color:var(--ink)}
 .logo b{font:900 22px "Archivo",sans-serif;letter-spacing:-.02em}
 .logo span{font:400 14px Michroma,sans-serif;letter-spacing:.2em}
@@ -51,7 +55,7 @@ footer{color:var(--gris);font-size:14px;text-align:center;padding:36px 0 44px}
 </head>
 <body>
 <div class="wrap">
-  <header><a class="logo" href="../"><b class="deg">MyM</b><span>SOLUCIONES</span></a></header>
+  <header><a class="logo" href="../"><b class="deg">MyM</b><span>SOLUCIONES</span></a><nav class="menu" aria-label="Secciones de MyM Soluciones"><a href="../">Inicio</a><a href="../#servicios">Servicios</a><a href="../#paquetes">Paquetes</a><a href="./" aria-current="page">Guías</a><a class="diag" href="../#contacto">Diagnóstico gratis</a></nav></header>
 
   <div class="eti">Guías de los tutoriales</div>
   <h1>Lo que enseñamos, <em class="deg">paso a paso.</em></h1>
