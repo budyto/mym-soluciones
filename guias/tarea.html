@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guía: de Excel a un tablero, sin programar · MyM Soluciones</title>
+<meta name="description" content="Subí tu planilla de Excel a Claude y pedile un tablero con tus palabras, sin programar. Con la planilla de ejemplo y los pedidos listos para copiar.">
+<meta name="theme-color" content="#f4f7ff">
+<meta property="og:title" content="De Excel a un tablero, sin programar">
+<meta property="og:description" content="La guía de MyM Soluciones: subí tu planilla a Claude y pedile un tablero, con la planilla de ejemplo y los pedidos listos para copiar.">
+<meta property="og:image" content="https://mymsoluciones.online/img/og-2.jpg">
+<link rel="icon" href="../img/favicon-2.png" type="image/png">
+<!-- Guía de la serie TAREA de los reels tutoriales (reel 2, "De Excel a un tablero").
+     Es la página que recibe por mensaje privado quien comenta TAREA. 12/11/2026.
+     Sólo enseña lo que se probó el 12/11/2026 en claude.ai, desde la computadora, con una cuenta paga (modelo Opus 5.5, esfuerzo Medio).
+     Sin probar: cuenta gratuita, celular, CSV, compartir el tablero por enlace y la plantilla con corchetes.
+     Hermana de bot.html: mismos estilos, mismo botón de copiar y mismo pie. Lo propio de esta guía está al final de los estilos. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Instrument+Serif:ital@1&family=Michroma&family=Martian+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{--azul:#2f6bff;--agua:#00c2a8;--deg:linear-gradient(120deg,#2f6bff,#00c2a8);--ink:#0e1a33;--gris:#4a5878;--borde:#dbe4f7;--suave:#eef3ff;--wa:#008069}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#f4f7ff,#fff 520px) #fff;color:var(--ink);font:17px/1.6 "Archivo",ui-sans-serif,system-ui,sans-serif}
+a{color:var(--azul)}
+.wrap{max-width:760px;margin:0 auto;padding:0 20px}
+.deg{background:var(--deg);-webkit-background-clip:text;background-clip:text;color:transparent}
+.eti{font:500 12px "Martian Mono",monospace;letter-spacing:.14em;color:var(--azul);text-transform:uppercase}
+header{padding:22px 0}
+.logo{display:inline-flex;align-items:baseline;gap:8px;text-decoration:none;color:var(--ink)}
+.logo b{font:900 22px "Archivo",sans-serif;letter-spacing:-.02em}
+.logo span{font:400 14px Michroma,sans-serif;letter-spacing:.2em}
+h1{font:900 clamp(34px,7vw,54px)/1.04 "Archivo",sans-serif;letter-spacing:-.03em;margin:14px 0 6px}
+h1 em{display:block;font:italic 400 clamp(38px,8vw,62px)/1.04 "Instrument Serif",serif;letter-spacing:0}
+.bajada{color:var(--gris);font-size:19px;margin:14px 0 0}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0 0}
+.chip{background:#fff;border:1px solid var(--borde);border-radius:999px;padding:6px 14px;font:600 14px "Archivo",sans-serif}
+h2{font:900 30px/1.15 "Archivo",sans-serif;letter-spacing:-.02em;margin:56px 0 8px}
+.sub{color:var(--gris);margin:0 0 22px}
+ol.pasos{list-style:none;padding:0;margin:0;counter-reset:p}
+ol.pasos li{counter-increment:p;position:relative;background:#fff;border:1px solid var(--borde);border-radius:20px;padding:18px 20px 18px 74px;margin-bottom:12px}
+ol.pasos li::before{content:counter(p);position:absolute;left:18px;top:16px;width:40px;height:40px;border-radius:12px;background:var(--deg);color:#fff;display:grid;place-items:center;font:800 19px "Archivo",sans-serif}
+ol.pasos b{display:block;font-size:18px}
+ol.pasos span{color:var(--gris);font-size:16px}
+.ruta{font:500 14px "Martian Mono",monospace;background:var(--suave);border-radius:8px;padding:2px 8px;color:var(--ink);overflow-wrap:anywhere;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.ojo{background:#fff8e6;border:1px solid #f3dca0;border-radius:16px;padding:14px 18px;margin:16px 0 0;font-size:16px}
+.msj{background:#fff;border:1px solid var(--borde);border-radius:20px;padding:18px 20px;margin-bottom:12px}
+.msj .tipo{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.msj .tipo b{font-size:16px}
+.burbuja{background:#d9fdd3;border-radius:14px 4px 14px 14px;padding:14px 16px;font-size:16.5px;line-height:1.5;white-space:pre-line}
+.copiar{flex:none;border:0;border-radius:999px;background:var(--ink);color:#fff;font:600 14px "Archivo",sans-serif;padding:8px 16px;cursor:pointer}
+.copiar.ok{background:var(--wa)}
+.limite{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:620px){.limite{grid-template-columns:1fr}}
+.col{background:#fff;border:1px solid var(--borde);border-radius:20px;padding:18px 20px}
+.col h3{margin:0 0 8px;font-size:17px}
+.col ul{margin:0;padding-left:20px;color:var(--gris);font-size:16px}
+.col.bot{background:var(--suave);border-color:#c9d8ff}
+.cta{margin:56px 0 0;background:var(--deg);color:#fff;border-radius:28px;padding:30px 26px;text-align:center}
+.cta h2{margin:0 0 8px;color:#fff}
+.cta p{margin:0 0 20px;opacity:.92}
+.btn{display:inline-flex;align-items:center;gap:10px;background:#fff;color:var(--ink);border-radius:999px;padding:14px 26px;font:700 17px "Archivo",sans-serif;text-decoration:none;box-shadow:0 12px 30px rgba(14,26,51,.18)}
+footer{color:var(--gris);font-size:14px;text-align:center;padding:36px 0 44px}
+
+/* Propio de la guía TAREA. Todo lo de arriba es igual a bot.html. */
+.pila{display:grid;gap:12px}
+.col p,.msj p{margin:0;color:var(--gris);font-size:16px}
+.col p+p,.col ul+p{margin-top:10px}
+.col strong{color:var(--ink)}
+.msj .eti{line-height:1.6}
+.msj .archivo{margin:6px 0 4px;color:var(--ink);font-size:18px}
+.btn.bajar{margin-top:16px;background:var(--ink);color:#fff}
+.grupo{margin-bottom:26px}
+.grupo .col{margin-bottom:12px}
+/* El pedido se le escribe a Claude, no por WhatsApp: misma burbuja, sin el verde. */
+.burbuja.pedido{background:var(--suave);border-radius:14px}
+.msj.plantilla .burbuja{background:#fff;border:1.5px dashed #9db8ff}
+.burbuja mark{background:#fff1b8;color:inherit;border-radius:4px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.burbuja+p{margin-top:10px;font-size:15px}
+.sello{display:inline-block;padding:2px 8px;border-radius:999px;background:#e2f6ef;color:#00695a;font:500 11px "Martian Mono",monospace;letter-spacing:.08em;text-transform:uppercase;vertical-align:2px;white-space:nowrap}
+.sello.no{background:#fff1b8;color:#7a5600}
+.duda{background:#fff;border:1px solid var(--borde);border-radius:20px;padding:0 20px;margin-bottom:12px}
+.duda summary{position:relative;cursor:pointer;list-style:none;font-weight:700;padding:16px 30px 16px 0}
+.duda summary::-webkit-details-marker{display:none}
+.duda summary::after{content:"+";position:absolute;right:2px;top:11px;color:var(--azul);font:700 24px/1.3 "Archivo",sans-serif}
+.duda[open] summary::after{content:"−"}
+.duda p{margin:0 0 12px;color:var(--gris);font-size:16px}
+.duda p:last-child{margin-bottom:18px}
+.servicios{margin:18px 0 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><a class="logo" href="../"><b class="deg">MyM</b><span>SOLUCIONES</span></a></header>
+
+  <div class="eti">Guía · Serie TAREA</div>
+  <h1>De Excel a un tablero, <em class="deg">sin programar.</em></h1>
+  <p class="bajada">Subís tu planilla de ventas a Claude, le pedís un tablero con tus palabras y lo corregís en el mismo chat. En nuestra prueba, el tablero quedó armado en unos 5&nbsp;minutos.</p>
+  <div class="chips"><span class="chip">⏱ Unos 5 minutos en nuestra prueba</span><span class="chip">💳 Probado con una cuenta paga</span><span class="chip">💻 Desde la computadora</span></div>
+
+  <h2>Qué necesitás</h2>
+  <p class="sub">Claude es un asistente de inteligencia artificial. Se usa desde claude.ai.</p>
+  <div class="pila">
+    <div class="col"><h3>La cuenta</h3>
+      <p>Necesitás una cuenta de Claude. <strong>Nosotros lo probamos con una cuenta paga.</strong> Según la ayuda oficial de Claude (noviembre de 2026), la cuenta gratuita también permite subir un Excel y crear artefactos (así llama Claude a lo que arma; este tablero es uno), pero tiene un límite de uso que Claude no publica y no incluye el modelo que usamos. Con una cuenta gratuita no lo probamos: el tablero te puede salir distinto, tardar otro tiempo o quedar sin terminar si llegás al límite.</p>
+      <p>Nuestra prueba fue el 12/11/2026, con el modelo Opus 5.5 y el esfuerzo en Medio.</p></div>
+    <div class="col"><h3>La planilla</h3>
+      <p>Una venta por fila y encabezados claros: arriba de cada columna, un nombre que se entienda (Fecha, Producto, Cantidad, Total). Guardada como <span class="ruta">.xlsx</span>, que es el formato que probamos.</p></div>
+    <div class="col"><h3>La computadora</h3>
+      <p>Lo hicimos en claude.ai, desde la computadora. Desde el celular no lo probamos.</p>
+      <p>¿Estás leyendo esto en el celular? Abrí la guía en la computadora: <span class="ruta">mymsoluciones.online/<wbr>guias/<wbr>tarea.html</span></p></div>
+  </div>
+
+  <h2>La planilla de ejemplo</h2>
+  <p class="sub">Para que pruebes los tres pasos antes de usar la tuya.</p>
+  <div class="msj">
+    <div class="eti">Datos de ejemplo · Almacén inventado</div>
+    <p class="archivo"><b>ventas-ejemplo.xlsx</b></p>
+    <p>Las ventas de un almacén que no existe: 1.225 ventas de enero a octubre de 2026, con fecha, producto, categoría, cantidad, precio unitario, total y medio de pago. Son datos inventados para este tutorial. Pesa 42&nbsp;KB.</p>
+    <a class="btn bajar" href="ventas-ejemplo.xlsx" download>Descargar la planilla ↓</a>
+  </div>
+
+  <h2>Los 3 pasos</h2>
+  <p class="sub">Los mismos del reel. Hacelos primero con la planilla de ejemplo; si vas a usar la tuya, leé antes <a href="#antes">estos dos cuidados</a>.</p>
+
+  <div class="grupo">
+    <ol class="pasos">
+      <li><b>Abrí Claude y subí tu planilla de Excel.</b><span>Entrá a <a href="https://claude.ai" target="_blank" rel="noopener">claude.ai</a> con tu cuenta, abrí un chat nuevo y adjuntá la planilla con el botón <span class="ruta">+</span> del cuadro de mensaje. Cuando se carga, queda arriba de donde escribís, con su nombre y la etiqueta XLSX.</span></li>
+    </ol>
+  </div>
+
+  <div class="grupo">
+    <ol class="pasos" start="2" style="counter-reset:p 1">
+      <li><b>Pedile un tablero con lo que querés ver.</b><span>En el mismo mensaje de la planilla, escribí qué querés ver y mandalo. Sin palabras técnicas: así se lo pedimos nosotros.</span></li>
+    </ol>
+    <div class="msj">
+      <div class="tipo"><b>El pedido que probamos <span class="sello">Probado</span></b><button class="copiar" type="button">Copiar</button></div>
+      <div class="burbuja pedido">Armame un tablero con las ventas por mes, los cinco productos que más se venden y un filtro por mes.</div>
+      <p>Textual, con la planilla de ejemplo.</p>
+    </div>
+    <div class="col bot"><h3>Lo que nos armó con ese pedido</h3>
+      <ul><li>Cuatro tarjetas: ventas, operaciones, unidades vendidas y ticket promedio</li><li>Un gráfico de barras con las ventas por mes</li><li>La tabla de los cinco productos más vendidos</li><li>Un selector de mes</li></ul>
+      <p>Tocás un mes y cambia todo. Nosotros lo probamos tocando la barra de julio en el gráfico: se filtró el tablero entero. Filtrar tocando una barra no estaba en el pedido; lo agregó Claude.</p>
+      <p>Tardó unos 5&nbsp;minutos desde que mandamos el pedido (entre 4&nbsp;min&nbsp;30&nbsp;s y 5&nbsp;min&nbsp;15&nbsp;s). Lo medimos una sola vez: a vos te puede armar un tablero distinto o tardar otro tiempo.</p></div>
+    <div class="msj plantilla">
+      <div class="tipo"><b>La plantilla para adaptar <span class="sello no">Sin probar</span></b><button class="copiar" type="button">Copiar</button></div>
+      <div class="burbuja pedido">Armame un tablero con <mark>[las ventas]</mark> por <mark>[mes]</mark>, <mark>[los cinco productos que más se venden]</mark> y un filtro por <mark>[mes]</mark>.</div>
+      <p>Es el pedido que probamos, con huecos para lo tuyo. Cambiá lo que está entre corchetes por lo que tenga tu planilla (gastos en vez de ventas, semana en vez de mes) y sacá los corchetes. Así, adaptado, no lo probamos.</p>
+    </div>
+  </div>
+
+  <div class="grupo">
+    <ol class="pasos" start="3" style="counter-reset:p 2">
+      <li><b>Pedí los cambios hablando.</b><span>Hablando quiere decir con tus palabras: escribile el cambio en el mismo chat, como se lo pedirías a una persona.</span></li>
+    </ol>
+    <div class="msj">
+      <div class="tipo"><b>El cambio que probamos <span class="sello">Probado</span></b><button class="copiar" type="button">Copiar</button></div>
+      <div class="burbuja pedido">Usá los colores de mi marca, azul y turquesa, y agregá las ventas por medio de pago.</div>
+      <p>Textual. Para tu planilla, cambiá «azul y turquesa» por tus colores y «medio de pago» por un dato que tengas en una columna.</p>
+    </div>
+    <div class="col bot"><h3>Lo que cambió</h3>
+      <ul><li>Pasó el tablero a azul y turquesa (los tonos los eligió Claude)</li><li>Agregó un gráfico con las ventas por medio de pago, que también cambia con el filtro de mes</li></ul>
+      <p>Tardó unos 3&nbsp;minutos (entre 2&nbsp;min&nbsp;55&nbsp;s y 3&nbsp;min&nbsp;35&nbsp;s).</p></div>
+  </div>
+
+  <div class="grupo">
+    <h3>Cuando tengas ventas nuevas</h3>
+    <p>El tablero no se actualiza solo: cuando sumes ventas a tu planilla, volvé al mismo chat, subí la planilla de nuevo y pedile que lo actualice.</p>
+    <div class="msj">
+      <div class="tipo"><b>El pedido que probamos <span class="sello">Probado</span></b><button class="copiar" type="button">Copiar</button></div>
+      <div class="burbuja pedido">Actualizá el tablero con esta planilla, que ya tiene las ventas de noviembre.</div>
+      <p>Textual. Cambiá «noviembre» por lo que hayas agregado.</p>
+    </div>
+    <div class="col bot"><h3>Lo que pasó</h3>
+      <p>Le agregamos a la planilla de ejemplo 45&nbsp;ventas de noviembre y la volvimos a subir. En 2&nbsp;min&nbsp;50&nbsp;s el tablero mostraba 1.270&nbsp;ventas y $&nbsp;9.885.860, los mismos totales que suma la planilla, con noviembre marcado como mes en curso.</p></div>
+  </div>
+
+  <h2 id="antes">Antes de subir tu planilla</h2>
+  <p class="sub">Cuando pases de la planilla de ejemplo a la tuya, dos cuidados.</p>
+  <div class="ojo"><b>Sacá los datos personales de tus clientes.</b> Nombres, DNI, teléfonos: para un tablero de ventas no hacen falta. Hacé una copia de la planilla, borrale esas columnas y subí la copia.</div>
+  <div class="ojo"><b>Revisá los números antes de usarlos para decidir.</b> Compará el tablero con tu planilla: sumá la columna del total en Excel y fijate que dé lo mismo que muestra el tablero. Probá también con un mes. En nuestra prueba coincidió: la columna Total de la planilla de ejemplo suma $&nbsp;9.489.720 en 1.225&nbsp;ventas, y eso mismo mostró el tablero. Si a vos no te coincide, no decidas con ese número.</div>
+
+  <h2>Si algo no sale</h2>
+  <p class="sub">Tocá el problema que tengas. Los cuatro primeros arreglos salen de la ayuda oficial de Claude y de la de Microsoft: nosotros no los probamos.</p>
+  <details class="duda"><summary>No te deja subir el Excel o no aparece el tablero</summary>
+    <p>Entrá a <span class="ruta">Configuración → Capacidades</span> y fijate que esté activado «Ejecución de código y creación de archivos» (en el diseño nuevo figura como «Crear y editar archivos»). En el celular: tocá tus iniciales o tu nombre en la barra lateral y después <span class="ruta">Configuración → Capacidades</span>.</p>
+    <p>Según la ayuda oficial de Claude, ese ajuste hace falta para subir un .xlsx y para que Claude arme artefactos. Los nombres los sacamos de la ayuda oficial en español; no los verificamos dentro de la app.</p></details>
+  <details class="duda"><summary>Tu planilla es un .xls viejo</summary>
+    <p>Guardala como .xlsx y subí esa. La lista oficial de archivos que acepta Claude nombra XLSX y no XLS.</p></details>
+  <details class="duda"><summary>Igual no acepta el .xlsx</summary>
+    <p>En Excel, andá a <span class="ruta">Archivo → Guardar como</span>, elegí el tipo «CSV (delimitado por comas)» y subí ese archivo. La ayuda oficial de Claude acepta CSV sin pedir el ajuste del primer punto para subirlo.</p>
+    <p>Tené en cuenta tres cosas. Según Microsoft, Excel guarda sólo la hoja que tenés abierta. El tablero igual necesita el ajuste del primer punto, así que el CSV no reemplaza ese paso. Y, también según Microsoft, con la coma como separador decimal (lo habitual en Argentina) Excel separa las columnas con punto y coma: no está comprobado cómo lee Claude ese archivo en el chat. Con CSV no lo probamos.</p></details>
+  <details class="duda"><summary>Te avisa que llegaste al límite de uso</summary>
+    <p>Según la ayuda oficial de Claude, en la cuenta gratuita el límite se reinicia cada cinco horas (la página de planes también menciona un límite semanal). Las salidas documentadas son dos: esperar o pasar a un plan pago.</p>
+    <p>Para gastar menos, la ayuda oficial recomienda juntar los pedidos relacionados en un solo mensaje: podés pedir de entrada el tablero con tus colores y las ventas por medio de pago. Ese pedido junto no lo probamos.</p></details>
+  <details class="duda"><summary>El tablero no es lo que esperabas</summary>
+    <p>Pedile el cambio con otras palabras, en el mismo chat: decile qué ves y qué querías ver.</p></details>
+  <details class="duda"><summary>Nada de esto alcanza</summary>
+    <p>La única forma que comprobamos es la de nuestra prueba: con una cuenta paga, en claude.ai, desde la computadora.</p></details>
+
+  <h2>Hasta dónde llega</h2>
+  <p class="sub">Este tablero se actualiza cuando volvés a subir la planilla. Si querés que se actualice solo, conectado a tu sistema, eso es un tablero a medida.</p>
+  <div class="limite">
+    <div class="col"><h3>Este tablero</h3><ul><li>Se arma con la planilla que subís</li><li>Para actualizarlo, hay que volver a subir la planilla</li><li>No está conectado a tu sistema</li></ul></div>
+    <div class="col bot"><h3>Un tablero a medida</h3><ul><li>Está conectado a tu sistema</li><li>Se actualiza solo</li><li>Eso lo armamos nosotros</li></ul></div>
+  </div>
+  <p class="sub servicios">Los tableros a medida son parte de nuestro <a href="../#servicios">Software a medida</a>. Y si además querés agentes de inteligencia artificial que miren tu operación y te propongan qué hacer, con tu aprobación, eso es el <a href="../#servicios">Orquestador</a>.</p>
+
+  <section class="cta">
+    <h2>¿Querés un tablero que se actualice solo?</h2>
+    <p>Pedí tu diagnóstico gratis de 30&nbsp;minutos: miramos cómo llevás hoy tus números y te decimos qué se puede conectar y automatizar.</p>
+    <a class="btn" id="diag" href="https://wa.me/5491133662080?text=Hola!%20Vengo%20de%20la%20gu%C3%ADa%20del%20tablero%20y%20quiero%20el%20diagn%C3%B3stico%20gratis.">Pedí tu diagnóstico gratis →</a>
+  </section>
+
+  <footer>MyM Soluciones · <a href="https://www.instagram.com/mymsoluciones369/">@mymsoluciones369</a> · WhatsApp 11 3366-2080 · Parte del grupo MyM</footer>
+</div>
+
+<script>
+(function () {
+  // Mismo botón de copiar que en bot.html, con el mismo respaldo. Acá los pedidos están escritos en la página:
+  // se copia el texto de la burbuja que está en la misma tarjeta que el botón.
+  document.addEventListener('click', async (e) => {
+    const b = e.target.closest('.copiar'); if (!b) return;
+    const txt = b.closest('.msj').querySelector('.burbuja').textContent.trim();
+    try { await navigator.clipboard.writeText(txt); }
+    catch (_) { const t = document.createElement('textarea'); t.value = txt; document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove(); }
+    b.textContent = '¡Copiado!'; b.classList.add('ok');
+    setTimeout(() => { b.textContent = 'Copiar'; b.classList.remove('ok'); }, 1800);
+  });
+})();
+</script>
+</body>
+</html>
