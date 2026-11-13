@@ -17,3 +17,14 @@
   RedirectMatch 403 ^/resenas(/|$)
   RedirectMatch 403 (^|/)\.(?!well-known/)
 </IfModule>
+
+# (13/11/2026) La planilla de ejemplo de la guía TAREA tiene que bajar como Excel y no como texto (sin esto Hostinger
+# la mandaba como text/plain y en el celular podía abrirse como basura en vez de descargarse).
+<IfModule mod_mime.c>
+  AddType application/vnd.openxmlformats-officedocument.spreadsheetml.sheet .xlsx
+</IfModule>
+<IfModule mod_headers.c>
+  <FilesMatch "\.xlsx$">
+    Header set Content-Disposition "attachment"
+  </FilesMatch>
+</IfModule>
