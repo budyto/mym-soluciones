@@ -45,6 +45,9 @@
 
   /* Barra de arriba */
   .wa-barra { position: relative; display: flex; align-items: center; gap: 10px; flex: 0 0 auto; }
+  /* 13/11/2026 (Matías): la vuelta al inicio, bien a la vista a la izquierda (antes era un "⌂ Panel" entre los botones). */
+  .wa-inicio { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 999px; background: #fff; border: 1px solid #dbe4f7; color: #0e1a33; font-weight: 700; font-size: 14px; text-decoration: none; }
+  .wa-inicio:hover { border-color: #2f6bff; color: #2f6bff; }
   .wa-sems { display: flex; align-items: center; gap: 10px; min-width: 0; overflow: hidden; }
   .wa-sem { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--gris); white-space: nowrap; }
   .wa-dot { width: 8px; height: 8px; border-radius: 50%; flex: 0 0 auto; background: var(--verde); }
@@ -161,6 +164,7 @@
 </form>
 <div id="panel" hidden>
   <div class="wa-barra">
+    <a class="wa-inicio" href="./" title="Volver al inicio del panel">← <span class="wa-lbl">Inicio</span></a>
     <div class="wa-sems" id="waSems"></div>
     <span class="grow"></span>
     <div class="wa-controles">
@@ -168,7 +172,6 @@
       <button class="btn" id="pausar" type="button" title="Pausar o prender TODAS las respuestas automáticas del robot">⏸️<span class="wa-lbl"> Pausar bot</span></button>
       <button class="btn gris" id="warecargar" type="button" title="Actualizar">↻</button>
       <button class="btn" id="verEstado" type="button" aria-expanded="false" title="Ver el estado completo">ⓘ<span class="wa-lbl"> Estado ▾</span></button>
-      <a class="btn gris" href="./" title="Volver al panel">⌂<span class="wa-lbl"> Panel</span></a>
       <button class="btn gris" id="salir" type="button" title="Salir">⎋<span class="wa-lbl"> Salir</span></button>
     </div>
     <div class="wa-detalle" id="waDetalle" hidden></div>
@@ -390,7 +393,12 @@
   $('#avisos').addEventListener('click', () => Notification.requestPermission().then(() => { $('#avisos').hidden = Notification.permission !== 'default'; }));
 
   // ---------- Eventos ----------
-  function entrar() { $('#entrar').hidden = true; $('#panel').hidden = false; cargarResumen(); cargarRespuestas(); cargar(); }
+  // whatsapp.html#tel=549... abre esa charla directo (lo usan los links del inicio).
+  const telDelLink = () => (String(location.hash).match(/tel=(\d{6,15})/) || [])[1] || '';
+  function entrar() {
+    $('#entrar').hidden = true; $('#panel').hidden = false; cargarResumen(); cargarRespuestas();
+    cargar().then(() => { const t = telDelLink(); if (t) { abrir(t); history.replaceState(null, '', location.pathname); } });
+  }
   function filtrar(f, e) { filtro = f; etapa = e || ''; pintarCharlas(); }
   $('#entrar').addEventListener('submit', (e) => { e.preventDefault(); $('#entrarmsg').textContent = 'Abriendo Google…'; ACCESO.entrar(); });
   $('#salir').addEventListener('click', () => salir(''));

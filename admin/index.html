@@ -3,48 +3,96 @@
 <title>Panel · MyM Soluciones</title>
 <link rel="icon" href="../img/favicon.png" type="image/png">
 <!-- Panel admin de MyM Soluciones. 12/11/2026 (Matías): se entra con Google y sólo matiasvale32@gmail.com
-     y dagiodes1@gmail.com (admin/acceso.js). Los números del WhatsApp los da el server de MyM, que vuelve a
-     verificar la cuenta en cada pedido. -->
+     y dagiodes1@gmail.com (admin/acceso.js). Los datos del WhatsApp los da el server de MyM, que vuelve a
+     verificar la cuenta en cada pedido.
+     13/11/2026 (Matías, "el inicio me parece muy básico"): el inicio pasó a ser un tablero. Muestra qué hay
+     para atender ahora, las últimas charlas, el embudo, el estado del robot, las guías de los reels y los
+     accesos agrupados. Cada charla abre whatsapp.html#tel=... directo en esa conversación. -->
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;900&family=Martian+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
-:root{--azul:#2f6bff;--agua:#00c2a8;--deg:linear-gradient(120deg,#2f6bff,#00c2a8);--ink:#0e1a33;--gris:#4a5878;--borde:#dbe4f7;--fondo:#f4f7ff}
+:root{--azul:#2f6bff;--agua:#00c2a8;--deg:linear-gradient(120deg,#2f6bff,#00c2a8);--ink:#0e1a33;--gris:#4a5878;--borde:#dbe4f7;--fondo:#f4f7ff;--rojo:#d43a4a;--verde:#12a37f;--naranja:#e08a1e}
 *{box-sizing:border-box}[hidden]{display:none!important}
 body{margin:0;min-height:100vh;background:linear-gradient(180deg,#f4f7ff,#e6eeff) fixed #f4f7ff;color:var(--ink);font:15px/1.5 "Archivo",ui-sans-serif,system-ui,sans-serif}
+a{color:inherit}
 .eti{font:500 11px "Martian Mono",monospace;letter-spacing:.14em;color:var(--azul);text-transform:uppercase}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:var(--deg);color:#fff;border:0;border-radius:999px;padding:12px 22px;font:600 15px "Archivo",sans-serif;cursor:pointer;text-decoration:none;box-shadow:0 12px 30px rgba(47,107,255,.25)}
 .btn.gris{background:#fff;color:var(--ink);border:1px solid var(--borde);box-shadow:none}
+.btn.chico{padding:8px 14px;font-size:13px}
 .btn svg{width:18px;height:18px}
 /* Entrada */
 .entrada{max-width:400px;margin:16vh auto;padding:36px 28px;background:#fff;border:1px solid var(--borde);border-radius:24px;box-shadow:0 20px 50px rgba(14,26,51,.08);text-align:center}
 .entrada h1{font:900 26px/1.15 "Archivo",sans-serif;letter-spacing:-.02em;margin:10px 0 6px}
 .entrada p{color:var(--gris);margin:0 0 22px}
-.entrada .msg{color:#d43a4a;margin:16px 0 0;font-size:14px;min-height:20px}
-/* Panel */
-.top{display:flex;align-items:center;gap:14px;max-width:1040px;margin:0 auto;padding:22px 20px 0}
-.top .logo{font:900 20px "Archivo",sans-serif;letter-spacing:-.02em}
+.entrada .msg{color:var(--rojo);margin:16px 0 0;font-size:14px;min-height:20px}
+/* Arriba */
+.top{display:flex;align-items:center;gap:14px;max-width:1120px;margin:0 auto;padding:22px 20px 0}
+.top .logo{font:900 20px "Archivo",sans-serif;letter-spacing:-.02em;text-decoration:none}
 .top .logo span{background:var(--deg);-webkit-background-clip:text;background-clip:text;color:transparent}
 .top .grow{flex:1}
 .yo{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--gris)}
 .yo img{width:32px;height:32px;border-radius:50%}
-main{max-width:1040px;margin:0 auto;padding:22px 20px 48px}
+@media (max-width:600px){.yo span{display:none}}
+main{max-width:1120px;margin:0 auto;padding:22px 20px 48px}
 h2{font:900 30px/1.1 "Archivo",sans-serif;letter-spacing:-.02em;margin:6px 0 4px}
-.sub{color:var(--gris);margin:0 0 24px}
-.nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:26px}
-.num{background:#fff;border:1px solid var(--borde);border-radius:18px;padding:16px 18px}
+h3{font:800 17px "Archivo",sans-serif;margin:0}
+.sub{color:var(--gris);margin:0 0 22px}
+.saludo{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 20px;margin-bottom:20px}
+.saludo .sub{margin:0}
+.chip{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--borde);border-radius:999px;padding:6px 14px;font-size:13px;font-weight:600}
+.chip i{width:9px;height:9px;border-radius:50%;background:var(--verde)}
+.chip.off i{background:var(--naranja)}
+/* Números */
+.nums{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px}
+@media (max-width:760px){.nums{grid-template-columns:repeat(2,1fr)}}
+.num{background:#fff;border:1px solid var(--borde);border-radius:18px;padding:14px 18px;text-decoration:none;display:block}
 .num b{display:block;font:900 30px "Archivo",sans-serif;letter-spacing:-.02em}
 .num span{color:var(--gris);font-size:13px}
-.num.alerta b{color:#d43a4a}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
-.card{display:flex;flex-direction:column;gap:6px;background:#fff;border:1px solid var(--borde);border-radius:20px;padding:20px;text-decoration:none;color:var(--ink);transition:transform .15s,box-shadow .15s}
-.card:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(47,107,255,.14)}
-.card .ic{width:44px;height:44px;border-radius:14px;background:#eef3ff;display:grid;place-items:center;font-size:22px;margin-bottom:6px}
-.card b{font-size:17px}.card span{color:var(--gris);font-size:13.5px}
-.card.prin{background:var(--deg);color:#fff;border:0}.card.prin span{color:rgba(255,255,255,.88)}.card.prin .ic{background:rgba(255,255,255,.18)}
-.seccion{margin:30px 0 12px}
-.guia .pal{align-self:flex-start;font:500 11px "Martian Mono",monospace;letter-spacing:.1em;background:#eef3ff;color:var(--azul);border-radius:999px;padding:4px 10px}
-.guia .acc{display:flex;gap:8px;margin-top:10px}.guia .acc .btn{padding:8px 14px;font-size:13px}
-.guia.prox{border-style:dashed;opacity:.75}
-.pie{margin-top:36px;color:var(--gris);font-size:12.5px}
+.num.alerta{border-color:#f3b6bd;background:#fff6f7}.num.alerta b{color:var(--rojo)}
+/* Tablero en dos columnas */
+.tablero{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:860px){.tablero{grid-template-columns:minmax(0,1fr)}}
+.tablero > div{min-width:0}
+@media (max-width:480px){.charla .l1 .tag{display:none}.caja .cab a{font-size:12px}}
+.caja{background:#fff;border:1px solid var(--borde);border-radius:20px;padding:18px 18px 12px}
+.caja + .caja{margin-top:16px}
+.caja .cab{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.caja .cab .grow{flex:1}
+.caja .cab a{font-size:13px;color:var(--azul);text-decoration:none;font-weight:600}
+.vacio{color:var(--gris);font-size:14px;padding:6px 0 10px}
+/* Charlas */
+.charla{display:flex;gap:12px;align-items:center;padding:10px 8px;margin:0 -8px;border-radius:14px;text-decoration:none}
+.charla:hover{background:#f4f7ff}
+.av{flex:0 0 38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#fff;background:var(--deg)}
+.charla .tx{flex:1;min-width:0}
+.charla .l1{display:flex;gap:8px;align-items:baseline}
+.charla .l1 b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.charla .l1 small{margin-left:auto;color:var(--gris);font-size:12px;white-space:nowrap}
+.charla .l2{display:block;color:var(--gris);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tag{display:inline-block;font-size:11px;font-weight:700;border-radius:999px;padding:2px 8px;background:#eef3ff;color:var(--azul);white-space:nowrap}
+.tag.rojo{background:#ffe9ec;color:var(--rojo)}
+.tag.verde{background:#e3f7f1;color:var(--verde)}
+/* Embudo */
+.emb{display:grid;grid-template-columns:110px 1fr 28px;gap:8px;align-items:center;font-size:13px;margin:6px 0}
+.emb .barra{height:10px;border-radius:999px;background:#eef3ff;overflow:hidden}
+.emb .barra i{display:block;height:100%;border-radius:999px;background:var(--deg)}
+.emb b{text-align:right}
+/* Accesos */
+.grupo{margin-top:6px}
+.grupo .eti{margin:12px 0 6px;color:var(--gris)}
+.acceso{display:flex;align-items:center;gap:12px;padding:9px 8px;margin:0 -8px;border-radius:12px;text-decoration:none}
+.acceso:hover{background:#f4f7ff}
+.acceso .ic{flex:0 0 36px;height:36px;border-radius:12px;background:#eef3ff;display:grid;place-items:center;font-size:18px}
+.acceso b{display:block;font-size:14.5px}.acceso span{display:block;color:var(--gris);font-size:12.5px}
+/* Guías */
+.guia{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;padding:10px 0;border-top:1px solid #edf1fa}
+.guia:first-of-type{border-top:0}
+.guia .pal{font:500 11px "Martian Mono",monospace;letter-spacing:.1em;background:#eef3ff;color:var(--azul);border-radius:999px;padding:4px 10px}
+.guia b{flex:1 1 180px;font-size:14.5px}
+.guia .acc{display:flex;gap:6px}
+.guia .acc .btn{padding:6px 12px;font-size:12.5px;box-shadow:none}
+.guia.prox{opacity:.6}
+.pie{margin-top:30px;color:var(--gris);font-size:12.5px}
+.aviso{background:#fff6e8;border:1px solid #f6d6a8;color:#7a4a08;border-radius:14px;padding:10px 14px;font-size:14px;margin:0 0 16px}
 </style></head>
 <body>
 
@@ -58,37 +106,64 @@ h2{font:900 30px/1.1 "Archivo",sans-serif;letter-spacing:-.02em;margin:6px 0 4px
 
 <div id="panel" hidden>
   <header class="top">
-    <div class="logo">MyM <span>Soluciones</span></div>
+    <a class="logo" href="./">MyM <span>Soluciones</span></a>
     <div class="grow"></div>
     <div class="yo"><img id="foto" alt="" hidden><span id="correo"></span></div>
-    <button class="btn gris" id="salir" type="button" style="padding:8px 16px;font-size:13px">Salir</button>
+    <button class="btn gris chico" id="salir" type="button">Salir</button>
   </header>
   <main>
-    <div class="eti">Panel interno</div>
-    <h2 id="hola">Hola</h2>
-    <p class="sub">Lo que pasa hoy en el WhatsApp de Soluciones y los accesos de siempre.</p>
-
-    <div class="nums" id="nums">
-      <div class="num" id="nEsperando"><b>–</b><span>esperan una persona</span></div>
-      <div class="num"><b id="nHoy">–</b><span>charlas hoy</span></div>
-      <div class="num"><b id="nSemana">–</b><span>charlas en 7 días</span></div>
-      <div class="num"><b id="nNuevas">–</b><span>nuevas en 7 días</span></div>
+    <div class="eti" id="fecha">Panel interno</div>
+    <div class="saludo">
+      <div><h2 id="hola">Hola</h2><p class="sub" id="resumenTxt">Cargando lo que pasa hoy…</p></div>
+      <span class="chip" id="robot" hidden><i></i><span></span></span>
     </div>
-    <p class="sub" id="numsMsg" hidden></p>
+    <p class="aviso" id="aviso" hidden></p>
 
-    <div class="grid">
-      <a class="card prin" href="whatsapp.html"><div class="ic">💬</div><b>WhatsApp 11 3366-2080</b><span>Leé y contestá las charlas del robot de ventas.</span></a>
-      <a class="card" href="https://crm.creditosmym.com/" target="_blank" rel="noopener"><div class="ic">📅</div><b>CRM de marketing</b><span>Calendario, piezas programadas y la bandeja de Instagram.</span></a>
-      <a class="card" href="https://www.instagram.com/mymsoluciones369/" target="_blank" rel="noopener"><div class="ic">📸</div><b>@mymsoluciones369</b><span>El perfil de Instagram.</span></a>
-      <a class="card" href="https://business.facebook.com/latest/home" target="_blank" rel="noopener"><div class="ic">📊</div><b>Meta Business Suite</b><span>Estadísticas, mensajes y anuncios.</span></a>
-      <a class="card" href="../" target="_blank" rel="noopener"><div class="ic">🌐</div><b>La web</b><span>mymsoluciones.online, como la ve un cliente.</span></a>
-      <a class="card" href="https://grupomym.online/" target="_blank" rel="noopener"><div class="ic">🧭</div><b>Panel del grupo</b><span>Las empresas, los documentos y los pendientes.</span></a>
+    <div class="nums">
+      <a class="num" id="nEsperando" href="whatsapp.html"><b>–</b><span>esperan una persona</span></a>
+      <a class="num" href="whatsapp.html"><b id="nHoy">–</b><span>charlas hoy</span></a>
+      <a class="num" href="whatsapp.html"><b id="nSemana">–</b><span>charlas en 7 días</span></a>
+      <a class="num" href="whatsapp.html"><b id="nNuevas">–</b><span>contactos nuevos en 7 días</span></a>
     </div>
-    <div class="seccion"><div class="eti">Guías de los reels</div><h2 style="font-size:22px">Lo que manda el «Comentá»</h2>
-      <p class="sub" style="margin:0">Cada reel pide comentar una palabra y el CRM le manda al que comenta el link a su guía.</p></div>
-    <div class="grid" id="guias"></div>
 
-    <p class="pie">Sólo entran las cuentas autorizadas. Parte del grupo MyM.</p>
+    <div class="tablero">
+      <div>
+        <section class="caja">
+          <div class="cab"><h3>Para atender ahora</h3><span class="grow"></span><a href="whatsapp.html">Abrir el WhatsApp →</a></div>
+          <div id="atender"><p class="vacio">Cargando…</p></div>
+        </section>
+        <section class="caja">
+          <div class="cab"><h3>Últimas charlas</h3><span class="grow"></span><a href="whatsapp.html">Ver todas →</a></div>
+          <div id="ultimas"><p class="vacio">Cargando…</p></div>
+        </section>
+        <section class="caja">
+          <div class="cab"><h3>Guías de los reels</h3><span class="grow"></span><a href="../guias/" target="_blank" rel="noopener">Página de guías →</a></div>
+          <p class="sub" style="margin:0 0 4px;font-size:13px">Cada reel pide comentar una palabra y el CRM le manda la guía al que comenta.</p>
+          <div id="guias"></div>
+        </section>
+      </div>
+      <div>
+        <section class="caja">
+          <div class="cab"><h3>Embudo</h3><span class="grow"></span><small style="color:var(--gris)">últimas 300 charlas</small></div>
+          <div id="embudo"><p class="vacio">Cargando…</p></div>
+        </section>
+        <section class="caja">
+          <div class="cab"><h3>Accesos</h3></div>
+          <div class="grupo">
+            <div class="eti">Atender</div>
+            <a class="acceso" href="whatsapp.html"><span class="ic">💬</span><span><b>WhatsApp 11 3366-2080</b><span>Las charlas del robot de ventas</span></span></a>
+            <a class="acceso" href="https://crm.creditosmym.com/" target="_blank" rel="noopener"><span class="ic">📥</span><span><b>CRM de marketing</b><span>Bandeja de Instagram y respuestas automáticas</span></span></a>
+            <div class="eti">Redes y contenido</div>
+            <a class="acceso" href="https://www.instagram.com/mymsoluciones369/" target="_blank" rel="noopener"><span class="ic">📸</span><span><b>@mymsoluciones369</b><span>El perfil de Instagram</span></span></a>
+            <a class="acceso" href="https://business.facebook.com/latest/home" target="_blank" rel="noopener"><span class="ic">📊</span><span><b>Meta Business Suite</b><span>Estadísticas, mensajes y anuncios</span></span></a>
+            <div class="eti">Web y grupo</div>
+            <a class="acceso" href="../" target="_blank" rel="noopener"><span class="ic">🌐</span><span><b>La web</b><span>mymsoluciones.online, como la ve un cliente</span></span></a>
+            <a class="acceso" href="https://grupomym.online/" target="_blank" rel="noopener"><span class="ic">🧭</span><span><b>Panel del grupo</b><span>Las empresas, los documentos y los pendientes</span></span></a>
+          </div>
+        </section>
+      </div>
+    </div>
+    <p class="pie">Sólo entran las cuentas autorizadas. Los datos se actualizan solos cada minuto. Parte del grupo MyM.</p>
   </main>
 </div>
 
@@ -100,51 +175,113 @@ h2{font:900 30px/1.1 "Archivo",sans-serif;letter-spacing:-.02em;margin:6px 0 4px
 (function () {
   const $ = (s) => document.querySelector(s);
   const API = String((window.SITE || {}).ventasApi || '').replace(/\/+$/, '');
+  const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const mostrarEntrada = (m) => { $('#panel').hidden = true; $('#entrada').hidden = false; $('#msg').textContent = m || ''; };
-
-  async function numeros() {
-    try {
-      const r = await fetch(API + '/api/ventas-sol/resumen', { headers: { Authorization: 'Bearer ' + await ACCESO.token() } });
-      if (!r.ok) throw new Error(r.status === 401 ? 'el server todavía no acepta el acceso con Google' : 'HTTP ' + r.status);
-      const m = (await r.json()).resumen || {};
-      $('#nEsperando b').textContent = m.esperando ?? 0;
-      $('#nEsperando').classList.toggle('alerta', (m.esperando || 0) > 0);
-      $('#nHoy').textContent = m.charlas_hoy ?? 0;
-      $('#nSemana').textContent = m.charlas_semana ?? 0;
-      $('#nNuevas').textContent = m.nuevas_semana ?? 0;
-      $('#numsMsg').hidden = true;
-    } catch (e) { $('#numsMsg').hidden = false; $('#numsMsg').textContent = 'No se pudieron traer los números del WhatsApp: ' + e.message + '.'; }
-  }
 
   // Guías de los reels tutoriales. Cuando se publica una nueva en /guias/, se suma acá (link vacío = en preparación).
   const GUIAS = [
-    { palabra: 'BOT', titulo: 'Tu WhatsApp contesta aunque estés durmiendo', reel: 'Reel 1 · mensaje de ausencia y de bienvenida', link: 'https://mymsoluciones.online/guias/bot.html' },
-    { palabra: 'TAREA', titulo: 'De Excel a un tablero', reel: 'Reel 2 · de Excel a un tablero', link: 'https://mymsoluciones.online/guias/tarea.html' },
+    { palabra: 'BOT', titulo: 'Tu WhatsApp contesta aunque estés durmiendo', link: 'https://mymsoluciones.online/guias/bot.html' },
+    { palabra: 'TAREA', titulo: 'De Excel a un tablero', link: 'https://mymsoluciones.online/guias/tarea.html' },
   ];
-  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  $('#guias').innerHTML = GUIAS.map((g) => `<div class="card guia${g.link ? '' : ' prox'}">
-      <span class="pal">Comentá ${esc(g.palabra)}</span><b>${esc(g.titulo)}</b><span>${esc(g.reel)}</span>
-      ${g.link ? `<div class="acc"><a class="btn" href="${esc(g.link)}" target="_blank" rel="noopener">Abrir</a>
-      <button class="btn gris" type="button" data-copiar="${esc(g.link)}">Copiar link</button></div>` : ''}</div>`).join('');
+  $('#guias').innerHTML = GUIAS.map((g) => `<div class="guia${g.link ? '' : ' prox'}"><span class="pal">${esc(g.palabra)}</span><b>${esc(g.titulo)}</b>
+      ${g.link ? `<span class="acc"><a class="btn" href="${esc(g.link)}" target="_blank" rel="noopener">Abrir</a><button class="btn gris" type="button" data-copiar="${esc(g.link)}">Copiar link</button></span>` : '<span class="tag">en preparación</span>'}</div>`).join('');
   $('#guias').addEventListener('click', async (e) => {
     const b = e.target.closest('[data-copiar]'); if (!b) return;
-    try { await navigator.clipboard.writeText(b.dataset.copiar); b.textContent = '¡Copiado!'; } catch { b.textContent = 'No se pudo copiar'; }
+    try { await navigator.clipboard.writeText(b.dataset.copiar); b.textContent = '¡Copiado!'; } catch { b.textContent = 'No se pudo'; }
     setTimeout(() => { b.textContent = 'Copiar link'; }, 2000);
   });
+
+  // ---------- Datos del WhatsApp (server de MyM) ----------
+  async function pedir(ruta) {
+    const r = await fetch(API + ruta, { headers: { Authorization: 'Bearer ' + await ACCESO.token() } });
+    if (r.status === 401) throw new Error('el server no aceptó tu cuenta');
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  }
+  const nombre = (c) => { const d = c.datos || {}; return d.nombre || c.nombre_perfil || d.negocio || ('+' + c.telefono); };
+  const inicial = (c) => String(nombre(c)).replace(/[^\p{L}\p{N}]/gu, '').charAt(0).toUpperCase() || '?';
+  function hace(ts) {
+    if (!ts) return '';
+    const s = (Date.now() - new Date(ts).getTime()) / 1000;
+    if (!isFinite(s)) return '';
+    if (s < 60) return 'recién';
+    if (s < 3600) return 'hace ' + Math.floor(s / 60) + ' min';
+    if (s < 86400) return 'hace ' + Math.floor(s / 3600) + ' h';
+    return 'hace ' + Math.floor(s / 86400) + ' d';
+  }
+  let ETAPAS = {};
+  const linkCharla = (c) => 'whatsapp.html#tel=' + encodeURIComponent(c.telefono);
+  function filaCharla(c, extra) {
+    const u = c.ultimo || {};
+    const quien = u.de === 'cliente' ? '' : (u.de === 'robot' ? 'Robot: ' : 'Equipo: ');
+    return `<a class="charla" href="${linkCharla(c)}"><span class="av">${esc(inicial(c))}</span><span class="tx">
+      <span class="l1"><b>${esc(nombre(c))}</b>${extra || ''}<small>${esc(hace(u.ts || c.actualizado))}</small></span>
+      <span class="l2">${esc(quien + (u.texto || ''))}</span></span></a>`;
+  }
+  // Mismo criterio que el número "esperan una persona" del server (espera_desde), más los mensajes que no salieron.
+  const necesitaAtencion = (c) => !c.resuelta && (c.espera_desde || c.ultimo_error);
+
+  function pintar(resumen, charlas, robotPausado) {
+    const m = resumen || {};
+    $('#nEsperando b').textContent = m.esperando ?? 0;
+    $('#nEsperando').classList.toggle('alerta', (m.esperando || 0) > 0);
+    $('#nHoy').textContent = m.charlas_hoy ?? 0;
+    $('#nSemana').textContent = m.charlas_semana ?? 0;
+    $('#nNuevas').textContent = m.nuevas_semana ?? 0;
+
+    const r = $('#robot'); r.hidden = false; r.classList.toggle('off', !!robotPausado);
+    r.querySelector('span').textContent = robotPausado ? 'Robot pausado: contestan ustedes' : 'Robot activo';
+
+    const pend = charlas.filter(necesitaAtencion);
+    $('#resumenTxt').textContent = pend.length
+      ? (pend.length === 1 ? 'Hay 1 charla que necesita una persona.' : 'Hay ' + pend.length + ' charlas que necesitan una persona.')
+      : 'Nada pendiente en el WhatsApp. El robot está atendiendo.';
+    $('#atender').innerHTML = pend.length
+      ? pend.slice(0, 6).map((c) => {
+          const t = c.ultimo_error ? '<span class="tag rojo">no se envió</span>' : c.derivada ? '<span class="tag rojo">pidió una persona</span>' : '<span class="tag rojo">espera desde ' + esc(hace(c.espera_desde).replace('hace ', '')) + '</span>';
+          return filaCharla(c, t);
+        }).join('')
+      : '<p class="vacio">✅ Todo atendido. Cuando alguien pida hablar con una persona, aparece acá.</p>';
+
+    const ult = charlas.slice().sort((a, b) => String((b.ultimo || {}).ts || b.actualizado).localeCompare(String((a.ultimo || {}).ts || a.actualizado))).slice(0, 5);
+    $('#ultimas').innerHTML = ult.length
+      ? ult.map((c) => filaCharla(c, '<span class="tag' + (c.etapa === 'cliente' ? ' verde' : '') + '">' + esc(ETAPAS[c.etapa] || c.etapa || '') + '</span>')).join('')
+      : '<p class="vacio">Todavía no hay charlas.</p>';
+
+    const pe = m.por_etapa || {}, claves = Object.keys(ETAPAS).length ? Object.keys(ETAPAS) : Object.keys(pe);
+    const max = Math.max(1, ...claves.map((k) => pe[k] || 0));
+    $('#embudo').innerHTML = claves.length
+      ? claves.map((k) => `<div class="emb"><span>${esc(ETAPAS[k] || k)}</span><span class="barra"><i style="width:${Math.round(((pe[k] || 0) / max) * 100)}%"></i></span><b>${pe[k] || 0}</b></div>`).join('')
+      : '<p class="vacio">Sin datos del embudo.</p>';
+  }
+
+  async function cargar() {
+    try {
+      const [j, k] = await Promise.all([pedir('/api/ventas-sol/resumen'), pedir('/api/ventas-sol/charlas')]);
+      if (j.etapas) ETAPAS = j.etapas;
+      const res = j.resumen || {};
+      pintar(res, k.charlas || [], !!(j.robot_pausado ?? res.robot_pausado));
+      $('#aviso').hidden = true;
+    } catch (e) {
+      $('#aviso').hidden = false; $('#aviso').textContent = 'No se pudieron traer los datos del WhatsApp: ' + e.message + '. Probá recargar la página.';
+    }
+  }
 
   ACCESO.iniciar({
     alEntrar(u) {
       $('#entrada').hidden = true; $('#panel').hidden = false;
-      $('#hola').textContent = 'Hola, ' + String(u.nombre).split(' ')[0];
+      const h = new Date().getHours();
+      $('#hola').textContent = (h < 13 ? 'Buen día, ' : h < 20 ? 'Buenas tardes, ' : 'Buenas noches, ') + String(u.nombre).split(' ')[0];
+      $('#fecha').textContent = new Date().toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' });
       $('#correo').textContent = u.email;
       if (u.foto) { $('#foto').src = u.foto; $('#foto').hidden = false; }
-      numeros();
+      cargar();
     },
     alSalir: mostrarEntrada
   });
   $('#google').addEventListener('click', () => { $('#msg').textContent = ''; ACCESO.entrar(); });
   $('#salir').addEventListener('click', () => ACCESO.salir(''));
-  setInterval(() => { if (!document.hidden && !$('#panel').hidden) numeros(); }, 60000);
+  setInterval(() => { if (!document.hidden && !$('#panel').hidden) cargar(); }, 60000);
 })();
 </script>
 </body></html>
