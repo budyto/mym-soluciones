@@ -23,6 +23,10 @@ window.SITE = {
   // traer la cotización oficial del día desde dolarapi.com; si falla, usa esta.
   usdArs: 1500,
 
+  // Servidor de la plataforma de bots (proyecto mym-soluciones-bots, 14/11/2026). Mientras esté vacío,
+  // /alta/ muestra que el alta automática se está preparando y no deja avanzar.
+  plataformaApi: "",
+
   // Supabase (opcional). Si queda vacío, el formulario manda el lead por WhatsApp.
   // Usá la "anon public key": es pública y la protege la política RLS de supabase-leads.sql.
   supabaseUrl: "",
