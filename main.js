@@ -21,7 +21,7 @@
   if (toggle) {
     const pone = (abre) => { nav.classList.toggle("abierto", abre); toggle.setAttribute("aria-expanded", String(abre)); toggle.setAttribute("aria-label", abre ? "Cerrar el menú" : "Abrir el menú"); };
     toggle.addEventListener("click", () => pone(!nav.classList.contains("abierto")));
-    $("#menu a").forEach((a) => a.addEventListener("click", () => pone(false)));
+    $$("#menu a").forEach((a) => a.addEventListener("click", () => pone(false)));
     addEventListener("keydown", (e) => { if (e.key === "Escape") pone(false); });
   }
 
