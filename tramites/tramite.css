@@ -1,0 +1,50 @@
+/* Páginas de trámites (botón de arrepentimiento y botón de baja), 14/11/2026. Mismo diseño que /sorteo/ y /guias/. */
+:root{--azul:#2f6bff;--agua:#00c2a8;--deg:linear-gradient(120deg,#2f6bff,#00c2a8);--ink:#0e1a33;--gris:#4a5878;--borde:#dbe4f7;--suave:#eef3ff;--ok:#0a8a60}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:linear-gradient(180deg,#f4f7ff,#e6eeff 640px) #e6eeff;color:var(--ink);font:17px/1.6 "Archivo",ui-sans-serif,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:var(--azul)}
+:focus-visible{outline:3px solid var(--azul);outline-offset:2px;border-radius:6px}
+.wrap{max-width:720px;margin:0 auto;padding:0 20px}
+.deg{background:var(--deg);-webkit-background-clip:text;background-clip:text;color:transparent}
+header{padding:18px 0;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.logo{display:inline-flex;align-items:baseline;gap:8px;text-decoration:none;color:var(--ink)}
+.logo b{font:900 22px "Archivo",sans-serif;letter-spacing:-.02em}
+.logo span{font:400 13px Michroma,sans-serif;letter-spacing:.2em}
+.menu{display:flex;flex-wrap:wrap;gap:4px 16px;font:600 15px "Archivo",sans-serif}
+.menu a{color:var(--gris);text-decoration:none}
+.menu a:hover,.menu a[aria-current]{color:var(--ink)}
+.rotulo{font:500 12.5px "Martian Mono",monospace;color:var(--azul);margin:26px 0 0}
+h1{font:900 clamp(34px,7vw,52px)/1.03 "Archivo",sans-serif;letter-spacing:-.03em;margin:10px 0 6px}
+h1 em{display:block;font:italic 400 clamp(38px,8vw,60px)/1.05 "Instrument Serif",serif;letter-spacing:0;background:var(--deg);-webkit-background-clip:text;background-clip:text;color:transparent;width:fit-content;padding-right:.08em}
+.bajada{color:var(--gris);font-size:18.5px;margin:14px 0 26px;max-width:600px}
+.tarjeta{background:#fff;border-radius:26px;box-shadow:0 1px 2px rgba(23,48,120,.06),0 10px 28px -8px rgba(23,48,120,.14);padding:26px;border:1px solid rgba(219,227,245,.7)}
+.datos{display:grid;gap:10px;margin:0 0 22px;padding:0;list-style:none}
+.datos li{display:grid;grid-template-columns:28px 1fr;gap:10px;color:var(--gris);font-size:16px}
+.datos li::before{content:"";width:22px;height:22px;margin-top:2px;border-radius:50%;background:var(--suave) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232f6bff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center/13px no-repeat}
+.datos b{color:var(--ink)}
+label{display:grid;gap:6px;font-weight:600;font-size:15px;margin-bottom:16px}
+label small{font-weight:400;color:var(--gris);font-size:13.5px}
+input,select,textarea{font:400 16px "Archivo",sans-serif;color:var(--ink);padding:13px 15px;border:1.5px solid var(--borde);border-radius:13px;background:#f6f8fe;width:100%}
+textarea{resize:vertical}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--azul);background:#fff;box-shadow:0 0 0 4px rgba(47,107,255,.13)}
+.dos{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+.trampa{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.btn{border:0;border-radius:14px;padding:14px 22px;font:700 16px "Archivo",sans-serif;cursor:pointer;background:var(--deg);color:#fff;box-shadow:0 10px 22px -8px rgba(47,107,255,.6);display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none}
+.btn.sec{background:var(--suave);color:var(--azul);box-shadow:none}
+.btn svg{width:20px;height:20px;flex:none}
+.btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.error{color:#c2364e;font-size:14.5px;margin:0 0 12px;min-height:1px}
+.codigo{display:none}
+.listo .formulario{display:none}
+.listo .codigo{display:block}
+.sello{display:flex;gap:16px;align-items:center;margin-bottom:18px}
+.sello .ok{width:52px;height:52px;border-radius:50%;background:var(--deg);display:grid;place-items:center;flex:none;box-shadow:0 0 0 8px rgba(0,194,168,.12)}
+.sello .ok svg{width:26px;height:26px}
+.sello h2{font:900 24px/1.15 "Archivo",sans-serif;margin:0}
+.num{font:500 clamp(22px,6vw,30px) "Martian Mono",monospace;letter-spacing:.04em;background:var(--suave);border:1.5px dashed #b9c9f0;border-radius:16px;padding:14px 18px;text-align:center;margin:6px 0 18px;word-break:break-all}
+.paso{color:var(--gris);font-size:16px;margin:0 0 14px}
+.paso b{color:var(--ink)}
+.nota{font-size:14.5px;color:var(--gris);margin-top:18px;padding-top:16px;border-top:1px dashed var(--borde)}
+footer{color:var(--gris);font:400 12.5px/1.7 "Martian Mono",monospace;text-align:center;padding:40px 0 44px}
+footer a{color:var(--gris)}
+@media (max-width:600px){.dos{grid-template-columns:1fr}.tarjeta{padding:20px;border-radius:22px}.btns .btn{width:100%}}

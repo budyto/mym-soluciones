@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Botón de baja · MyM Soluciones</title>
+<meta name="description" content="Pedí la baja de un servicio de MyM Soluciones sin registrarte: código del trámite en el momento y confirmación dentro de las 24 horas.">
+<meta name="theme-color" content="#f4f7ff">
+<link rel="icon" href="../img/favicon-2.png" type="image/png">
+<!-- Botón de baja, 14/11/2026, pedido de Matías. Sin registro previo.
+     Código del trámite en el momento. Script y estilo compartidos con /arrepentimiento/ en /tramites/. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;900&family=Instrument+Serif:ital@1&family=Michroma&family=Martian+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../tramites/tramite.css?v=202611141900">
+</head>
+<body data-tramite="baja">
+<div class="wrap">
+  <header><a class="logo" href="../"><b class="deg">MyM</b><span>SOLUCIONES</span></a><nav class="menu" aria-label="Secciones de MyM Soluciones"><a href="../">Inicio</a><a href="../#paquetes">Paquetes</a><a href="../arrepentimiento/">Arrepentimiento</a><a href="./" aria-current="page">Dar de baja</a></nav></header>
+
+  <main>
+    <div class="formulario">
+      <p class="rotulo">Trámite sin registrarte</p>
+      <h1>Dar de baja un servicio,<em>sin vueltas.</em></h1>
+      <p class="bajada">Pedí la baja de tu abono de MyM Soluciones desde acá, sin registrarte y sin llamar a nadie. Nuestros abonos <b>no tienen permanencia</b>.</p>
+      <ul class="datos">
+        <li><span>No necesitás <b>registrarte ni explicar por qué</b>.</span></li>
+        <li><span>Te damos el <b>código del trámite en el momento</b>, para que tengas la constancia.</span></li>
+        <li><span>Dentro de las 24 horas te confirmamos la baja y <b>desde qué fecha deja de cobrarse</b> el abono.</span></li>
+      </ul>
+      <form class="tarjeta" id="form" novalidate>
+        <div class="dos">
+          <label>Nombre y apellido<input name="nombre" autocomplete="name" required></label>
+          <label>DNI o CUIT<input name="documento" inputmode="numeric" required></label>
+        </div>
+        <label>WhatsApp o mail <small>Por acá te confirmamos el trámite.</small><input name="contacto" autocomplete="email" required></label>
+        <div class="dos">
+          <label>Servicio que contrataste
+            <select name="servicio" required>
+              <option value="">Elegí uno</option>
+              <option>Bot de WhatsApp</option><option>Seguimiento de clientes</option><option>Paquete completo</option>
+              <option>Landing de ventas</option><option>Página web institucional</option><option>Orquestador de IA</option>
+              <option>Empresa en automático</option><option>Agente extra</option><option>Software a medida</option><option>Otro</option>
+            </select></label>
+          <label>Fecha en que contrataste <small>Si no te acordás, dejala vacía.</small><input name="fecha" type="date"></label>
+        </div>
+        <label>¿Querés contarnos por qué? <small>Opcional: nos ayuda a mejorar.</small><textarea name="comentario" rows="2"></textarea></label>
+        <label class="trampa" aria-hidden="true">No completar<input name="web" tabindex="-1" autocomplete="off"></label>
+        <p class="error" id="error" role="alert"></p>
+        <button class="btn" type="submit">Generar el código del trámite</button>
+        <p class="nota">¿Contrataste hace 10 días corridos o menos? Te conviene el <a href="../arrepentimiento/">botón de arrepentimiento</a>: cancelás la contratación y te devolvemos lo que pagaste.</p>
+      </form>
+    </div>
+
+    <section class="codigo" aria-live="polite">
+      <p class="rotulo">Botón de baja</p>
+      <div class="tarjeta" style="margin-top:14px">
+        <div class="sello"><span class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><h2>Este es el código de tu trámite</h2></div>
+        <div class="num" id="cod" tabindex="-1"></div>
+        <p class="paso"><b>Último paso: mandanos el pedido.</b> Ya va armado con tus datos y el código. El trámite cuenta desde que nos llega.</p>
+        <div class="btns">
+          <a class="btn" id="wa" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.16-.17.2-.35.22-.64.08-.3-.15-1.26-.46-2.39-1.48-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.6.13-.14.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.03-.52-.07-.15-.67-1.61-.92-2.2-.24-.59-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48s1.06 2.88 1.21 3.07c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.63.71.22 1.36.2 1.87.12.57-.09 1.76-.72 2-1.41.25-.7.25-1.29.18-1.41-.08-.13-.28-.2-.57-.35M12.05 21.8h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 0 1-1.51-5.26c0-5.45 4.44-9.88 9.89-9.88 2.64 0 5.12 1.03 6.99 2.9a9.83 9.83 0 0 1 2.89 6.99c0 5.45-4.44 9.88-9.88 9.88m8.41-18.3A11.82 11.82 0 0 0 12.05 0C5.5 0 .16 5.34.16 11.89c0 2.1.55 4.14 1.59 5.95L.06 24l6.3-1.65a11.88 11.88 0 0 0 5.69 1.45c6.55 0 11.89-5.34 11.89-11.89 0-3.18-1.24-6.17-3.48-8.41z"/></svg>Mandarlo por WhatsApp</a>
+          <a class="btn sec" id="mail">Mandarlo por mail</a>
+          <button class="btn sec" id="copiar" type="button">Copiar el código</button>
+        </div>
+        <p class="nota">Dentro de las 24 horas te confirmamos la baja, por el mismo medio, y desde qué fecha deja de cobrarse el abono. Guardá el código: es tu constancia.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>MyM Soluciones · WhatsApp 11 3366-2080 · <a href="mailto:info@mymsoluciones.online">info@mymsoluciones.online</a><br><a href="../privacidad.html">Política de privacidad</a> · Parte del grupo MyM</footer>
+</div>
+<script src="../config.js"></script>
+<script src="../tramites/tramite.js?v=202611141900"></script>
+</body>
+</html>
