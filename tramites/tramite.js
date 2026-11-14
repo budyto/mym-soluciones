@@ -21,14 +21,27 @@
   }
 
   const form = $('#form');
-  form.addEventListener('submit', (e) => {
+  // Cuando el servidor de la plataforma está prendido (SITE.plataformaApi), el trámite y su código quedan
+  // guardados del lado de MyM al instante. Si no responde, el código se arma acá como antes.
+  const API = String(cfg.plataformaApi || '').replace(/\/+$/, '');
+  async function codigoDelServidor(d) {
+    if (!API) return null;
+    try {
+      const r = await fetch(API + '/api/tramites', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ tipo, nombre: d.nombre, documento: d.documento, contacto: d.contacto, servicio: d.servicio, fecha: d.fecha, comentario: d.comentario }) });
+      return r.ok ? (await r.json()).codigo : null;
+    } catch (e) { return null; }
+  }
+
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const d = Object.fromEntries(new FormData(form).entries());
     if (d.web) return; // trampa anti-spam
     const faltan = ['nombre', 'documento', 'contacto', 'servicio'].filter((k) => !String(d[k] || '').trim());
     if (faltan.length) { $('#error').textContent = 'Completá los datos marcados para generar el código.'; form.querySelector(`[name=${faltan[0]}]`).focus(); return; }
     $('#error').textContent = '';
-    const cod = codigo();
+    const boton = form.querySelector('[type=submit]'); boton.disabled = true;
+    const cod = (await codigoDelServidor(d)) || codigo();
+    boton.disabled = false;
     const cuando = new Date().toLocaleString('es-AR', { dateStyle: 'short', timeStyle: 'short' });
     const lineas = [
       `${TITULO} de MyM Soluciones`,
