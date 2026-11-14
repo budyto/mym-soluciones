@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sumá tu bot de WhatsApp · MyM Soluciones</title>
+<meta name="description" content="Conectá el WhatsApp de tu negocio y armá tu bot con IA, solo y en minutos.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#f4f7ff">
+<link rel="icon" href="../img/favicon-2.png" type="image/png">
+<!-- Alta de clientes de la plataforma de bots (14/11/2026, pedido de Matías). Paso 1: datos; paso 2: botón
+     «Conectar WhatsApp» con el registro insertado de Meta (app MyMBoti 1446343080591411, configuración
+     4643639185915736). Lo que devuelve Meta se le manda al servidor de la plataforma (SITE.plataformaApi en
+     config.js), que hace todo lo demás solo. Queda en noindex hasta que la plataforma esté prendida.
+     El botón de Meta solo abre desde https://mymsoluciones.online (dominio autorizado en la app). -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;900&family=Instrument+Serif:ital@1&family=Michroma&family=Martian+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../tramites/tramite.css?v=202611141900">
+<style>
+.pasos-alta{display:flex;gap:8px;margin:0 0 22px;padding:0;list-style:none}
+.pasos-alta li{flex:1;height:7px;border-radius:99px;background:#dbe4f7}
+.pasos-alta li.si{background:var(--deg)}
+.paso-alta{display:none}
+.paso-alta.ver{display:block}
+.btn-meta{background:#1877f2;box-shadow:0 10px 22px -8px rgba(24,119,242,.6)}
+.btn-meta svg{width:22px;height:22px}
+.aviso{background:#fff3d9;color:#7a4b00;border-radius:14px;padding:13px 16px;font-size:15px;margin:0 0 16px}
+.mal{background:#fde9ed;color:#a3203a}
+.lista-conecta{margin:0 0 20px;padding-left:20px;color:var(--gris);font-size:16px}
+.lista-conecta li{margin:4px 0}
+</style>
+</head>
+<body data-tramite="alta">
+<div class="wrap">
+  <header><a class="logo" href="../"><b class="deg">MyM</b><span>SOLUCIONES</span></a><nav class="menu" aria-label="Secciones de MyM Soluciones"><a href="../">Inicio</a><a href="../#paquetes">Paquetes</a><a href="../arrepentimiento/">Arrepentimiento</a><a href="../baja/">Dar de baja</a></nav></header>
+
+  <main>
+    <p class="rotulo">Tu bot de WhatsApp, paso a paso</p>
+    <h1>Sumá tu negocio<em>y conectá tu WhatsApp.</em></h1>
+    <p class="bajada">Te lleva unos minutos. Tu número sigue siendo tuyo: solo lo conectás a la plataforma de MyM Soluciones con la ventana oficial de Meta.</p>
+    <ol class="pasos-alta" aria-label="Pasos del alta"><li class="si"></li><li></li><li></li></ol>
+    <div id="estado"></div>
+
+    <!-- Paso 1: datos -->
+    <form class="tarjeta paso-alta ver" id="paso1" novalidate>
+      <div class="dos">
+        <label>Nombre del negocio<input name="negocio" autocomplete="organization" required></label>
+        <label>Tu nombre<input name="contacto" autocomplete="name" required></label>
+      </div>
+      <div class="dos">
+        <label>Tu mail <small>Te mandamos ahí el resumen y la factura.</small><input name="email" type="email" autocomplete="email" required></label>
+        <label>Tu celular <small>Para avisarte; puede ser otro número.</small><input name="celular" type="tel" autocomplete="tel" required></label>
+      </div>
+      <label>¿Qué querés contratar?
+        <select name="plan" required>
+          <option value="bot">Bot de WhatsApp: $ 99.900 de instalación y $ 39.900 por mes</option>
+          <option value="paquete">Paquete completo: $ 129.900 de instalación y $ 49.900 por mes</option>
+        </select></label>
+      <label class="trampa" aria-hidden="true">No completar<input name="web" tabindex="-1" autocomplete="off"></label>
+      <p class="error" id="error1" role="alert"></p>
+      <button class="btn" type="submit">Seguir</button>
+    </form>
+
+    <!-- Paso 2: conectar WhatsApp con Meta -->
+    <section class="tarjeta paso-alta" id="paso2">
+      <h2 style="font:900 24px/1.15 Archivo,sans-serif;margin:0 0 10px">Conectá el WhatsApp de tu negocio</h2>
+      <p class="paso">Se abre una ventana de Meta. Ahí:</p>
+      <ol class="lista-conecta">
+        <li>entrás con tu Facebook;</li>
+        <li>elegís (o creás) el portfolio de tu negocio;</li>
+        <li>ponés el número del negocio y lo confirmás con el código que te llega por SMS o llamada.</li>
+      </ol>
+      <p class="aviso">Ese número no puede estar usándose al mismo tiempo en la app de WhatsApp del celular. Si hoy lo usás ahí, avisanos antes y te ayudamos a pasarlo.</p>
+      <p class="error" id="error2" role="alert"></p>
+      <button class="btn btn-meta" id="conectar" type="button" disabled><svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.4l-.5 3.5h-2.9v8.4A12 12 0 0 0 24 12z"/></svg>Conectar WhatsApp</button>
+    </section>
+
+    <!-- Paso 3: listo -->
+    <section class="tarjeta paso-alta" id="paso3" aria-live="polite">
+      <div class="sello"><span class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><h2>Tu WhatsApp quedó conectado</h2></div>
+      <p class="paso">El siguiente paso es contarnos cómo trabaja tu negocio para que el bot se arme solo. Te mandamos el link por mail, así lo completás a tu ritmo y lo podés guardar a medias.</p>
+    </section>
+  </main>
+
+  <footer>MyM Soluciones · WhatsApp 11 3366-2080 · <a href="mailto:info@mymsoluciones.online">info@mymsoluciones.online</a><br><a href="../privacidad.html">Política de privacidad</a> · <a href="../arrepentimiento/">Botón de arrepentimiento</a> · <a href="../baja/">Botón de baja</a></footer>
+</div>
+<script src="../config.js"></script>
+<script src="alta.js?v=202611141930"></script>
+</body>
+</html>
