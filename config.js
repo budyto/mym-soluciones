@@ -25,7 +25,7 @@ window.SITE = {
 
   // Servidor de la plataforma de bots (proyecto mym-soluciones-bots, 14/11/2026). Mientras esté vacío,
   // /alta/ muestra que el alta automática se está preparando y no deja avanzar.
-  plataformaApi: "",
+  plataformaApi: "https://plataforma-bots-332174980527.southamerica-east1.run.app",
 
   // Supabase (opcional). Si queda vacío, el formulario manda el lead por WhatsApp.
   // Usá la "anon public key": es pública y la protege la política RLS de supabase-leads.sql.
