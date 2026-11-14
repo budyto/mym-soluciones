@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sorteo: un bot de WhatsApp para tu negocio · MyM Soluciones</title>
+<meta name="description" content="Sorteamos un bot de WhatsApp con IA para tu negocio: instalación gratis y 3 meses de abono sin cargo. Bases y condiciones.">
+<meta name="theme-color" content="#f4f7ff">
+<meta property="og:title" content="Sorteo: un bot de WhatsApp para tu negocio">
+<meta property="og:description" content="Instalación gratis y 3 meses de abono sin cargo. Comentá SORTEO en el post de @mymsoluciones369.">
+<meta property="og:image" content="https://mymsoluciones.online/img/og-2.jpg">
+<link rel="icon" href="../img/favicon-2.png" type="image/png">
+<!-- Sorteo de lanzamiento de @mymsoluciones369 (14/11/2026, pedido de Matías). El premio es el bot de WhatsApp
+     instalado + 3 meses de abono sin cargo; el ganador sólo paga el consumo de la IA, al costo y sin recargo, y eso
+     está dicho acá desde el primer día. Mismo diseño que /guias/. Si cambian las fechas, se cambian en «Fechas» y
+     en los puntos 3 y 6 de las bases. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Instrument+Serif:ital@1&family=Michroma&family=Martian+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{--azul:#2f6bff;--agua:#00c2a8;--deg:linear-gradient(120deg,#2f6bff,#00c2a8);--ink:#0e1a33;--gris:#4a5878;--borde:#dbe4f7;--suave:#eef3ff}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#f4f7ff,#fff 520px) #fff;color:var(--ink);font:17px/1.6 "Archivo",ui-sans-serif,system-ui,sans-serif}
+a{color:var(--azul)}
+.wrap{max-width:760px;margin:0 auto;padding:0 20px}
+.deg{background:var(--deg);-webkit-background-clip:text;background-clip:text;color:transparent}
+.eti{font:500 12px "Martian Mono",monospace;letter-spacing:.14em;color:var(--azul);text-transform:uppercase}
+header{padding:18px 0;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.menu{display:flex;flex-wrap:wrap;gap:4px 16px;font:600 15px "Archivo",sans-serif}
+.menu a{color:var(--gris);text-decoration:none}
+.menu a:hover{color:var(--ink)}
+.menu a.diag{color:var(--azul)}
+.logo{display:inline-flex;align-items:baseline;gap:8px;text-decoration:none;color:var(--ink)}
+.logo b{font:900 22px "Archivo",sans-serif;letter-spacing:-.02em}
+.logo span{font:400 14px Michroma,sans-serif;letter-spacing:.2em}
+h1{font:900 clamp(34px,7vw,54px)/1.04 "Archivo",sans-serif;letter-spacing:-.03em;margin:14px 0 6px}
+h1 em{display:block;font:italic 400 clamp(38px,8vw,62px)/1.04 "Instrument Serif",serif;letter-spacing:0}
+.bajada{color:var(--gris);font-size:19px;margin:14px 0 30px}
+h2{font:900 26px/1.15 "Archivo",sans-serif;letter-spacing:-.02em;margin:40px 0 12px}
+.premio{background:var(--deg);color:#fff;border-radius:28px;padding:26px 24px}
+.premio .eti{color:rgba(255,255,255,.85)}
+.premio h3{font:900 26px/1.15 "Archivo",sans-serif;margin:8px 0 12px}
+.premio ul{margin:0;padding-left:20px}
+.premio li{margin:4px 0}
+.premio .valor{margin-top:14px;font-size:15px;opacity:.92}
+.pasos{display:grid;gap:12px;counter-reset:paso;margin:0;padding:0;list-style:none}
+.pasos li{background:#fff;border:1px solid var(--borde);border-radius:20px;padding:16px 18px 16px 64px;position:relative}
+.pasos li::before{counter-increment:paso;content:counter(paso);position:absolute;left:18px;top:14px;width:32px;height:32px;border-radius:50%;background:var(--deg);color:#fff;display:grid;place-items:center;font:800 16px "Archivo",sans-serif}
+.pasos b{display:block}
+.pasos span{color:var(--gris);font-size:16px}
+.palabra{display:inline-block;background:var(--deg);color:#fff;border-radius:999px;padding:1px 10px;font:700 14px "Martian Mono",monospace;letter-spacing:.06em}
+.fechas{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media (max-width:600px){.fechas{grid-template-columns:1fr}}
+.fecha{background:var(--suave);border-radius:18px;padding:14px 16px}
+.fecha small{display:block;color:var(--gris);font-size:13px}
+.fecha b{font-size:18px}
+.costo{background:#fff;border:2px solid var(--agua);border-radius:22px;padding:18px 20px}
+.costo h3{margin:0 0 6px;font:800 19px "Archivo",sans-serif}
+.costo p{margin:6px 0;color:var(--gris);font-size:16px}
+.costo b{color:var(--ink)}
+.bases{padding-left:22px;color:var(--gris);font-size:16px}
+.bases li{margin:8px 0}
+.bases b{color:var(--ink)}
+.cta{margin:44px 0 0;background:var(--ink);color:#fff;border-radius:28px;padding:30px 26px;text-align:center}
+.cta h2{margin:0 0 8px;color:#fff}
+.cta p{margin:0 0 20px;opacity:.88}
+.btn{display:inline-flex;align-items:center;gap:10px;background:var(--deg);color:#fff;border-radius:999px;padding:14px 26px;font:700 17px "Archivo",sans-serif;text-decoration:none}
+footer{color:var(--gris);font-size:14px;text-align:center;padding:36px 0 44px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><a class="logo" href="../"><b class="deg">MyM</b><span>SOLUCIONES</span></a><nav class="menu" aria-label="Secciones de MyM Soluciones"><a href="../">Inicio</a><a href="../#servicios">Servicios</a><a href="../#paquetes">Paquetes</a><a href="../guias/">Guías</a><a class="diag" href="../#contacto">Diagnóstico gratis</a></nav></header>
+
+  <div class="eti">Sorteo · @mymsoluciones369</div>
+  <h1>Ganate un bot de WhatsApp <em class="deg">para tu negocio.</em></h1>
+  <p class="bajada">Un asistente con IA que contesta a tus clientes las 24 horas: precios, turnos, pedidos y preguntas frecuentes. Lo instalamos nosotros, sin que tengas que saber nada de tecnología.</p>
+
+  <div class="premio">
+    <div class="eti">El premio</div>
+    <h3>Bot de WhatsApp con IA, listo para usar</h3>
+    <ul>
+      <li><b>Instalación gratis</b>, armada con los productos, precios y respuestas de tu negocio.</li>
+      <li><b>3 meses de abono sin cargo</b>: mantenimiento, cambios y soporte.</li>
+      <li>Después de los 3 meses, seguís sólo si querés, con el abono normal y <b>sin permanencia</b>.</li>
+    </ul>
+    <p class="valor">Valor del premio: $ 219.600 (instalación de $ 99.900 + 3 meses de abono de $ 39.900, precios de la web).</p>
+  </div>
+
+  <h2>Cómo participar</h2>
+  <ol class="pasos">
+    <li><b>Seguí a @mymsoluciones369</b><span>en Instagram.</span></li>
+    <li><b>Comentá <span class="palabra">SORTEO</span> en el post del sorteo</b><span>y contanos en el mismo comentario qué te gustaría que el bot resuelva en tu negocio.</span></li>
+    <li><b>Etiquetá a 2 dueños de negocio</b><span>en ese comentario. Tienen que ser cuentas de personas reales.</span></li>
+  </ol>
+  <p style="color:var(--gris);font-size:16px">Al comentar <span class="palabra">SORTEO</span> te llega un mensaje privado confirmando tu participación.</p>
+
+  <h2>Fechas</h2>
+  <div class="fechas">
+    <div class="fecha"><small>Empieza</small><b>Lunes 16/11/2026</b></div>
+    <div class="fecha"><small>Cierra</small><b>Domingo 22/11, 23:59</b></div>
+    <div class="fecha"><small>Sorteo</small><b>Lunes 23/11, 18 h</b></div>
+  </div>
+
+  <h2>Lo que tenés que saber antes de participar</h2>
+  <div class="costo">
+    <h3>El ganador sólo paga el consumo de la IA</h3>
+    <p>La instalación y los 3 meses de abono son gratis. Lo único que queda a cargo del ganador es el <b>consumo de la inteligencia artificial</b> que contesta los mensajes, que se cobra <b>al costo y sin recargo</b>.</p>
+    <p>Para que tengas una idea: en nuestro propio bot, <b>1.000 respuestas consumen menos de US$ 1</b> de IA. Para la mayoría de los comercios son unos pocos miles de pesos por mes.</p>
+    <p>Contestar a los clientes que te escriben no tiene costo de WhatsApp. Sólo si el negocio decide mandar mensajes por su cuenta (promociones o recordatorios con plantillas de WhatsApp), esos los cobra Meta aparte, según su tarifa.</p>
+  </div>
+
+  <h2>Bases y condiciones</h2>
+  <ol class="bases">
+    <li><b>Organiza</b> MyM Soluciones (mymsoluciones.online), agencia de software y automatización del grupo MyM, Argentina.</li>
+    <li><b>Sin obligación de compra.</b> Participar es gratis y no hace falta contratar ni pagar nada.</li>
+    <li><b>Vigencia:</b> desde el lunes 16/11/2026 hasta el domingo 22/11/2026 a las 23:59 (hora de Argentina). Los comentarios hechos después no participan.</li>
+    <li><b>Quién puede participar:</b> personas mayores de 18 años que vivan en Argentina y tengan un negocio, emprendimiento o profesión que atienda clientes por WhatsApp. No participan los integrantes del grupo MyM ni sus familiares directos.</li>
+    <li><b>Participación válida:</b> seguir a @mymsoluciones369 y comentar SORTEO en el post del sorteo etiquetando a 2 cuentas de personas reales. Cada cuenta participa una sola vez, aunque comente varias veces. Se descartan las cuentas falsas, los perfiles creados para sorteos y los comentarios que no cumplan lo anterior.</li>
+    <li><b>Cómo se elige al ganador:</b> el lunes 23/11/2026 a las 18 h, al azar entre los comentarios válidos, con una herramienta de sorteo de comentarios. El sorteo se graba y se publica en las historias de @mymsoluciones369. También se sortean 2 suplentes.</li>
+    <li><b>Aviso al ganador:</b> le escribimos por mensaje privado desde @mymsoluciones369 y lo anunciamos en una historia. Tiene 72 horas para responder; si no responde o no cumple las bases, el premio pasa al primer suplente, y después al segundo. <b>Nunca te vamos a pedir claves, códigos ni pagos para entregarte el premio.</b></li>
+    <li><b>El premio:</b> la instalación de un bot de WhatsApp con IA para el negocio del ganador y 3 meses de abono sin cargo, según el Bot de WhatsApp que se describe en mymsoluciones.online. Para instalarlo hace falta un número con WhatsApp Business y una reunión de 30 minutos para cargar la información del negocio. La instalación se coordina dentro de los 30 días del sorteo.</li>
+    <li><b>Costos a cargo del ganador:</b> el consumo de la IA que contesta los mensajes, al costo y sin recargo (ver arriba), y los mensajes con plantillas de WhatsApp que el negocio decida mandar, que cobra Meta. Terminados los 3 meses, el ganador elige si sigue con el abono normal, sin permanencia.</li>
+    <li>El premio es personal, no se puede cambiar por dinero ni por otro servicio, y no se puede ceder.</li>
+    <li><b>Datos:</b> los datos de los participantes se usan sólo para este sorteo y, si el participante lo pide, para el diagnóstico gratis. Ver la <a href="../privacidad.html">política de privacidad</a>.</li>
+    <li><b>Instagram y Meta no patrocinan, avalan ni administran este sorteo</b>, y no tienen relación con él. Cada participante libera a Instagram y a Meta de toda responsabilidad.</li>
+    <li>Participar implica aceptar estas bases. Ante cualquier duda, escribinos al WhatsApp 11 3366-2080.</li>
+  </ol>
+
+  <div class="cta">
+    <h2>¿No querés esperar al sorteo?</h2>
+    <p>Pedí tu diagnóstico gratis de 30 minutos: miramos tu negocio y te decimos qué se puede automatizar y cuánto cuesta.</p>
+    <a class="btn" href="https://wa.me/5491133662080?text=Hola!%20Vengo%20del%20sorteo%20y%20quiero%20el%20diagn%C3%B3stico%20gratis." target="_blank" rel="noopener">Pedí tu diagnóstico gratis →</a>
+  </div>
+
+  <footer>MyM Soluciones · <a href="https://www.instagram.com/mymsoluciones369/">@mymsoluciones369</a> · WhatsApp 11 3366-2080 · Parte del grupo MyM</footer>
+</div>
+</body>
+</html>
