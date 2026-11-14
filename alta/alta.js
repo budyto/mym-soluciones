@@ -88,17 +88,20 @@
     if (!/^https:\/\/(www\.|web\.)?facebook\.com$/.test(ev.origin)) return;
     let d; try { d = typeof ev.data === 'string' ? JSON.parse(ev.data) : ev.data; } catch (e) { return; }
     if (!d || d.type !== 'WA_EMBEDDED_SIGNUP') return;
-    if (d.event === 'FINISH' || d.event === 'FINISH_ONLY_WABA') { datosWa = { waba_id: d.data && d.data.waba_id, phone_number_id: d.data && d.data.phone_number_id }; terminarConexion(); }
+    if (d.event === 'FINISH' || d.event === 'FINISH_ONLY_WABA' || d.event === 'FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING') { datosWa = { waba_id: d.data && d.data.waba_id, phone_number_id: d.data && d.data.phone_number_id }; terminarConexion(); }
     else if (d.event === 'CANCEL') $('#error2').textContent = 'Se cerró la ventana de Meta antes de terminar' + (d.data && d.data.current_step ? ` (en el paso «${d.data.current_step}»)` : '') + '. Tocá «Conectar WhatsApp» para seguir.';
     else if (d.event === 'ERROR') $('#error2').textContent = 'Meta avisó un error: ' + ((d.data && d.data.error_message) || 'sin detalle') + '. Probá de nuevo o escribinos.';
   });
 
+  // Coexistencia: si el negocio ya usa la app WhatsApp Business, conecta ese mismo número y la sigue usando.
+  const tipoNumero = () => (document.querySelector('input[name=tipoNumero]:checked') || {}).value || 'app';
+  document.querySelectorAll('input[name=tipoNumero]').forEach((r) => r.addEventListener('change', () => { $('#req-app').hidden = tipoNumero() !== 'app'; $('#req-nuevo').hidden = tipoNumero() === 'app'; }));
   $('#conectar').addEventListener('click', () => {
     $('#error2').textContent = ''; codigo = null; datosWa = null;
     window.FB.login((resp) => {
       if (resp && resp.authResponse && resp.authResponse.code) { codigo = resp.authResponse.code; terminarConexion(); }
       else if (!datosWa) $('#error2').textContent = 'No se completó la conexión con Meta. Tocá «Conectar WhatsApp» para probar de nuevo.';
-    }, { config_id: META.configId, response_type: 'code', override_default_response_type: true, extras: { setup: {}, featureType: '', sessionInfoVersion: '3' } });
+    }, { config_id: META.configId, response_type: 'code', override_default_response_type: true, extras: { setup: {}, featureType: tipoNumero() === 'app' ? 'whatsapp_business_app_onboarding' : '', sessionInfoVersion: '3' } });
   });
 
   async function terminarConexion() {
@@ -107,7 +110,7 @@
     if (!sesion) { verPaso(1); return; }
     enviando = true; const b = $('#conectar'); b.disabled = true; b.lastChild.textContent = 'Conectando tu número…';
     try {
-      const r = await api('/api/meta/registro', conLlave({ code: codigo, waba_id: datosWa.waba_id, phone_number_id: datosWa.phone_number_id }));
+      const r = await api('/api/meta/registro', conLlave({ code: codigo, waba_id: datosWa.waba_id, phone_number_id: datosWa.phone_number_id, coexistencia: tipoNumero() === 'app' }));
       $('#titulo3').textContent = `Tu WhatsApp ${r.numero || ''} quedó conectado`.replace('  ', ' ');
       cargarFicha(await api('/api/ficha/obtener', conLlave())); verPaso(3);
     } catch (err) { $('#error2').textContent = err.message; }

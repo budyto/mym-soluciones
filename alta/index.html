@@ -29,6 +29,16 @@
 .mal{background:#fde9ed;color:#a3203a}
 .lista-conecta{margin:0 0 20px;padding-left:20px;color:var(--gris);font-size:16px}
 .lista-conecta li{margin:4px 0}
+.planes{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.opcion{position:relative;display:block;margin:0;cursor:pointer;border:1.5px solid var(--borde);border-radius:16px;padding:14px 16px 14px 44px;background:#f6f8fe;font-weight:400}
+.opcion input{position:absolute;left:16px;top:17px;width:18px;height:18px;accent-color:var(--azul)}
+.opcion b{display:block;margin-bottom:4px}
+.opcion span{color:var(--gris);font-size:14px}
+.opcion:has(input:checked){border-color:var(--azul);background:#fff;box-shadow:0 0 0 4px rgba(47,107,255,.12)}
+.leyenda{font-weight:700;margin:0 0 8px}
+.requisitos{background:#f6f8fe;border-radius:14px;padding:12px 16px;margin-bottom:16px}
+.requisitos summary{font-weight:700;cursor:pointer}
+.requisitos .lista-conecta{margin:10px 0 0}
 .fila-ia{display:flex;gap:8px}
 .fila-ia input{flex:1}
 .fila-ia .btn{flex:none}
@@ -43,7 +53,7 @@
 .control{font-size:13px;color:var(--gris);margin-top:4px}
 .chat{background:#efeae2;border-radius:16px;padding:12px;min-height:120px;max-height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
 .chat .b-cli,.chat .b-bot{margin-top:0}
-@media (max-width:600px){.fila-ia{flex-direction:column}.pasos-alta{gap:5px}}
+@media (max-width:600px){.fila-ia{flex-direction:column}.pasos-alta{gap:5px}.planes{grid-template-columns:1fr}}
 </style>
 </head>
 <body data-tramite="alta">
@@ -80,13 +90,22 @@
     <!-- Paso 2: conectar WhatsApp con Meta -->
     <section class="tarjeta paso-alta" id="paso2">
       <h2 style="font:900 24px/1.15 Archivo,sans-serif;margin:0 0 10px">Conectá el WhatsApp de tu negocio</h2>
-      <p class="paso">Se abre una ventana de Meta. Ahí:</p>
-      <ol class="lista-conecta">
-        <li>entrás con tu Facebook;</li>
-        <li>elegís (o creás) el portfolio de tu negocio;</li>
-        <li>ponés el número del negocio y lo confirmás con el código que te llega por SMS o llamada.</li>
-      </ol>
-      <p class="aviso">Ese número no puede estar usándose al mismo tiempo en la app de WhatsApp del celular. Si hoy lo usás ahí, avisanos antes y te ayudamos a pasarlo.</p>
+      <p class="leyenda" id="ley-num">¿Qué número vas a conectar?</p>
+      <div class="planes" role="radiogroup" aria-labelledby="ley-num" style="margin-bottom:16px">
+        <label class="opcion"><input type="radio" name="tipoNumero" value="app" checked><b>El que ya uso en WhatsApp Business</b><span>Lo seguís usando en tu celular como siempre y el bot contesta a la par. Cuando vos respondés desde el celular, el bot deja de contestar en esa charla.</span></label>
+        <label class="opcion"><input type="radio" name="tipoNumero" value="nuevo"><b>Un número nuevo o sin WhatsApp</b><span>Un chip o una línea que hoy no esté en ninguna app de WhatsApp. Solo lo usa el bot (y vos desde el panel).</span></label>
+      </div>
+      <details class="requisitos" open><summary>Antes de empezar, tené a mano</summary>
+        <ul class="lista-conecta">
+          <li><b>Tu Facebook</b> personal (con el que manejás la página de tu negocio, si tenés).</li>
+          <li><b>El celular con ese número</b>, para recibir el código por SMS o llamada.</li>
+          <li id="req-app">Si usás WhatsApp Business: la app <b>actualizada</b> (versión 2.24.17 o más nueva). Meta te va a mostrar un código QR para escanear desde la app.</li>
+          <li id="req-nuevo" hidden>Que el número <b>no esté en ninguna app de WhatsApp</b> (ni la común ni Business). Si lo está, primero borrá la cuenta de WhatsApp de ese número desde la app.</li>
+          <li>El <b>nombre que va a ver la gente</b> (el de tu negocio, tal como figura en tu Instagram o tu local).</li>
+          <li>Una <b>tarjeta para Meta</b>: Meta pide un medio de pago en tu cuenta de WhatsApp. Contestar a tus clientes tiene 1.000 respuestas gratis por mes; lo que pase de eso, y los mensajes de promoción que mandes vos, los cobra Meta directo a tu tarjeta.</li>
+        </ul>
+      </details>
+      <p class="paso">Se abre una ventana de Meta. Ahí: <b>1)</b> entrás con tu Facebook; <b>2)</b> elegís o creás el portfolio de tu negocio; <b>3)</b> ponés el número y el nombre, y lo confirmás con el código (o con el QR, si usás WhatsApp Business); <b>4)</b> aceptás los permisos para MyM Soluciones.</p>
       <p class="error" id="error2" role="alert"></p>
       <button class="btn btn-meta" id="conectar" type="button" disabled><svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.4l-.5 3.5h-2.9v8.4A12 12 0 0 0 24 12z"/></svg>Conectar WhatsApp</button>
     </section>
@@ -132,8 +151,8 @@
         </div>
         <label>¿Qué IA querés que conteste? <small>La IA la pagás vos, al costo y sin recargo. Lo podés cambiar cuando quieras.</small>
           <select name="modelo">
-            <option value="recomendado">Recomendada: mejor redacción y cuentas (unos $ 2 a $ 3,50 por mensaje)</option>
-            <option value="economico">Económica: más simple (unos $ 0,50 a $ 1 por mensaje)</option>
+            <option value="recomendado">Recomendada: la mejor redacción (cerca de $ 1 por mensaje; $ 850 a $ 1.650 cada 1.000)</option>
+            <option value="economico">Económica: más simple (cerca de $ 0,35 por mensaje; $ 320 a $ 580 cada 1.000)</option>
           </select></label>
         <p class="error" id="error3" role="alert"></p>
         <button class="btn" type="submit" id="armar">Armar mi bot y probarlo</button>
@@ -170,6 +189,6 @@
   <footer>MyM Soluciones · WhatsApp 11 3366-2080 · <a href="mailto:info@mymsoluciones.online">info@mymsoluciones.online</a><br><a href="../privacidad.html">Política de privacidad</a> · <a href="../arrepentimiento/">Botón de arrepentimiento</a> · <a href="../baja/">Botón de baja</a></footer>
 </div>
 <script src="../config.js?v=202611142100"></script>
-<script src="alta.js?v=202611150000"></script>
+<script src="alta.js?v=202611150100"></script>
 </body>
 </html>
