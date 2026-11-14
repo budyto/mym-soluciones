@@ -29,6 +29,21 @@
 .mal{background:#fde9ed;color:#a3203a}
 .lista-conecta{margin:0 0 20px;padding-left:20px;color:var(--gris);font-size:16px}
 .lista-conecta li{margin:4px 0}
+.fila-ia{display:flex;gap:8px}
+.fila-ia input{flex:1}
+.fila-ia .btn{flex:none}
+.chica-g{font-size:14.5px;color:var(--gris);cursor:pointer}
+.guardado{font:500 12.5px "Martian Mono",monospace;color:var(--ok);margin:0 0 10px;min-height:18px}
+.sugerido{border-color:var(--agua)!important;background:#effcf9!important}
+.prueba{display:grid;grid-template-columns:30px 1fr;gap:12px;padding:14px 0;border-top:1px solid var(--borde)}
+.tilde{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:900}
+.tilde.si{background:#e2f6ee;color:var(--ok)}.tilde.no{background:#fde9ed;color:#c2364e}
+.b-cli{background:#d9fdd3;border-radius:14px 14px 4px 14px;padding:7px 12px;font-size:15px;margin-left:auto;width:fit-content;max-width:85%}
+.b-bot{background:var(--suave);border-radius:14px 14px 14px 4px;padding:7px 12px;font-size:15px;width:fit-content;max-width:92%;margin-top:6px}
+.control{font-size:13px;color:var(--gris);margin-top:4px}
+.chat{background:#efeae2;border-radius:16px;padding:12px;min-height:120px;max-height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.chat .b-cli,.chat .b-bot{margin-top:0}
+@media (max-width:600px){.fila-ia{flex-direction:column}.pasos-alta{gap:5px}}
 </style>
 </head>
 <body data-tramite="alta">
@@ -39,7 +54,7 @@
     <p class="rotulo">Tu bot de WhatsApp, paso a paso</p>
     <h1>Sumá tu negocio<em>y conectá tu WhatsApp.</em></h1>
     <p class="bajada">Te lleva unos minutos. Tu número sigue siendo tuyo: solo lo conectás a la plataforma de MyM Soluciones con la ventana oficial de Meta.</p>
-    <ol class="pasos-alta" aria-label="Pasos del alta"><li class="si"></li><li></li><li></li></ol>
+    <ol class="pasos-alta" aria-label="Pasos del alta"><li class="si"></li><li></li><li></li><li></li><li></li></ol>
     <div id="estado"></div>
 
     <!-- Paso 1: datos -->
@@ -76,16 +91,80 @@
       <button class="btn btn-meta" id="conectar" type="button" disabled><svg viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.4l-.5 3.5h-2.9v8.4A12 12 0 0 0 24 12z"/></svg>Conectar WhatsApp</button>
     </section>
 
-    <!-- Paso 3: listo -->
-    <section class="tarjeta paso-alta" id="paso3" aria-live="polite">
-      <div class="sello"><span class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><h2>Tu WhatsApp quedó conectado</h2></div>
-      <p class="paso">El siguiente paso es contarnos cómo trabaja tu negocio para que el bot se arme solo. Te mandamos el link por mail, así lo completás a tu ritmo y lo podés guardar a medias.</p>
+    <!-- Paso 3: la ficha del negocio (se guarda sola a medida que escribís) -->
+    <section class="paso-alta" id="paso3">
+      <div class="tarjeta" style="margin-bottom:16px">
+        <div class="sello"><span class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><h2 id="titulo3">Tu WhatsApp quedó conectado</h2></div>
+        <p class="paso">Ahora contanos cómo trabaja tu negocio: con eso se arma tu bot solo. <b>Lo que no esté acá, el bot no lo dice</b>, así nunca inventa.</p>
+        <p class="paso" id="link-seguir"></p>
+      </div>
+      <div class="tarjeta ia-caja" style="margin-bottom:16px">
+        <h3 style="margin:0 0 6px;font:800 19px Archivo,sans-serif">Que la IA te arme un borrador</h3>
+        <p class="paso" style="margin-bottom:12px">Pegá el link de tu web o de tu Instagram y completamos lo que encontremos. Después vos corregís.</p>
+        <div class="fila-ia"><input id="ia-url" placeholder="Ej.: instagram.com/tunegocio o tunegocio.com.ar" aria-label="Link de tu web o tu Instagram"><button class="btn sec" id="ia-btn" type="button">Armar borrador</button></div>
+        <details style="margin-top:10px"><summary class="chica-g">Instagram no deja leer el perfil: prefiero pegar el texto</summary><textarea id="ia-texto" rows="4" placeholder="Pegá acá tu bio, tus destacados o lo que tengas escrito sobre tu negocio" style="margin-top:8px"></textarea></details>
+        <p class="error" id="error-ia" role="alert"></p>
+      </div>
+      <form class="tarjeta" id="ficha" novalidate>
+        <p class="guardado" id="guardado" aria-live="polite"></p>
+        <div class="dos">
+          <label>Rubro *<input name="rubro" placeholder="Ej.: verdulería, peluquería, taller"></label>
+          <label>Horarios *<input name="horarios" placeholder="Ej.: lunes a sábado de 8 a 20"></label>
+        </div>
+        <label>Qué vendés y a quién *<textarea name="queVende" rows="2" placeholder="Ej.: frutas y verduras frescas para familias y comercios del barrio"></textarea></label>
+        <label>Tus precios * <small>Uno por renglón, con el precio final. Son los únicos que va a dar el bot.</small><textarea name="precios" rows="4" placeholder="Cajón de tomate: $ 12.000&#10;Kilo de papa: $ 900"></textarea></label>
+        <div class="dos">
+          <label>Dirección <small>Si atendés en un local.</small><input name="direccion"></label>
+          <label>Medios de pago<input name="mediosPago" placeholder="Ej.: efectivo, transferencia y Mercado Pago"></label>
+        </div>
+        <label>Zona y envíos<textarea name="zonaEnvios" rows="2" placeholder="Ej.: envíos en Haedo y Ramos Mejía, $ 1.000; retiro en el local sin cargo"></textarea></label>
+        <label>Preguntas que te hacen siempre <small>Una por renglón: la pregunta con «?» y después la respuesta.</small><textarea name="preguntas" rows="4" placeholder="¿Hacen envíos? Sí, en Haedo y Ramos Mejía.&#10;¿Venden por mayor? Sí, desde 5 cajones."></textarea></label>
+        <div class="dos">
+          <label>¿A quién le pasa la charla? * <small>Nombre o área.</small><input name="derivarA" placeholder="Ej.: Ana, de ventas"></label>
+          <label>¿Cómo querés que hable?<input name="tono" placeholder="Ej.: cercano, con buena onda, sin emojis"></label>
+        </div>
+        <label>¿Cuándo tiene que pasarle la charla a una persona?<textarea name="derivarCuando" rows="2" placeholder="Ej.: pedidos de más de 10 cajones, reclamos, o si preguntan por algo que no está acá"></textarea></label>
+        <label>Lo que el bot no tiene que decir nunca<textarea name="nuncaDecir" rows="2" placeholder="Ej.: no prometer entregas para el mismo día"></textarea></label>
+        <label>Catálogo o fotos <small>Link a tu catálogo, a un álbum o a tu Instagram.</small><input name="catalogo" inputmode="url"></label>
+        <div class="dos">
+          <label>Instagram<input name="instagram" placeholder="@tunegocio"></label>
+          <label>Web<input name="web" inputmode="url" placeholder="tunegocio.com.ar"></label>
+        </div>
+        <p class="error" id="error3" role="alert"></p>
+        <button class="btn" type="submit" id="armar">Armar mi bot y probarlo</button>
+        <p class="nota">Los campos con * son obligatorios. Todo se guarda solo mientras escribís: podés cerrar y seguir después.</p>
+      </form>
+    </section>
+
+    <!-- Paso 4: pruebas, ensayo y aprobación -->
+    <section class="paso-alta" id="paso4">
+      <div class="tarjeta" style="margin-bottom:16px">
+        <h2 style="font:900 24px/1.15 Archivo,sans-serif;margin:0 0 6px">Tu bot ya está armado</h2>
+        <p class="paso" id="resumen-pruebas"></p>
+        <div id="lista-pruebas"></div>
+      </div>
+      <div class="tarjeta" style="margin-bottom:16px">
+        <h3 style="margin:0 0 6px;font:800 19px Archivo,sans-serif">Probalo vos</h3>
+        <p class="paso">Escribile como si fueras un cliente. Todavía no les contesta a tus clientes de verdad.</p>
+        <div class="chat" id="chat" aria-live="polite"></div>
+        <form class="fila-ia" id="form-ensayo"><input id="txt-ensayo" placeholder="Escribí un mensaje" autocomplete="off" aria-label="Mensaje de prueba"><button class="btn sec" type="submit">Enviar</button></form>
+      </div>
+      <div class="tarjeta" id="caja-aprobar">
+        <p class="error" id="error4" role="alert"></p>
+        <div class="btns"><button class="btn" id="aprobar" type="button">Me gusta: aprobar mi bot</button><button class="btn sec" id="corregir" type="button">Corregir los datos</button></div>
+        <p class="nota">Cuando lo aprobás, lo revisamos y lo prendemos. Te avisamos por mail.</p>
+      </div>
+    </section>
+
+    <section class="tarjeta paso-alta" id="paso5" aria-live="polite">
+      <div class="sello"><span class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><h2>¡Listo! Lo estamos revisando</h2></div>
+      <p class="paso">Aprobaste tu bot. Lo revisamos y, cuando lo prendamos, empieza a contestar en tu WhatsApp. Te avisamos por mail.</p>
     </section>
   </main>
 
   <footer>MyM Soluciones · WhatsApp 11 3366-2080 · <a href="mailto:info@mymsoluciones.online">info@mymsoluciones.online</a><br><a href="../privacidad.html">Política de privacidad</a> · <a href="../arrepentimiento/">Botón de arrepentimiento</a> · <a href="../baja/">Botón de baja</a></footer>
 </div>
 <script src="../config.js?v=202611142100"></script>
-<script src="alta.js?v=202611141930"></script>
+<script src="alta.js?v=202611142200"></script>
 </body>
 </html>
