@@ -46,7 +46,8 @@
     try {
       const v = await api('/api/ficha/obtener', conLlave());
       if (!v.whatsapp || !v.whatsapp.conectado) return verPaso(2);
-      if (['revision', 'activo'].includes(v.estado)) return verPaso(5);
+      if (['revision', 'activo'].includes(v.estado)) return mostrarListo();
+      if (v.estado === 'pago') return mostrarPago();
       if (['pruebas', 'aprobar'].includes(v.estado) && v.pruebas) { mostrarPruebas(v); return verPaso(4); }
       cargarFicha(v); verPaso(3);
     } catch (e) {
@@ -190,10 +191,32 @@
   });
   $('#aprobar').addEventListener('click', async () => {
     const b = $('#aprobar'); b.disabled = true; $('#error4').textContent = '';
-    try { await api('/api/aprobar', conLlave()); verPaso(5); } catch (e) { $('#error4').textContent = e.message; }
+    try { const r = await api('/api/aprobar', conLlave()); if (r.estado === 'pago') mostrarPago(r); else mostrarListo(); } catch (e) { $('#error4').textContent = e.message; }
     b.disabled = false;
   });
   $('#corregir').addEventListener('click', async () => { try { cargarFicha(await api('/api/ficha/obtener', conLlave())); } catch (e) { /* sigue igual */ } verPaso(3); });
+
+  // ---------- Paso 5: pago con Ualá (si el cobro está prendido) y confirmación ----------
+  function mostrarListo() { $('#caja-pago').hidden = true; $('#caja-listo').hidden = false; verPaso(5); }
+  let consultas = 0;
+  async function mostrarPago(datos) {
+    $('#caja-listo').hidden = true; $('#caja-pago').hidden = false; verPaso(5);
+    let p = datos;
+    if (!p || !p.link) { try { const e = await api('/api/pago/estado', conLlave()); if (e.estado !== 'pago') return mostrarListo(); p = e.cobro && e.cobro.pendiente; } catch (err) { return; } }
+    if (!p) return;
+    $('#detalle-pago').textContent = p.detalle || '';
+    $('#monto-pago').textContent = '$ ' + Number(p.monto).toLocaleString('es-AR');
+    // Solo se abre un link de Ualá.
+    if (/^https:\/\/([\w-]+\.)*ua\.la\//.test(p.link)) $('#link-pago').href = p.link; else $('#link-pago').hidden = true;
+    if (new URLSearchParams(location.search).get('pago') === 'ok') esperarPago();
+  }
+  async function esperarPago() {
+    $('#esperando-pago').hidden = false;
+    if (consultas++ > 40) return;
+    try { const e = await api('/api/pago/estado', conLlave()); if (e.estado !== 'pago') return mostrarListo(); } catch (err) { /* reintenta */ }
+    setTimeout(esperarPago, 3000);
+  }
+  if (new URLSearchParams(location.search).get('pago') === 'error') $('#estado').innerHTML = '<p class="aviso">El pago no se completó. Podés intentarlo de nuevo con el botón de abajo.</p>';
 
   retomar();
 })();
