@@ -660,3 +660,11 @@ body::after { content: ""; position: fixed; inset: -20vmax; z-index: -2; pointer
 
 /* Redes en automático (15/11/2026): que el menú fijo no tape el título al tocar «Redes» */
 #redes { scroll-margin-top: 110px; }
+/* Redes en automático: el método en tres pasos (15/11/2026) */
+.redes-lead { margin: 14px 0 0; color: var(--ink-2); max-width: 70ch; }
+.redes-metodo { list-style: none; counter-reset: rm; padding: 0; margin: 20px 0 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.redes-metodo li { counter-increment: rm; background: #fff; border: 1px solid rgba(14, 26, 51, .08); border-radius: 18px; padding: 18px 20px 18px 64px; position: relative; box-shadow: 0 10px 30px -20px rgba(14, 26, 51, .35); }
+.redes-metodo li::before { content: counter(rm); position: absolute; left: 18px; top: 18px; width: 32px; height: 32px; border-radius: 10px; background: var(--deg); color: #fff; font-weight: 900; display: grid; place-items: center; }
+.redes-metodo b { display: block; font-size: 18px; font-weight: 900; }
+.redes-metodo span { display: block; margin-top: 4px; font-size: 14.5px; color: var(--ink-2); }
+@media (max-width: 760px) { .redes-metodo { grid-template-columns: 1fr; } }
