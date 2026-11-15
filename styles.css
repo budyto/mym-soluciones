@@ -657,3 +657,6 @@ body::after { content: ""; position: fixed; inset: -20vmax; z-index: -2; pointer
 .nav .legal-top a:hover { color: var(--ink); }
 .nav.scrolled .legal-top { margin-bottom: 4px; }
 @media (max-width: 600px) { .nav .legal-top { justify-content: center; font-size: 12px; } }
+
+/* Redes en automático (15/11/2026): que el menú fijo no tape el título al tocar «Redes» */
+#redes { scroll-margin-top: 110px; }
