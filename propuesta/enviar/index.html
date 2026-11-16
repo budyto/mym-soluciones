@@ -70,6 +70,7 @@ body{background:linear-gradient(180deg,#f4f7ff,#e6eeff);color:#0e1a33;min-height
 <script>
 (function () {
   var BASE = 'https://mymsoluciones.online/propuesta/';
+  var VER = '?v=202611165';   // versión de los MP4: se sube cada vez que se rehacen los videos (igual que en ../index.html)
   var VIDEOS = [['bot-de-whatsapp', 'Bot de WhatsApp'], ['seguimiento-de-clientes', 'Seguimiento de clientes'], ['paquete-completo', 'Paquete completo'], ['orquestador', 'Orquestador'], ['empresa-en-automatico', 'Empresa en automático'], ['redes-esencial', 'Redes en automático · Esencial'], ['redes-profesional', 'Redes en automático · Profesional'], ['redes-premium', 'Redes en automático · Premium']];
   var PROMO_HASTA = new Date('2026-12-01T03:00:00Z'); // 30/11/2026 23:59, hora de Argentina
   var $ = function (id) { return document.getElementById(id); };
@@ -130,7 +131,7 @@ body{background:linear-gradient(180deg,#f4f7ff,#e6eeff);color:#0e1a33;min-height
     }
     var s = ev.target.closest('[data-compartir]');
     if (s) {
-      var i = +s.dataset.compartir, v = VIDEOS[i], url = '../videos/' + v[0] + '.mp4';
+      var i = +s.dataset.compartir, v = VIDEOS[i], url = '../videos/' + v[0] + '.mp4' + VER;
       s.disabled = true; s.textContent = 'Preparando…';
       fetch(url).then(function (r) { if (!r.ok) throw new Error('no cargó'); return r.blob(); }).then(function (b) {
         var f = new File([b], 'MyM Soluciones - ' + v[1] + '.mp4', { type: 'video/mp4' });
@@ -142,7 +143,7 @@ body{background:linear-gradient(180deg,#f4f7ff,#e6eeff);color:#0e1a33;min-height
   });
 
   $('videos').innerHTML = VIDEOS.map(function (v, i) {
-    return '<div class="vid"><b>' + v[1] + '</b><span class="fila" style="margin:0"><button class="bt" type="button" data-compartir="' + i + '">Compartir</button><a class="bt cl" href="../videos/' + v[0] + '.mp4" download="MyM Soluciones - ' + v[1] + '.mp4">Descargar</a></span></div>';
+    return '<div class="vid"><b>' + v[1] + '</b><span class="fila" style="margin:0"><button class="bt" type="button" data-compartir="' + i + '">Compartir</button><a class="bt cl" href="../videos/' + v[0] + '.mp4' + VER + '" download="MyM Soluciones - ' + v[1] + '.mp4">Descargar</a></span></div>';
   }).join('');
   armar();
 })();
