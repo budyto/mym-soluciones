@@ -152,6 +152,20 @@
     #waWrap:not(.abierta) #waChat { display: none; }
     .solo-cel { display: inline-flex !important; }
   }
+  /* Mandar la propuesta en PDF (16/11/2026) */
+  #dlgProp { border: 0; border-radius: 16px; padding: 0; width: min(440px, calc(100vw - 32px)); box-shadow: 0 24px 60px rgba(0,0,0,.25); }
+  #dlgProp::backdrop { background: rgba(14,26,51,.45); }
+  #dlgProp form { display: grid; gap: 10px; padding: 20px; font-family: Archivo, system-ui, sans-serif; }
+  #dlgProp h2 { margin: 0 0 2px; font-size: 19px; }
+  #dlgProp label { display: grid; gap: 4px; font-size: 13px; font-weight: 600; }
+  #dlgProp input { font: inherit; font-weight: 400; padding: 9px 10px; border: 1px solid #cfd6e4; border-radius: 9px; }
+  #dlgProp .ayuda { margin: 0; font-size: 12.5px; color: #4a5878; line-height: 1.45; }
+  #dlgProp .acc { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; margin-top: 4px; }
+  #propEstado { font-size: 12.5px; padding: 8px 10px; border-radius: 9px; background: #eef3ff; }
+  #propEstado.mal { background: #fff3e0; }
+  .escribir .adj { cursor: pointer; padding: 10px 12px; }
+  .escribir .adj input { display: none; }
+  .wa-prop { margin: 0; font-size: 12px; padding: 6px 12px; background: #eef3ff; }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Martian+Mono:wght@500&display=swap" rel="stylesheet">
@@ -168,6 +182,7 @@
     <div class="wa-sems" id="waSems"></div>
     <span class="grow"></span>
     <div class="wa-controles">
+      <button class="btn" id="propuestaBtn" type="button" title="Mandarle la propuesta en PDF a un cliente, aunque no haya escrito">📄<span class="wa-lbl"> Mandar propuesta</span></button>
       <button class="btn gris" id="avisos" type="button" hidden title="Que el navegador avise cuando entra un mensaje">🔔<span class="wa-lbl"> Activar avisos</span></button>
       <button class="btn" id="pausar" type="button" title="Pausar o prender TODAS las respuestas automáticas del robot">⏸️<span class="wa-lbl"> Pausar bot</span></button>
       <button class="btn gris" id="warecargar" type="button" title="Actualizar">↻</button>
@@ -186,6 +201,26 @@
     <div id="waChat"><div class="vacio">Elegí una conversación de la lista.</div></div>
   </div>
 </div>
+<!-- Mandar la propuesta en PDF (16/11/2026, Matías). Si el cliente escribió en las últimas 24 h, el PDF sale
+     directo. Si no, sale la plantilla «propuesta_soluciones» con «Sí, mandala» y «Ahora no», y el PDF sale
+     solo cuando toca «Sí, mandala». -->
+<dialog id="dlgProp">
+  <form id="propForm" method="dialog">
+    <h2>📄 Mandar propuesta</h2>
+    <p class="ayuda">Sale del 11 3366-2080. Si te escribió en las últimas 24 horas, le llega el PDF directo. Si no, le llega un mensaje para que acepte recibirla, y el PDF sale solo cuando toca «Sí, mandala».</p>
+    <div id="propEstado">Revisando la plantilla en Meta…</div>
+    <label>Celular<input name="telefono" inputmode="tel" placeholder="11 5555-1234" required autocomplete="off"></label>
+    <label>Nombre del cliente<input name="nombre" placeholder="Juan" maxlength="60" required autocomplete="off"></label>
+    <label>Negocio<input name="negocio" placeholder="Plomería Mansilla" maxlength="80" required autocomplete="off"></label>
+    <label>PDF de la propuesta (hasta 12 MB)<input name="archivo" type="file" accept="application/pdf,.pdf" required></label>
+    <p class="ayuda" id="propVista"></p>
+    <p id="propMsg" class="ayuda"></p>
+    <div class="acc">
+      <button class="btn gris" type="button" id="propCerrar">Cancelar</button>
+      <button class="btn" type="submit" id="propMandar">Mandar</button>
+    </div>
+  </form>
+</dialog>
 <script src="../config.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" integrity="sha384-AQ3POAMqIhwS81FrUH95ekxqBZHeP5tG2JfEL3+7GuTtfRLWnrRh32UxwzM+//A9" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js" integrity="sha384-TnlRYaR4JYz/lpaGuaiU61PjNberSA4vjLjtF+oRC/IkohkJqnWxw5EmDSOt1vA1" crossorigin="anonymous"></script>
@@ -335,10 +370,11 @@
       + '<div class="wa-burbujas scroll" id="msgs">' + (c.mensajes || []).map((m) => '<div class="wa-b wa-' + esc(m.de) + '">' + esc(m.texto) + '<span class="wa-t">' + (DE[m.de] ? DE[m.de] + ' · ' : '') + fecha(m.ts)
       + (m.error ? ' · <span class="err">no salió: ' + esc(m.error) + '</span>' : '') + '</span></div>').join('') + '</div>'
       + (c.ultimo_error ? '<p class="err" style="margin:0;font-size:12px">Último error de envío: ' + esc(c.ultimo_error) + '</p>' : '')
+      + (c.propuesta && !c.propuesta.enviada && !c.propuesta.cancelada ? '<p class="wa-prop">📄 La propuesta (' + esc(c.propuesta.archivo) + ') espera que toque «Sí, mandala»' + (c.propuesta.error ? ' · <span class="err">último intento: ' + esc(c.propuesta.error) + '</span>' : '') + '</p>' : '')
       + (c.ventana_abierta
         ? (respuestas.length ? '<div class="rapidas">' + respuestas.map((r, i) => '<button type="button" data-rapida="' + i + '" title="' + esc(r.texto) + '">' + esc(r.titulo) + '</button>').join('') + '</div>' : '')
-          + '<form class="escribir" id="escribir"><textarea id="texto" rows="1" placeholder="Escribile desde el 11 3366-2080…" required></textarea><button class="btn" type="submit" style="padding:10px 16px">Enviar</button></form>'
-        : '<div class="cerrada"><b>🔒 Ventana de 24 h cerrada.</b> Pasaron más de 24 horas desde su último mensaje: WhatsApp no permite escribirle hasta que el contacto vuelva a escribir.</div>')
+          + '<form class="escribir" id="escribir"><label class="btn gris adj" title="Mandar un PDF (lo que escribas al lado va como texto del archivo)">📎<input type="file" id="adjunto" accept="application/pdf,.pdf"></label><textarea id="texto" rows="1" placeholder="Escribile desde el 11 3366-2080…" required></textarea><button class="btn" type="submit" style="padding:10px 16px">Enviar</button></form>'
+        : '<div class="cerrada"><b>🔒 Ventana de 24 h cerrada.</b> Pasaron más de 24 horas desde su último mensaje: WhatsApp no permite escribirle hasta que el contacto vuelva a escribir. <button class="btn" type="button" id="propDeCharla" style="margin-top:8px">📄 Mandarle la propuesta</button></div>')
       + '<aside id="waFicha" class="scroll"' + (fichaAbierta ? '' : ' hidden') + '></aside>';
     if (borrador && $('#texto')) $('#texto').value = borrador;
     const msgs = $('#msgs'); msgs.scrollTop = msgs.scrollHeight;
@@ -423,6 +459,7 @@
   $('#waChat').addEventListener('click', async (e) => {
     const b = e.target.closest('button'); if (!b || !abierta) return;
     if (b.id === 'volver') { abierta = null; pintarCharlas(); pintarChat(); return; }
+    if (b.id === 'propDeCharla') { abrirPropuesta(abierta); return; }
     if (b.id === 'verficha' || b.id === 'cerrarficha') { fichaAbierta = b.id === 'verficha' ? !fichaAbierta : false; $('#waFicha').hidden = !fichaAbierta; $('#verficha').setAttribute('aria-expanded', fichaAbierta); return; }
     if (b.dataset.rapida != null) {
       const t = $('#texto'), r = respuestas[+b.dataset.rapida]; if (!t || !r) return;
@@ -455,6 +492,76 @@
       else msg('No se pudo mandar: ' + err.message);
     }
   });
+  // ---------- PDF y propuesta (16/11/2026) ----------
+  const MAX_PDF = 12 * 1024 * 1024;
+  function leerPdf(file) {
+    return new Promise((ok, mal) => {
+      if (!file) return mal(new Error('Elegí el PDF.'));
+      if (!/pdf$/i.test(file.type || file.name)) return mal(new Error('El archivo tiene que ser un PDF.'));
+      if (file.size > MAX_PDF) return mal(new Error('El PDF pesa más de 12 MB: achicalo antes de mandarlo.'));
+      const fr = new FileReader();
+      fr.onload = () => ok({ nombre: file.name, base64: String(fr.result).split(',')[1] || '' });
+      fr.onerror = () => mal(new Error('No se pudo leer el archivo.'));
+      fr.readAsDataURL(file);
+    });
+  }
+  // 📎 en una charla con la ventana abierta: lo escrito al lado va como texto del archivo.
+  $('#waChat').addEventListener('change', async (e) => {
+    if (e.target.id !== 'adjunto' || !abierta) return;
+    const file = e.target.files[0]; e.target.value = '';
+    if (!file) return;
+    const texto = ($('#texto') || {}).value ? $('#texto').value.trim() : '';
+    if (!confirm('¿Mandarle «' + file.name + '» a ' + nombre(abierta) + '?' + (texto ? '\n\nCon el texto: ' + texto : ''))) return;
+    try {
+      msg(''); $('#wamsg').textContent = 'Mandando el PDF…';
+      await post(ruta(abierta.telefono, '/documento'), { archivo: await leerPdf(file), texto });
+      if ($('#texto')) $('#texto').value = '';
+      $('#wamsg').textContent = ''; await abrir(abierta.telefono); cargar();
+    } catch (err) {
+      if (err.status === 409) { abierta.ventana_abierta = false; pintarChat(); }
+      msg('No se pudo mandar el PDF: ' + err.message);
+    }
+  });
+
+  const dlg = $('#dlgProp'), pf = $('#propForm');
+  async function estadoPlantilla(alta) {
+    const box = $('#propEstado');
+    box.className = ''; box.textContent = alta ? 'Pidiendo la aprobación a Meta…' : 'Revisando la plantilla en Meta…';
+    try {
+      const p = (alta ? await post('/api/ventas-sol/plantilla', {}) : await pedir('/api/ventas-sol/plantilla')).plantilla || {};
+      const est = p.estado || '';
+      if (est === 'APPROVED') { box.textContent = '✅ Plantilla aprobada por Meta: se le puede escribir aunque no haya escrito.'; return; }
+      box.className = 'mal';
+      if (est === 'NO_EXISTE' || (!est && !p.error)) box.innerHTML = 'La plantilla todavía no está dada de alta en Meta. Sin ella sólo se le puede mandar a quien escribió en las últimas 24 h. <button class="btn" type="button" id="propAlta" style="margin-top:6px">Pedir aprobación a Meta</button>';
+      else if (est === 'PENDING' || est === 'IN_APPEAL') box.textContent = '⏳ Meta está revisando la plantilla (suele tardar de minutos a unas horas). Mientras tanto sólo sale a quien escribió en las últimas 24 h.';
+      else if (est === 'REJECTED') box.textContent = '❌ Meta rechazó la plantilla. Hay que revisar el texto: avisale a Claude.';
+      else box.textContent = 'No se pudo saber el estado de la plantilla' + (p.error ? ': ' + p.error : '') + '.';
+    } catch (err) { box.className = 'mal'; box.textContent = 'No se pudo revisar la plantilla: ' + err.message; }
+  }
+  function abrirPropuesta(c) {
+    pf.reset(); $('#propMsg').textContent = ''; $('#propVista').textContent = ''; $('#propMandar').disabled = false;
+    if (c) { pf.telefono.value = '+' + c.telefono; pf.nombre.value = String((c.datos || {}).nombre || c.nombre_perfil || '').split(' ')[0]; pf.negocio.value = (c.datos || {}).negocio || ''; }
+    dlg.showModal(); estadoPlantilla(false);
+  }
+  $('#propuestaBtn').addEventListener('click', () => abrirPropuesta(null));
+  $('#propCerrar').addEventListener('click', () => dlg.close());
+  $('#propEstado').addEventListener('click', (e) => { if (e.target.id === 'propAlta') { e.target.disabled = true; estadoPlantilla(true); } });
+  pf.addEventListener('input', () => {
+    const n = pf.nombre.value.trim() || '{nombre}', g = pf.negocio.value.trim() || '{negocio}';
+    $('#propVista').textContent = 'Si no te escribió en las últimas 24 h le llega: «Hola ' + n + ', te escribimos de MyM Soluciones. Ya tenemos lista la propuesta para ' + g + '. ¿Te la mandamos por acá?» [Sí, mandala] [Ahora no]';
+  });
+  pf.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const b = $('#propMandar'); b.disabled = true; $('#propMsg').textContent = 'Mandando…';
+    try {
+      const archivo = await leerPdf(pf.archivo.files[0]);
+      const j = await post('/api/ventas-sol/propuesta', { telefono: pf.telefono.value, nombre: pf.nombre.value, negocio: pf.negocio.value, archivo });
+      dlg.close();
+      $('#wamsg').textContent = j.modo === 'directo' ? '✅ Listo: le llegó el PDF.' : '✅ Listo: le llegó el mensaje. El PDF sale solo cuando toque «Sí, mandala».';
+      await cargar(); if (j.telefono) abrir(j.telefono);
+    } catch (err) { b.disabled = false; $('#propMsg').innerHTML = '<span class="err">' + esc(err.message) + '</span>'; }
+  });
+
   async function guardarFicha(f) {
     if (!abierta) return;
     const d = abierta.datos || {}, datos = {}, cuerpo = {};
