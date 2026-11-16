@@ -1,4 +1,4 @@
-// Trámites sin registrarse: botón de arrepentimiento (Res. SCI 424/2020) y botón de baja (14/11/2026).
+// Trámites sin registrarse: botón de arrepentimiento (Disposición 954/2025) y botón de baja (14/11/2026).
 // La web es estática (Hostinger) y todavía no tiene base propia, así que el código del trámite se genera acá,
 // se muestra en el momento y viaja en el mensaje que la persona manda por WhatsApp o por mail.
 // El trámite cuenta desde que llega ese mensaje. Cuando exista el servidor de la plataforma, el formulario
@@ -7,7 +7,7 @@
   const cfg = window.SITE || {};
   const tipo = document.body.dataset.tramite; // "arrepentimiento" | "baja"
   const PREFIJO = { arrepentimiento: 'ARR', baja: 'BAJ' }[tipo];
-  const TITULO = { arrepentimiento: 'Botón de arrepentimiento', baja: 'Botón de baja' }[tipo];
+  const TITULO = { arrepentimiento: 'Botón de arrepentimiento', baja: 'Botón de baja de servicio' }[tipo];
   const MAIL = 'info@mymsoluciones.online';
   const $ = (s) => document.querySelector(s);
 
