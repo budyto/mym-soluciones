@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Diagnóstico de redes · MyM Soluciones</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../img/favicon-2.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@600;800&family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Fraunces:opsz,wght@9..144,700&family=Inter:wght@400;600;800&family=Playfair+Display:ital,wght@0,800;1,600&display=swap">
+<style>
+/* Devolución de redes (MyM Soluciones, 16/11/2026).
+   Se dibuja desde un JSON en páginas con proporción de celular (108 × 192 mm), para leer en el teléfono o bajar como PDF.
+   Modos: ?id=… (link público, lee devoluciones/{id}), ?ejemplo (devolución de ejemplo) y vista previa del CRM (postMessage).
+   Todo el texto se escapa: los datos nunca se insertan como HTML. Solo **negrita** y saltos de línea. */
+@page { size: 108mm 192mm; margin: 0; }
+:root{ --fondo:#fff; --tinta:#16151a; --acento:#2f6bff; --acento2:#00c2a8; --suave:#eef3ff; --oscuro:#0d1b3d; --sobreosc:#9fe9de;
+  --gris:#5f6370; --linea:#e1e6f0; --portada:#2f6bff; --portada2:#2f6bff; --portadaAcento:#bff3ea; --final:#00c2a8;
+  --fdisp:'Bricolage Grotesque',system-ui,sans-serif; --mayus:none; --pesodisp:800; }
+.t-energia{ --fondo:#fff; --tinta:#16151a; --acento:#ff5a1f; --acento2:#ffc531; --suave:#f4f1ea; --oscuro:#0b0b0d; --sobreosc:#ffc531;
+  --gris:#5f5d66; --linea:#e4e0d6; --portada:#0b0b0d; --portada2:#0b0b0d; --portadaAcento:#ff5a1f; --final:#ff5a1f; --fdisp:Anton,Impact,sans-serif; --mayus:uppercase; --pesodisp:400; }
+.t-bienestar{ --fondo:#fffdf9; --tinta:#2b2522; --acento:#c06a48; --acento2:#6f8466; --suave:#f6f1ea; --oscuro:#2b2522; --sobreosc:#f3d9c4;
+  --gris:#6d655f; --linea:#e2d8ca; --portada:#6f8466; --portada2:#6f8466; --portadaAcento:#f3d9c4; --final:#c06a48; --fdisp:Fraunces,Georgia,serif; --mayus:none; --pesodisp:700; }
+.t-elegante{ --fondo:#fffcfa; --tinta:#141214; --acento:#b8915a; --acento2:#141214; --suave:#f6ece8; --oscuro:#141214; --sobreosc:#e9d6b4;
+  --gris:#6c6468; --linea:#eadfd8; --portada:#141214; --portada2:#141214; --portadaAcento:#e9d6b4; --final:#b8915a; --fdisp:'Playfair Display',Georgia,serif; --mayus:none; --pesodisp:800; }
+.t-tecnico{ --fondo:#fbfdff; --tinta:#0b1530; --acento:#ff6a2b; --acento2:#1352c9; --suave:#e8f3fb; --oscuro:#0a2f7a; --sobreosc:#5ec3f0;
+  --gris:#5f6b80; --linea:#d9e6f2; --portada:#1352c9; --portada2:#0b1530; --portadaAcento:#5ec3f0; --final:#ff6a2b; --fdisp:'Barlow Condensed',Impact,sans-serif; --mayus:uppercase; --pesodisp:800; }
+*{ box-sizing:border-box; margin:0; padding:0; }
+html,body{ background:#d9dce3; }
+body{ font-family:Inter,Arial,sans-serif; color:var(--tinta); font-size:10.4pt; line-height:1.45; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+#hojas{ display:flex; flex-direction:column; align-items:center; gap:14px; padding:16px 0 96px; }
+.marco{ flex:none; }
+.pag{ width:108mm; height:192mm; padding:9mm 7.5mm 10mm; position:relative; overflow:hidden; background:var(--fondo); box-shadow:0 6px 24px rgba(0,0,0,.18); }
+.num{ position:absolute; bottom:4.5mm; left:7.5mm; right:7.5mm; display:flex; justify-content:space-between; font-size:7pt; color:#a3a1a8; }
+.disp{ font-family:var(--fdisp); text-transform:var(--mayus); font-weight:var(--pesodisp); }
+h2{ font-family:var(--fdisp); text-transform:var(--mayus); font-weight:var(--pesodisp); font-size:22pt; line-height:1.02; margin:1.5mm 0 4mm; color:var(--tinta); }
+h3{ font-size:11pt; font-weight:800; margin-bottom:1.2mm; }
+.tag{ font-size:7.5pt; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--acento); }
+p{ margin-bottom:2.6mm; } b{ font-weight:800; }
+.bloque{ margin-bottom:2.8mm; }
+.card{ background:var(--suave); border-radius:3.2mm; padding:3.6mm 4mm; margin-bottom:2.8mm; }
+.card p:last-child{ margin-bottom:0; }
+.card.osc{ background:var(--oscuro); color:#fff; } .card.osc h3{ color:var(--sobreosc); }
+.card.acc{ background:var(--acento2); color:#fff; }
+.card.borde{ background:#fff; border:.4mm solid var(--linea); }
+.n{ display:inline-grid; place-items:center; width:6.2mm; height:6.2mm; border-radius:50%; background:var(--acento); color:#fff; font-weight:800; font-size:9pt; margin-right:2mm; vertical-align:middle; }
+ul.chk{ list-style:none; padding-left:4.5mm; margin-bottom:2.6mm; } ul.chk li{ position:relative; margin-bottom:1.3mm; }
+ul.chk li:before{ content:"✓"; position:absolute; left:-4.2mm; color:var(--acento); font-weight:800; }
+ul.pts{ padding-left:4.5mm; } ul.pts li{ margin-bottom:1.2mm; }
+.bio{ background:#fff; border:.4mm solid var(--linea); border-left:1.4mm solid var(--acento2); border-radius:2mm; padding:3mm 3.6mm; font-size:9.8pt; line-height:1.55; }
+.fila{ display:flex; justify-content:space-between; gap:3mm; padding:2mm 0; border-bottom:.3mm solid var(--linea); }
+.fila:last-child{ border-bottom:0; } .fila span:first-child{ color:var(--gris); } .fila span:last-child{ font-weight:800; text-align:right; }
+.osc .fila{ border-color:#ffffff22; } .osc .fila span:first-child{ color:#cfc9d6; }
+.escalon{ display:flex; gap:3mm; align-items:stretch; margin-bottom:2.2mm; }
+.escalon .lado{ flex:none; width:19mm; border-radius:2.4mm; background:var(--oscuro); color:var(--sobreosc); font-size:6.8pt; font-weight:800; letter-spacing:.08em; text-transform:uppercase; display:grid; place-items:center; text-align:center; padding:1.5mm; }
+.escalon .cont{ flex:1; background:var(--suave); border-radius:2.4mm; padding:2.4mm 3mm; font-size:9.6pt; }
+.escalon .cont b.t{ display:block; } .escalon .precio{ color:var(--acento); font-weight:800; }
+.chico{ font-size:8.4pt; color:var(--gris); }
+.barras .b{ display:flex; align-items:center; gap:2mm; margin-bottom:1.7mm; font-size:8.5pt; }
+.barras .b span:first-child{ width:33mm; flex:none; color:var(--gris); line-height:1.25; }
+.barras .b i{ display:block; height:4mm; border-radius:1mm; background:var(--acento); min-width:.8mm; }
+.barras .b em{ font-style:normal; font-weight:800; white-space:nowrap; }
+.portada{ background:linear-gradient(160deg,var(--portada) 0%,var(--portada2) 100%); color:#fff; display:flex; flex-direction:column; justify-content:space-between; }
+.portada .big{ font-family:var(--fdisp); text-transform:var(--mayus); font-weight:var(--pesodisp); font-size:34pt; line-height:1; margin-top:7mm; overflow-wrap:anywhere; }
+.portada .big em{ font-style:normal; color:var(--portadaAcento); }
+.portada .sub{ color:#ffffffcc; font-size:10.5pt; margin-top:4mm; }
+.portada .indice{ font-size:9.2pt; color:#ffffffcc; line-height:1.9; }
+.portada .indice b{ color:var(--portadaAcento); margin-right:2mm; }
+.portada .tag{ color:var(--portadaAcento); }
+.portada .firma{ font-size:8pt; color:#ffffff99; margin-top:3mm; }
+.final{ background:var(--final); color:#fff; display:flex; flex-direction:column; justify-content:center; }
+.final .big{ font-family:var(--fdisp); text-transform:var(--mayus); font-weight:var(--pesodisp); font-size:28pt; line-height:1.02; margin:4mm 0 6mm; }
+.final .tag{ color:#fff; opacity:.85; }
+.final .wa{ display:inline-block; margin-top:5mm; background:#fff; color:var(--tinta); border-radius:99px; padding:2.6mm 5mm; font-weight:800; text-decoration:none; font-size:10pt; }
+/* Barra de acciones (solo pantalla) */
+.barra{ position:fixed; left:0; right:0; bottom:0; z-index:5; display:flex; gap:8px; justify-content:center; padding:10px max(12px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px)); background:rgba(255,255,255,.94); backdrop-filter:blur(8px); border-top:1px solid #0001; font-family:Inter,sans-serif; }
+.barra a,.barra button{ font:700 14px Inter,sans-serif; border-radius:99px; padding:11px 18px; border:1px solid #0002; background:#fff; color:#111; text-decoration:none; cursor:pointer; }
+.barra .prim{ background:#25d366; border-color:#25d366; color:#fff; }
+#estado{ font:15px Inter,sans-serif; color:#333; text-align:center; padding:60px 20px; max-width:520px; margin:0 auto; }
+.vista .barra,.embebido .barra{ display:none; } .vista #hojas,.embebido #hojas{ padding-bottom:16px; }
+@media print{ html,body{ background:none; } #hojas{ display:block; padding:0; gap:0; } .marco{ zoom:1 !important; }
+  .pag{ box-shadow:none; page-break-after:always; } .marco:last-child .pag{ page-break-after:auto; } .barra,#estado{ display:none; } }
+</style>
+</head>
+<body>
+<div id="estado" role="status">Cargando tu diagnóstico…</div>
+<div id="hojas" aria-live="polite"></div>
+<div class="barra" id="barra" hidden>
+  <button type="button" id="bajar">Descargar PDF</button>
+  <a class="prim" id="hablar" href="https://wa.me/5491133662080" target="_blank" rel="noopener">Hablemos por WhatsApp</a>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>window.FIREBASE_GRUPO={apiKey:"AIzaSyDTLcVzYxFdz5AOzq40zaMDHhvaKC0SW-I",authDomain:"grupo-mym-73b8d.firebaseapp.com",projectId:"grupo-mym-73b8d",appId:"1:966952304229:web:99501761762dfd290cd08c"}; /* Base del Grupo MyM (proyecto grupo-mym-73b8d): config pública, no es secreta. Ahí viven los pedidos, devoluciones y demos. */</script>
+<script>
+(function(){
+'use strict';
+var Q = new URLSearchParams(location.search);
+var hojas = document.getElementById('hojas'), estado = document.getElementById('estado');
+var TEMAS = ['soluciones','energia','bienestar','elegante','tecnico'];
+var WA_SOLUCIONES = '5491133662080';
+// Clases de modo: «vista» (vista previa del CRM) y «embebido» (ejemplo dentro de otra página): sin barra de botones.
+var FLAGS = [];
+if (Q.has('vista')) FLAGS.push('vista');
+else if (window.self !== window.top) FLAGS.push('embebido');
+
+/* ---------- texto seguro ---------- */
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function md(s){ return esc(s).replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>'); }
+function arr(x){ return Array.isArray(x) ? x : []; }
+function txt(x){ return x == null ? '' : String(x); }
+function el(html){ var d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstChild; }
+
+/* ---------- armado de bloques por sección ---------- */
+function secciones(D){
+  var S = [], n = 0;
+  function num(){ n++; return (n < 10 ? '0' : '') + n; }
+  var h = D.hoy || {};
+  if (arr(h.datos).length || arr(h.fortalezas).length){
+    var b = [], k = num();
+    b.push('<div><span class="tag">' + k + ' · Hoy</span><h2>' + esc(h.titulo || 'Lo que ya tenés') + '</h2></div>');
+    if (arr(h.datos).length) b.push('<div class="card borde">' + arr(h.datos).map(function(f){ return '<div class="fila"><span>' + esc(f[0]) + '</span><span>' + esc(f[1]) + '</span></div>'; }).join('') + '</div>');
+    if (arr(h.fortalezas).length){ b.push('<h3>Tus fortalezas</h3>'); arr(h.fortalezas).forEach(function(f){ b.push('<ul class="chk"><li><b>' + esc(f[0]) + ':</b> ' + md(f[1]) + '</li></ul>'); }); }
+    S.push({ nombre:'Lo que ya tenés', k:k, bloques:b });
+  }
+  var p = D.posteos || {};
+  if (arr(p.items).length){
+    var mx = Math.max.apply(null, arr(p.items).map(function(i){ return Number(i[1]) || 0; }).concat([1]));
+    var b2 = ['<div><span class="tag">' + (S.length ? S[S.length-1].k : num()) + ' · Hoy</span><h2>Qué funcionó y qué no</h2><p class="chico">' + esc(p.bajada || 'Me gusta y comentarios de tus últimos posteos:') + '</p></div>'];
+    b2.push('<div class="card borde barras">' + arr(p.items).map(function(i){ var v = Number(i[1]) || 0; return '<div class="b"><span>' + esc(i[0]) + '</span><i style="width:' + Math.max(.8, 30 * v / mx).toFixed(1) + 'mm"></i><em>' + esc(v.toLocaleString('es-AR')) + (i[2] !== undefined && i[2] !== '' ? ' · ' + esc(i[2]) + ' 💬' : '') + '</em></div>'; }).join('') + '</div>');
+    if (p.leccion) b2.push('<div class="card osc"><h3>La lección</h3><p>' + md(p.leccion) + '</p></div>');
+    S.push({ nombre:null, bloques:b2 });
+  }
+  if (arr(D.mejoras).length){
+    var k3 = num(), b3 = ['<div><span class="tag">' + k3 + ' · Qué mejorar</span><h2>' + arr(D.mejoras).length + ' cosas para mejorar</h2></div>'];
+    arr(D.mejoras).forEach(function(m, i){
+      var c = '<div class="card"><h3><span class="n">' + (i+1) + '</span>' + esc(m[0]) + '</h3><p>' + md(m[1]) + '</p>';
+      if (i === 1 && D.bio) c += '<div class="bio">' + md(D.bio) + '</div>';
+      b3.push(c + '</div>');
+    });
+    S.push({ nombre: arr(D.mejoras).length + ' cosas para mejorar', k:k3, bloques:b3 });
+  }
+  var e = D.escalera || {};
+  if (arr(e.pasos).length){
+    var k4 = num(), b4 = ['<div><span class="tag">' + k4 + ' · Plata</span><h2>' + esc(e.titulo || 'La escalera de valor') + '</h2>' + (e.bajada ? '<p class="chico">' + md(e.bajada) + '</p>' : '') + '</div>'];
+    arr(e.pasos).forEach(function(s){ b4.push('<div class="escalon"><div class="lado">' + esc(s[0]) + '</div><div class="cont"><b class="t">' + esc(s[1]) + '</b>' + (s[2] ? '<span class="precio">' + esc(s[2]) + '</span> · ' : '') + md(s[3]) + '</div></div>'); });
+    S.push({ nombre: e.nombre || 'Cómo monetizar', k:k4, bloques:b4 });
+  }
+  var nu = D.numeros || {};
+  if (arr(nu.filas).length){
+    var b5 = ['<div><span class="tag">' + (S.length ? S[S.length-1].k : num()) + ' · Plata</span><h2>Hagamos números</h2>' + (nu.bajada ? '<p class="chico">' + md(nu.bajada) + '</p>' : '') + '</div>'];
+    b5.push('<div class="card borde">' + arr(nu.filas).map(function(f){ return '<div class="fila"><span>' + esc(f[0]) + '</span><span>' + esc(f[1]) + '</span></div>'; }).join('') + '</div>');
+    b5.push('<p class="chico">' + md(nu.nota || 'Son estimaciones para dimensionar, no promesas.') + '</p>');
+    if (arr(nu.destacado).length) b5.push('<div class="card acc"><h3>' + esc(nu.destacado[0]) + '</h3><p>' + md(nu.destacado[1]) + '</p></div>');
+    S.push({ nombre:null, bloques:b5 });
+  }
+  var pr = D.producto || {};
+  if (pr.titulo){
+    var k6 = num(), b6 = ['<div><span class="tag">' + k6 + ' · Tu producto estrella</span><h2>' + esc(pr.titulo) + '</h2>' + (pr.bajada ? '<p>' + md(pr.bajada) + '</p>' : '') + '</div>'];
+    arr(pr.bloques).forEach(function(c){ b6.push('<div class="card"><h3>' + esc(c[0]) + '</h3><p>' + md(c[1]) + '</p></div>'); });
+    if (arr(pr.claves).length) b6.push('<div><h3>Que nadie abandone</h3><ul class="chk">' + arr(pr.claves).map(function(c){ return '<li>' + md(c) + '</li>'; }).join('') + '</ul></div>');
+    S.push({ nombre: 'Tu producto estrella', k:k6, bloques:b6 });
+  }
+  var me = D.mercado || {};
+  if (arr(me.filas).length || me.diferencial){
+    var k7 = num(), b7 = ['<div><span class="tag">' + k7 + ' · El mercado</span><h2>' + esc(me.titulo || '¿Alguien ya lo hace?') + '</h2>' + (me.bajada ? '<p>' + md(me.bajada) + '</p>' : '') + '</div>'];
+    if (arr(me.filas).length) b7.push('<div class="card borde">' + arr(me.filas).map(function(f){ return '<div class="fila"><span>' + esc(f[0]) + '</span><span>' + esc(f[1]) + '</span></div>'; }).join('') + '</div>');
+    if (me.diferencial) b7.push('<div class="card osc"><h3>Tu diferencial</h3><p>' + md(me.diferencial) + '</p></div>');
+    if (arr(me.fuentes).length) b7.push('<p class="chico">Fuentes: ' + arr(me.fuentes).map(esc).join(' · ') + '</p>');
+    S.push({ nombre: 'Quién ya lo hace', k:k7, bloques:b7 });
+  }
+  if (arr(D.plan).length || arr(D.preguntas).length){
+    var k8 = num(), b8 = ['<div><span class="tag">' + k8 + ' · Manos a la obra</span><h2>Plan de 30 días</h2></div>'];
+    arr(D.plan).forEach(function(s){ b8.push('<div class="escalon"><div class="lado">' + esc(s[0]) + '</div><div class="cont"><b class="t">' + esc(s[1]) + '</b>' + md(s[2]) + '</div></div>'); });
+    if (arr(D.preguntas).length) b8.push('<div class="card borde"><h3>Para afinar el plan, necesitamos de vos:</h3><ul class="pts">' + arr(D.preguntas).map(function(q){ return '<li>' + md(q) + '</li>'; }).join('') + '</ul></div>');
+    S.push({ nombre: 'Plan de 30 días', k:k8, bloques:b8 });
+  }
+  return S;
+}
+
+/* ---------- reparto en páginas: cada bloque entra entero; si no entra, va a la página siguiente ---------- */
+function nuevaPagina(pie, nro){
+  var m = document.createElement('div'); m.className = 'marco';
+  var p = document.createElement('section'); p.className = 'pag';
+  var c = document.createElement('div'); c.className = 'cuerpo';
+  p.appendChild(c);
+  if (pie) p.appendChild(el('<div class="num"><span>' + esc(pie) + '</span><span>' + nro + '</span></div>'));
+  m.appendChild(p); hojas.appendChild(m);
+  return { pag:p, cuerpo:c };
+}
+function dibujar(D){
+  hojas.innerHTML = '';
+  var tema = TEMAS.indexOf(D.tema) >= 0 ? D.tema : 'soluciones';
+  document.body.className = FLAGS.concat(['t-' + tema]).join(' ');
+  var pie = txt(D.pie) || ((txt(D.nombre) || 'Diagnóstico') + ' · Devolución');
+  var S = secciones(D);
+  // Portada
+  var po = D.portada || {};
+  var tit = md(po.titulo || ((D.nombre || 'Hola') + ', este es tu diagnóstico'));
+  var cov = nuevaPagina('', 0); cov.pag.classList.add('portada');
+  cov.pag.innerHTML = '<div><div class="tag">' + esc(D.etiqueta || ('Diagnóstico de redes · ' + (D.fecha || ''))) + '</div>' +
+    '<div class="big">' + tit + (po.destacado ? '<br><em>' + esc(po.destacado) + '</em>' : '') + '</div>' +
+    (po.bajada ? '<p class="sub">' + md(po.bajada) + '</p>' : '') + '</div>' +
+    '<div><div class="indice">' + S.filter(function(s){ return s.nombre; }).map(function(s){ return '<div><b>' + s.k + '</b>' + esc(s.nombre) + '</div>'; }).join('') + '</div>' +
+    '<div class="firma">Preparado por MyM Soluciones · ' + esc(D.marca || '') + '</div></div>';
+  // Contenido
+  var nro = 2, actual = nuevaPagina(pie, nro);
+  S.forEach(function(s, si){
+    if (si > 0 && actual.cuerpo.childNodes.length) { nro++; actual = nuevaPagina(pie, nro); }
+    s.bloques.forEach(function(html){
+      var b = el(html); actual.cuerpo.appendChild(b);
+      if (actual.pag.scrollHeight > actual.pag.clientHeight + 1 && actual.cuerpo.childNodes.length > 1){
+        actual.cuerpo.removeChild(b); nro++; actual = nuevaPagina(pie, nro); actual.cuerpo.appendChild(b);
+      }
+    });
+  });
+  if (!actual.cuerpo.childNodes.length) hojas.removeChild(actual.pag.parentNode);
+  // Cierre
+  var ci = D.cierre || {};
+  var fin = nuevaPagina('', 0); fin.pag.classList.add('final');
+  var wa = txt((D.contacto || {}).whatsapp) || WA_SOLUCIONES;
+  fin.pag.innerHTML = '<div class="tag">Próximo paso</div><div class="big">' + md(ci.titulo || 'Hagamos crecer tu negocio') + '</div>' +
+    (ci.texto ? '<p style="font-size:11pt">' + md(ci.texto) + '</p>' : '') +
+    '<p style="font-size:11pt;margin-top:3mm"><b>' + esc(ci.cta || '¿Lo hablamos esta semana?') + '</b></p>' +
+    '<a class="wa" href="https://wa.me/' + esc(wa.replace(/\D/g, '')) + '">💬 Escribinos al WhatsApp</a>' +
+    '<p style="font-size:8pt;margin-top:6mm;opacity:.8">MyM Soluciones · Parte del Grupo MyM · @mymsoluciones369</p>';
+  document.getElementById('hablar').href = 'https://wa.me/' + wa.replace(/\D/g, '') + '?text=' + encodeURIComponent('Hola, leí el diagnóstico de redes de ' + (D.nombre || 'mi negocio') + ' y quiero hablar del próximo paso.');
+  escalar();
+  estado.hidden = true;
+  if (FLAGS.length === 0) document.getElementById('barra').hidden = false;
+}
+
+/* En pantalla se achica para que entre en el ancho del celular; al imprimir vuelve al tamaño real. */
+function escalar(){
+  var ancho = 108 * 96 / 25.4, z = Math.min(1.25, (window.innerWidth - 24) / ancho);
+  Array.prototype.forEach.call(document.querySelectorAll('.marco'), function(m){ m.style.zoom = z; });
+}
+window.addEventListener('resize', escalar);
+window.addEventListener('beforeprint', function(){ Array.prototype.forEach.call(document.querySelectorAll('.marco'), function(m){ m.style.zoom = 1; }); });
+window.addEventListener('afterprint', escalar);
+document.getElementById('bajar').addEventListener('click', function(){ window.print(); });
+
+function falla(t){ estado.hidden = false; estado.textContent = t; }
+
+/* ---------- de dónde salen los datos ---------- */
+// Vista previa: la abre el CRM de Soluciones (grupomym.online) en otra pestaña, porque esta web no deja que otra
+// la meta en un marco (X-Frame-Options del .htaccess). Solo se acepta contenido que venga del CRM.
+var CRM = ['https://grupomym.online', 'http://localhost:8787'];
+if (Q.has('vista')){
+  // Vista previa dentro del CRM: el CRM manda el JSON por postMessage (mismo origen).
+  window.addEventListener('message', function(ev){
+    if (CRM.indexOf(ev.origin) < 0 || !ev.data || ev.data.tipo !== 'devolucion') return;
+    try { dibujar(ev.data.datos || {}); } catch (e) { falla('No se pudo dibujar la devolución: ' + e.message); }
+  });
+  // Avisa que está lista (solo un aviso, sin datos): el CRM le manda el contenido.
+  var dueno = window.opener || (window.parent !== window ? window.parent : null);
+  if (dueno) dueno.postMessage({ tipo:'vista-lista' }, '*');
+} else if (Q.has('ejemplo')){
+  fetch('ejemplo.json').then(function(r){ return r.json(); }).then(dibujar).catch(function(){ falla('No se pudo cargar el ejemplo.'); });
+} else if (Q.get('id')){
+  var id = Q.get('id');
+  if (!/^[A-Za-z0-9_-]{16,64}$/.test(id)) { falla('El link no es válido. Pedinos uno nuevo por WhatsApp al 11 3366-2080.'); }
+  else {
+    var app = firebase.initializeApp(window.FIREBASE_GRUPO, 'devolucion-publica'), db = app.firestore();
+    var ref = db.collection('devoluciones').doc(id);
+    ref.get().then(function(s){
+      if (!s.exists) return falla('No encontramos este diagnóstico. Escribinos al 11 3366-2080 y te lo mandamos de nuevo.');
+      var x = s.data(), dev = x.devolucion || {};
+      try { if (x.devolucionJson) dev = JSON.parse(x.devolucionJson); } catch (e) {}
+      dibujar(dev);
+      // Contamos la visita una vez por sesión, para saber en el CRM si lo abrió.
+      try {
+        if (!sessionStorage.getItem('visto-' + id)) {
+          sessionStorage.setItem('visto-' + id, '1');
+          ref.update({ vistas: firebase.firestore.FieldValue.increment(1), vistoEn: firebase.firestore.FieldValue.serverTimestamp() }).catch(function(){});
+        }
+      } catch (e) {}
+    }).catch(function(){ falla('No pudimos abrir el diagnóstico. Probá de nuevo en un rato o escribinos al 11 3366-2080.'); });
+  }
+} else {
+  falla('Para ver un diagnóstico necesitás el link que te mandamos. ¿Querés el tuyo? Pedilo gratis en grupomym.online/diagnostico-redes');
+}
+window.__dibujarDevolucion = dibujar;
+})();
+</script>
+</body>
+</html>

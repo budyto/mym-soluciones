@@ -1,0 +1,68 @@
+{
+  "v": 1,
+  "tema": "bienestar",
+  "nombre": "Luna Pilates",
+  "marca": "@lunapilates.ejemplo (negocio ficticio)",
+  "pie": "Luna Pilates · Ejemplo",
+  "fecha": "Noviembre 2026",
+  "etiqueta": "Ejemplo de diagnóstico · Negocio ficticio",
+  "portada": {
+    "titulo": "Luna Pilates,\ntus clases pueden\nllenarse",
+    "destacado": "solas",
+    "bajada": "Esto es un **ejemplo** del diagnóstico gratis de MyM Soluciones: así se ve el análisis de tus redes y el plan para vender más."
+  },
+  "hoy": {
+    "datos": [["Seguidores", "4.200"], ["Publicaciones", "180"], ["Seguidos", "950"], ["Link en la bio", "No tiene"], ["Último posteo", "Hace 3 semanas"]],
+    "fortalezas": [
+      ["Un estudio lindo", "la luz y el espacio se ven bien en cámara."],
+      ["Alumnas fieles", "los comentarios son de gente que ya toma clase."],
+      ["Un reel que explotó", "el de \"pilates para el dolor de espalda\" multiplicó por 6 el promedio."]
+    ]
+  },
+  "posteos": {
+    "items": [["Pilates para el dolor de espalda", 1240, 64], ["Clase de prueba gratis", 210, 31], ["Foto del estudio", 95, 4], ["Frase motivacional", 40, 1]],
+    "leccion": "Lo que funciona es **un problema concreto que la gente tiene** (dolor de espalda). Las frases y las fotos del lugar no traen alumnas nuevas."
+  },
+  "mejoras": [
+    ["Una bio que venda", "Que diga **qué problema resolvés, dónde estás y qué hacer**. Propuesta:"],
+    ["Link para reservar", "Hoy no hay link. Con una agenda online, la clase de prueba se reserva sola."],
+    ["Series de \"dolor de\"", "Espalda, cuello, rodillas: repetí el formato que explotó, una vez por semana."],
+    ["Cada reel pide algo", "Cerrá con **\"Comentá ESPALDA y te mando la rutina\"**, con respuesta automática."],
+    ["Constancia", "Tres reels por semana. Se graban todos juntos en una tarde."],
+    ["Mostrá a las alumnas", "Testimonios cortos, con permiso por escrito."]
+  ],
+  "bio": "Pilates para vivir sin dolor de espalda 🧘‍♀️\n📍 Palermo · Grupos reducidos\n👇 Reservá tu clase de prueba",
+  "escalera": {
+    "titulo": "La escalera de valor",
+    "bajada": "Cada escalón lleva al siguiente.",
+    "pasos": [
+      ["Gratis", "Rutina de 7 días por mail", "", "a cambio del contacto: así se arma la lista"],
+      ["Entrada", "Clase de prueba", "[FALTA precio]", "la puerta de entrada al estudio"],
+      ["Mensual", "Pase de 8 clases", "[FALTA precio]", "el ingreso fijo del estudio"],
+      ["Online", "Programa \"Espalda sana\" de 21 días", "[FALTA precio]", "para quien no puede ir en persona"]
+    ]
+  },
+  "numeros": {
+    "bajada": "Ejemplo para dimensionar: se ajusta con los precios reales.",
+    "filas": [["20 alumnas nuevas por mes × pase mensual", "[FALTA]"], ["Programa online: 30 ventas", "[FALTA]"]],
+    "nota": "Son estimaciones para dimensionar, no promesas. Dependen de publicar seguido.",
+    "destacado": ["La oportunidad", "El reel de espalda demostró que hay demanda. Falta un camino para convertir esas vistas en reservas."]
+  },
+  "mercado": {
+    "titulo": "¿Alguien ya lo hace?",
+    "filas": [["Programas online de 21-30 días", "Habituales"], ["Clases de prueba con reserva online", "Estándar"]],
+    "diferencial": "Grupos reducidos y foco en el dolor de espalda: un problema concreto que la gente busca resolver."
+  },
+  "plan": [
+    ["Semana 1", "Ordenar la casa", "Bio, link de reservas y destacadas."],
+    ["Semana 2", "Contenido", "12 reels grabados en una tarde."],
+    ["Semana 3", "Calentamiento", "Serie \"dolor de\" con \"Comentá ESPALDA\"."],
+    ["Semana 4", "Lanzamiento", "Clase de prueba con cupos y programa online."]
+  ],
+  "preguntas": ["Tus precios actuales.", "Cuántas alumnas activas tenés.", "Los países y ciudades de tu audiencia (están en las estadísticas de Instagram)."],
+  "cierre": {
+    "titulo": "Tus seguidores ya te miran. Ahora hay que darles algo para reservar.",
+    "texto": "Esto es un ejemplo. Pedí el tuyo gratis y te lo armamos con los datos reales de tu cuenta.",
+    "cta": "¿Querés el tuyo?"
+  }
+}
