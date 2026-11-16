@@ -239,7 +239,7 @@ function datosParaIA(p){
   var r = p.redes || {};
   return {
     negocio:p.negocio, nombre:p.nombre, rubro:p.rubro, objetivo:p.objetivo, comentario:p.comentario || '',
-    loQueContoElCliente:{ seguidores:p.seguidores || '', frecuenciaDePublicacion:p.frecuencia || '', queVendeYPrecio:p.vende || '', loQueMasLeCuesta:p.problema || '', mejorPublicacion:p.mejorPost || '' },
+    loQueContoElCliente:{ frecuenciaDePublicacion:p.frecuencia || '', queVendeYPrecio:p.vende || '', loQueMasLeCuesta:p.problema || '', mejorPublicacion:p.mejorPost || '' },
     instagram:p.instagram ? '@' + p.instagram : '', tiktok:p.tiktok ? '@' + p.tiktok : '', web:p.web || '',
     metricas:{ seguidores:r.seguidores || p.seguidores, seguidos:r.seguidos, publicaciones:r.publicaciones, ultimoPosteo:r.ultimoPosteo, bio:r.bio, linkBio:r.linkBio },
     posteos:(r.posteos || []).filter(function(x){ return x.texto; }).slice(0, 15),
@@ -350,7 +350,7 @@ function renderDetalle(){
   '<span class="small muted">Entró ' + esc(fecha(p.creado)) + ' · ' + esc(p.origen || 'a mano') + '</span></div>' +
   '<div class="grid" data-grupo="pedido">' + campo('nombre', 'Nombre', p.nombre) + campo('negocio', 'Negocio', p.negocio) + campo('rubro', 'Rubro', p.rubro) + campo('whatsapp', 'WhatsApp', p.whatsapp) +
   campo('instagram', 'Instagram (usuario)', p.instagram) + campo('tiktok', 'TikTok', p.tiktok) + campo('web', 'Web', p.web) + campo('objetivo', 'Objetivo', p.objetivo) +
-  campo('seguidores', 'Seguidores (dice el cliente)', p.seguidores) + campo('frecuencia', 'Cada cuánto publica', p.frecuencia) + campo('vende', 'Qué vende y a qué precio', p.vende) +
+  campo('frecuencia', 'Cada cuánto publica', p.frecuencia) + campo('vende', 'Qué vende y a qué precio', p.vende) +
   campo('problema', 'Lo que más le cuesta', p.problema) + campo('mejorPost', 'Su mejor publicación (link)', p.mejorPost) +
   campo('comentario', 'Comentario del cliente', p.comentario, { ancho:true, area:true }) + '</div>' +
   '<div class="fila" style="margin-top:12px"><button class="btn sm gold" data-a="guardar-pedido">Guardar</button>' +
@@ -360,7 +360,7 @@ function renderDetalle(){
   '<button class="btn sm bad" data-a="borrar">Borrar pedido</button></div></section>' +
   // 2. Redes (16/11, Matías: «hacelo más simple»): arriba solo lo esencial; lo opcional, plegado.
   '<section class="panel"><h2><span class="paso">2 · Los datos</span>Redes y web</h2>' +
-  '<p class="small muted">Lo principal ya lo contó el cliente en el formulario (arriba). Tocá «Leer automático» para sumar la web (e Instagram, cuando esté conectada la API de Meta) y anotá lo que viste.</p>' +
+  '<p class="small muted">Tocá «Leer automático»: trae la web y, cuando esté conectada la API de Meta, también Instagram. Mientras tanto, mirá el perfil y cargá los seguidores y lo que veas.</p>' +
   '<div class="fila"><button class="btn sm gold" data-a="leer">Leer automático</button><span class="small muted">' + (r.leido ? 'Leído el ' + esc(fecha(r.leido)) : '') + '</span></div>' +
   '<p class="estado" id="estLeer"></p>' +
   '<div class="grid" data-grupo="redes">' + campo('seguidores', 'Seguidores', r.seguidores || p.seguidores || '') + campo('ultimoPosteo', 'Último posteo', r.ultimoPosteo, { ph:'Ej: hace 3 semanas' }) +
@@ -541,7 +541,7 @@ if (PRUEBA){
   fetch('../devolucion/ejemplo.json').then(function(r){ return r.json(); }).then(function(ej){
     window.__ejemplo = ej;
     S.items = [{ id:'p1', negocio:'Luna Pilates', nombre:'Ana', rubro:'Estudio de pilates', whatsapp:'11 2222-3333', instagram:'lunapilates.ejemplo', web:'maxi-marefrigeracion.com',
-      objetivo:'Conseguir más clientes', comentario:'Quiero llenar los horarios de la mañana', quiereDemo:true, seguidores:'4200', frecuencia:'1 o 2 veces por semana', vende:'Clases de pilates, $ 25.000 el mes', problema:'Que me compren', mejorPost:'', estado:'pedido', origen:'mymsoluciones.online/diagnostico-redes', creado:new Date() }];
+      objetivo:'Conseguir más clientes', comentario:'Quiero llenar los horarios de la mañana', quiereDemo:true, frecuencia:'1 o 2 veces por semana', vende:'Clases de pilates, $ 25.000 el mes', problema:'Que me compren', mejorPost:'', estado:'pedido', origen:'mymsoluciones.online/diagnostico-redes', creado:new Date() }];
     render();
   });
 } else {
