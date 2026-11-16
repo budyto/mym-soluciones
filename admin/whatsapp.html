@@ -242,7 +242,7 @@
     <h2>📱 Segundo número</h2>
     <div id="puenteDatos">Cargando…</div>
     <div id="puenteQr"></div>
-    <p class="ayuda">Para vincularlo: en el celular del segundo número abrí WhatsApp → Ajustes → Dispositivos vinculados → Vincular un dispositivo, y escaneá el QR. El programa del puente tiene que estar abierto en la PC (INICIAR-PUENTE-SOL).</p>
+    <p class="ayuda" id="puenteAyuda">Para vincularlo: en el celular del segundo número abrí WhatsApp → Ajustes → Dispositivos vinculados → Vincular un dispositivo, y escaneá el QR. El programa del puente tiene que estar abierto en la PC (INICIAR-PUENTE-SOL).</p>
     <div style="display:flex;justify-content:flex-end"><button class="btn gris" type="button" id="puenteCerrar">Cerrar</button></div>
   </div>
 </dialog>
@@ -575,15 +575,20 @@
       if ($('#dlgPuente').open) pintarPuente();
     } catch (e) { /* sin el puente, el panel sigue igual */ }
   }
+  // 5491133588684 → +54 9 11 3358-8684 (celulares de Argentina; otro formato queda como vino).
+  const telLindo = (n) => { const m = String(n).match(/^549(11|\d{3})(\d{3,4})(\d{4})$/); return m ? '+54 9 ' + m[1] + ' ' + m[2] + '-' + m[3] : '+' + n; };
   function pintarPuente() {
     const p = puenteDe(); if (!p) return;
     const e = p.estado || {};
     const est = !e.vivo ? '⚪ El programa del puente no está andando (la PC apagada o la ventana cerrada).'
-      : e.conectado ? '🟢 Conectado' + (e.numero ? ' · +' + esc(e.numero) : '') : (e.qr ? '🟠 Esperando que escanees el QR' : '🟠 Desconectado, reconectando…');
+      : e.conectado ? '🟢 Conectado' + (e.numero ? ' · ' + esc(telLindo(e.numero)) : '') : (e.qr ? '🟠 Esperando que escanees el QR' : '🟠 Desconectado, reconectando…');
     $('#puenteDatos').innerHTML = '<b>' + esc(p.nombre) + '</b> · ' + est
       + (e.vivo && e.conectado ? '<br>Mensajes hoy: ' + (e.usado_dia || 0) + ' de ' + (e.cupo_dia || 0) + (e.tope_inicios ? ' · primeros contactos: ' + (e.inicios_dia || 0) + ' de ' + e.tope_inicios : '') + (e.pausado ? '<br>⏸ En pausa: ' + esc(e.motivo || '') : '') : '')
       + (e.alerta ? '<span class="err">⚠️ ' + esc(e.alerta) + '</span>' : '');
     $('#puenteQr').innerHTML = e.qr ? '<img alt="QR para vincular el segundo número" src="' + esc(e.qr) + '">' : '';
+    // Conectado: ni instrucciones ni lugar para el QR; sólo cuando hay que escanear.
+    const conectadoYa = !!(e.vivo && e.conectado);
+    $('#puenteQr').hidden = !e.qr; $('#puenteAyuda').hidden = conectadoYa;
   }
   let relojPuente = null;
   $('#puenteBtn').addEventListener('click', () => { $('#dlgPuente').showModal(); pintarPuente(); cargarLineas(); relojPuente = setInterval(cargarLineas, 4000); });
