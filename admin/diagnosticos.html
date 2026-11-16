@@ -195,12 +195,26 @@ var DB = {
 };
 
 /* ---------- servidor: IA y lectura de redes ---------- */
-function api(ruta, cuerpo){
+// Si Google tiene la IA saturada («high demand», 16/11/2026) el servidor contesta 502/503: se reintenta solo
+// hasta 2 veces, esperando 8 y 16 segundos, antes de avisar.
+function api(ruta, cuerpo, intento){
   if (PRUEBA) return pruebaApi(ruta, cuerpo);
+  intento = intento || 0;
   return auth.currentUser.getIdToken().then(function(tk){
     return fetch(GRUPO_API + ruta, { method:'POST', headers:{ 'Content-Type':'application/json', Authorization:'Bearer ' + tk }, body:JSON.stringify(cuerpo) });
-  }).then(function(r){ return r.json().then(function(j){ if (!r.ok || j.error) throw new Error(j.error || ('Error ' + r.status)); return j; }); });
+  }).then(function(r){ return r.json().catch(function(){ return {}; }).then(function(j){
+    if (r.ok && !j.error) return j;
+    // Cupo agotado (plan gratis de Google, 20 pedidos por día, visto el 16/11): no se reintenta, se avisa.
+    if (/quota|exceeded|rate.?limit|free.?tier/i.test(String(j.detalle || ''))) throw new Error('Se terminó el cupo diario de la IA de Google (la clave del grupo está en el plan gratis: 20 pedidos por día). Vuelve mañana, o se activa la facturación en Google AI Studio.');
+    var saturada = r.status === 503 || /demand|overloaded|unavailable|tiempo/i.test(String(j.detalle || ''));
+    if (saturada && intento < 2){
+      avisoIA('La IA de Google está saturada: reintento en ' + (8 * (intento + 1)) + ' segundos (' + (intento + 1) + ' de 2)…');
+      return new Promise(function(ok){ setTimeout(ok, 8000 * (intento + 1)); }).then(function(){ return api(ruta, cuerpo, intento + 1); });
+    }
+    throw new Error(saturada ? 'La IA de Google está saturada en este momento. Probá de nuevo en unos minutos.' : (j.error || ('Error ' + r.status)) + (j.detalle ? ' (' + j.detalle + ')' : ''));
+  }); });
 }
+function avisoIA(t){ ['estDev', 'estDemo'].forEach(function(id){ var e = $('#' + id); if (e && /Trabajando|armando|reintento|Aplicando/.test(e.textContent + (document.querySelector('[disabled]') ? 'Trabajando' : ''))) { e.textContent = t; e.className = 'estado'; } }); }
 function pedirIA(sistema, texto){
   return api('/api/ia', { emp:EMP, sistema:sistema, texto:texto, cerebros:CEREBROS, consulta:texto.slice(0, 1500), json:true }).then(function(j){ return sacarJSON(j.texto); });
 }
