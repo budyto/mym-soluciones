@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Propuesta comercial de los planes de automatización (16/11/2026).
+     Se personaliza por dirección: propuesta/?empresa=Nombre%20de%20la%20Empresa (y, si se quiere, &contacto=Nombre).
+     Los nombres, precios y viñetas son los de index.html (secciones «Paquetes» y «Orquestador de IA») al 16/11/2026:
+     si cambian en la web, hay que cambiarlos acá, en la tabla comparativa y en los videos (videos/src/).
+     No pide datos personales y no se indexa en buscadores. -->
+<title>Propuesta para tu empresa — MyM Soluciones</title>
+<meta name="robots" content="noindex">
+<meta name="description" content="Propuesta de MyM Soluciones: cinco planes de automatización, con lo que hace cada uno y su precio final.">
+<meta name="theme-color" content="#f4f7ff">
+<meta property="og:title" content="Propuesta de MyM Soluciones">
+<meta property="og:description" content="Cinco planes de automatización, con lo que hace cada uno y su precio final.">
+<meta property="og:image" content="https://mymsoluciones.online/img/og-2.jpg">
+<link rel="icon" href="../img/favicon-2.png" type="image/png">
+<link rel="apple-touch-icon" href="../img/apple-touch-icon-2.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Instrument+Serif:ital@1&family=Michroma&family=Martian+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../styles.css?v=202611141900">
+<link rel="stylesheet" href="propuesta.css?v=202611161">
+</head>
+<body class="pp">
+
+<header class="pp-top">
+  <div class="wrap">
+    <a href="../" class="logo" aria-label="MyM Soluciones, ir a la web"><span class="logo-mym deg">M<small>y</small>M</span><span class="logo-sol">SOLUCIONES</span></a>
+    <!-- Botones de arrepentimiento y de baja a la vista desde la primera pantalla (Res. SCI 424/2020) -->
+    <nav class="pp-legal" aria-label="Legales"><a href="../arrepentimiento/">Botón de arrepentimiento</a><a href="../baja/">Botón de baja</a></nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- PORTADA -->
+  <section class="pp-portada">
+    <div class="wrap">
+      <span class="eyebrow">Propuesta comercial · Planes de automatización</span>
+      <h1>Propuesta para<br><span class="em" id="pp-empresa">tu empresa</span></h1>
+      <p class="lead"><b id="pp-saludo">Hola.</b> Acá están los cinco planes de automatización de MyM Soluciones: qué hace cada uno, qué necesitamos de tu lado y cuánto cuesta. Cada plan tiene un video corto de ejemplo.</p>
+      <dl class="pp-datos">
+        <div><dt>Para</dt><dd id="pp-para">Tu empresa</dd></div>
+        <div><dt>Fecha</dt><dd id="pp-fecha">16/11/2026</dd></div>
+        <div><dt>De parte de</dt><dd>MyM Soluciones</dd></div>
+        <div><dt>Contacto</dt><dd>WhatsApp 11 3366-2080<br>info@mymsoluciones.online</dd></div>
+      </dl>
+      <div class="hero-cta pp-noprint">
+        <a href="#planes" class="btn btn-primary">Ver los planes <span class="arr">→</span></a>
+        <button type="button" class="btn" id="pp-imprimir">Guardar como PDF</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- QUÉ PROBLEMA RESOLVEMOS (frases de «Así nos llegan» de la web) -->
+  <section class="sec pp-sec">
+    <div class="wrap">
+      <div class="sec-head split">
+        <div>
+          <span class="eyebrow">Qué problema resolvemos</span>
+          <h2>Nadie viene pidiendo un sistema.<br><span class="em">Vienen contando un problema.</span></h2>
+        </div>
+        <p class="lead">Si alguna de estas frases se dice en tu empresa, hay horas de trabajo que se pueden hacer solas.</p>
+      </div>
+      <div class="pains">
+        <article class="pain card">
+          <span class="tag">Ventas</span>
+          <blockquote>"Contestamos el WhatsApp a la mañana y el cliente ya le compró a otro."</blockquote>
+          <p class="fix"><b>→ Bot de WhatsApp</b> que contesta en segundos, a cualquier hora, para que ninguna consulta se enfríe.</p>
+        </article>
+        <article class="pain card">
+          <span class="tag">Administración</span>
+          <blockquote>"Pasamos los datos de una planilla a otra todo el día."</blockquote>
+          <p class="fix"><b>→ Automatización:</b> los datos se cargan solos donde tienen que ir, sin copiar y pegar.</p>
+        </article>
+        <article class="pain card">
+          <span class="tag">Gestión</span>
+          <blockquote>"Para saber cómo venimos tengo que abrir cinco archivos."</blockquote>
+          <p class="fix"><b>→ Software a medida:</b> creamos la herramienta que resuelve eso que hoy te traba.</p>
+        </article>
+        <article class="pain card">
+          <span class="tag">Presencia online</span>
+          <blockquote>"Nos buscan en Google y no aparecemos, o aparece una página vieja."</blockquote>
+          <p class="fix"><b>→ Web o landing de ventas:</b> rápida, clara y conectada a tu WhatsApp.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOS 5 PLANES -->
+  <section class="sec pp-sec" id="planes">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">Los planes</span>
+        <h2>Cinco planes.<br><span class="em">Elegí por dónde arrancar.</span></h2>
+        <p class="lead">Plantillas ya armadas que adaptamos a tu negocio. Instalación y primer mes al empezar; después, un abono mensual sin permanencia. <b>Todos los precios son finales, en pesos.</b></p>
+      </div>
+
+      <!-- 1 · BOT DE WHATSAPP -->
+      <article class="pp-plan card" id="plan-bot">
+        <div class="paq">
+          <span class="eyebrow">Plan 1 de 5</span>
+          <h3>Bot de WhatsApp</h3>
+          <div class="paq-precio deg">$&nbsp;99.900</div>
+          <div class="paq-mes">de instalación<br>después $&nbsp;39.900 por mes</div>
+          <p>Responde al instante, a cualquier hora, y agenda.</p>
+          <h4>Para quién es</h4>
+          <p class="pp-txt">Para negocios que reciben consultas por WhatsApp y no llegan a contestarlas en el momento.</p>
+          <h4>Qué hace</h4>
+          <ul><li>Responde con tus precios y horarios</li><li>Califica al cliente y agenda turnos o visitas</li><li>Pasa la charla a una persona cuando hace falta</li><li>API oficial de WhatsApp Business</li></ul>
+          <h4>Qué necesitamos de tu empresa</h4>
+          <ul class="pp-simple"><li>Tus precios, tus horarios y la información que el bot puede usar, aprobada por vos.</li><li>Tu WhatsApp: revisamos tu configuración actual y los requisitos de la integración oficial antes de confirmar cómo conectar tu número.</li><li>Definir juntos cuándo la charla pasa a una persona, y a quién.</li><li>Los accesos: te los detallamos en el alcance por escrito, antes de empezar.</li></ul>
+          <h4>En cuánto tiempo queda andando</h4>
+          <p class="pp-txt">Entre 5 y 10 días hábiles desde que nos pasás todos los accesos.</p>
+          <a href="../#contacto" class="btn btn-primary pp-noprint" data-plan="Bot de WhatsApp">Quiero este plan <span class="arr">→</span></a>
+        </div>
+        <figure class="pp-video">
+          <video controls playsinline preload="metadata" poster="videos/bot-de-whatsapp.jpg" data-anim="videos/src/bot-de-whatsapp.html" aria-label="Video del plan Bot de WhatsApp"><source src="videos/bot-de-whatsapp.mp4" type="video/mp4"></video>
+          <figcaption>Ejemplo ilustrativo · 32 segundos · sin sonido</figcaption>
+        </figure>
+      </article>
+
+      <!-- 2 · SEGUIMIENTO DE CLIENTES -->
+      <article class="pp-plan card" id="plan-seguimiento">
+        <div class="paq">
+          <span class="eyebrow">Plan 2 de 5</span>
+          <h3>Seguimiento de clientes</h3>
+          <div class="paq-precio deg">$&nbsp;49.900</div>
+          <div class="paq-mes">de instalación<br>después $&nbsp;24.900 por mes</div>
+          <p>Le vuelve a escribir al que preguntó y no compró.</p>
+          <h4>Para quién es</h4>
+          <p class="pp-txt">Para negocios donde muchos preguntan, no compran en el momento y nadie les vuelve a escribir.</p>
+          <h4>Qué hace</h4>
+          <ul><li>Le vuelve a escribir al que preguntó y no compró</li><li>Seguimiento automático a los 1, 3 y 7 días</li><li>Planilla o CRM con cada contacto y su estado</li><li>Aviso cuando alguien está listo para comprar</li><li>Resumen semanal de lo que entró</li></ul>
+          <h4>Qué necesitamos de tu empresa</h4>
+          <ul class="pp-simple"><li>Dónde querés ver los contactos: en una planilla o en un CRM.</li><li>Los mensajes de seguimiento, aprobados por vos antes de que salgan.</li><li>A quién le llega el aviso cuando alguien está listo para comprar.</li><li>Los accesos: te los detallamos en el alcance por escrito, antes de empezar.</li></ul>
+          <h4>En cuánto tiempo queda andando</h4>
+          <p class="pp-txt">Entre 5 y 10 días hábiles desde que nos pasás todos los accesos.</p>
+          <a href="../#contacto" class="btn btn-primary pp-noprint" data-plan="Seguimiento de clientes">Quiero este plan <span class="arr">→</span></a>
+        </div>
+        <figure class="pp-video">
+          <video controls playsinline preload="metadata" poster="videos/seguimiento-de-clientes.jpg" data-anim="videos/src/seguimiento-de-clientes.html" aria-label="Video del plan Seguimiento de clientes"><source src="videos/seguimiento-de-clientes.mp4" type="video/mp4"></video>
+          <figcaption>Ejemplo ilustrativo · 32 segundos · sin sonido</figcaption>
+        </figure>
+      </article>
+
+      <!-- 3 · PAQUETE COMPLETO -->
+      <article class="pp-plan card paq-top" id="plan-completo">
+        <div class="paq">
+          <span class="eyebrow">Plan 3 de 5</span>
+          <div class="paq-head"><h3>Paquete completo</h3><span class="paq-pill">Más conveniente</span></div>
+          <div class="paq-precio deg">$&nbsp;129.900</div>
+          <div class="paq-mes">de instalación<br>después $&nbsp;49.900 por mes<br><b class="pp-promo">Contratando hasta el 30/11/2026, la instalación queda en $&nbsp;64.950</b><span class="pp-promo-fin">La promoción de instalación a mitad de precio venció el 30/11/2026.</span></div>
+          <p>Landing + Bot de WhatsApp + Seguimiento: atender y seguir a cada cliente, todo en automático. Por separado sale $&nbsp;229.700 + $&nbsp;79.700 por mes.</p>
+          <h4>Para quién es</h4>
+          <p class="pp-txt">Para el negocio que quiere la página, la atención y el seguimiento andando juntos desde el primer día.</p>
+          <h4>Qué hace</h4>
+          <ul><li>Landing de ventas con botón a WhatsApp</li><li>Bot de WhatsApp</li><li>Seguimiento de clientes</li><li>Una sola puesta en marcha</li></ul>
+          <h4>Qué necesitamos de tu empresa</h4>
+          <ul class="pp-simple"><li>Lo mismo que para el Bot de WhatsApp y para el Seguimiento de clientes.</li><li>Para la landing: qué producto o qué campaña va, y el material que ya tengas.</li><li>Los accesos: te los detallamos en el alcance por escrito, antes de empezar.</li></ul>
+          <h4>En cuánto tiempo queda andando</h4>
+          <p class="pp-txt">Entre 5 y 10 días hábiles desde que nos pasás todos los accesos.</p>
+          <a href="../#contacto" class="btn btn-primary pp-noprint" data-plan="Paquete completo">Quiero este plan <span class="arr">→</span></a>
+        </div>
+        <figure class="pp-video">
+          <video controls playsinline preload="metadata" poster="videos/paquete-completo.jpg" data-anim="videos/src/paquete-completo.html" aria-label="Video del Paquete completo"><source src="videos/paquete-completo.mp4" type="video/mp4"></video>
+          <figcaption>Ejemplo ilustrativo · 32 segundos · sin sonido</figcaption>
+        </figure>
+      </article>
+
+      <!-- 4 · ORQUESTADOR -->
+      <article class="pp-plan card" id="plan-orquestador">
+        <div class="paq">
+          <span class="eyebrow">Plan 4 de 5 · Orquestador de IA</span>
+          <h3>Orquestador</h3>
+          <div class="paq-precio"><small class="paq-desde">desde</small> <span class="deg">$&nbsp;249.900</span></div>
+          <div class="paq-mes">de instalación<br>después $&nbsp;69.900 por mes<br><b class="pp-promo">Hasta el 30/11/2026, instalación desde $&nbsp;124.950</b><span class="pp-promo-fin">La promoción de instalación a mitad de precio venció el 30/11/2026.</span></div>
+          <p>Hasta 3 agentes armados para tu empresa. Agentes que proponen; vos aprobás.</p>
+          <h4>Para quién es</h4>
+          <p class="pp-txt">Para la empresa que quiere que alguien mire la operación todos los días (cobros, stock, pedidos o lo que necesite) y le proponga qué hacer, sin que nada pase sin su OK.</p>
+          <h4>Qué hace</h4>
+          <ul><li>Relevamiento de tus procesos</li><li>Hasta 3 agentes a medida</li><li>Aprobación por WhatsApp o Telegram</li><li>Registro y tablero de lo propuesto y lo aprobado</li><li>Arranca en modo espectador: propone sin ejecutar hasta que confíes</li></ul>
+          <h4>Qué necesitamos de tu empresa</h4>
+          <ul class="pp-simple"><li>Que nos cuentes cómo trabajan, para hacer el relevamiento de tus procesos.</li><li>Qué querés que miren los agentes: cobros, stock, pedidos o lo que necesites.</li><li>Acceso a lo que ya usás: WhatsApp, Google, Mercado Pago, tus planillas o tu sistema de gestión.</li><li>Quién aprueba desde el celular, por WhatsApp o por Telegram.</li></ul>
+          <h4>En cuánto tiempo queda andando</h4>
+          <p class="pp-txt">Lo definimos en el diagnóstico: depende de lo que haya que conectar. El plazo queda en la propuesta por escrito.</p>
+          <a href="../#contacto" class="btn btn-primary pp-noprint" data-plan="Orquestador">Quiero este plan <span class="arr">→</span></a>
+        </div>
+        <figure class="pp-video">
+          <video controls playsinline preload="metadata" poster="videos/orquestador.jpg" data-anim="videos/src/orquestador.html" aria-label="Video del plan Orquestador"><source src="videos/orquestador.mp4" type="video/mp4"></video>
+          <figcaption>Ejemplo ilustrativo · 32 segundos · sin sonido</figcaption>
+        </figure>
+      </article>
+
+      <!-- 5 · EMPRESA EN AUTOMÁTICO -->
+      <article class="pp-plan card paq-top" id="plan-empresa">
+        <div class="paq">
+          <span class="eyebrow">Plan 5 de 5 · Orquestador de IA</span>
+          <div class="paq-head"><h3>Empresa en automático</h3><span class="paq-pill">Más completo</span></div>
+          <div class="paq-precio"><small class="paq-desde">desde</small> <span class="deg">$&nbsp;329.900</span></div>
+          <div class="paq-mes">de instalación<br>después $&nbsp;99.900 por mes<br><b class="pp-promo">Hasta el 30/11/2026, instalación desde $&nbsp;164.950</b><span class="pp-promo-fin">La promoción de instalación a mitad de precio venció el 30/11/2026.</span></div>
+          <p>Orquestador + Paquete completo (landing, bot de WhatsApp y seguimiento), conectados. Por separado sale desde $&nbsp;379.800 + $&nbsp;119.800 por mes.</p>
+          <h4>Para quién es</h4>
+          <p class="pp-txt">Para la empresa que quiere todo conectado: la landing, el bot, el seguimiento y los agentes, en una sola puesta en marcha.</p>
+          <h4>Qué hace</h4>
+          <ul><li>El bot atiende</li><li>El seguimiento insiste con los que no compraron</li><li>El orquestador coordina y te propone</li><li>Una sola puesta en marcha</li></ul>
+          <h4>Qué necesitamos de tu empresa</h4>
+          <ul class="pp-simple"><li>Lo mismo que para el Paquete completo y para el Orquestador.</li><li>Los accesos: te los detallamos en el alcance por escrito, antes de empezar.</li></ul>
+          <h4>En cuánto tiempo queda andando</h4>
+          <p class="pp-txt">Lo definimos en el diagnóstico. El plazo queda en la propuesta por escrito.</p>
+          <a href="../#contacto" class="btn btn-primary pp-noprint" data-plan="Empresa en automático">Quiero este plan <span class="arr">→</span></a>
+        </div>
+        <figure class="pp-video">
+          <video controls playsinline preload="metadata" poster="videos/empresa-en-automatico.jpg" data-anim="videos/src/empresa-en-automatico.html" aria-label="Video del plan Empresa en automático"><source src="videos/empresa-en-automatico.mp4" type="video/mp4"></video>
+          <figcaption>Ejemplo ilustrativo · 32 segundos · sin sonido</figcaption>
+        </figure>
+      </article>
+
+      <!-- Pago anual (Orquestador y Empresa en automático), tal cual la web -->
+      <article class="paq-anual card pp-anual"><div><span class="eyebrow">Pago anual</span><h3>Pagás 10 meses de abono y usás 12</h3><p>Orquestador desde $&nbsp;699.000 y Empresa en automático desde $&nbsp;999.000 por el año, más la instalación. Si das de baja antes, te devolvemos los meses que no usaste.</p></div><a href="../#contacto" class="btn pp-noprint" data-plan="Orquestador con pago anual">Quiero el pago anual</a></article>
+    </div>
+  </section>
+
+  <!-- TABLA COMPARATIVA -->
+  <section class="sec pp-sec pp-hoja" id="comparar">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">Comparación</span>
+        <h2>Los cinco planes,<br><span class="em">lado a lado.</span></h2>
+      </div>
+      <p class="pp-desliza pp-noprint">Deslizá la tabla para ver los cinco planes →</p>
+      <div class="pp-tabla-caja card" tabindex="0" role="region" aria-label="Tabla comparativa de los cinco planes">
+        <table class="pp-tabla">
+          <thead>
+            <tr><th scope="col"></th><th scope="col">Bot de WhatsApp</th><th scope="col">Seguimiento de clientes</th><th scope="col">Paquete completo</th><th scope="col">Orquestador</th><th scope="col">Empresa en automático</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Instalación</th><td><b>$&nbsp;99.900</b></td><td><b>$&nbsp;49.900</b></td><td><b>$&nbsp;129.900</b></td><td><b>desde $&nbsp;249.900</b></td><td><b>desde $&nbsp;329.900</b></td></tr>
+            <tr class="pp-promo"><th scope="row">Instalación contratando hasta el 30/11/2026</th><td>—</td><td>—</td><td>$&nbsp;64.950</td><td>desde $&nbsp;124.950</td><td>desde $&nbsp;164.950</td></tr>
+            <tr><th scope="row">Abono por mes</th><td><b>$&nbsp;39.900</b></td><td><b>$&nbsp;24.900</b></td><td><b>$&nbsp;49.900</b></td><td><b>$&nbsp;69.900</b></td><td><b>$&nbsp;99.900</b></td></tr>
+            <tr><th scope="row">Pago anual (10 meses de abono, usás 12)</th><td>—</td><td>—</td><td>—</td><td>desde $&nbsp;699.000 por el año, más la instalación</td><td>desde $&nbsp;999.000 por el año, más la instalación</td></tr>
+            <tr><th scope="row">Bot de WhatsApp</th><td class="si">Sí</td><td>—</td><td class="si">Sí</td><td>—</td><td class="si">Sí</td></tr>
+            <tr><th scope="row">Seguimiento a los 1, 3 y 7 días</th><td>—</td><td class="si">Sí</td><td class="si">Sí</td><td>—</td><td class="si">Sí</td></tr>
+            <tr><th scope="row">Landing de ventas</th><td>—</td><td>—</td><td class="si">Sí</td><td>—</td><td class="si">Sí</td></tr>
+            <tr><th scope="row">Agentes de IA que proponen y vos aprobás</th><td>—</td><td>—</td><td>—</td><td class="si">Sí, hasta 3</td><td class="si">Sí</td></tr>
+            <tr><th scope="row">Entrega</th><td>5 a 10 días hábiles</td><td>5 a 10 días hábiles</td><td>5 a 10 días hábiles</td><td>Según el diagnóstico</td><td>Según el diagnóstico</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="paq-nota">Todos los precios son finales, en pesos. Instalación y primer mes al empezar. <span class="pp-promo">La instalación a mitad de precio (Paquete completo $&nbsp;64.950, Orquestador desde $&nbsp;124.950 y Empresa en automático desde $&nbsp;164.950) vale para contrataciones hasta el 30/11/2026 inclusive.</span><span class="pp-promo-fin">La promoción de instalación a mitad de precio venció el 30/11/2026.</span> El abono incluye hosting, mantenimiento y soporte, sin permanencia. Los consumos de terceros (mensajes de WhatsApp de Meta y la IA) van aparte, a cargo de cada negocio. Los días de entrega corren desde que nos pasás todos los accesos.</p>
+    </div>
+  </section>
+
+  <!-- CÓMO TRABAJAMOS (los pasos de «Proceso» de la web) -->
+  <section class="sec pp-sec pp-hoja">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">Cómo trabajamos</span>
+        <h2>Un alcance claro.<br><span class="em">Un plan para hacerlo.</span></h2>
+      </div>
+      <div class="steps">
+        <div class="step card"><div class="dot">01</div><span class="when">30 minutos · gratis · videollamada</span><h3>Diagnóstico</h3><p>Nos contás cómo trabajás y dónde se traba. Salís sabiendo qué se puede automatizar y qué hace falta.</p></div>
+        <div class="step card"><div class="dot">02</div><span class="when">Alcance por escrito</span><h3>Propuesta</h3><p>Qué vamos a hacer, qué necesitamos de tu lado y cuánto cuesta, antes de empezar.</p></div>
+        <div class="step card"><div class="dot">03</div><span class="when">Paquetes: 5 a 10 días hábiles</span><h3>Implementación</h3><p>Lo armamos, lo conectamos a lo que ya usás y lo probamos con tu equipo antes de largarlo. Los días corren desde que nos pasás todos los accesos; en lo a medida, el plazo queda en la propuesta.</p></div>
+        <div class="step card"><div class="dot">04</div><span class="when">Mes a mes</span><h3>Soporte y mejoras</h3><p>Seguimiento, ajustes y nuevas automatizaciones a medida que tu empresa crece.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONDICIONES -->
+  <section class="sec pp-sec pp-hoja">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">Condiciones</span>
+        <h2>Las reglas,<br><span class="em">claras desde el principio.</span></h2>
+      </div>
+      <div class="pp-cond">
+        <div class="card"><h3>Sin permanencia</h3><p>El abono es mensual y lo das de baja cuando quieras. Incluye hosting, mantenimiento y soporte.</p></div>
+        <div class="card"><h3>Vos aprobás</h3><p>Te pasamos el alcance por escrito antes de empezar y lo probamos con tu equipo antes de largarlo. En el Orquestador, nada pasa sin tu OK.</p></div>
+        <div class="card"><h3>Diagnóstico gratis</h3><p>30 minutos por videollamada. Vemos qué se puede automatizar y, si no conviene, te lo decimos ahí mismo.</p></div>
+        <div class="card"><h3>Precios finales, en pesos</h3><p>Instalación y primer mes al empezar. Los consumos de terceros (mensajes de WhatsApp de Meta y la IA) van aparte, a cargo de cada negocio.</p></div>
+        <div class="card"><h3>Arrepentimiento y baja</h3><p>Los dos botones están a la vista en la web y en esta página: <a href="../arrepentimiento/">Botón de arrepentimiento</a> · <a href="../baja/">Botón de baja</a>.</p></div>
+        <div class="card"><h3>Tus datos</h3><p>Esta página no te pide ningún dato. Cómo cuidamos los que nos pasás por WhatsApp está en la <a href="../privacidad.html">política de privacidad</a>.</p></div>
+      </div>
+      <p class="pp-validez"><b>Validez de esta propuesta:</b> precios vigentes al 16/11/2026; <span class="pp-promo">la promoción vence el 30/11/2026.</span><span class="pp-promo-fin">la promoción venció el 30/11/2026.</span> Los videos y los chats de esta página son ejemplos ilustrativos: no son conversaciones ni clientes reales. No prometemos una cantidad de ventas ni de consultas: eso depende también de tu producto, tu precio y cómo atendés.</p>
+    </div>
+  </section>
+
+  <!-- TAMBIÉN HACEMOS -->
+  <section class="sec pp-sec pp-hoja">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">También hacemos</span>
+        <h2>Si necesitás<br><span class="em">otra cosa.</span></h2>
+      </div>
+      <div class="paqs pp-tambien">
+        <article class="paq card">
+          <h3>Landing de ventas</h3>
+          <div class="paq-precio deg">$&nbsp;79.900</div>
+          <div class="paq-mes">pago único<br>después $&nbsp;14.900 por mes de hosting y cambios chicos</div>
+          <p>Una página de una sola sección para un producto o una campaña.</p>
+        </article>
+        <article class="paq card">
+          <h3>Página web institucional</h3>
+          <div class="paq-precio"><small class="paq-desde">desde</small> <span class="deg">$&nbsp;149.900</span></div>
+          <div class="paq-mes">pago único<br>después $&nbsp;14.900 por mes de hosting y cambios chicos</div>
+          <p>Tu empresa en internet, para que te encuentren. El precio final depende de cuántas secciones lleva y se define en el diagnóstico.</p>
+        </article>
+        <article class="paq card">
+          <h3>Agente extra</h3>
+          <div class="paq-precio"><small class="paq-desde">desde</small> <span class="deg">$&nbsp;39.900</span></div>
+          <div class="paq-mes">de instalación<br>después $&nbsp;14.900 por mes</div>
+          <p>Un agente más para otro proceso de tu empresa. Se suma al Orquestador cuando quieras. El precio final depende de lo que haya que conectar y se define en el diagnóstico.</p>
+        </article>
+        <article class="paq card">
+          <h3>Software a medida</h3>
+          <div class="paq-mes">Sin precio fijo: se cotiza en el diagnóstico gratis</div>
+          <p>Cada proyecto es distinto: lo definimos con vos y te pasamos el alcance por escrito antes de empezar.</p>
+        </article>
+      </div>
+      <div class="pp-cierre">
+        <a href="../#contacto" class="btn btn-primary pp-noprint" data-plan="">Escribinos por WhatsApp <span class="arr">→</span></a>
+        <p>WhatsApp 11 3366-2080 · info@mymsoluciones.online · mymsoluciones.online</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="pp-pie">
+  <div class="wrap">
+    <div class="foot-bottom"><span>© 2026 MyM Soluciones</span><span><a href="../privacidad.html">Política de privacidad</a> · <a href="../arrepentimiento/">Botón de arrepentimiento</a> · <a href="../baja/">Botón de baja</a></span><span class="grupo">Parte del <b>grupo MyM</b></span></div>
+  </div>
+</footer>
+
+<a class="wa-float pp-noprint" href="../#contacto" data-plan="" aria-label="Escribinos por WhatsApp">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+</a>
+
+<script src="../config.js?v=202611141900"></script>
+<script src="propuesta.js?v=202611161"></script>
+</body>
+</html>
