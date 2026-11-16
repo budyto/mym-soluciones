@@ -281,7 +281,7 @@ h3 { font-size: 21px; font-weight: 800; letter-spacing: -0.015em; line-height: 1
 .paq-anual { margin-top: 24px; padding: 30px 34px; display: grid; grid-template-columns: 1fr auto; gap: 20px 40px; align-items: center; }
 .paq-anual h3 { margin-top: 10px; }
 .paq-anual p { margin: 8px 0 0; color: var(--ink-2); font-size: 15px; }
-.paq-nota { margin: 22px 0 0; font-size: 13.5px; color: var(--ink-3); max-width: 90ch; }
+.paq-nota { margin: 22px 0 0; font-size: 13.5px; color: var(--ink-3); }
 
 /* ============ Proceso ============ */
 .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
