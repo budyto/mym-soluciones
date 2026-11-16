@@ -130,7 +130,7 @@
   .rapidas button { background: #fff; border: 1px dashed #b7c8f2; color: var(--ink); border-radius: 999px; padding: 2px 10px; font-size: 12px; cursor: pointer; }
   .rapidas button:hover { border-color: var(--azul); color: var(--azul); }
   .escribir { display: flex; gap: 8px; align-items: flex-end; flex: 0 0 auto; }
-  .escribir textarea { flex: 1; min-height: 42px; max-height: 140px; resize: none; background: var(--fondo); border: 1.5px solid var(--borde); color: var(--ink); border-radius: 14px; padding: 9px 12px; outline: none; }
+  .escribir textarea { flex: 1; min-height: 42px; max-height: min(320px, 45vh); line-height: 1.45; resize: none; background: var(--fondo); border: 1.5px solid var(--borde); color: var(--ink); border-radius: 14px; padding: 9px 12px; outline: none; }
   .escribir textarea:focus { border-color: var(--azul); }
 
   /* Ficha: panel que se despliega dentro de la charla */
@@ -488,8 +488,14 @@
     if (b.id === 'verficha' || b.id === 'cerrarficha') { fichaAbierta = b.id === 'verficha' ? !fichaAbierta : false; $('#waFicha').hidden = !fichaAbierta; $('#verficha').setAttribute('aria-expanded', fichaAbierta); return; }
     if (b.dataset.rapida != null) {
       const t = $('#texto'), r = respuestas[+b.dataset.rapida]; if (!t || !r) return;
-      const i = t.selectionStart ?? t.value.length;
-      t.value = t.value.slice(0, i) + r.texto + t.value.slice(t.selectionEnd ?? i); t.focus(); return;
+      // Cada respuesta rápida en su propio párrafo (16/11/2026): antes se pegaban sin espacio
+      // («…permanencia.¿Pudiste ver…»). Después se agranda el cuadro para que se lea entero.
+      const i = t.selectionStart ?? t.value.length, f = t.selectionEnd ?? i;
+      const antes = t.value.slice(0, i).replace(/\s+$/, ''), despues = t.value.slice(f).replace(/^\s+/, '');
+      const nuevo = (antes ? antes + '\n\n' : '') + r.texto;
+      t.value = nuevo + (despues ? '\n\n' + despues : '');
+      t.focus(); t.setSelectionRange(nuevo.length, nuevo.length);
+      t.dispatchEvent(new Event('input', { bubbles: true })); return;
     }
     if (b.id !== 'robot' && b.id !== 'resolver') return;
     b.disabled = true;
