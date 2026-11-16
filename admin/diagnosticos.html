@@ -77,6 +77,10 @@ pre.json{ white-space:pre-wrap; font-size:12px; }
 .entrada p{ color:var(--muted); margin:0; }
 .entrada .msg{ color:var(--bad); min-height:20px; font-size:14px; }
 .entrada label{ text-align:left; }
+.pass{ position:relative; display:block; }
+.pass input{ padding-right:46px; }
+.pass button{ position:absolute; right:6px; top:50%; transform:translateY(-50%); border:0; background:none; cursor:pointer; font-size:18px; padding:6px; border-radius:8px; }
+.pass button[aria-pressed="true"]{ background:var(--panel2); }
 </style>
 </head>
 <body>
@@ -87,7 +91,7 @@ pre.json{ white-space:pre-wrap; font-size:12px; }
   <button class="btn gold" type="button" id="google">Entrar con Google</button>
   <form id="formGrupo" hidden style="display:grid;gap:10px">
     <label>Correo del CRM del grupo<input id="gMail" type="email" autocomplete="email" required></label>
-    <label>Contraseña<input id="gPass" type="password" autocomplete="current-password" required minlength="6"></label>
+    <label>Contraseña<span class="pass"><input id="gPass" type="password" autocomplete="current-password" required minlength="6"><button type="button" id="gVer" aria-label="Mostrar la contraseña" aria-pressed="false">👁</button></span></label>
     <button class="btn gold" type="submit">Conectar</button>
     <button class="btn sm" type="button" id="gOlvide">Me olvidé la contraseña</button>
   </form>
@@ -550,6 +554,11 @@ if (PRUEBA){
     auth.signInWithEmailAndPassword($('#gMail').value.trim(), $('#gPass').value).then(function(){ entradaMsg(''); })
       .catch(function(e){ entradaMsg(/invalid|wrong|not-found/.test(e && e.code) ? 'Correo o contraseña incorrectos.' : 'No se pudo conectar. Probá de nuevo.'); });
   });
+  $('#gVer').addEventListener('click', function(){
+    var i = $('#gPass'), ver = i.type === 'password';
+    i.type = ver ? 'text' : 'password'; this.setAttribute('aria-pressed', String(ver)); this.setAttribute('aria-label', ver ? 'Ocultar la contraseña' : 'Mostrar la contraseña');
+  });
+  $('#gMail').addEventListener('input', function(){ entradaMsg(''); });
   $('#gOlvide').addEventListener('click', function(){
     var m = $('#gMail').value.trim(); if (!m) return entradaMsg('Escribí tu correo arriba.');
     auth.sendPasswordResetEmail(m).then(function(){ entradaMsg('Te mandamos un correo para cambiar la contraseña.'); }, function(){ entradaMsg('No se pudo mandar el correo.'); });
