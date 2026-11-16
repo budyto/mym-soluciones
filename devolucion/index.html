@@ -245,13 +245,12 @@ document.getElementById('bajar').addEventListener('click', function(){ window.pr
 function falla(t){ estado.hidden = false; estado.textContent = t; }
 
 /* ---------- de dónde salen los datos ---------- */
-// Vista previa: la abre el CRM de Soluciones (grupomym.online) en otra pestaña, porque esta web no deja que otra
-// la meta en un marco (X-Frame-Options del .htaccess). Solo se acepta contenido que venga del CRM.
-var CRM = ['https://grupomym.online', 'http://localhost:8787'];
+// Vista previa: la muestra el panel admin de esta misma web (admin/diagnosticos.html) en un recuadro.
+// Solo se acepta contenido que venga de esta web.
 if (Q.has('vista')){
   // Vista previa dentro del CRM: el CRM manda el JSON por postMessage (mismo origen).
   window.addEventListener('message', function(ev){
-    if (CRM.indexOf(ev.origin) < 0 || !ev.data || ev.data.tipo !== 'devolucion') return;
+    if (ev.origin !== location.origin || !ev.data || ev.data.tipo !== 'devolucion') return;
     try { dibujar(ev.data.datos || {}); } catch (e) { falla('No se pudo dibujar la devolución: ' + e.message); }
   });
   // Avisa que está lista (solo un aviso, sin datos): el CRM le manda el contenido.

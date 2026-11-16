@@ -111,12 +111,11 @@ function dibujar(D){
 }
 function falla(t){ estado.hidden = false; estado.textContent = t; }
 
-// Vista previa: la abre el CRM de Soluciones (grupomym.online) en otra pestaña, porque esta web no deja que otra
-// la meta en un marco (X-Frame-Options del .htaccess). Solo se acepta contenido que venga del CRM.
-var CRM = ['https://grupomym.online', 'http://localhost:8787'];
+// Vista previa: la muestra el panel admin de esta misma web (admin/diagnosticos.html) en un recuadro.
+// Solo se acepta contenido que venga de esta web.
 if (Q.has('vista')){
   window.addEventListener('message', function(ev){
-    if (CRM.indexOf(ev.origin) < 0 || !ev.data || ev.data.tipo !== 'demo') return;
+    if (ev.origin !== location.origin || !ev.data || ev.data.tipo !== 'demo') return;
     try { dibujar(ev.data.datos || {}); } catch (e) { falla('No se pudo dibujar la demo: ' + e.message); }
   });
   // Avisa que está lista (solo un aviso, sin datos): el CRM le manda el contenido.

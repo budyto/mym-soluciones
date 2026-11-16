@@ -34,7 +34,7 @@
 #   "sólo informar" (Report-Only): el navegador avisa en la consola lo que bloquearía, sin bloquearlo.
 #   Cuando se sume el registro insertado de Meta hay que agregar connect.facebook.net y www.facebook.com.
 #   (16/11/2026) firestore.googleapis.com: el diagnóstico de redes (diagnostico-redes/, devolucion/, demo/) guarda
-#   y lee en la base del Grupo MyM.
+#   y lee en la base del Grupo MyM; grupomym.online: la IA y la lectura de redes del panel admin/diagnosticos.html.
 #   Pasarla a obligatoria recién cuando la consola del panel admin (con login) y de la web no muestre avisos.
 # - No se pone Cross-Origin-Opener-Policy: el login de Google (Firebase) y el de Meta usan ventanas emergentes
 #   que se comunican con la página, y esa cabecera las rompe.
@@ -45,7 +45,7 @@
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
   Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), usb=(), serial=(), hid=()"
   Header always set Content-Security-Policy "frame-ancestors 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
-  Header always set Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://apis.google.com https://cdn.jsdelivr.net https://connect.facebook.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; media-src 'self'; connect-src 'self' https://firestore.googleapis.com https://mym-creditos-81440681742.southamerica-east1.run.app https://dolarapi.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://www.googleapis.com https://*.facebook.com https://*.run.app; frame-src https://appmym-5fdd1.firebaseapp.com https://accounts.google.com https://www.google.com https://www.facebook.com https://web.facebook.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'"
+  Header always set Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://apis.google.com https://cdn.jsdelivr.net https://connect.facebook.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; media-src 'self'; connect-src 'self' https://firestore.googleapis.com https://grupomym.online https://mym-creditos-81440681742.southamerica-east1.run.app https://dolarapi.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://www.googleapis.com https://*.facebook.com https://*.run.app; frame-src https://appmym-5fdd1.firebaseapp.com https://accounts.google.com https://www.google.com https://www.facebook.com https://web.facebook.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'"
 </IfModule>
 
 # (13/11/2026) La planilla de ejemplo de la guía TAREA tiene que bajar como Excel y no como texto (sin esto Hostinger
