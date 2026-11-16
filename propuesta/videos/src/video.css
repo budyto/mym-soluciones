@@ -158,3 +158,80 @@ body { font-family: var(--sans); color: var(--ink); -webkit-font-smoothing: anti
 .nodo.vos { font-size: 38px; text-align: left; padding: 30px 34px; }
 .si { display: inline-block; margin-top: 14px; background: var(--ink); color: #fff; font-size: 38px; font-weight: 800; padding: 12px 32px; border-radius: 30px 30px 8px 30px; }
 .capa .chat { min-height: 640px; }
+
+/* ===== Redes en automático (16/11/2026) ===== */
+.promo.oferta { background: var(--deg); color: #fff; margin-top: 18px; }
+.portada .plan-n { font-weight: 900; font-size: 104px; letter-spacing: -0.04em; line-height: 1; display: flex; align-items: center; gap: 26px; flex-wrap: wrap; }
+.reco { font-size: 34px; font-weight: 800; letter-spacing: 0; color: #fff; background: var(--deg); border-radius: 999px; padding: 12px 30px; }
+.cierre h2 small { display: block; font-size: .62em; font-weight: 800; letter-spacing: -0.02em; color: var(--ink-2); margin-bottom: 8px; }
+.aprobas { font-size: 34px; font-weight: 800; line-height: 1.25; text-align: center; color: var(--ink); margin: 0; }
+.incluye.largo li { font-size: 40px; padding: 22px 28px; }
+.incluye.largo ul { gap: 20px; }
+.incluye.largo h2 { font-size: 80px; margin-bottom: 8px; }
+
+/* Calendario del mes (Esencial) */
+.cal { padding: 30px; }
+.cal-cab { display: flex; justify-content: space-between; align-items: baseline; font-weight: 900; font-size: 44px; margin-bottom: 20px; }
+.cal-cab small { font-family: var(--mono); font-size: 22px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
+.cal-grilla { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; }
+.cal-grilla .d { text-align: center; font-family: var(--mono); font-size: 22px; color: var(--ink-3); padding-bottom: 4px; }
+.cal-grilla .c { height: 122px; border-radius: 20px; background: var(--fondo); padding: 10px 8px; display: flex; flex-direction: column; justify-content: space-between; align-items: stretch; }
+.cal-grilla .c.fs { background: transparent; border: 2px dashed var(--line); }
+.pz { display: block; text-align: center; font-size: 21px; font-weight: 800; color: #fff; border-radius: 12px; padding: 9px 0; }
+.pz.reel { background: var(--azul); }
+.pz.carr { background: var(--ink); }
+.hist { display: flex; justify-content: center; gap: 7px; margin-top: auto; }
+.hist i { width: 16px; height: 16px; border-radius: 50%; background: var(--agua); }
+.leyenda { display: flex; flex-wrap: wrap; gap: 14px 30px; margin-top: 26px; font-size: 30px; font-weight: 800; }
+.leyenda span { display: inline-flex; align-items: center; gap: 12px; }
+.leyenda i { width: 30px; height: 30px; border-radius: 10px; }
+.cuentas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 26px; }
+.cuenta { background: var(--blanco); border-radius: 30px; box-shadow: var(--sombra-s); padding: 22px 12px; text-align: center; font-size: 27px; font-weight: 700; line-height: 1.2; color: var(--ink-2); }
+.cuenta b { display: block; font-size: 62px; font-weight: 900; letter-spacing: -0.03em; color: var(--ink); line-height: 1.05; }
+
+/* Los tres pasos del método */
+.metodo { display: grid; gap: 26px; margin-top: 10px; }
+.mpaso { display: flex; gap: 30px; align-items: center; background: var(--blanco); border-radius: 40px; box-shadow: var(--sombra); padding: 36px 38px; }
+.mpaso i { flex: none; width: 110px; height: 110px; border-radius: 34px; background: var(--deg); color: #fff; font-style: normal; font-weight: 900; font-size: 64px; display: grid; place-items: center; }
+.mpaso b { display: block; font-size: 60px; font-weight: 900; letter-spacing: -0.03em; line-height: 1.05; }
+.mpaso span { display: block; font-size: 34px; font-weight: 600; color: var(--ink-2); line-height: 1.25; margin-top: 8px; }
+
+/* La semana (Profesional) */
+.semana { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+.semana .dia-n { text-align: center; font-family: var(--mono); font-size: 24px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 12px; }
+.mini-reel { position: relative; height: 280px; border-radius: 24px; background: linear-gradient(160deg, var(--azul), var(--agua)); display: grid; place-items: center; }
+.mini-reel::before { content: ""; border-left: 44px solid #fff; border-top: 28px solid transparent; border-bottom: 28px solid transparent; margin-left: 10px; }
+.mini-reel small { position: absolute; left: 0; right: 0; bottom: 14px; text-align: center; color: #fff; font-size: 24px; font-weight: 800; }
+.semana .hist { margin-top: 16px; flex-wrap: wrap; }
+
+/* Tablero de ganchos (Profesional): barras sin cifras */
+.tablero h3 { margin: 0 0 26px; font-size: 44px; font-weight: 900; letter-spacing: -0.02em; }
+.gancho { margin-top: 26px; }
+.gancho .gn { display: flex; justify-content: space-between; align-items: center; font-size: 36px; font-weight: 800; margin-bottom: 12px; min-height: 60px; }
+.gancho .gn em { font-style: normal; font-size: 27px; font-weight: 800; color: #fff; background: var(--agua); border-radius: 999px; padding: 10px 22px; }
+.barra { height: 46px; border-radius: 999px; background: var(--fondo-2); overflow: hidden; }
+.barra i { display: block; height: 100%; width: var(--w); border-radius: 999px; background: var(--ink-3); transform-origin: left; animation: barra 1s cubic-bezier(.2, .8, .2, 1) var(--in) both; }
+.barra i.mejor { background: var(--deg); }
+@keyframes barra { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* Reel que pasa a anuncio (Premium) */
+.anuncio { display: grid; grid-template-columns: 300px 1fr; gap: 34px; align-items: center; }
+.anuncio .mini-reel { height: 430px; }
+.anuncio .lado { display: grid; gap: 22px; justify-items: start; }
+.etq { position: relative; min-width: 270px; text-align: center; font-family: var(--mono); font-size: 25px; letter-spacing: .12em; text-transform: uppercase; border-radius: 999px; padding: 12px 26px; background: var(--fondo-2); color: var(--ink-2); overflow: hidden; }
+.etq b { position: absolute; inset: 0; display: grid; place-items: center; font-weight: 500; background: var(--ink); color: #fff; opacity: 0; animation: prende .4s var(--in) both; }
+.anuncio .t { font-size: 40px; font-weight: 900; letter-spacing: -0.02em; line-height: 1.12; }
+.anuncio .boton-wa { font-size: 32px; padding: 20px 30px; margin-top: 0; }
+.anuncio .boton-wa svg { width: 42px; height: 42px; }
+.capa .chat.corto { min-height: 0; }
+
+/* Avatar hecho con IA (Premium): figura genérica */
+.avatar { display: grid; grid-template-columns: 330px 1fr; gap: 36px; align-items: center; }
+.avatar .fig { position: relative; height: 420px; border-radius: 36px; background: linear-gradient(160deg, var(--fondo), var(--fondo-2)); overflow: hidden; }
+.avatar .fig::before { content: ""; position: absolute; left: 50%; top: 80px; width: 130px; height: 130px; margin-left: -65px; border-radius: 50%; background: var(--deg); }
+.avatar .fig::after { content: ""; position: absolute; left: 50%; top: 240px; width: 250px; height: 260px; margin-left: -125px; border-radius: 120px 120px 0 0; background: var(--deg); }
+.avatar .fig span { position: absolute; left: 14px; top: 14px; z-index: 2; font-family: var(--mono); font-size: 21px; letter-spacing: .08em; text-transform: uppercase; color: #fff; background: var(--ink); border-radius: 999px; padding: 9px 18px; }
+.avatar .lado { display: grid; gap: 20px; }
+.avatar .n { font-size: 54px; font-weight: 900; letter-spacing: -0.03em; line-height: 1.05; }
+.chk { display: flex; gap: 20px; align-items: center; font-size: 36px; font-weight: 800; line-height: 1.15; }
+.chk::before { content: "✓"; flex: none; width: 54px; height: 54px; border-radius: 16px; background: var(--agua); color: #fff; font-size: 34px; font-weight: 900; display: grid; place-items: center; }
