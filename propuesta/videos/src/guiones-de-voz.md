@@ -4,9 +4,12 @@ Un guion por video, partido en tramos: cada tramo se dice mientras se ve esa par
 Este archivo es la fuente de la voz: `hacer-voz.py` lo lee, genera el audio de cada tramo, le da a cada tramo
 de la animación el tiempo que necesita la voz y deja la pista en `voz/<plan>.m4a`. Después `hacer-videos.mjs` arma el MP4 con esa pista.
 
-- **Voz:** sintética, en español neutro (motor Kokoro, voz `ef_dora`, pronunciación latinoamericana). No es la voz de nadie del equipo.
-- **Cómo se escribe:** como se dice. Los números en letras, «MyM» como «eme y eme», «CRM» como «ce erre eme» e «IA» como «inteligencia artificial».
-  Las palabras en inglés (WhatsApp, reels, landing, stock, YouTube Shorts) se escriben normal: `hacer-voz.py` tiene la lista de cómo se pronuncian.
+- **Voz:** ElevenLabs, voz «Mauricio - Publicidad cálida | Argentina» de su biblioteca (`voice_id` `jIgvw3W75cbd6IP0JYwL`, modelo `eleven_v4`), a velocidad normal. No es la voz de nadie del equipo.
+  Se genera un MP3 por tramo, con el texto del tramo tal cual está acá, y se guarda en `voz/elevenlabs/<plan>-<n>.mp3`. Si se cambia un tramo, hay que regenerar sólo ese MP3.
+- **Duración:** ningún video puede pasar de 51 segundos (tope subido el 16/11/2026 para esta voz; antes era 45).
+- **Cómo se escribe:** como se dice (vale para ElevenLabs y para Kokoro). Los números en letras, «MyM» como «eme y eme», «CRM» como «ce erre eme» e «IA» como «inteligencia artificial».
+  Las palabras en inglés (WhatsApp, reels, landing, stock, YouTube Shorts) se escriben normal: ElevenLabs las dice bien así (verificado el 16/11/2026);
+  para Kokoro, `hacer-voz.py` tiene la lista de cómo se pronuncian.
 - **Precios y cantidades:** los de `propuesta/index.html` al 16/11/2026. Si cambian en la web, se cambian acá, en la página animada y se rehace el video.
 - **Sin promesas:** nada de cantidades de seguidores, ventas, alcance, consultas ni ahorro. La única urgencia es la fecha real de cada promoción.
 - **Vence el 30/11/2026:** la prueba gratis de 15 días (Bot, Seguimiento, Paquete completo y los tres de Redes) y la instalación a mitad de precio
