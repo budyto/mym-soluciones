@@ -532,7 +532,11 @@ if (PRUEBA){
     mostrarApp(); if (!escuchando){ escuchando = true; escuchar(); }
   }
   // Primero la puerta de Google: acceso.js arma la conexión principal solo si todavía no hay ninguna.
-  ACCESO.iniciar({
+  // En la compu (localhost) no hay puerta de Google: el proyecto de AppMyM no tiene habilitado localhost y no se toca.
+  // Igual se entra con el usuario del CRM del grupo, y las reglas de la base y el servidor del grupo controlan todo.
+  var LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+  if (LOCAL) setTimeout(function(){ googleOk = true; seguir(); }, 0);
+  else ACCESO.iniciar({
     alEntrar: function(){ googleOk = true; seguir(); },
     alSalir: function(m){ googleOk = false; $('#app').hidden = true; $('#entrada').hidden = false; $('#google').hidden = false; $('#formGrupo').hidden = true; $('#entradaTxt').textContent = 'Entrá con tu cuenta de Google autorizada.'; entradaMsg(m); }
   });
