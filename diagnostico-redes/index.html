@@ -60,7 +60,11 @@ label small{ font-weight:400; color:var(--gris); font-size:13px; }
 input,select,textarea{ font:inherit; font-weight:400; color:var(--tinta); background:var(--fondo); border:1px solid var(--linea); border-radius:12px; padding:11px 13px; width:100%; min-height:46px; }
 textarea{ min-height:90px; resize:vertical; }
 .check{ flex-direction:row; align-items:flex-start; gap:10px; font-weight:500; font-size:14px; }
+@media (max-width:480px){ .nav a.wa{ font-size:0; } .nav a.wa::after{ content:"WhatsApp"; font-size:15px; } }
 .check input{ width:20px; height:20px; min-height:auto; margin-top:2px; flex:none; }
+.bloque-extra{ display:flex; flex-direction:column; gap:2px; margin-top:10px; padding-top:14px; border-top:1px solid var(--linea); }
+.bloque-extra b{ font:800 18px 'Bricolage Grotesque',sans-serif; }
+.bloque-extra small{ color:var(--gris); font-size:14px; }
 .trampa{ position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden; }
 .msg{ min-height:22px; font-size:15px; }
 .msg.error{ color:#c2410c; } .msg.ok{ color:#047857; }
@@ -125,7 +129,27 @@ footer{ border-top:1px solid var(--linea); padding-block:24px 36px; color:var(--
         <option>Ordenar mis redes</option>
         <option>Otro</option>
       </select></label>
-      <label class="ancho">Contanos algo más <small>(opcional)</small><textarea id="comentario" maxlength="600" placeholder="Qué vendés, a quién, qué te preocupa…"></textarea></label>
+      <div class="ancho bloque-extra"><b>Un poco de tus números</b><small>Opcional, 1 minuto. Con esto el diagnóstico sale mucho más preciso.</small></div>
+      <label>¿Cuántos seguidores tenés en Instagram?<small>Más o menos, está bien</small><input id="seguidores" inputmode="numeric" maxlength="12" placeholder="Ej: 2500"></label>
+      <label>¿Cada cuánto publicás?<select id="frecuencia">
+        <option value="">Elegí una opción</option>
+        <option>Todos los días</option>
+        <option>3 o más veces por semana</option>
+        <option>1 o 2 veces por semana</option>
+        <option>Menos de una vez por semana</option>
+        <option>Casi nunca</option>
+      </select></label>
+      <label>¿Qué vendés y a qué precio, más o menos?<input id="vende" maxlength="200" placeholder="Ej: clases de yoga, $ 25.000 el mes"></label>
+      <label>¿Qué es lo que más te cuesta?<select id="problema">
+        <option value="">Elegí una opción</option>
+        <option>Que me vea más gente</option>
+        <option>Que me escriban</option>
+        <option>Que me compren</option>
+        <option>No tengo tiempo para publicar</option>
+        <option>No sé qué publicar</option>
+      </select></label>
+      <label class="ancho">Link de tu publicación que mejor funcionó <small>(opcional)</small><input id="mejorPost" maxlength="300" inputmode="url" placeholder="Pegá el link del reel o posteo"></label>
+      <label class="ancho">¿Algo más que quieras contarnos? <small>(opcional)</small><textarea id="comentario" maxlength="600" placeholder="A quién le vendés, qué probaste, qué te preocupa…"></textarea></label>
       <label class="check ancho"><input type="checkbox" id="demo"> Quiero además una demo de cómo podría verse mi página web</label>
       <label class="check ancho"><input type="checkbox" id="consentimiento" required> Acepto que MyM Soluciones use estos datos y lo que publico en mis redes para hacer el diagnóstico y contactarme por WhatsApp. Puedo pedir que los borren cuando quiera (Ley 25.326).</label>
       <div class="trampa" aria-hidden="true"><label>No completar<input id="sitio" tabindex="-1" autocomplete="off"></label></div>
@@ -153,7 +177,7 @@ function decir(t, tipo){ msg.textContent = t; msg.className = 'msg ancho ' + (ti
 // Instagram y TikTok se guardan como usuario limpio (sin @ ni link).
 function usuario(s){ s = String(s || '').trim(); var m = s.match(/(?:instagram\.com|tiktok\.com)\/@?([A-Za-z0-9._]+)/i); if (m) s = m[1]; return s.replace(/^@/, '').replace(/[^A-Za-z0-9._]/g, '').slice(0, 60); }
 function porWhatsApp(d){
-  var t = 'Hola, quiero el diagnóstico de redes gratis.\nNombre: ' + d.nombre + '\nNegocio: ' + d.negocio + ' (' + d.rubro + ')\nInstagram: ' + (d.instagram ? '@' + d.instagram : '-') + '\nTikTok: ' + (d.tiktok ? '@' + d.tiktok : '-') + '\nWeb: ' + (d.web || '-') + '\nObjetivo: ' + d.objetivo + (d.quiereDemo ? '\nQuiero también la demo de la web.' : '');
+  var t = 'Hola, quiero el diagnóstico de redes gratis.\nNombre: ' + d.nombre + '\nNegocio: ' + d.negocio + ' (' + d.rubro + ')\nInstagram: ' + (d.instagram ? '@' + d.instagram : '-') + '\nTikTok: ' + (d.tiktok ? '@' + d.tiktok : '-') + '\nWeb: ' + (d.web || '-') + '\nObjetivo: ' + d.objetivo + (d.seguidores ? '\nSeguidores: ' + d.seguidores : '') + (d.frecuencia ? '\nPublico: ' + d.frecuencia : '') + (d.vende ? '\nVendo: ' + d.vende : '') + (d.problema ? '\nLo que más me cuesta: ' + d.problema : '') + (d.quiereDemo ? '\nQuiero también la demo de la web.' : '');
   return 'https://wa.me/5491133662080?text=' + encodeURIComponent(t);
 }
 $('f').addEventListener('submit', function(ev){
@@ -161,7 +185,9 @@ $('f').addEventListener('submit', function(ev){
   if ($('sitio').value) return; // un robot completó el campo oculto
   var d = { nombre:v('nombre'), negocio:v('negocio'), rubro:v('rubro'), whatsapp:v('whatsapp').replace(/[^\d+ -]/g, ''),
     instagram:usuario(v('instagram')), tiktok:usuario(v('tiktok')), web:v('web').slice(0, 200), objetivo:v('objetivo'),
-    comentario:v('comentario').slice(0, 600), quiereDemo:$('demo').checked, consentimiento:$('consentimiento').checked };
+    comentario:v('comentario').slice(0, 600), quiereDemo:$('demo').checked, consentimiento:$('consentimiento').checked,
+    seguidores:v('seguidores').replace(/[^\d.,kKmM ]/g, '').slice(0, 12), frecuencia:v('frecuencia'), vende:v('vende').slice(0, 200),
+    problema:v('problema'), mejorPost:v('mejorPost').slice(0, 300) };
   if (d.nombre.length < 2) return decir('Poné tu nombre.', 'error'), $('nombre').focus();
   if (d.negocio.length < 2) return decir('Poné el nombre de tu negocio.', 'error'), $('negocio').focus();
   if (d.rubro.length < 2) return decir('Contanos el rubro.', 'error'), $('rubro').focus();

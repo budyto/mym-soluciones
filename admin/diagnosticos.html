@@ -239,8 +239,9 @@ function datosParaIA(p){
   var r = p.redes || {};
   return {
     negocio:p.negocio, nombre:p.nombre, rubro:p.rubro, objetivo:p.objetivo, comentario:p.comentario || '',
+    loQueContoElCliente:{ seguidores:p.seguidores || '', frecuenciaDePublicacion:p.frecuencia || '', queVendeYPrecio:p.vende || '', loQueMasLeCuesta:p.problema || '', mejorPublicacion:p.mejorPost || '' },
     instagram:p.instagram ? '@' + p.instagram : '', tiktok:p.tiktok ? '@' + p.tiktok : '', web:p.web || '',
-    metricas:{ seguidores:r.seguidores, seguidos:r.seguidos, publicaciones:r.publicaciones, ultimoPosteo:r.ultimoPosteo, bio:r.bio, linkBio:r.linkBio },
+    metricas:{ seguidores:r.seguidores || p.seguidores, seguidos:r.seguidos, publicaciones:r.publicaciones, ultimoPosteo:r.ultimoPosteo, bio:r.bio, linkBio:r.linkBio },
     posteos:(r.posteos || []).filter(function(x){ return x.texto; }).slice(0, 15),
     webLeida:r.webResumen || '', notasDelAnalista:r.notas || '', investigacion:r.investigacion || ''
   };
@@ -274,7 +275,9 @@ function generarDevolucion(p){
 function armarDevolucion(p, A, B){
   var r = p.redes || {};
   var datos = [];
-  if (r.seguidores !== '' && r.seguidores != null) datos.push(['Seguidores', miles(r.seguidores)]);
+  var seg = (r.seguidores !== '' && r.seguidores != null) ? r.seguidores : p.seguidores;
+  if (seg) datos.push(['Seguidores', /^[\d.]+$/.test(String(seg)) ? miles(seg) : String(seg)]);
+  if (p.frecuencia) datos.push(['Publica', p.frecuencia]);
   if (r.publicaciones) datos.push(['Publicaciones', miles(r.publicaciones)]);
   if (r.seguidos) datos.push(['Seguidos', miles(r.seguidos)]);
   datos.push(['Link en la bio', r.linkBio ? r.linkBio : 'No tiene']);
@@ -347,26 +350,30 @@ function renderDetalle(){
   '<span class="small muted">Entró ' + esc(fecha(p.creado)) + ' · ' + esc(p.origen || 'a mano') + '</span></div>' +
   '<div class="grid" data-grupo="pedido">' + campo('nombre', 'Nombre', p.nombre) + campo('negocio', 'Negocio', p.negocio) + campo('rubro', 'Rubro', p.rubro) + campo('whatsapp', 'WhatsApp', p.whatsapp) +
   campo('instagram', 'Instagram (usuario)', p.instagram) + campo('tiktok', 'TikTok', p.tiktok) + campo('web', 'Web', p.web) + campo('objetivo', 'Objetivo', p.objetivo) +
+  campo('seguidores', 'Seguidores (dice el cliente)', p.seguidores) + campo('frecuencia', 'Cada cuánto publica', p.frecuencia) + campo('vende', 'Qué vende y a qué precio', p.vende) +
+  campo('problema', 'Lo que más le cuesta', p.problema) + campo('mejorPost', 'Su mejor publicación (link)', p.mejorPost) +
   campo('comentario', 'Comentario del cliente', p.comentario, { ancho:true, area:true }) + '</div>' +
   '<div class="fila" style="margin-top:12px"><button class="btn sm gold" data-a="guardar-pedido">Guardar</button>' +
   (wa ? '<a class="btn sm" href="https://wa.me/' + wa + '" target="_blank" rel="noopener">WhatsApp al cliente ↗</a>' : '') +
   (p.instagram ? '<a class="btn sm" href="https://www.instagram.com/' + encodeURIComponent(p.instagram) + '/" target="_blank" rel="noopener">Ver Instagram ↗</a>' : '') +
   (p.clienteId ? '<span class="chip ok">En el CRM de Soluciones</span>' : '<button class="btn sm" data-a="embudo">Pasar al CRM de Soluciones</button>') +
   '<button class="btn sm bad" data-a="borrar">Borrar pedido</button></div></section>' +
-  // 2. Redes
+  // 2. Redes (16/11, Matías: «hacelo más simple»): arriba solo lo esencial; lo opcional, plegado.
   '<section class="panel"><h2><span class="paso">2 · Los datos</span>Redes y web</h2>' +
-  '<p class="small muted">Tocá «Leer automático» para traer Instagram (API oficial de Meta, solo cuentas de empresa o creador) y la web. Lo que no se pueda leer, cargalo a mano mirando el perfil.</p>' +
+  '<p class="small muted">Lo principal ya lo contó el cliente en el formulario (arriba). Tocá «Leer automático» para sumar la web (e Instagram, cuando esté conectada la API de Meta) y anotá lo que viste.</p>' +
   '<div class="fila"><button class="btn sm gold" data-a="leer">Leer automático</button><span class="small muted">' + (r.leido ? 'Leído el ' + esc(fecha(r.leido)) : '') + '</span></div>' +
   '<p class="estado" id="estLeer"></p>' +
-  '<div class="grid" data-grupo="redes">' + campo('seguidores', 'Seguidores', r.seguidores) + campo('seguidos', 'Seguidos', r.seguidos) + campo('publicaciones', 'Publicaciones', r.publicaciones) +
-  campo('ultimoPosteo', 'Último posteo', r.ultimoPosteo, { ph:'Ej: 9 de octubre' }) + campo('linkBio', 'Link en la bio', r.linkBio, { ph:'vacío si no tiene' }) +
+  '<div class="grid" data-grupo="redes">' + campo('seguidores', 'Seguidores', r.seguidores || p.seguidores || '') + campo('ultimoPosteo', 'Último posteo', r.ultimoPosteo, { ph:'Ej: hace 3 semanas' }) +
+  campo('linkBio', 'Link en la bio', r.linkBio, { ph:'vacío si no tiene' }) +
+  campo('notas', 'Lo que vimos', r.notas, { ancho:true, area:true, ph:'Ej: no aparece en cámara; imágenes hechas con IA; no publica hace 5 semanas…' }) + '</div>' +
+  '<details' + (r.posteos && r.posteos.some(function(x){ return x.texto; }) ? ' open' : '') + '><summary>Más datos (opcional): posteos, bio, web e investigación</summary>' +
+  '<div class="grid" data-grupo="redes">' + campo('seguidos', 'Seguidos', r.seguidos) + campo('publicaciones', 'Publicaciones', r.publicaciones) +
   campo('bio', 'Bio actual', r.bio, { ancho:true, area:true }) + '</div>' +
-  '<h3 style="margin:16px 0 0;font-size:15px">Posteos recientes</h3><table><thead><tr><th>Posteo (tema o texto)</th><th style="width:90px">Me gusta</th><th style="width:90px">Comentarios</th><th style="width:40px"></th></tr></thead><tbody id="posteos">' +
+  '<h3 style="margin:16px 0 0;font-size:15px">Posteos recientes <span class="small muted">(para que la IA compare qué funcionó)</span></h3><table><thead><tr><th>Posteo (tema o texto)</th><th style="width:90px">Me gusta</th><th style="width:90px">Comentarios</th><th style="width:40px"></th></tr></thead><tbody id="posteos">' +
   posteos.map(function(x, i){ return '<tr><td><input data-p="texto" data-i="' + i + '" value="' + esc(x.texto) + '"></td><td><input data-p="meGusta" data-i="' + i + '" value="' + esc(x.meGusta) + '" inputmode="numeric"></td><td><input data-p="comentarios" data-i="' + i + '" value="' + esc(x.comentarios) + '" inputmode="numeric"></td><td><button class="btn sm" data-a="quitar-posteo" data-i="' + i + '" aria-label="Quitar">✕</button></td></tr>'; }).join('') +
   '</tbody></table><button class="btn sm" data-a="sumar-posteo" style="margin-top:8px">+ Posteo</button>' +
-  '<div class="grid" data-grupo="redes">' + campo('webResumen', 'Lo que tiene la web', r.webResumen, { ancho:true, area:true, ph:'Se completa solo al leer la web. Podés corregirlo.' }) +
-  campo('notas', 'Lo que vimos (notas para la IA)', r.notas, { ancho:true, area:true, ph:'Ej: casi no aparece en cámara; las imágenes son de IA; no publica hace 5 semanas; usa la foto de un famoso…' }) +
-  campo('investigacion', 'Investigación de mercado (con fuentes)', r.investigacion, { ancho:true, area:true, ph:'Precios y competidores reales, cada uno con su fuente. Si no hay, la IA pone [FALTA].' }) + '</div>' +
+  '<div class="grid" data-grupo="redes">' + campo('webResumen', 'Lo que tiene la web', r.webResumen, { ancho:true, area:true, ph:'Se completa solo al leer la web.' }) +
+  campo('investigacion', 'Investigación de mercado (con fuentes)', r.investigacion, { ancho:true, area:true, ph:'Precios y competidores reales con su fuente. Si no hay, la IA pone [FALTA].' }) + '</div></details>' +
   '<div class="fila" style="margin-top:12px"><button class="btn sm gold" data-a="guardar-redes">Guardar datos</button></div></section>' +
   // 3. Devolución
   '<section class="panel"><h2><span class="paso">3 · La devolución</span>PDF y link para el cliente</h2>' +
@@ -534,7 +541,7 @@ if (PRUEBA){
   fetch('../devolucion/ejemplo.json').then(function(r){ return r.json(); }).then(function(ej){
     window.__ejemplo = ej;
     S.items = [{ id:'p1', negocio:'Luna Pilates', nombre:'Ana', rubro:'Estudio de pilates', whatsapp:'11 2222-3333', instagram:'lunapilates.ejemplo', web:'maxi-marefrigeracion.com',
-      objetivo:'Conseguir más clientes', comentario:'Quiero llenar los horarios de la mañana', quiereDemo:true, estado:'pedido', origen:'mymsoluciones.online/diagnostico-redes', creado:new Date() }];
+      objetivo:'Conseguir más clientes', comentario:'Quiero llenar los horarios de la mañana', quiereDemo:true, seguidores:'4200', frecuencia:'1 o 2 veces por semana', vende:'Clases de pilates, $ 25.000 el mes', problema:'Que me compren', mejorPost:'', estado:'pedido', origen:'mymsoluciones.online/diagnostico-redes', creado:new Date() }];
     render();
   });
 } else {
