@@ -18,7 +18,7 @@ Para mandarla como PDF: abrí el link en la computadora, tocá «Guardar como PD
 
 ```
 Hola [CONTACTO], soy Matías, de MyM Soluciones.
-Te armé la propuesta para [EMPRESA] con los cinco planes de automatización.
+Te armé la propuesta para [EMPRESA] con los cinco planes de automatización y los tres de Redes en automático.
 Cada uno dice qué hace, qué necesitamos de tu lado y su precio (más IVA), y tiene un video corto que lo explica.
 [LINK]
 Mirala tranquilo. Si alguno te sirve, lo vemos en un diagnóstico gratis de 30 minutos por videollamada.
@@ -36,7 +36,7 @@ Soy Matías, de MyM Soluciones. Te paso la propuesta que armamos para [EMPRESA]:
 
 [LINK]
 
-Ahí están los cinco planes de automatización: Bot de WhatsApp, Seguimiento de clientes, Paquete completo, Orquestador y Empresa en automático. De cada uno vas a ver qué hace, qué necesitamos de tu lado para arrancar, en cuánto tiempo queda andando y cuánto cuesta. Los precios son finales, en pesos. Cada plan tiene un video corto que lo explica.
+Ahí están los cinco planes de automatización (Bot de WhatsApp, Seguimiento de clientes, Paquete completo, Orquestador y Empresa en automático) y los tres planes de Redes en automático (Esencial, Profesional y Premium), que hacen, publican y miden el contenido de tus redes todos los meses. De cada uno vas a ver qué hace, qué necesitamos de tu lado para arrancar, en cuánto tiempo queda andando y cuánto cuesta. Los precios son finales, en pesos. Cada plan tiene un video corto que lo explica.
 
 Hay una promoción con fecha: contratando hasta el 30/11/2026, la instalación del Paquete completo, del Orquestador y de Empresa en automático va a mitad de precio. El detalle está en la propuesta.
 
