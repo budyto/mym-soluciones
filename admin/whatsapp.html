@@ -166,6 +166,19 @@
   .escribir .adj { cursor: pointer; padding: 10px 12px; }
   .escribir .adj input { display: none; }
   .wa-prop { margin: 0; font-size: 12px; padding: 6px 12px; background: #eef3ff; }
+  /* El segundo número por el puente (16/11/2026) */
+  .wa-n2 { display: inline-block; font: 700 10px/1 'Martian Mono', monospace; color: #fff; background: #00a08a; border-radius: 6px; padding: 3px 5px; margin-left: 6px; vertical-align: middle; }
+  #puenteBtn .pt { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #b0b8c8; margin-right: 6px; }
+  #puenteBtn.ok .pt { background: #22c55e; } #puenteBtn.mal .pt { background: #f59e0b; }
+  #dlgPuente { border: 0; border-radius: 16px; padding: 0; width: min(420px, calc(100vw - 32px)); box-shadow: 0 24px 60px rgba(0,0,0,.25); }
+  #dlgPuente::backdrop { background: rgba(14,26,51,.45); }
+  #dlgPuente .in { display: grid; gap: 10px; padding: 20px; font-family: Archivo, system-ui, sans-serif; }
+  #dlgPuente h2 { margin: 0; font-size: 19px; }
+  #dlgPuente .ayuda { margin: 0; font-size: 12.5px; color: #4a5878; line-height: 1.45; }
+  #puenteQr { display: grid; place-items: center; min-height: 40px; }
+  #puenteQr img { width: 260px; height: 260px; image-rendering: pixelated; border-radius: 10px; border: 1px solid #e3e8f2; }
+  #puenteDatos { font-size: 13px; line-height: 1.6; }
+  #puenteDatos .err { display: block; margin-top: 6px; }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Martian+Mono:wght@500&display=swap" rel="stylesheet">
@@ -182,6 +195,7 @@
     <div class="wa-sems" id="waSems"></div>
     <span class="grow"></span>
     <div class="wa-controles">
+      <button class="btn gris" id="puenteBtn" type="button" hidden title="El segundo número de WhatsApp (por el puente): estado y QR para vincularlo"><span class="pt"></span>📱<span class="wa-lbl"> Número 2</span></button>
       <button class="btn" id="propuestaBtn" type="button" title="Mandarle la propuesta en PDF a un cliente, aunque no haya escrito">📄<span class="wa-lbl"> Mandar propuesta</span></button>
       <button class="btn gris" id="avisos" type="button" hidden title="Que el navegador avise cuando entra un mensaje">🔔<span class="wa-lbl"> Activar avisos</span></button>
       <button class="btn" id="pausar" type="button" title="Pausar o prender TODAS las respuestas automáticas del robot">⏸️<span class="wa-lbl"> Pausar bot</span></button>
@@ -209,6 +223,7 @@
     <h2>📄 Mandar propuesta</h2>
     <p class="ayuda">Sale del 11 3366-2080. Si te escribió en las últimas 24 horas, le llega el PDF directo. Si no, le llega un mensaje para que acepte recibirla, y el PDF sale solo cuando toca «Sí, mandala».</p>
     <div id="propEstado">Revisando la plantilla en Meta…</div>
+    <label id="propDesdeL" hidden>Desde<select name="desde" id="propDesde" style="font:inherit;font-weight:400;padding:9px 10px;border:1px solid #cfd6e4;border-radius:9px"></select></label>
     <label>Celular<input name="telefono" inputmode="tel" placeholder="11 5555-1234" required autocomplete="off"></label>
     <label>Nombre del cliente<input name="nombre" placeholder="Juan" maxlength="60" required autocomplete="off"></label>
     <label>Negocio<input name="negocio" placeholder="Plomería Mansilla" maxlength="80" required autocomplete="off"></label>
@@ -220,6 +235,16 @@
       <button class="btn" type="submit" id="propMandar">Mandar</button>
     </div>
   </form>
+</dialog>
+<!-- El segundo número (puente-sol, en la PC de la oficina): estado y QR para vincularlo (16/11/2026). -->
+<dialog id="dlgPuente">
+  <div class="in">
+    <h2>📱 Segundo número</h2>
+    <div id="puenteDatos">Cargando…</div>
+    <div id="puenteQr"></div>
+    <p class="ayuda">Para vincularlo: en el celular del segundo número abrí WhatsApp → Ajustes → Dispositivos vinculados → Vincular un dispositivo, y escaneá el QR. El programa del puente tiene que estar abierto en la PC (INICIAR-PUENTE-SOL).</p>
+    <div style="display:flex;justify-content:flex-end"><button class="btn gris" type="button" id="puenteCerrar">Cerrar</button></div>
+  </div>
 </dialog>
 <script src="../config.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" integrity="sha384-AQ3POAMqIhwS81FrUH95ekxqBZHeP5tG2JfEL3+7GuTtfRLWnrRh32UxwzM+//A9" crossorigin="anonymous"></script>
@@ -336,7 +361,7 @@
       const nueva = (c.etapa || 'nuevo') === 'nuevo' && minDesde(c.creado) != null && minDesde(c.creado) < 1440;
       return '<div class="wa-item' + (abierta && abierta.telefono === c.telefono ? ' on' : '') + (c.resuelta ? ' resuelta' : '') + '" data-tel="' + esc(c.telefono) + '">'
         + avatar(c, 38)
-        + '<div class="wa-cuerpo"><div class="wa-l1"><span class="wa-nom">' + esc(nombre(c)) + '</span>'
+        + '<div class="wa-cuerpo"><div class="wa-l1"><span class="wa-nom">' + esc(nombre(c)) + (c.por_puente ? '<span class="wa-n2" title="Entró por el segundo número">N2</span>' : '') + '</span>'
         + (minUlt != null ? '<span class="wa-hora' + (minUlt > 1440 ? ' viejo' : '') + '">' + hace(minUlt) + '</span>' : '') + '</div>'
         + '<div class="wa-bajo"><div class="wa-txts">'
         + '<div class="wa-ult">' + (ult.de && ult.de !== 'cliente' ? (ult.de === 'robot' ? 'Robot: ' : 'Vos: ') : '') + esc(ult.texto || '') + '</div>'
@@ -361,7 +386,7 @@
     const borrador = $('#texto') ? $('#texto').value : '';
     const fichaVieja = fichaSucia === c.telefono ? $('#waFicha') : null;
     $('#waChat').innerHTML = '<div class="wa-cab"><button class="btn gris solo-cel" id="volver" type="button">←</button>' + avatar(c, 40)
-      + '<div class="quien"><b>' + esc(nombre(c)) + '</b><small>+' + esc(c.telefono) + ((c.datos || {}).negocio ? ' · ' + esc(c.datos.negocio) : '') + '</small>'
+      + '<div class="quien"><b>' + esc(nombre(c)) + (c.por_puente ? '<span class="wa-n2">N2</span>' : '') + '</b><small>+' + esc(c.telefono) + (c.por_puente ? ' · por el número 2' : '') + ((c.datos || {}).negocio ? ' · ' + esc(c.datos.negocio) : '') + '</small>'
       + (c.derivada ? '<small class="der">El robot la derivó: ' + esc((MOTIVOS[c.derivada.motivo] || c.derivada.motivo).toLowerCase()) + ' · ' + fecha(c.derivada.ts) + '</small>' : '') + '</div>'
       + '<div class="wa-acc">'
       + (c.robot_activo ? '<button class="btn" id="robot" type="button" title="El robot deja de contestar en esta charla">✋ Tomar la charla</button>' : '<button class="btn gris" id="robot" type="button" title="El robot vuelve a contestar en esta charla">🤖 Devolver al robot</button>')
@@ -373,7 +398,7 @@
       + (c.propuesta && !c.propuesta.enviada && !c.propuesta.cancelada ? '<p class="wa-prop">📄 La propuesta (' + esc(c.propuesta.archivo) + ') espera que toque «Sí, mandala»' + (c.propuesta.error ? ' · <span class="err">último intento: ' + esc(c.propuesta.error) + '</span>' : '') + '</p>' : '')
       + (c.ventana_abierta
         ? (respuestas.length ? '<div class="rapidas">' + respuestas.map((r, i) => '<button type="button" data-rapida="' + i + '" title="' + esc(r.texto) + '">' + esc(r.titulo) + '</button>').join('') + '</div>' : '')
-          + '<form class="escribir" id="escribir"><label class="btn gris adj" title="Mandar un PDF (lo que escribas al lado va como texto del archivo)">📎<input type="file" id="adjunto" accept="application/pdf,.pdf"></label><textarea id="texto" rows="1" placeholder="Escribile desde el 11 3366-2080…" required></textarea><button class="btn" type="submit" style="padding:10px 16px">Enviar</button></form>'
+          + '<form class="escribir" id="escribir"><label class="btn gris adj" title="Mandar un PDF (lo que escribas al lado va como texto del archivo)">📎<input type="file" id="adjunto" accept="application/pdf,.pdf"></label><textarea id="texto" rows="1" placeholder="' + (c.por_puente ? 'Escribile desde el número 2…' : 'Escribile desde el 11 3366-2080…') + '" required></textarea><button class="btn" type="submit" style="padding:10px 16px">Enviar</button></form>'
         : '<div class="cerrada"><b>🔒 Ventana de 24 h cerrada.</b> Pasaron más de 24 horas desde su último mensaje: WhatsApp no permite escribirle hasta que el contacto vuelva a escribir. <button class="btn" type="button" id="propDeCharla" style="margin-top:8px">📄 Mandarle la propuesta</button></div>')
       + '<aside id="waFicha" class="scroll"' + (fichaAbierta ? '' : ' hidden') + '></aside>';
     if (borrador && $('#texto')) $('#texto').value = borrador;
@@ -432,7 +457,7 @@
   // whatsapp.html#tel=549... abre esa charla directo (lo usan los links del inicio).
   const telDelLink = () => (String(location.hash).match(/tel=(\d{6,15})/) || [])[1] || '';
   function entrar() {
-    $('#entrar').hidden = true; $('#panel').hidden = false; cargarResumen(); cargarRespuestas();
+    $('#entrar').hidden = true; $('#panel').hidden = false; cargarResumen(); cargarRespuestas(); cargarLineas();
     cargar().then(() => { const t = telDelLink(); if (t) { abrir(t); history.replaceState(null, '', location.pathname); } });
   }
   function filtrar(f, e) { filtro = f; etapa = e || ''; pintarCharlas(); }
@@ -538,26 +563,62 @@
       else box.textContent = 'No se pudo saber el estado de la plantilla' + (p.error ? ': ' + p.error : '') + '.';
     } catch (err) { box.className = 'mal'; box.textContent = 'No se pudo revisar la plantilla: ' + err.message; }
   }
+  // ---------- El segundo número (puente) ----------
+  let lineas = [];
+  const puenteDe = () => lineas.find((l) => l.puente);
+  async function cargarLineas() {
+    try {
+      lineas = (await pedir('/api/ventas-sol/puente')).lineas || [];
+      const p = puenteDe(), b = $('#puenteBtn');
+      b.hidden = !p;
+      if (p) { const e = p.estado || {}; b.classList.toggle('ok', !!(e.vivo && e.conectado)); b.classList.toggle('mal', !(e.vivo && e.conectado)); }
+      if ($('#dlgPuente').open) pintarPuente();
+    } catch (e) { /* sin el puente, el panel sigue igual */ }
+  }
+  function pintarPuente() {
+    const p = puenteDe(); if (!p) return;
+    const e = p.estado || {};
+    const est = !e.vivo ? '⚪ El programa del puente no está andando (la PC apagada o la ventana cerrada).'
+      : e.conectado ? '🟢 Conectado' + (e.numero ? ' · +' + esc(e.numero) : '') : (e.qr ? '🟠 Esperando que escanees el QR' : '🟠 Desconectado, reconectando…');
+    $('#puenteDatos').innerHTML = '<b>' + esc(p.nombre) + '</b> · ' + est
+      + (e.vivo && e.conectado ? '<br>Mensajes hoy: ' + (e.usado_dia || 0) + ' de ' + (e.cupo_dia || 0) + (e.tope_inicios ? ' · primeros contactos: ' + (e.inicios_dia || 0) + ' de ' + e.tope_inicios : '') + (e.pausado ? '<br>⏸ En pausa: ' + esc(e.motivo || '') : '') : '')
+      + (e.alerta ? '<span class="err">⚠️ ' + esc(e.alerta) + '</span>' : '');
+    $('#puenteQr').innerHTML = e.qr ? '<img alt="QR para vincular el segundo número" src="' + esc(e.qr) + '">' : '';
+  }
+  let relojPuente = null;
+  $('#puenteBtn').addEventListener('click', () => { $('#dlgPuente').showModal(); pintarPuente(); cargarLineas(); relojPuente = setInterval(cargarLineas, 4000); });
+  $('#puenteCerrar').addEventListener('click', () => $('#dlgPuente').close());
+  $('#dlgPuente').addEventListener('close', () => { clearInterval(relojPuente); relojPuente = null; });
+
   function abrirPropuesta(c) {
     pf.reset(); $('#propMsg').textContent = ''; $('#propVista').textContent = ''; $('#propMandar').disabled = false;
+    // «Desde»: aparece sólo si hay segundo número. Por el puente no hay plantilla: sale una presentación y el PDF.
+    const p = puenteDe();
+    $('#propDesdeL').hidden = !p;
+    $('#propDesde').innerHTML = lineas.map((l) => '<option value="' + esc(l.puente ? l.id : '') + '">' + esc(l.puente ? l.nombre + ' (número 2)' : 'Oficial · 11 3366-2080') + '</option>').join('');
+    if (c && c.por_puente && p) $('#propDesde').value = p.id;
     if (c) { pf.telefono.value = '+' + c.telefono; pf.nombre.value = String((c.datos || {}).nombre || c.nombre_perfil || '').split(' ')[0]; pf.negocio.value = (c.datos || {}).negocio || ''; }
+    $('#propEstado').hidden = !!$('#propDesde').value;
     dlg.showModal(); estadoPlantilla(false);
   }
   $('#propuestaBtn').addEventListener('click', () => abrirPropuesta(null));
   $('#propCerrar').addEventListener('click', () => dlg.close());
   $('#propEstado').addEventListener('click', (e) => { if (e.target.id === 'propAlta') { e.target.disabled = true; estadoPlantilla(true); } });
+  $('#propDesde').addEventListener('change', () => { $('#propEstado').hidden = !!$('#propDesde').value; pf.dispatchEvent(new Event('input')); });
   pf.addEventListener('input', () => {
     const n = pf.nombre.value.trim() || '{nombre}', g = pf.negocio.value.trim() || '{negocio}';
-    $('#propVista').textContent = 'Si no te escribió en las últimas 24 h le llega: «Hola ' + n + ', te escribimos de MyM Soluciones. Ya tenemos lista la propuesta para ' + g + '. ¿Te la mandamos por acá?» [Sí, mandala] [Ahora no]';
+    $('#propVista').textContent = $('#propDesde').value
+      ? 'Por el número 2 le llega: «Hola ' + n + ', ¿cómo estás? Te escribo de MyM Soluciones. Te paso la propuesta que preparamos para ' + g + '. Cualquier duda, respondeme por acá.» y el PDF. Si no te escribió antes, cuenta como primer contacto del día.'
+      : 'Si no te escribió en las últimas 24 h le llega: «Hola ' + n + ', te escribimos de MyM Soluciones. Ya tenemos lista la propuesta para ' + g + '. ¿Te la mandamos por acá?» [Sí, mandala] [Ahora no]';
   });
   pf.addEventListener('submit', async (e) => {
     e.preventDefault();
     const b = $('#propMandar'); b.disabled = true; $('#propMsg').textContent = 'Mandando…';
     try {
       const archivo = await leerPdf(pf.archivo.files[0]);
-      const j = await post('/api/ventas-sol/propuesta', { telefono: pf.telefono.value, nombre: pf.nombre.value, negocio: pf.negocio.value, archivo });
+      const j = await post('/api/ventas-sol/propuesta', { telefono: pf.telefono.value, nombre: pf.nombre.value, negocio: pf.negocio.value, archivo, linea: $('#propDesde').value || '' });
       dlg.close();
-      $('#wamsg').textContent = j.modo === 'directo' ? '✅ Listo: le llegó el PDF.' : '✅ Listo: le llegó el mensaje. El PDF sale solo cuando toque «Sí, mandala».';
+      $('#wamsg').textContent = j.modo === 'directo' ? '✅ Listo: le llegó el PDF.' : j.modo === 'puente' ? '✅ Listo: quedó en la cola del número 2 (sale en menos de un minuto, con una pausa natural).' : '✅ Listo: le llegó el mensaje. El PDF sale solo cuando toque «Sí, mandala».';
       await cargar(); if (j.telefono) abrir(j.telefono);
     } catch (err) { b.disabled = false; $('#propMsg').innerHTML = '<span class="err">' + esc(err.message) + '</span>'; }
   });
@@ -579,7 +640,7 @@
   // Mientras se escribe un mensaje no se refresca la charla; la ficha se cuida sola (fichaSucia).
   function tick() {
     if (document.hidden || $('#panel').hidden) return;
-    cargar(); cargarResumen();
+    cargar(); cargarResumen(); cargarLineas();
     const foco = document.activeElement;
     if (abierta && !(foco && foco.id === 'texto')) abrir(abierta.telefono);
   }
