@@ -168,6 +168,7 @@ h3 { font-size: 21px; font-weight: 800; letter-spacing: -0.015em; line-height: 1
 .svc h3 { font-size: 28px; font-weight: 900; letter-spacing: -0.03em; }
 .svc p { margin: 0; color: var(--ink-2); }
 .svc ul { list-style: none; padding: 0; margin: 4px 0 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.svc-alta { align-self: flex-start; margin-top: 6px; }
 .svc li { font-size: 13px; font-weight: 600; color: var(--ink-2); background: var(--fondo); border-radius: 999px; padding: 6px 12px; }
 .svc-art { height: 150px; border-radius: var(--r-s); background: linear-gradient(160deg, var(--fondo), var(--fondo-2)); display: grid; place-items: center; margin-bottom: 8px; overflow: hidden; }
 
@@ -269,6 +270,9 @@ h3 { font-size: 21px; font-weight: 800; letter-spacing: -0.015em; line-height: 1
 .paq li { display: flex; gap: 10px; }
 .paq li::before { content: "✓"; flex: none; width: 22px; height: 22px; border-radius: 7px; background: var(--agua); color: #fff; font-size: 13px; font-weight: 900; display: grid; place-items: center; margin-top: 1px; }
 .paq .btn { margin-top: auto; }
+/* Segundo camino del paquete del bot: consultar por WhatsApp en vez de armarlo solo (16/11/2026) */
+.paq-alt { margin-top: 10px; text-align: center; font-size: 14px; font-weight: 600; color: var(--ink-2); text-decoration: underline; text-underline-offset: 3px; }
+.paq-alt:hover { color: var(--ink); }
 .paq-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
 .paq-pill { font-size: 12px; font-weight: 800; color: #fff; background: var(--deg); padding: 5px 11px; border-radius: 999px; white-space: nowrap; }
 .paq-top { outline: 2px solid var(--azul); outline-offset: -2px; }
