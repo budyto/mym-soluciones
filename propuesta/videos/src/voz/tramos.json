@@ -1,0 +1,636 @@
+{
+ "bot-de-whatsapp": {
+  "dura": 40.2,
+  "voz": "ef_dora",
+  "idioma": "es-419",
+  "velocidad": 1.1,
+  "tramos": [
+   {
+    "tramo": 1,
+    "se_ve": "Portada",
+    "pantalla_desde": 0.0,
+    "pantalla_hasta": 5.2,
+    "pantalla_dura": 5.2,
+    "voz_desde": 0.35,
+    "voz_dura": 4.49,
+    "aire_al_final": 0.36
+   },
+   {
+    "tramo": 2,
+    "se_ve": "Chat: responde con precios y horarios",
+    "pantalla_desde": 5.2,
+    "pantalla_hasta": 8.9,
+    "pantalla_dura": 3.7,
+    "voz_desde": 5.55,
+    "voz_dura": 2.98,
+    "aire_al_final": 0.37
+   },
+   {
+    "tramo": 3,
+    "se_ve": "Chat: califica y agenda",
+    "pantalla_desde": 8.9,
+    "pantalla_hasta": 12.5,
+    "pantalla_dura": 3.6,
+    "voz_desde": 9.25,
+    "voz_dura": 2.87,
+    "aire_al_final": 0.38
+   },
+   {
+    "tramo": 4,
+    "se_ve": "Chat: pasa a una persona",
+    "pantalla_desde": 12.5,
+    "pantalla_hasta": 16.0,
+    "pantalla_dura": 3.5,
+    "voz_desde": 12.85,
+    "voz_dura": 2.77,
+    "aire_al_final": 0.38
+   },
+   {
+    "tramo": 5,
+    "se_ve": "Qué incluye",
+    "pantalla_desde": 16.0,
+    "pantalla_hasta": 21.0,
+    "pantalla_dura": 5.0,
+    "voz_desde": 16.35,
+    "voz_dura": 2.73,
+    "aire_al_final": 1.92
+   },
+   {
+    "tramo": 6,
+    "se_ve": "Precio",
+    "pantalla_desde": 21.0,
+    "pantalla_hasta": 29.0,
+    "pantalla_dura": 8.0,
+    "voz_desde": 21.35,
+    "voz_dura": 7.28,
+    "aire_al_final": 0.37
+   },
+   {
+    "tramo": 7,
+    "se_ve": "Prueba gratis y contacto",
+    "pantalla_desde": 29.0,
+    "pantalla_hasta": 40.2,
+    "pantalla_dura": 11.2,
+    "voz_desde": 29.35,
+    "voz_dura": 9.61,
+    "aire_al_final": 1.24
+   }
+  ]
+ },
+ "seguimiento-de-clientes": {
+  "dura": 42.6,
+  "voz": "ef_dora",
+  "idioma": "es-419",
+  "velocidad": 1.1,
+  "tramos": [
+   {
+    "tramo": 1,
+    "se_ve": "Portada",
+    "pantalla_desde": 0.0,
+    "pantalla_hasta": 3.5,
+    "pantalla_dura": 3.5,
+    "voz_desde": 0.35,
+    "voz_dura": 2.79,
+    "aire_al_final": 0.36
+   },
+   {
+    "tramo": 2,
+    "se_ve": "Chat: el cliente no contesta más",
+    "pantalla_desde": 3.5,
+    "pantalla_hasta": 7.0,
+    "pantalla_dura": 3.5,
+    "voz_desde": 3.85,
+    "voz_dura": 2.74,
+    "aire_al_final": 0.41
+   },
+   {
+    "tramo": 3,
+    "se_ve": "Chat: días 1, 3 y 7",
+    "pantalla_desde": 7.0,
+    "pantalla_hasta": 10.5,
+    "pantalla_dura": 3.5,
+    "voz_desde": 7.35,
+    "voz_dura": 2.7,
+    "aire_al_final": 0.45
+   },
+   {
+    "tramo": 4,
+    "se_ve": "Planilla con estados",
+    "pantalla_desde": 10.5,
+    "pantalla_hasta": 15.0,
+    "pantalla_dura": 4.5,
+    "voz_desde": 10.85,
+    "voz_dura": 3.71,
+    "aire_al_final": 0.44
+   },
+   {
+    "tramo": 5,
+    "se_ve": "Aviso",
+    "pantalla_desde": 15.0,
+    "pantalla_hasta": 18.5,
+    "pantalla_dura": 3.5,
+    "voz_desde": 15.35,
+    "voz_dura": 2.79,
+    "aire_al_final": 0.36
+   },
+   {
+    "tramo": 6,
+    "se_ve": "Qué incluye",
+    "pantalla_desde": 18.5,
+    "pantalla_hasta": 23.5,
+    "pantalla_dura": 5.0,
+    "voz_desde": 18.85,
+    "voz_dura": 2.66,
+    "aire_al_final": 1.99
+   },
+   {
+    "tramo": 7,
+    "se_ve": "Precio",
+    "pantalla_desde": 23.5,
+    "pantalla_hasta": 31.4,
+    "pantalla_dura": 7.9,
+    "voz_desde": 23.85,
+    "voz_dura": 7.16,
+    "aire_al_final": 0.39
+   },
+   {
+    "tramo": 8,
+    "se_ve": "Prueba gratis y contacto",
+    "pantalla_desde": 31.4,
+    "pantalla_hasta": 42.6,
+    "pantalla_dura": 11.2,
+    "voz_desde": 31.75,
+    "voz_dura": 9.61,
+    "aire_al_final": 1.24
+   }
+  ]
+ },
+ "paquete-completo": {
+  "dura": 43.7,
+  "voz": "ef_dora",
+  "idioma": "es-419",
+  "velocidad": 1.1,
+  "tramos": [
+   {
+    "tramo": 1,
+    "se_ve": "Portada",
+    "pantalla_desde": 0.0,
+    "pantalla_hasta": 3.4,
+    "pantalla_dura": 3.4,
+    "voz_desde": 0.35,
+    "voz_dura": 2.62,
+    "aire_al_final": 0.43
+   },
+   {
+    "tramo": 2,
+    "se_ve": "Paso 1: landing",
+    "pantalla_desde": 3.4,
+    "pantalla_hasta": 6.9,
+    "pantalla_dura": 3.5,
+    "voz_desde": 3.75,
+    "voz_dura": 2.77,
+    "aire_al_final": 0.38
+   },
+   {
+    "tramo": 3,
+    "se_ve": "Paso 2: bot",
+    "pantalla_desde": 6.9,
+    "pantalla_hasta": 10.2,
+    "pantalla_dura": 3.3,
+    "voz_desde": 7.25,
+    "voz_dura": 2.6,
+    "aire_al_final": 0.35
+   },
+   {
+    "tramo": 4,
+    "se_ve": "Paso 3: seguimiento",
+    "pantalla_desde": 10.2,
+    "pantalla_hasta": 13.8,
+    "pantalla_dura": 3.6,
+    "voz_desde": 10.55,
+    "voz_dura": 2.89,
+    "aire_al_final": 0.36
+   },
+   {
+    "tramo": 5,
+    "se_ve": "Qué incluye",
+    "pantalla_desde": 13.8,
+    "pantalla_hasta": 17.6,
+    "pantalla_dura": 3.8,
+    "voz_desde": 14.15,
+    "voz_dura": 3.06,
+    "aire_al_final": 0.39
+   },
+   {
+    "tramo": 6,
+    "se_ve": "Precio",
+    "pantalla_desde": 17.6,
+    "pantalla_hasta": 25.6,
+    "pantalla_dura": 8.0,
+    "voz_desde": 17.95,
+    "voz_dura": 7.28,
+    "aire_al_final": 0.37
+   },
+   {
+    "tramo": 7,
+    "se_ve": "Promoción de instalación",
+    "pantalla_desde": 25.6,
+    "pantalla_hasta": 33.0,
+    "pantalla_dura": 7.4,
+    "voz_desde": 25.95,
+    "voz_dura": 6.69,
+    "aire_al_final": 0.36
+   },
+   {
+    "tramo": 8,
+    "se_ve": "Prueba gratis y contacto",
+    "pantalla_desde": 33.0,
+    "pantalla_hasta": 43.7,
+    "pantalla_dura": 10.7,
+    "voz_desde": 33.35,
+    "voz_dura": 9.14,
+    "aire_al_final": 1.21
+   }
+  ]
+ },
+ "orquestador": {
+  "dura": 44.1,
+  "voz": "ef_dora",
+  "idioma": "es-419",
+  "velocidad": 1.1,
+  "tramos": [
+   {
+    "tramo": 1,
+    "se_ve": "Portada",
+    "pantalla_desde": 0.0,
+    "pantalla_hasta": 5.6,
+    "pantalla_dura": 5.6,
+    "voz_desde": 0.35,
+    "voz_dura": 4.83,
+    "aire_al_final": 0.42
+   },
+   {
+    "tramo": 2,
+    "se_ve": "Agentes y propuestas",
+    "pantalla_desde": 5.6,
+    "pantalla_hasta": 9.9,
+    "pantalla_dura": 4.3,
+    "voz_desde": 5.95,
+    "voz_dura": 3.58,
+    "aire_al_final": 0.37
+   },
+   {
+    "tramo": 3,
+    "se_ve": "Vos aprobás",
+    "pantalla_desde": 9.9,
+    "pantalla_hasta": 13.5,
+    "pantalla_dura": 3.6,
+    "voz_desde": 10.25,
+    "voz_dura": 2.83,
+    "aire_al_final": 0.42
+   },
+   {
+    "tramo": 4,
+    "se_ve": "Se ejecuta y queda registro",
+    "pantalla_desde": 13.5,
+    "pantalla_hasta": 17.9,
+    "pantalla_dura": 4.4,
+    "voz_desde": 13.85,
+    "voz_dura": 3.64,
+    "aire_al_final": 0.41
+   },
+   {
+    "tramo": 5,
+    "se_ve": "Qué incluye",
+    "pantalla_desde": 17.9,
+    "pantalla_hasta": 24.6,
+    "pantalla_dura": 6.7,
+    "voz_desde": 18.25,
+    "voz_dura": 5.9,
+    "aire_al_final": 0.45
+   },
+   {
+    "tramo": 6,
+    "se_ve": "Precio",
+    "pantalla_desde": 24.6,
+    "pantalla_hasta": 33.5,
+    "pantalla_dura": 8.9,
+    "voz_desde": 24.95,
+    "voz_dura": 8.12,
+    "aire_al_final": 0.43
+   },
+   {
+    "tramo": 7,
+    "se_ve": "Promoción de instalación y contacto",
+    "pantalla_desde": 33.5,
+    "pantalla_hasta": 44.1,
+    "pantalla_dura": 10.6,
+    "voz_desde": 33.85,
+    "voz_dura": 9.01,
+    "aire_al_final": 1.24
+   }
+  ]
+ },
+ "empresa-en-automatico": {
+  "dura": 42.9,
+  "voz": "ef_dora",
+  "idioma": "es-419",
+  "velocidad": 1.1,
+  "tramos": [
+   {
+    "tramo": 1,
+    "se_ve": "Portada",
+    "pantalla_desde": 0.0,
+    "pantalla_hasta": 4.4,
+    "pantalla_dura": 4.4,
+    "voz_desde": 0.35,
+    "voz_dura": 3.62,
+    "aire_al_final": 0.43
+   },
+   {
+    "tramo": 2,
+    "se_ve": "El bot atiende",
+    "pantalla_desde": 4.4,
+    "pantalla_hasta": 7.6,
+    "pantalla_dura": 3.2,
+    "voz_desde": 4.75,
+    "voz_dura": 2.4,
+    "aire_al_final": 0.45
+   },
+   {
+    "tramo": 3,
+    "se_ve": "El seguimiento insiste",
+    "pantalla_desde": 7.6,
+    "pantalla_hasta": 10.9,
+    "pantalla_dura": 3.3,
+    "voz_desde": 7.95,
+    "voz_dura": 2.57,
+    "aire_al_final": 0.38
+   },
+   {
+    "tramo": 4,
+    "se_ve": "El orquestador coordina",
+    "pantalla_desde": 10.9,
+    "pantalla_hasta": 14.4,
+    "pantalla_dura": 3.5,
+    "voz_desde": 11.25,
+    "voz_dura": 2.74,
+    "aire_al_final": 0.41
+   },
+   {
+    "tramo": 5,
+    "se_ve": "Vos aprobás",
+    "pantalla_desde": 14.4,
+    "pantalla_hasta": 17.4,
+    "pantalla_dura": 3.0,
+    "voz_desde": 14.75,
+    "voz_dura": 1.89,
+    "aire_al_final": 0.76
+   },
+   {
+    "tramo": 6,
+    "se_ve": "Qué incluye",
+    "pantalla_desde": 17.4,
+    "pantalla_hasta": 23.4,
+    "pantalla_dura": 6.0,
+    "voz_desde": 17.75,
+    "voz_dura": 5.26,
+    "aire_al_final": 0.39
+   },
+   {
+    "tramo": 7,
+    "se_ve": "Precio",
+    "pantalla_desde": 23.4,
+    "pantalla_hasta": 32.1,
+    "pantalla_dura": 8.7,
+    "voz_desde": 23.75,
+    "voz_dura": 7.97,
+    "aire_al_final": 0.38
+   },
+   {
+    "tramo": 8,
+    "se_ve": "Promoción de instalación y contacto",
+    "pantalla_desde": 32.1,
+    "pantalla_hasta": 42.9,
+    "pantalla_dura": 10.8,
+    "voz_desde": 32.45,
+    "voz_dura": 9.21,
+    "aire_al_final": 1.24
+   }
+  ]
+ },
+ "redes-esencial": {
+  "dura": 43.6,
+  "voz": "ef_dora",
+  "idioma": "es-419",
+  "velocidad": 1.1,
+  "tramos": [
+   {
+    "tramo": 1,
+    "se_ve": "Portada",
+    "pantalla_desde": 0.0,
+    "pantalla_hasta": 7.2,
+    "pantalla_dura": 7.2,
+    "voz_desde": 0.35,
+    "voz_dura": 6.45,
+    "aire_al_final": 0.4
+   },
+   {
+    "tramo": 2,
+    "se_ve": "Calendario del mes",
+    "pantalla_desde": 7.2,
+    "pantalla_hasta": 14.8,
+    "pantalla_dura": 7.6,
+    "voz_desde": 7.55,
+    "voz_dura": 6.84,
+    "aire_al_final": 0.41
+   },
+   {
+    "tramo": 3,
+    "se_ve": "Los tres pasos",
+    "pantalla_desde": 14.8,
+    "pantalla_hasta": 19.6,
+    "pantalla_dura": 4.8,
+    "voz_desde": 15.15,
+    "voz_dura": 3.58,
+    "aire_al_final": 0.87
+   },
+   {
+    "tramo": 4,
+    "se_ve": "Qué incluye",
+    "pantalla_desde": 19.6,
+    "pantalla_hasta": 25.6,
+    "pantalla_dura": 6.0,
+    "voz_desde": 19.95,
+    "voz_dura": 5.22,
+    "aire_al_final": 0.43
+   },
+   {
+    "tramo": 5,
+    "se_ve": "Precio",
+    "pantalla_desde": 25.6,
+    "pantalla_hasta": 32.4,
+    "pantalla_dura": 6.8,
+    "voz_desde": 25.95,
+    "voz_dura": 6.03,
+    "aire_al_final": 0.42
+   },
+   {
+    "tramo": 6,
+    "se_ve": "Prueba gratis y contacto",
+    "pantalla_desde": 32.4,
+    "pantalla_hasta": 43.6,
+    "pantalla_dura": 11.2,
+    "voz_desde": 32.75,
+    "voz_dura": 9.61,
+    "aire_al_final": 1.24
+   }
+  ]
+ },
+ "redes-profesional": {
+  "dura": 42.7,
+  "voz": "ef_dora",
+  "idioma": "es-419",
+  "velocidad": 1.1,
+  "tramos": [
+   {
+    "tramo": 1,
+    "se_ve": "Portada",
+    "pantalla_desde": 0.0,
+    "pantalla_hasta": 6.1,
+    "pantalla_dura": 6.1,
+    "voz_desde": 0.35,
+    "voz_dura": 5.35,
+    "aire_al_final": 0.4
+   },
+   {
+    "tramo": 2,
+    "se_ve": "La semana",
+    "pantalla_desde": 6.1,
+    "pantalla_hasta": 13.0,
+    "pantalla_dura": 6.9,
+    "voz_desde": 6.45,
+    "voz_dura": 6.16,
+    "aire_al_final": 0.39
+   },
+   {
+    "tramo": 3,
+    "se_ve": "Tablero de ganchos",
+    "pantalla_desde": 13.0,
+    "pantalla_hasta": 18.1,
+    "pantalla_dura": 5.1,
+    "voz_desde": 13.35,
+    "voz_dura": 4.05,
+    "aire_al_final": 0.7
+   },
+   {
+    "tramo": 4,
+    "se_ve": "Qué incluye",
+    "pantalla_desde": 18.1,
+    "pantalla_hasta": 25.0,
+    "pantalla_dura": 6.9,
+    "voz_desde": 18.45,
+    "voz_dura": 6.16,
+    "aire_al_final": 0.39
+   },
+   {
+    "tramo": 5,
+    "se_ve": "Precio",
+    "pantalla_desde": 25.0,
+    "pantalla_hasta": 31.5,
+    "pantalla_dura": 6.5,
+    "voz_desde": 25.35,
+    "voz_dura": 5.71,
+    "aire_al_final": 0.44
+   },
+   {
+    "tramo": 6,
+    "se_ve": "Prueba gratis y contacto",
+    "pantalla_desde": 31.5,
+    "pantalla_hasta": 42.7,
+    "pantalla_dura": 11.2,
+    "voz_desde": 31.85,
+    "voz_dura": 9.61,
+    "aire_al_final": 1.24
+   }
+  ]
+ },
+ "redes-premium": {
+  "dura": 43.8,
+  "voz": "ef_dora",
+  "idioma": "es-419",
+  "velocidad": 1.1,
+  "tramos": [
+   {
+    "tramo": 1,
+    "se_ve": "Portada",
+    "pantalla_desde": 0.0,
+    "pantalla_hasta": 4.2,
+    "pantalla_dura": 4.2,
+    "voz_desde": 0.35,
+    "voz_dura": 3.45,
+    "aire_al_final": 0.4
+   },
+   {
+    "tramo": 2,
+    "se_ve": "El reel pasa a anuncio",
+    "pantalla_desde": 4.2,
+    "pantalla_hasta": 8.2,
+    "pantalla_dura": 4.0,
+    "voz_desde": 4.55,
+    "voz_dura": 3.2,
+    "aire_al_final": 0.45
+   },
+   {
+    "tramo": 3,
+    "se_ve": "Botón a WhatsApp",
+    "pantalla_desde": 8.2,
+    "pantalla_hasta": 12.2,
+    "pantalla_dura": 4.0,
+    "voz_desde": 8.55,
+    "voz_dura": 3.28,
+    "aire_al_final": 0.37
+   },
+   {
+    "tramo": 4,
+    "se_ve": "Avatar hecho con IA",
+    "pantalla_desde": 12.2,
+    "pantalla_hasta": 20.3,
+    "pantalla_dura": 8.1,
+    "voz_desde": 12.55,
+    "voz_dura": 7.35,
+    "aire_al_final": 0.4
+   },
+   {
+    "tramo": 5,
+    "se_ve": "Qué incluye",
+    "pantalla_desde": 20.3,
+    "pantalla_hasta": 26.0,
+    "pantalla_dura": 5.7,
+    "voz_desde": 20.65,
+    "voz_dura": 4.98,
+    "aire_al_final": 0.37
+   },
+   {
+    "tramo": 6,
+    "se_ve": "Precio",
+    "pantalla_desde": 26.0,
+    "pantalla_hasta": 32.6,
+    "pantalla_dura": 6.6,
+    "voz_desde": 26.35,
+    "voz_dura": 5.9,
+    "aire_al_final": 0.35
+   },
+   {
+    "tramo": 7,
+    "se_ve": "Prueba gratis y contacto",
+    "pantalla_desde": 32.6,
+    "pantalla_hasta": 43.8,
+    "pantalla_dura": 11.2,
+    "voz_desde": 32.95,
+    "voz_dura": 9.61,
+    "aire_al_final": 1.24
+   }
+  ]
+ }
+}
