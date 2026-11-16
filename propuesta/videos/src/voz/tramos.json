@@ -166,7 +166,7 @@
   ]
  },
  "paquete-completo": {
-  "dura": 43.7,
+  "dura": 44.0,
   "voz": "ef_dora",
   "idioma": "es-419",
   "velocidad": 1.1,
@@ -225,29 +225,29 @@
     "tramo": 6,
     "se_ve": "Precio",
     "pantalla_desde": 17.6,
-    "pantalla_hasta": 25.6,
-    "pantalla_dura": 8.0,
+    "pantalla_hasta": 25.9,
+    "pantalla_dura": 8.3,
     "voz_desde": 17.95,
-    "voz_dura": 7.28,
+    "voz_dura": 7.58,
     "aire_al_final": 0.37
    },
    {
     "tramo": 7,
     "se_ve": "Promoción de instalación",
-    "pantalla_desde": 25.6,
-    "pantalla_hasta": 33.0,
+    "pantalla_desde": 25.9,
+    "pantalla_hasta": 33.3,
     "pantalla_dura": 7.4,
-    "voz_desde": 25.95,
+    "voz_desde": 26.25,
     "voz_dura": 6.69,
     "aire_al_final": 0.36
    },
    {
     "tramo": 8,
     "se_ve": "Prueba gratis y contacto",
-    "pantalla_desde": 33.0,
-    "pantalla_hasta": 43.7,
+    "pantalla_desde": 33.3,
+    "pantalla_hasta": 44.0,
     "pantalla_dura": 10.7,
-    "voz_desde": 33.35,
+    "voz_desde": 33.65,
     "voz_dura": 9.14,
     "aire_al_final": 1.21
    }
