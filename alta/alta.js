@@ -207,7 +207,7 @@
     $('#detalle-pago').textContent = p.detalle || '';
     $('#monto-pago').textContent = '$ ' + Number(p.monto).toLocaleString('es-AR');
     // Solo se abre un link de Ualá.
-    if (/^https:\/\/([\w-]+\.)*ua\.la\//.test(p.link)) $('#link-pago').href = p.link; else $('#link-pago').hidden = true;
+    if (/^https:\/\/([\w-]+\.)*(ua\.la|uala\.com\.ar)\//.test(p.link)) $('#link-pago').href = p.link; else $('#link-pago').hidden = true;
     if (new URLSearchParams(location.search).get('pago') === 'ok') esperarPago();
   }
   async function esperarPago() {
