@@ -172,6 +172,17 @@
   #puenteBtn.ok .pt { background: #22c55e; } #puenteBtn.mal .pt { background: #f59e0b; }
   #dlgPuente { border: 0; border-radius: 16px; padding: 0; width: min(420px, calc(100vw - 32px)); box-shadow: 0 24px 60px rgba(0,0,0,.25); }
   #dlgPuente::backdrop { background: rgba(14,26,51,.45); }
+  /* Visor de PDF (16/11/2026) */
+  .wa-verpdf { display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; background: rgba(255,255,255,.92); color: #0e1a33; border: 0; border-radius: 999px; padding: 5px 12px; font: 700 12.5px Archivo, system-ui, sans-serif; cursor: pointer; }
+  .wa-cliente .wa-verpdf { background: #eef3ff; }
+  #dlgPdf { border: 0; border-radius: 16px; padding: 0; width: min(900px, calc(100vw - 24px)); height: min(92vh, 1100px); box-shadow: 0 24px 60px rgba(0,0,0,.3); overflow: hidden; }
+  #dlgPdf[open] { display: flex; flex-direction: column; }
+  #dlgPdf::backdrop { background: rgba(14,26,51,.6); }
+  #dlgPdf .cab { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-bottom: 1px solid #e3e8f2; font-family: Archivo, system-ui, sans-serif; }
+  #dlgPdf .cab b { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 14px; }
+  #pdfHojas { flex: 1; overflow: auto; background: #525659; padding: 12px; display: grid; gap: 12px; justify-items: center; align-content: start; }
+  #pdfHojas canvas { width: 100%; max-width: 820px; height: auto; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.35); }
+  #pdfHojas p { color: #fff; font-family: Archivo, system-ui, sans-serif; }
   #dlgPuente .in { display: grid; gap: 10px; padding: 20px; font-family: Archivo, system-ui, sans-serif; }
   #dlgPuente h2 { margin: 0; font-size: 19px; }
   #dlgPuente .ayuda { margin: 0; font-size: 12.5px; color: #4a5878; line-height: 1.45; }
@@ -237,6 +248,11 @@
   </form>
 </dialog>
 <!-- El segundo número (puente-sol, en la PC de la oficina): estado y QR para vincularlo (16/11/2026). -->
+<!-- Visor de PDF: muestra el archivo de una burbuja sin salir del panel (16/11/2026). -->
+<dialog id="dlgPdf" aria-label="Ver PDF">
+  <div class="cab"><b id="pdfNombre">PDF</b><a class="btn gris" id="pdfBajar" download>⬇<span class="wa-lbl"> Descargar</span></a><button class="btn gris" type="button" id="pdfCerrar">✕</button></div>
+  <div id="pdfHojas"></div>
+</dialog>
 <dialog id="dlgPuente">
   <div class="in">
     <h2>📱 Segundo número</h2>
@@ -392,7 +408,7 @@
       + (c.robot_activo ? '<button class="btn" id="robot" type="button" title="El robot deja de contestar en esta charla">✋ Tomar la charla</button>' : '<button class="btn gris" id="robot" type="button" title="El robot vuelve a contestar en esta charla">🤖 Devolver al robot</button>')
       + (c.resuelta ? '<button class="btn gris" id="resolver" type="button" title="Vuelve a Esperando">Reabrir</button>' : '<button class="btn gris" id="resolver" type="button" title="Sale de Esperando hasta que vuelva a escribir">✓ Ya la atendí</button>')
       + '<button class="btn gris" id="verficha" type="button" aria-expanded="' + fichaAbierta + '">📋 Ficha</button></div></div>'
-      + '<div class="wa-burbujas scroll" id="msgs">' + (c.mensajes || []).map((m) => '<div class="wa-b wa-' + esc(m.de) + '">' + esc(m.texto) + '<span class="wa-t">' + (DE[m.de] ? DE[m.de] + ' · ' : '') + fecha(m.ts)
+      + '<div class="wa-burbujas scroll" id="msgs">' + (c.mensajes || []).map((m) => '<div class="wa-b wa-' + esc(m.de) + '">' + esc(m.texto) + (m.archivo ? '<br><button type="button" class="wa-verpdf" data-ruta="' + esc(m.archivo.ruta) + '" data-nombre="' + esc(m.archivo.nombre) + '">👁 Ver PDF</button>' : '') + '<span class="wa-t">' + (DE[m.de] ? DE[m.de] + ' · ' : '') + fecha(m.ts)
       + (m.error ? ' · <span class="err">no salió: ' + esc(m.error) + '</span>' : '') + '</span></div>').join('') + '</div>'
       + (c.ultimo_error ? '<p class="err" style="margin:0;font-size:12px">Último error de envío: ' + esc(c.ultimo_error) + '</p>' : '')
       + (c.propuesta && !c.propuesta.enviada && !c.propuesta.cancelada ? '<p class="wa-prop">📄 La propuesta (' + esc(c.propuesta.archivo) + ') espera que toque «Sí, mandala»' + (c.propuesta.error ? ' · <span class="err">último intento: ' + esc(c.propuesta.error) + '</span>' : '') + '</p>' : '')
@@ -485,6 +501,7 @@
     const b = e.target.closest('button'); if (!b || !abierta) return;
     if (b.id === 'volver') { abierta = null; pintarCharlas(); pintarChat(); return; }
     if (b.id === 'propDeCharla') { abrirPropuesta(abierta); return; }
+    if (b.classList.contains('wa-verpdf')) { verPdf(b.dataset.ruta, b.dataset.nombre); return; }
     if (b.id === 'verficha' || b.id === 'cerrarficha') { fichaAbierta = b.id === 'verficha' ? !fichaAbierta : false; $('#waFicha').hidden = !fichaAbierta; $('#verficha').setAttribute('aria-expanded', fichaAbierta); return; }
     if (b.dataset.rapida != null) {
       const t = $('#texto'), r = respuestas[+b.dataset.rapida]; if (!t || !r) return;
@@ -523,6 +540,46 @@
       else msg('No se pudo mandar: ' + err.message);
     }
   });
+  // ---------- Visor de PDF (16/11/2026) ----------
+  // El PDF lo da AppMyM con la misma llave del panel; se dibuja con pdf.js porque Chrome del celular no
+  // muestra un PDF dentro de la página (lo descarga). pdf.js se carga recién la primera vez que se usa.
+  const PDFJS = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
+  let pdfjsListo = null, pdfUrl = '';
+  const cargarPdfjs = () => pdfjsListo || (pdfjsListo = new Promise((ok, mal) => {
+    const sc = document.createElement('script'); sc.src = PDFJS + 'pdf.min.js';
+    sc.onload = () => { window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS + 'pdf.worker.min.js'; ok(window.pdfjsLib); };
+    sc.onerror = () => { pdfjsListo = null; mal(new Error('No se pudo cargar el visor')); };
+    document.head.appendChild(sc);
+  }));
+  async function verPdf(ruta, nombreArch) {
+    const dlgP = $('#dlgPdf'), hojas = $('#pdfHojas');
+    $('#pdfNombre').textContent = nombreArch || 'PDF';
+    hojas.innerHTML = '<p>Cargando el PDF…</p>';
+    dlgP.showModal();
+    try {
+      const r = await fetch(API + '/api/ventas-sol/archivo?ruta=' + encodeURIComponent(ruta), { headers: { Authorization: 'Bearer ' + await ACCESO.token() } });
+      if (!r.ok) throw new Error(r.status === 404 ? 'El archivo ya no está guardado.' : 'HTTP ' + r.status);
+      const datos = await r.arrayBuffer();
+      if (pdfUrl) URL.revokeObjectURL(pdfUrl);
+      pdfUrl = URL.createObjectURL(new Blob([datos], { type: 'application/pdf' }));
+      $('#pdfBajar').href = pdfUrl; $('#pdfBajar').download = nombreArch || 'documento.pdf';
+      const pdfjs = await cargarPdfjs();
+      const doc = await pdfjs.getDocument({ data: datos }).promise;
+      hojas.innerHTML = '';
+      const ancho = Math.min(hojas.clientWidth - 24, 820);
+      for (let i = 1; i <= doc.numPages; i++) {
+        if (!dlgP.open) return;
+        const pag = await doc.getPage(i);
+        const base = pag.getViewport({ scale: 1 });
+        const vp = pag.getViewport({ scale: (ancho / base.width) * Math.min(window.devicePixelRatio || 1, 2) });
+        const cv = document.createElement('canvas'); cv.width = vp.width; cv.height = vp.height;
+        hojas.appendChild(cv);
+        await pag.render({ canvasContext: cv.getContext('2d'), viewport: vp }).promise;
+      }
+    } catch (e) { hojas.innerHTML = '<p>No se pudo mostrar el PDF: ' + esc(e.message) + '</p>'; }
+  }
+  $('#pdfCerrar').addEventListener('click', () => $('#dlgPdf').close());
+
   // ---------- PDF y propuesta (16/11/2026) ----------
   const MAX_PDF = 12 * 1024 * 1024;
   function leerPdf(file) {
