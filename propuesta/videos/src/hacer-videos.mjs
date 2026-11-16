@@ -1,9 +1,11 @@
-// Pasa las páginas animadas de esta carpeta a MP4 (1080 x 1920, 30 cuadros por segundo, sin voz).
+// Pasa las páginas animadas de esta carpeta a MP4 (1080 x 1920, 30 cuadros por segundo) con su voz.
+// La voz y los tiempos de cada tramo los deja antes hacer-voz.py (lee guiones-de-voz.md y escribe voz/<plan>.m4a):
+//   1) python3 propuesta/videos/src/hacer-voz.py [plan]     2) node propuesta/videos/src/hacer-videos.mjs [plan]
 //
 // Qué hace falta: Node, ffmpeg y Chrome instalados, y una carpeta aparte (fuera del repo) con:
 //   npm i playwright-core @fontsource/archivo @fontsource/instrument-serif @fontsource/michroma @fontsource/martian-mono
 // Cómo se corre (desde cualquier lado):
-//   HERRAMIENTAS=/ruta/a/esa/carpeta node propuesta/videos/src/hacer-videos.mjs            -> los 5 videos
+//   HERRAMIENTAS=/ruta/a/esa/carpeta node propuesta/videos/src/hacer-videos.mjs            -> los 8 videos
 //   HERRAMIENTAS=... node propuesta/videos/src/hacer-videos.mjs orquestador               -> uno solo
 //   HERRAMIENTAS=... FOTOS=/ruta/salida node .../hacer-videos.mjs                         -> sólo fotos de control
 // Deja <plan>.mp4 y <plan>.jpg (la portada) en propuesta/videos/.
@@ -20,7 +22,7 @@ const herr = process.env.HERRAMIENTAS || process.cwd();
 const require = createRequire(path.join(herr, 'x.js'));
 const { chromium } = require('playwright-core');
 const FPS = 30;
-const PLANES = ['bot-de-whatsapp', 'seguimiento-de-clientes', 'paquete-completo', 'orquestador', 'empresa-en-automatico'];
+const PLANES = ['bot-de-whatsapp', 'seguimiento-de-clientes', 'paquete-completo', 'orquestador', 'empresa-en-automatico', 'redes-esencial', 'redes-profesional', 'redes-premium'];
 const pedidos = process.argv.slice(2).length ? process.argv.slice(2) : PLANES;
 
 const fuente = (paquete, archivo) => 'data:font/woff2;base64,' + fs.readFileSync(path.join(herr, 'node_modules/@fontsource', paquete, 'files', archivo)).toString('base64');
@@ -51,11 +53,13 @@ for (const plan of pedidos) {
     }
   } else {
     const mp4 = path.join(salida, plan + '.mp4');
+    const voz = path.join(aca, 'voz', plan + '.m4a');
+    if (!fs.existsSync(voz)) throw new Error('Falta la voz de ' + plan + ': corré antes hacer-voz.py');
     const ff = spawn('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(FPS), '-c:v', 'mjpeg', '-i', '-',
-      '-f', 'lavfi', '-i', 'anullsrc=r=44100:cl=stereo', '-shortest',
+      '-i', voz, '-map', '0:v', '-map', '1:a', '-t', String(dur),
       '-vf', 'scale=in_color_matrix=bt601:out_color_matrix=bt709:in_range=full:out_range=tv,format=yuv420p',
-      '-c:v', 'libx264', '-preset', 'slow', '-crf', '20', '-profile:v', 'high', '-colorspace', 'bt709', '-color_primaries', 'bt709', '-color_trc', 'bt709', '-color_range', 'tv',
-      '-c:a', 'aac', '-b:a', '48k', '-movflags', '+faststart', mp4], { stdio: ['pipe', 'inherit', 'inherit'] });
+      '-c:v', 'libx264', '-preset', 'slow', '-crf', '21', '-profile:v', 'high', '-colorspace', 'bt709', '-color_primaries', 'bt709', '-color_trc', 'bt709', '-color_range', 'tv',
+      '-c:a', 'copy', '-movflags', '+faststart', mp4], { stdio: ['pipe', 'inherit', 'inherit'] });
     const fin = new Promise((ok, mal) => ff.on('close', (c) => (c === 0 ? ok() : mal(new Error('ffmpeg salió con ' + c)))));
     const cuadros = Math.round(dur * FPS);
     for (let i = 0; i < cuadros; i++) {
@@ -66,7 +70,7 @@ for (const plan of pedidos) {
     ff.stdin.end();
     await fin;
     // La portada: la pantalla del nombre del plan
-    await pagina.evaluate(() => window.irA(2500));
+    await pagina.evaluate(() => window.irA(2200));
     await pagina.screenshot({ path: path.join(salida, plan + '.jpg'), type: 'jpeg', quality: 82 });
     console.log(plan, 'listo:', (fs.statSync(mp4).size / 1048576).toFixed(2), 'MB,', dur, 's');
   }
