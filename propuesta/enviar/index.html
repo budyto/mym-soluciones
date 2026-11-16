@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Enviar la propuesta · MyM Soluciones</title>
+<link rel="icon" href="../../favicon.ico">
+<link rel="stylesheet" href="../../styles.css">
+<link rel="stylesheet" href="../propuesta.css">
+<style>
+/* Armador de envíos de la propuesta (16/11/2026, pedido de Matías): pone el nombre y el contacto, y sale todo listo. Uso interno. */
+body{background:linear-gradient(180deg,#f4f7ff,#e6eeff);color:#0e1a33;min-height:100vh}
+.env{max-width:760px;margin:0 auto;padding:28px 18px 60px}
+.env h1{font-size:clamp(26px,5vw,38px);line-height:1.1;margin:8px 0 6px}
+.env p.baj{color:#4a5878;margin:0 0 20px}
+.caja{background:#fff;border:1px solid #d7e2f7;border-radius:18px;padding:18px;margin:0 0 16px;box-shadow:0 8px 24px rgba(14,26,51,.06)}
+.caja h2{font-size:17px;margin:0 0 12px}
+.env label{display:block;font-size:13px;font-weight:700;margin:10px 0 4px}
+.env input,.env textarea{width:100%;box-sizing:border-box;border:1px solid #c9d6f2;border-radius:12px;padding:12px;font:inherit;color:#0e1a33;background:#fff}
+.env textarea{min-height:170px;resize:vertical;font-size:14px;line-height:1.45}
+.fila{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.bt{border:0;border-radius:999px;padding:12px 18px;font:inherit;font-weight:700;cursor:pointer;background:linear-gradient(90deg,#2f6bff,#00c2a8);color:#fff;text-decoration:none;display:inline-block}
+.bt.cl{background:#fff;color:#0e1a33;border:1px solid #c9d6f2}
+.link{word-break:break-all;font-size:14px;background:#f4f7ff;border-radius:10px;padding:10px;margin-top:8px}
+.vid{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid #e6eeff}
+.vid:first-of-type{border-top:0}
+.nota{font-size:13px;color:#4a5878;margin:10px 0 0}
+.ok{font-size:13px;color:#0a8f6a;font-weight:700;min-height:18px;margin-top:8px}
+</style>
+</head>
+<body>
+<main class="env">
+  <p style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#2f6bff;margin:0">MyM Soluciones · uso interno</p>
+  <h1>Enviar la propuesta</h1>
+  <p class="baj">Poné el nombre de la empresa y el contacto. El link, el mensaje de WhatsApp y el mail se arman solos.</p>
+
+  <section class="caja">
+    <h2>1. Para quién es</h2>
+    <label for="emp">Empresa</label><input id="emp" autocomplete="off" placeholder="Ferretería El Tornillo">
+    <label for="con">Contacto (nombre de la persona)</label><input id="con" autocomplete="off" placeholder="Laura">
+    <label for="tel">WhatsApp del contacto (opcional, con código de área, sin 0 ni 15)</label><input id="tel" inputmode="numeric" autocomplete="off" placeholder="11 5555 5555">
+    <label for="mai">Mail del contacto (opcional)</label><input id="mai" type="email" autocomplete="off" placeholder="laura@empresa.com">
+    <div class="link" id="link"></div>
+    <div class="fila"><button class="bt cl" type="button" data-copiar="link">Copiar el link</button><a class="bt cl" id="ver" target="_blank" rel="noopener">Ver la propuesta</a></div>
+  </section>
+
+  <section class="caja">
+    <h2>2. WhatsApp</h2>
+    <textarea id="wa"></textarea>
+    <div class="fila"><a class="bt" id="abrirwa" target="_blank" rel="noopener">Abrir WhatsApp con el mensaje</a><button class="bt cl" type="button" data-copiar="wa">Copiar el mensaje</button></div>
+    <p class="nota">El mensaje lleva el link de la propuesta, que tiene los 5 videos adentro. Para mandar además un video como archivo, usá el paso 4.</p>
+  </section>
+
+  <section class="caja">
+    <h2>3. Mail</h2>
+    <label for="asu">Asunto</label><input id="asu">
+    <label for="ml">Texto</label><textarea id="ml" style="min-height:300px"></textarea>
+    <div class="fila"><a class="bt" id="abrirml">Abrir el mail ya escrito</a><button class="bt cl" type="button" data-copiar="ml">Copiar el texto</button></div>
+    <p class="nota">Un mail abierto desde un botón no puede traer archivos adjuntos: es un límite de todos los programas de correo. El link del texto abre la propuesta con los videos. Para adjuntar un video, usá el paso 4.</p>
+  </section>
+
+  <section class="caja">
+    <h2>4. Mandar un video como archivo</h2>
+    <div id="videos"></div>
+    <p class="nota">En el celular, «Compartir» abre WhatsApp o el mail con el video ya adjunto y el mensaje escrito. En la computadora, «Descargar» lo baja para adjuntarlo a mano.</p>
+    <div class="ok" id="ok" role="status"></div>
+  </section>
+</main>
+<script>
+(function () {
+  var BASE = 'https://mymsoluciones.online/propuesta/';
+  var VIDEOS = [['bot-de-whatsapp', 'Bot de WhatsApp'], ['seguimiento-de-clientes', 'Seguimiento de clientes'], ['paquete-completo', 'Paquete completo'], ['orquestador', 'Orquestador'], ['empresa-en-automatico', 'Empresa en automático']];
+  var PROMO_HASTA = new Date('2026-12-01T03:00:00Z'); // 30/11/2026 23:59, hora de Argentina
+  var $ = function (id) { return document.getElementById(id); };
+  var tocado = { wa: false, ml: false, asu: false };
+
+  function datos() {
+    return { emp: $('emp').value.trim(), con: $('con').value.trim(), tel: $('tel').value.replace(/\D/g, ''), mai: $('mai').value.trim() };
+  }
+  function link(d) {
+    var q = [];
+    if (d.emp) q.push('empresa=' + encodeURIComponent(d.emp));
+    if (d.con) q.push('contacto=' + encodeURIComponent(d.con));
+    return BASE + (q.length ? '?' + q.join('&') : '');
+  }
+  function textoWa(d, l) {
+    return 'Hola' + (d.con ? ' ' + d.con : '') + ', soy Matías, de MyM Soluciones.\n' +
+      'Te armé la propuesta' + (d.emp ? ' para ' + d.emp : '') + ' con los cinco planes de automatización.\n' +
+      'Cada uno dice qué hace, qué necesitamos de tu lado y el precio final, y tiene un video corto de ejemplo.\n' + l + '\n' +
+      'Mirala tranquilo. Si alguno te sirve, lo vemos en un diagnóstico gratis de 30 minutos por videollamada.\n' +
+      'Cualquier duda, escribime por acá.';
+  }
+  function textoMail(d, l) {
+    var promo = new Date() < PROMO_HASTA ? 'Hay una promoción con fecha: contratando hasta el 30/11/2026, la instalación del Paquete completo, del Orquestador y de Empresa en automático va a mitad de precio. El detalle está en la propuesta.\n\n' : '';
+    return 'Hola' + (d.con ? ' ' + d.con : '') + ':\n\n' +
+      'Soy Matías, de MyM Soluciones. Te paso la propuesta que armamos' + (d.emp ? ' para ' + d.emp : '') + ':\n\n' + l + '\n\n' +
+      'Ahí están los cinco planes de automatización: Bot de WhatsApp, Seguimiento de clientes, Paquete completo, Orquestador y Empresa en automático. De cada uno vas a ver qué hace, qué necesitamos de tu lado para arrancar, en cuánto tiempo queda andando y cuánto cuesta. Los precios son finales, en pesos. Cada plan tiene un video corto de ejemplo.\n\n' +
+      promo +
+      'Si alguno te sirve, el paso siguiente es un diagnóstico gratis de 30 minutos por videollamada. Ahí vemos tu caso y te pasamos el alcance por escrito antes de empezar. El abono es mensual y sin permanencia.\n\n' +
+      'Me podés responder este mail o escribirme por WhatsApp al 11 3366-2080.\n\nSaludos,\nMatías\nMyM Soluciones\nmymsoluciones.online';
+  }
+  function telArg(t) { if (!t) return ''; if (t.indexOf('54') === 0) return t; return '549' + t.replace(/^0/, ''); }
+
+  function armar() {
+    var d = datos(), l = link(d);
+    $('link').textContent = l; $('ver').href = l;
+    if (!tocado.wa) $('wa').value = textoWa(d, l);
+    if (!tocado.asu) $('asu').value = 'Propuesta de automatización' + (d.emp ? ' para ' + d.emp : '');
+    if (!tocado.ml) $('ml').value = textoMail(d, l);
+    enlaces();
+  }
+  function enlaces() {
+    var d = datos();
+    $('abrirwa').href = 'https://wa.me/' + telArg(d.tel) + '?text=' + encodeURIComponent($('wa').value);
+    $('abrirml').href = 'mailto:' + encodeURIComponent(d.mai) + '?subject=' + encodeURIComponent($('asu').value) + '&body=' + encodeURIComponent($('ml').value);
+  }
+  function aviso(t) { $('ok').textContent = t; setTimeout(function () { if ($('ok').textContent === t) $('ok').textContent = ''; }, 5000); }
+
+  ['emp', 'con', 'tel', 'mai'].forEach(function (id) { $(id).addEventListener('input', armar); });
+  ['wa', 'ml', 'asu'].forEach(function (id) { $(id).addEventListener('input', function () { tocado[id] = true; enlaces(); }); });
+
+  document.addEventListener('click', function (ev) {
+    var c = ev.target.closest('[data-copiar]');
+    if (c) {
+      var id = c.dataset.copiar, txt = id === 'link' ? $('link').textContent : $(id).value;
+      navigator.clipboard.writeText(txt).then(function () { c.textContent = 'Copiado'; setTimeout(function () { c.textContent = id === 'link' ? 'Copiar el link' : (id === 'wa' ? 'Copiar el mensaje' : 'Copiar el texto'); }, 1800); });
+      return;
+    }
+    var s = ev.target.closest('[data-compartir]');
+    if (s) {
+      var i = +s.dataset.compartir, v = VIDEOS[i], url = '../videos/' + v[0] + '.mp4';
+      s.disabled = true; s.textContent = 'Preparando…';
+      fetch(url).then(function (r) { if (!r.ok) throw new Error('no cargó'); return r.blob(); }).then(function (b) {
+        var f = new File([b], 'MyM Soluciones - ' + v[1] + '.mp4', { type: 'video/mp4' });
+        if (navigator.canShare && navigator.canShare({ files: [f] })) return navigator.share({ files: [f], text: $('wa').value });
+        aviso('Este navegador no deja compartir archivos: usá «Descargar» y adjuntalo.');
+      }).catch(function (e) { if (e && e.name !== 'AbortError') aviso('No se pudo compartir: usá «Descargar».'); })
+        .then(function () { s.disabled = false; s.textContent = 'Compartir'; });
+    }
+  });
+
+  $('videos').innerHTML = VIDEOS.map(function (v, i) {
+    return '<div class="vid"><b>' + v[1] + '</b><span class="fila" style="margin:0"><button class="bt" type="button" data-compartir="' + i + '">Compartir</button><a class="bt cl" href="../videos/' + v[0] + '.mp4" download="MyM Soluciones - ' + v[1] + '.mp4">Descargar</a></span></div>';
+  }).join('');
+  armar();
+})();
+</script>
+</body>
+</html>
