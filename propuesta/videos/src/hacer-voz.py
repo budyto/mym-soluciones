@@ -1,28 +1,44 @@
 #!/usr/bin/env python3
 """Voz de los videos de la propuesta de MyM Soluciones.
 
-Lee guiones-de-voz.md, genera la voz de cada tramo con Kokoro (voz sintética, sin internet),
-le da a cada tramo de la animación el tiempo que necesita la voz (reescribe los tiempos de <plan>.html)
-y deja la pista completa, con el volumen parejo, en voz/<plan>.m4a. Después se corre hacer-videos.mjs.
+Lee guiones-de-voz.md, toma la voz de cada tramo, le da a cada tramo de la animación el tiempo que necesita
+la voz (reescribe los tiempos de <plan>.html) y deja la pista completa, con el volumen parejo, en voz/<plan>.m4a.
+Después se corre hacer-videos.mjs.
 
-Qué hace falta (una vez):
+Dos fuentes de voz:
+  --fuente elevenlabs (la que se usa desde el 16/11/2026): voz «Mauricio - Publicidad cálida | Argentina» de la
+    biblioteca de ElevenLabs (voice_id jIgvw3W75cbd6IP0JYwL, modelo eleven_v4). No es la voz de nadie del equipo.
+    Lee un MP3 por tramo de voz/elevenlabs/<plan>-<n>.mp3, generado con el texto del tramo tal cual está en el guion
+    (una generación por tramo). Si un tramo dice lo mismo que otro ya generado (la prueba gratis de cinco planes),
+    se reusa ese MP3. La voz va a velocidad normal (1,00×). Sólo si el video pasara de 51 s, se acelera la voz de todo el video lo mínimo necesario,
+    hasta 1,04× (atempo de ffmpeg: no cambia el tono). Si ni así entra, avisa.
+  --fuente kokoro: voz sintética de Kokoro (ef_dora), sin internet. Lo de abajo es sólo para esta fuente.
+
+Qué hace falta para Kokoro (una vez):
   pip install kokoro-onnx soundfile numpy        (y ffmpeg instalado)
   Los dos archivos del modelo, de los «releases» de github.com/thewh1teagle/kokoro-onnx (model-files-v1.0):
   kokoro-v1.0.onnx y voices-v1.0.bin, en una carpeta aparte (fuera del repo).
 Cómo se corre:
-  KOKORO=/ruta/a/esa/carpeta python3 propuesta/videos/src/hacer-voz.py              -> los 8
-  KOKORO=... python3 propuesta/videos/src/hacer-voz.py redes-premium                -> uno solo
+  python3 propuesta/videos/src/hacer-voz.py                                         -> los 8, con ElevenLabs
+  python3 propuesta/videos/src/hacer-voz.py redes-premium                           -> uno solo
+  KOKORO=/ruta/a/esa/carpeta python3 propuesta/videos/src/hacer-voz.py --fuente kokoro [plan]
 Cómo se piensan los tiempos: cada página tiene en <body> data-base (lo mínimo que dura cada tramo de la animación)
 y data-tramos (dónde empieza cada tramo hoy). Cada tramo dura lo que pide su voz, nunca menos que su mínimo,
-y todos los --in, --out y --foco de la página se corren en proporción. Ningún video puede pasar de 45 segundos.
+y todos los --in, --out y --foco de la página se corren en proporción. Ningún video puede pasar de 51 segundos (tope subido el 16/11/2026 para la voz de ElevenLabs; antes era 45).
 """
 import hashlib, json, os, pathlib, re, subprocess, sys
 import numpy as np, soundfile as sf
 
 ACA = pathlib.Path(__file__).resolve().parent
+FUENTE = 'elevenlabs'
+if '--fuente' in sys.argv:
+    i = sys.argv.index('--fuente'); FUENTE = sys.argv[i + 1]; del sys.argv[i:i + 2]
+if FUENTE not in ('elevenlabs', 'kokoro'): sys.exit('--fuente tiene que ser elevenlabs o kokoro')
 VOZ, IDIOMA, VELOCIDAD = 'ef_dora', 'es-419', float(os.environ.get('VELOCIDAD', '1.1'))
-ANTES, DESPUES, COLA, TOPE = 0.35, 0.40, 1.2, 45.0   # aire antes y después de cada tramo, cola del final, duración máxima
-SR = 24000
+ONCE = {'voz': 'Mauricio - Publicidad cálida | Argentina', 'voice_id': 'jIgvw3W75cbd6IP0JYwL', 'modelo': 'eleven_v4'}
+ACELERAR_MAX = 1.04   # lo más que se puede apurar la voz de ElevenLabs para entrar en el tope (normal: 1,00×)
+ANTES, DESPUES, COLA, TOPE = 0.35, 0.40, 1.2, 51.0   # aire antes y después de cada tramo, cola del final, duración máxima
+SR = 24000 if FUENTE == 'kokoro' else 44100        # la de ElevenLabs viene a 44,1 kHz: no se baja de calidad
 # Cómo se le escriben al motor las palabras que no son del español
 DICHO = [(r'WhatsApp Business', 'guátsap bísnes'), (r'WhatsApp', 'guátsap'), (r'\breels\b', 'rils'), (r'\breel\b', 'ril'),
          (r'\blanding\b', 'landin'), (r'\bstock\b', 'estoc'), (r'YouTube Shorts', 'iutub shorts'), (r'TikTok', 'tic toc'),
@@ -60,6 +76,24 @@ def decir(texto, cache):
     s, _ = sf.read(f, dtype='float32')
     return s
 
+def leer_mp3(f, tempo=1.0):
+    """Decodifica el MP3 a mono, a SR, y si hace falta lo acelera sin cambiar el tono (atempo)."""
+    filtro = ['-af', f'atempo={tempo:.4f}'] if abs(tempo - 1) > 1e-6 else []
+    crudo = subprocess.run(['ffmpeg', '-v', 'error', '-i', str(f), *filtro, '-ac', '1', '-ar', str(SR), '-f', 'f32le', '-'],
+                           capture_output=True, check=True).stdout
+    return np.frombuffer(crudo, dtype=np.float32).copy()
+
+def mp3_del_tramo(planes, plan, n):
+    """voz/elevenlabs/<plan>-<n>.mp3; si no está y otro tramo dice exactamente lo mismo, usa el de ese tramo."""
+    carpeta = ACA / 'voz' / 'elevenlabs'
+    f = carpeta / f'{plan}-{n}.mp3'
+    if f.exists(): return f
+    texto = planes[plan]['tramos'][n - 1][1]
+    for otro, d in planes.items():
+        for m, (_, t) in enumerate(d['tramos'], 1):
+            if t == texto and (carpeta / f'{otro}-{m}.mp3').exists(): return carpeta / f'{otro}-{m}.mp3'
+    sys.exit(f'{plan}: falta la voz del tramo {n} ({f.name}). Generala en ElevenLabs con el texto del guion.')
+
 def recortar(s, umbral=0.012):
     act = np.where(np.abs(s) > umbral)[0]
     a, b = max(act[0] - int(0.03 * SR), 0), min(act[-1] + int(0.08 * SR), len(s))
@@ -92,11 +126,21 @@ def main():
     resumen = json.loads((ACA / 'voz' / 'tramos.json').read_text()) if (ACA / 'voz' / 'tramos.json').exists() else {}
     mal = False
     for plan in pedidos:
-        audios = [decir(t, cache) for _, t in planes[plan]['tramos']]
+        tempo, origen = 1.0, []
+        if FUENTE == 'kokoro':
+            audios = [decir(t, cache) for _, t in planes[plan]['tramos']]
+        else:
+            origen = [mp3_del_tramo(planes, plan, n) for n in range(1, len(planes[plan]['tramos']) + 1)]
+            base = [recortar(leer_mp3(f)) for f in origen]
+            # Lo mínimo que hay que apurar la voz (de a 1 %, hasta 1,08×) para que el video no pase de 45 s
+            while retocar_pagina(plan, [len(a) / SR / tempo for a in base])[0][-1] > TOPE and tempo < ACELERAR_MAX - 1e-9:
+                tempo = round(min(tempo + 0.01, ACELERAR_MAX), 2)
+            audios = base if tempo == 1.0 else [recortar(leer_mp3(f, tempo)) for f in origen]
         durs = [len(a) / SR for a in audios]
         lim, archivo, pagina = retocar_pagina(plan, durs)
         if lim[-1] > TOPE:
-            print(f'{plan}: quedaría de {lim[-1]} s y el tope es {TOPE} s. Acortá el guion. Voz de cada tramo:', [round(d, 1) for d in durs]); mal = True; continue
+            print(f'{plan}: quedaría de {lim[-1]} s y el tope es {TOPE} s' + (f' (voz ya acelerada {tempo:g}×)' if tempo != 1.0 else '') +
+                  '. Acortá el guion. Voz de cada tramo:', [round(d, 1) for d in durs]); mal = True; continue
         archivo.write_text(pagina, encoding='utf-8')
         pista = np.zeros(int(lim[-1] * SR), dtype=np.float32)
         filas = []
@@ -116,8 +160,12 @@ def main():
                   f":measured_thresh={m['input_thresh']}:offset={m['target_offset']}:linear=true,aresample=48000")
         subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', str(crudo), '-af', filtro, '-ac', '2', '-c:a', 'aac', '-b:a', '128k',
                         '-t', f'{lim[-1]:g}', str(ACA / 'voz' / f'{plan}.m4a')], check=True)
-        resumen[plan] = {'dura': lim[-1], 'voz': VOZ, 'idioma': IDIOMA, 'velocidad': VELOCIDAD, 'tramos': filas}
-        print(f"\n{plan}: {lim[-1]:g} s")
+        if FUENTE == 'kokoro':
+            resumen[plan] = {'dura': lim[-1], 'fuente': 'kokoro', 'voz': VOZ, 'idioma': IDIOMA, 'velocidad': VELOCIDAD, 'tramos': filas}
+        else:
+            for x, f in zip(filas, origen): x['mp3'] = f.name
+            resumen[plan] = {'dura': lim[-1], 'fuente': 'elevenlabs', **ONCE, 'velocidad': tempo, 'tramos': filas}
+        print(f"\n{plan}: {lim[-1]:g} s" + (f" · voz acelerada {tempo:g}×" if tempo != 1.0 else ''))
         for x in filas: print(f"  {x['tramo']}. {x['se_ve'][:38]:38} pantalla {x['pantalla_desde']:5.1f}–{x['pantalla_hasta']:5.1f} ({x['pantalla_dura']:4.1f} s) · voz {x['voz_dura']:5.2f} s · aire {x['aire_al_final']:.2f} s")
     (ACA / 'voz' / 'tramos.json').write_text(json.dumps(resumen, ensure_ascii=False, indent=1) + '\n', encoding='utf-8')
     if mal: sys.exit(1)
