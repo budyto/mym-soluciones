@@ -1,0 +1,6 @@
+# PDF de propuestas para clientes (16/11/2026): se mandan por link en WhatsApp. Que no los indexe Google
+# ni se pueda ver la lista de la carpeta; los nombres llevan una parte al azar para que no se adivinen.
+Options -Indexes
+<IfModule mod_headers.c>
+  Header set X-Robots-Tag "noindex, nofollow, noarchive"
+</IfModule>
