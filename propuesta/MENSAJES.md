@@ -12,14 +12,14 @@ Este archivo no se ve desde la web: el servidor bloquea los `.md`.
 4. Si querés que salude por el nombre, agregá al final `&contacto=Nombre`. Ejemplo: `...?empresa=Ferretería%20El%20Tornillo&contacto=Laura`
 5. Abrí el link en tu celular antes de mandarlo y mirá que el nombre se lea bien. No pongas ningún otro dato en el link (ni teléfono, ni mail, ni CUIT).
 
-Para mandarla como PDF: abrí el link en la computadora, tocá «Guardar como PDF» y adjuntá ese archivo. Los videos están en `propuesta/videos/` (un MP4 por plan, con voz, de menos de 12 MB; son 8: los cinco de automatización y los tres de Redes en automático) por si querés mandar uno suelto por WhatsApp.
+Para mandarla como PDF: abrí el link en la computadora, tocá «Guardar como PDF» y adjuntá ese archivo. Los videos están en `propuesta/videos/` (un MP4 por plan, con voz, de menos de 12 MB; son 8: cinco de automatización y los tres de Redes en automático; la Landing de ventas todavía no tiene video) por si querés mandar uno suelto por WhatsApp.
 
 ## WhatsApp
 
 ```
 Hola [CONTACTO], soy Matías, de MyM Soluciones.
-Te armé la propuesta para [EMPRESA] con los cinco planes de automatización y los tres de Redes en automático.
-Cada uno dice qué hace, qué necesitamos de tu lado y su precio (más IVA), y tiene un video corto que lo explica.
+Te armé la propuesta para [EMPRESA] con los seis planes de automatización y los tres de Redes en automático.
+Cada uno dice qué hace, qué necesitamos de tu lado y su precio (más IVA), y casi todos tienen un video corto que lo explica.
 [LINK]
 Mirala tranquilo. Si alguno te sirve, lo vemos en un diagnóstico gratis de 30 minutos por videollamada.
 Cualquier duda, escribime por acá.
@@ -36,7 +36,7 @@ Soy Matías, de MyM Soluciones. Te paso la propuesta que armamos para [EMPRESA]:
 
 [LINK]
 
-Ahí están los cinco planes de automatización (Bot de WhatsApp, Seguimiento de clientes, Paquete completo, Orquestador y Empresa en automático) y los tres planes de Redes en automático (Esencial, Profesional y Premium), que hacen, publican y miden el contenido de tus redes todos los meses. De cada uno vas a ver qué hace, qué necesitamos de tu lado para arrancar, en cuánto tiempo queda andando y cuánto cuesta. Los precios son finales, en pesos. Cada plan tiene un video corto que lo explica.
+Ahí están los seis planes de automatización (Bot de WhatsApp, Seguimiento de clientes, Landing de ventas, Paquete completo, Orquestador y Empresa en automático) y los tres planes de Redes en automático (Esencial, Profesional y Premium), que hacen, publican y miden el contenido de tus redes todos los meses. De cada uno vas a ver qué hace, qué necesitamos de tu lado para arrancar, en cuánto tiempo queda andando y cuánto cuesta. Los precios son finales, en pesos. Casi todos los planes tienen un video corto que lo explica.
 
 Hay una promoción con fecha: contratando hasta el 30/11/2026, la instalación del Paquete completo, del Orquestador y de Empresa en automático va a mitad de precio. El detalle está en la propuesta.
 
