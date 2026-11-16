@@ -200,7 +200,7 @@ $('f').addEventListener('submit', function(ev){
   else {
     var app = firebase.initializeApp(window.FIREBASE_GRUPO, 'diagnostico-redes'), db = app.firestore();
     guardar = db.collection('empresas').doc('agencia-ia').collection('diagnosticosRedes').add(Object.assign({}, d, {
-      estado:'pedido', origen:'grupomym.online/diagnostico-redes', creado:firebase.firestore.FieldValue.serverTimestamp() }));
+      estado:'pedido', origen:'mymsoluciones.online/diagnostico-redes', creado:firebase.firestore.FieldValue.serverTimestamp() }));
   }
   guardar.then(function(){
     $('caja').innerHTML = '<div class="gracias"><h2>¡Listo, ' + d.nombre.replace(/[<>&"]/g, '') + '!</h2><p>Recibimos tu pedido. En 48 horas hábiles te mandamos el diagnóstico de <b>' + d.negocio.replace(/[<>&"]/g, '') + '</b> por WhatsApp.</p><p><a class="btn agua" href="../devolucion/?ejemplo" target="_blank" rel="noopener">Mientras tanto, mirá un ejemplo</a></p></div>';
