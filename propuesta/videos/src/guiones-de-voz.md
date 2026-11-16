@@ -41,7 +41,7 @@ de la animación el tiempo que necesita la voz y deja la pista en `voz/<plan>.m4
 3. **Paso 2: bot.** Después, el bot responde al instante y agenda.
 4. **Paso 3: seguimiento.** Y el seguimiento le vuelve a escribir al que no compró.
 5. **Qué incluye.** Incluye las tres cosas, con una sola puesta en marcha.
-6. **Precio.** La instalación sale ciento veintinueve mil novecientos pesos. Después, cuarenta y nueve mil novecientos por mes, sin permanencia.
+6. **Precio.** La instalación sale doscientos diecinueve mil novecientos pesos. Después, sesenta y cuatro mil novecientos por mes, sin permanencia.
 7. **Promoción de instalación.** Hasta el treinta de noviembre de dos mil veintiséis, la instalación queda en sesenta y cuatro mil novecientos cincuenta pesos.
 8. **Prueba gratis y contacto.** Y empezando hasta esa fecha, tenés quince días de prueba totalmente gratis: no pagás nada al empezar y, si no te sirve, no debés nada. Escribinos por WhatsApp.
 
