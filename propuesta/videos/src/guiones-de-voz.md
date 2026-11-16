@@ -72,7 +72,7 @@ de la animación el tiempo que necesita la voz y deja la pista en `voz/<plan>.m4
 ## redes-esencial · Redes en automático · Esencial
 
 1. **Portada.** Redes en automático, plan Esencial, de eme y eme Soluciones. Para empezar a publicar con constancia y método.
-2. **Calendario del mes.** Armamos el calendario del mes: doce reels animados, cuatro carruseles y tres historias por día hábil, en Instagram y Facebook.
+2. **Calendario del mes.** Armamos el calendario del mes: doce reels animados, cuatro carruseles y veinte historias al mes, en Instagram y Facebook.
 3. **Los tres pasos.** Cada pieza sigue tres pasos: gancho, retención y conversión.
 4. **Qué incluye.** Incluye la estrategia del mes, la respuesta automática a los comentarios y un reporte mensual.
 5. **Precio.** Cuesta doscientos cincuenta mil pesos por mes, sin permanencia. Vos aprobás cada pieza antes de que salga.
