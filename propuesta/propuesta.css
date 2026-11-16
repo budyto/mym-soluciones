@@ -1,0 +1,154 @@
+/* Propuesta comercial de MyM Soluciones.
+   Usa las variables y las clases de ../styles.css (logo, .eyebrow, .em, .btn, .card, .paq, .pains, .steps).
+   Acá va sólo lo propio de esta página: portada, bloque de cada plan, tabla comparativa e impresión. */
+
+/* Encabezado simple (no es fijo, para que no tape nada al imprimir) */
+.pp-top { padding: 18px 0 0; }
+.pp-top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 14px 20px; flex-wrap: wrap; }
+.pp-legal { display: flex; gap: 18px; font-size: 12.5px; font-weight: 600; }
+.pp-legal a { color: var(--ink-2); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(74, 88, 120, .35); }
+.pp-legal a:hover { color: var(--ink); }
+
+/* Portada */
+.pp-portada { padding: 70px 0 30px; }
+.pp-portada h1 { margin-top: 22px; font-size: clamp(40px, 6.2vw, 80px); }
+.pp-portada h1 .em { overflow-wrap: anywhere; max-width: 100%; }
+.pp-portada .lead { margin-top: 26px; }
+.pp-datos { display: grid; grid-template-columns: repeat(4, auto); justify-content: start; gap: 14px 44px; margin: 34px 0 0; }
+.pp-datos dt { font-family: var(--mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--azul); }
+.pp-datos dd { margin: 4px 0 0; font-weight: 700; overflow-wrap: anywhere; }
+
+.pp-sec { padding: 60px 0; }
+.pp-sec .sec-head { margin-bottom: 36px; }
+.pp a:not(.btn):not(.logo):not(.wa-float) { color: var(--azul); font-weight: 700; }
+.pp .pp-top .pp-legal a:not(.btn):not(.logo) { color: var(--ink-2); font-weight: 600; }
+
+/* Cada plan: a la izquierda los datos, a la derecha el video vertical */
+.pp-plan { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 40px; padding: 38px; margin-bottom: 28px; align-items: start; scroll-margin-top: 16px; }
+.pp-plan .paq { padding: 0; gap: 8px; }
+.pp-plan .paq h3 { font-size: clamp(28px, 3.4vw, 38px); letter-spacing: -0.03em; margin-top: 8px; }
+.pp-plan .paq h4 { margin: 18px 0 0; font-family: var(--mono); font-weight: 500; font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--azul); }
+.pp-plan .paq ul { margin: 6px 0 0; }
+.pp-plan .paq .pp-txt { margin: 4px 0 0; font-weight: 500; color: var(--ink-2); font-size: 15.5px; }
+.pp-plan .paq ul.pp-simple { gap: 6px; }
+.pp-plan .paq ul.pp-simple li::before { content: "·"; background: var(--fondo-2); color: var(--azul); }
+.pp-plan .paq .btn { margin-top: 24px; align-self: flex-start; }
+.pp-plan .paq-mes b { color: var(--ink); }
+.pp-video { margin: 0; position: sticky; top: 20px; }
+.pp-video video, .pp-video iframe { display: block; width: 100%; aspect-ratio: 9 / 16; height: auto; border: 0; border-radius: 26px; background: var(--fondo-2); box-shadow: var(--sombra-s); object-fit: cover; }
+.pp-video figcaption { margin-top: 10px; text-align: center; font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+.pp-anual { margin-top: 0; }
+
+/* La promoción tiene fecha: pasado el 30/11/2026, propuesta.js la saca y deja el aviso de que venció */
+.pp-promo-fin { display: none; }
+.promo-vencida .pp-promo { display: none !important; }
+.promo-vencida .pp-promo-fin { display: inline; }
+
+/* Tabla comparativa */
+.pp-desliza { display: none; margin: 0 0 10px; font-size: 13px; color: var(--ink-3); font-weight: 600; }
+.pp-tabla-caja { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.pp-tabla { width: 100%; min-width: 860px; border-collapse: collapse; font-size: 15px; }
+.pp-tabla th, .pp-tabla td { padding: 15px 16px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+.pp-tabla tbody tr:last-child > * { border-bottom: 0; }
+.pp-tabla thead th { font-weight: 900; font-size: 16px; letter-spacing: -0.01em; line-height: 1.2; background: var(--fondo); }
+.pp-tabla tbody th { font-weight: 700; color: var(--ink-2); width: 21%; background: var(--blanco); }
+.pp-tabla td { color: var(--ink-2); }
+.pp-tabla td b { color: var(--ink); font-weight: 800; white-space: nowrap; }
+.pp-tabla td.si { color: #00866f; font-weight: 800; }
+
+/* Condiciones */
+.pp-cond { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.pp-cond .card { padding: 26px; box-shadow: var(--sombra-s); }
+.pp-cond p { margin: 8px 0 0; color: var(--ink-2); font-size: 15px; }
+.pp-validez { margin: 28px 0 0; font-size: 14.5px; color: var(--ink-2); max-width: 90ch; }
+.pp-validez b { color: var(--ink); }
+
+/* También hacemos */
+.pp-tambien { grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.pp-tambien .paq { padding: 26px; box-shadow: var(--sombra-s); }
+.pp-tambien .paq h3 { font-size: 21px; }
+.pp-tambien .paq-precio { font-size: 34px; }
+.pp-tambien .paq p { font-weight: 500; font-size: 14.5px; color: var(--ink-2); }
+.pp-cierre { margin-top: 40px; display: grid; justify-items: center; gap: 14px; text-align: center; }
+.pp-cierre p { margin: 0; font-weight: 700; color: var(--ink-2); }
+.pp-pie { padding: 0 0 40px; background: transparent; margin-top: 0; }
+.pp-pie .foot-bottom { margin-top: 20px; }
+
+@media (max-width: 1000px) {
+  .pp-plan { grid-template-columns: minmax(0, 1fr) 250px; gap: 28px; padding: 30px; }
+  .pp-cond { grid-template-columns: repeat(2, 1fr); }
+  .pp-tambien { grid-template-columns: repeat(2, 1fr); }
+  .pp-datos { grid-template-columns: repeat(2, auto); }
+  .pp-desliza { display: block; }
+}
+@media (max-width: 760px) {
+  .pp-plan { grid-template-columns: 1fr; padding: 24px 20px; }
+  .pp-video { position: static; width: min(300px, 100%); margin-inline: auto; }
+  .pp-plan .paq .btn { align-self: stretch; }
+}
+@media (max-width: 640px) {
+  .pp-portada { padding: 44px 0 20px; }
+  .pp-sec { padding: 44px 0; }
+  .pp-legal { gap: 14px; font-size: 12px; }
+  .pp-datos { grid-template-columns: 1fr 1fr; gap: 14px 20px; }
+  .pp-cond, .pp-tambien { grid-template-columns: 1fr; }
+  .pp-tabla { font-size: 14px; min-width: 780px; }
+  .pp-tabla th, .pp-tabla td { padding: 12px; }
+  .pp .paq-anual { grid-template-columns: 1fr; padding: 24px 20px; }
+  .pp .paq-anual .btn { white-space: normal; }
+  .pp-pie .foot-bottom { flex-direction: column; }
+}
+
+/* Impresión y «Guardar como PDF»: un plan por hoja, sin botones ni videos */
+@media print {
+  @page { size: A4; margin: 13mm 12mm; }
+  html { background: #fff !important; }
+  body { font-size: 10.5pt; line-height: 1.45; overflow: visible; }
+  html, body { overflow: visible !important; }
+  body::before, body::after, .pp-noprint, .wa-float, .pp-video { display: none !important; }
+  /* El degradé en el texto no sale si el navegador no imprime fondos: va en azul liso */
+  .em, .deg { background: none !important; -webkit-text-fill-color: currentColor; color: var(--azul) !important; }
+  .card { box-shadow: none !important; border: 1px solid var(--line); transform: none !important; }
+  .paq-top { outline: 0; border: 1.5px solid var(--azul); }
+  .paq li::before, .step .dot, .paq-pill { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .pp a:not(.btn):not(.logo) { color: var(--ink); }
+  .pp-top { padding: 0; }
+  .pp-portada { padding: 22mm 0 8mm; }
+  .pp-portada h1 { font-size: 40pt; }
+  .pp-sec { padding: 6mm 0; }
+  .pp-sec .sec-head { margin-bottom: 6mm; }
+  .sec-head.split { grid-template-columns: 1fr; gap: 4mm; }
+  h2 { font-size: 22pt; }
+  .pains { grid-template-columns: repeat(4, 1fr); gap: 3mm; }
+  .pain { padding: 4mm; gap: 2.5mm; break-inside: avoid; }
+  .pain blockquote { font-size: 9.5pt; }
+  .pain .fix { font-size: 8pt; padding-top: 2.5mm; }
+  #planes { break-before: page; }
+  #planes { padding-top: 0; }
+  #planes .sec-head { margin-bottom: 4mm; }
+  #planes .sec-head h2 { font-size: 17pt; margin-top: 2mm; }
+  #planes .sec-head h2 br { display: none; }
+  #planes .sec-head h2 .em { margin-left: .25em; }
+  #planes .sec-head .lead { margin-top: 2mm; font-size: 9.5pt; max-width: none; }
+  .pp-plan .paq ul { gap: 1.5mm; }
+  .pp-plan { display: block; padding: 8mm; margin: 0; break-inside: avoid; break-before: page; }
+  #plan-bot { break-before: auto; }
+  .pp-plan .paq h3 { font-size: 22pt; }
+  .paq-precio { font-size: 30pt; }
+  .pp-plan .paq h4 { margin-top: 4mm; }
+  .pp-anual { margin-top: 6mm; break-inside: avoid; }
+  .pp-hoja { break-before: page; }
+  .pp-tabla-caja { overflow: visible; }
+  .pp-tabla { min-width: 0; font-size: 8.5pt; }
+  .pp-tabla th, .pp-tabla td { padding: 2.2mm 2mm; }
+  .pp-tabla thead th { font-size: 9pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .pp-tabla td b { white-space: normal; }
+  .steps { grid-template-columns: repeat(2, 1fr); gap: 4mm; }
+  .step { padding: 5mm; break-inside: avoid; }
+  .pp-cond { grid-template-columns: repeat(2, 1fr); gap: 4mm; }
+  .pp-cond .card { padding: 5mm; break-inside: avoid; }
+  .pp-tambien { grid-template-columns: repeat(2, 1fr); gap: 4mm; }
+  .pp-tambien .paq { padding: 5mm; break-inside: avoid; }
+  .pp-pie { padding: 0; }
+  .pp-pie .foot-bottom { margin-top: 6mm; }
+}
