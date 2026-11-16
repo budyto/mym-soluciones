@@ -1,0 +1,42 @@
+{
+  "tema": "bienestar",
+  "marca": "Luna Pilates",
+  "rubro": "Estudio de pilates · Ejemplo ficticio",
+  "palabraServicios": "clases",
+  "hero": {
+    "etiqueta": "Pilates en grupos reducidos · Palermo",
+    "titulo": "Viví sin dolor de espalda con",
+    "destacado": "pilates de verdad",
+    "bajada": "Clases de hasta 6 personas, con profesoras que corrigen cada postura. Tu primera clase es de prueba.",
+    "cta": "Reservá tu clase de prueba"
+  },
+  "tituloBeneficios": "¿Por qué Luna?",
+  "beneficios": [
+    ["Grupos de 6", "Te corregimos la postura en cada ejercicio, no sos una más."],
+    ["Foco en la espalda", "Rutinas pensadas para quien pasa muchas horas sentado."],
+    ["Horarios amplios", "De 7 a 21 h, para que entre en tu semana."]
+  ],
+  "tituloServicios": "Clases y pases",
+  "servicios": [
+    ["Clase de prueba", "[Consultar]", "Para conocer el estudio y armar tu plan."],
+    ["Pase de 8 clases", "[Consultar]", "Dos veces por semana, con lugar reservado."],
+    ["Programa Espalda sana", "[Consultar]", "21 días online, para hacer desde tu casa."]
+  ],
+  "notaPrecios": "Precios de ejemplo: en la web real van los tuyos, con el precio final como pide la Ley 24.240.",
+  "como": [
+    ["Reservás", "Elegís día y horario por WhatsApp."],
+    ["Probás", "Hacés tu primera clase y te evaluamos."],
+    ["Avanzás", "Te armamos un plan y medimos tu progreso."]
+  ],
+  "testimonios": [
+    ["Después de un mes, me levanto sin dolor de espalda.", "Alumna de ejemplo"],
+    ["Los grupos chicos hacen toda la diferencia.", "Alumno de ejemplo"]
+  ],
+  "faq": [
+    ["¿Necesito experiencia?", "No. Arrancamos según tu nivel."],
+    ["¿Qué tengo que llevar?", "Ropa cómoda y medias antideslizantes."],
+    ["¿Puedo recuperar una clase?", "Sí, avisando con 12 horas de anticipación."]
+  ],
+  "cierre": { "titulo": "Tu espalda te lo va a agradecer", "texto": "Reservá tu clase de prueba y empezá esta semana.", "cta": "Reservar por WhatsApp" },
+  "contacto": { "whatsapp": "", "instagram": "lunapilates.ejemplo", "direccion": "Palermo, CABA", "horario": "Lunes a viernes de 7 a 21 h" }
+}

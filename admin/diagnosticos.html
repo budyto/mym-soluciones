@@ -1,0 +1,605 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Diagnósticos de redes · Panel · MyM Soluciones</title>
+<link rel="icon" href="../img/favicon-2.png" type="image/png">
+<!-- Diagnósticos de redes (16/11/2026, Matías: «quiero verlo en el panel de admin de la página de MyM Soluciones»).
+     Mesa de trabajo del diagnóstico de redes gratis. Se entra con Google como el resto del panel (acceso.js) y se conecta
+     una vez con el usuario del CRM del grupo, porque los pedidos, la IA y las devoluciones viven en el Grupo MyM
+     (budyto/grupo-mym: worker.js y crm/firestore.rules). Lo que ve el cliente: ../diagnostico-redes/, ../devolucion/ y ../demo/.
+     Doc: grupo-mym/docs/soluciones/Diagnostico-de-redes.md -->
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* Diagnósticos de redes (panel admin de MyM Soluciones, 16/11/2026; Matías: «quiero verlo en el panel de admin»).
+   Lo que ve el cliente está en mymsoluciones.online (diagnostico-redes/, devolucion/, demo/; repo budyto/mym-soluciones).
+   Pedido (formulario público) → leer redes y web (/api/redes) → completar a mano → devolución con IA (/api/ia, 2 pedidos)
+   → revisión de una persona → link público (devoluciones/{token}) y PDF → WhatsApp → embudo (clients, etapa diagnóstico).
+   Opcional: demo web (demos/{token}). La IA propone y una persona decide: nada se manda sin revisar. */
+:root{ color-scheme:light; --bg:#f4f7ff; --panel:#ffffff; --panel2:#eef3ff; --line:#dbe4f7; --line2:#c3d2f0;
+  --fg:#0e1a33; --muted:#4a5878; --gold:#2f6bff; --gold2:#2f6bff; --ink:#ffffff; --ok:#12a37f; --warn:#c97a12; --bad:#d43a4a; --info:#2f6bff;
+  --display:'Archivo',system-ui,sans-serif; --body:'Archivo',system-ui,sans-serif; }
+*{ box-sizing:border-box; }
+body{ margin:0; background:var(--bg); color:var(--fg); font:15px/1.5 var(--body); padding-bottom:env(safe-area-inset-bottom,0px); }
+a{ color:var(--gold); }
+header.top{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; padding:14px max(16px,env(safe-area-inset-right,0px)) 14px max(16px,env(safe-area-inset-left,0px)); border-bottom:1px solid var(--line); position:sticky; top:0; background:#f4f7ff; z-index:5; }
+header.top h1{ font:900 24px var(--display); letter-spacing:-.02em; margin:0; }
+header.top h1 span{ color:var(--gold); }
+.fila{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.btn{ all:unset; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:9px 15px; border-radius:999px; font-weight:700; font-size:14px; border:1px solid var(--line2); color:var(--fg); text-align:center; }
+.btn:hover{ border-color:var(--gold); }
+.btn.gold{ background:var(--gold2); color:var(--ink); border-color:var(--gold2); }
+.btn.sm{ padding:6px 11px; font-size:13px; }
+.btn.bad{ color:var(--bad); border-color:rgba(226,118,107,.45); }
+.btn[disabled]{ opacity:.5; pointer-events:none; }
+.btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+.app{ display:grid; grid-template-columns:330px minmax(0,1fr); min-height:calc(100vh - 64px); }
+@media (max-width:900px){ .app{ grid-template-columns:minmax(0,1fr); } .lista{ border-right:0 !important; border-bottom:1px solid var(--line); max-height:none !important; } }
+.lista{ border-right:1px solid var(--line); padding:14px; overflow:auto; max-height:calc(100vh - 64px); position:sticky; top:64px; }
+.filtros{ display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+.chip{ display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:999px; font-size:12px; font-weight:700; border:1px solid var(--line2); white-space:nowrap; cursor:pointer; background:none; color:var(--fg); font-family:var(--body); }
+.chip.on{ background:var(--gold2); color:var(--ink); border-color:var(--gold2); }
+.chip.ok{ color:var(--ok); border-color:rgba(124,196,154,.45); } .chip.warn{ color:var(--warn); border-color:rgba(230,163,90,.45); }
+.chip.info{ color:var(--info); border-color:rgba(134,168,224,.45); } .chip.gold{ color:var(--gold); }
+.item{ display:block; width:100%; text-align:left; background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:12px; margin-bottom:8px; cursor:pointer; color:var(--fg); font:inherit; }
+.item:hover,.item.sel{ border-color:var(--gold); }
+.item b{ display:block; } .item small{ color:var(--muted); }
+.detalle{ padding:18px max(16px,env(safe-area-inset-right,0px)) 60px 18px; min-width:0; display:flex; flex-direction:column; gap:16px; }
+.panel{ background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:18px; min-width:0; scroll-margin-top:80px; }
+.panel h2{ font:900 21px var(--display); letter-spacing:-.02em; margin:0 0 4px; }
+.panel h2 .paso{ font:700 12px var(--body); color:var(--gold); letter-spacing:.12em; text-transform:uppercase; display:block; margin-bottom:2px; }
+.muted{ color:var(--muted); } .small{ font-size:13px; }
+.grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:10px; margin-top:12px; }
+.grid .ancho{ grid-column:1/-1; }
+label{ display:flex; flex-direction:column; gap:5px; font-size:13px; font-weight:600; color:var(--muted); }
+input,select,textarea{ font:inherit; color:var(--fg); background:var(--bg); border:1px solid var(--line2); border-radius:10px; padding:9px 11px; width:100%; }
+textarea{ min-height:80px; resize:vertical; }
+table{ width:100%; border-collapse:collapse; margin-top:8px; }
+td,th{ border-bottom:1px solid var(--line); padding:6px 4px; text-align:left; font-size:13px; vertical-align:top; }
+th{ color:var(--muted); font-weight:600; }
+td input{ padding:6px 8px; }
+.estado{ min-height:20px; font-size:14px; margin-top:8px; }
+.estado.error{ color:var(--bad); } .estado.ok{ color:var(--ok); }
+.link{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; background:var(--panel2); border:1px dashed var(--line2); border-radius:12px; padding:10px 12px; margin-top:10px; word-break:break-all; }
+.vacio{ border:1px dashed var(--line2); border-radius:14px; padding:28px; text-align:center; color:var(--muted); }
+details summary{ cursor:pointer; color:var(--gold); font-weight:700; margin-top:10px; }
+pre.json{ white-space:pre-wrap; font-size:12px; }
+.toast{ position:fixed; left:50%; transform:translateX(-50%); bottom:calc(20px + env(safe-area-inset-bottom,0px)); background:var(--gold2); color:var(--ink); font-weight:700; padding:10px 18px; border-radius:999px; z-index:60; }
+.aviso{ border:1px solid rgba(230,163,90,.45); background:rgba(230,163,90,.08); border-radius:12px; padding:10px 14px; font-size:13.5px; }
+</style>
+<style>
+[hidden]{ display:none !important; }
+.vista{ width:100%; border:1px solid var(--line); border-radius:14px; background:#d9dce3; height:680px; margin-top:12px; }
+.entrada{ max-width:420px; margin:14vh auto; padding:32px 26px; background:#fff; border:1px solid var(--line); border-radius:24px; box-shadow:0 20px 50px rgba(14,26,51,.08); text-align:center; display:grid; gap:12px; }
+.entrada h2{ font:900 24px var(--display); margin:0; }
+.entrada p{ color:var(--muted); margin:0; }
+.entrada .msg{ color:var(--bad); min-height:20px; font-size:14px; }
+.entrada label{ text-align:left; }
+.pass{ position:relative; display:block; }
+.pass input{ padding-right:46px; }
+.pass button{ position:absolute; right:6px; top:50%; transform:translateY(-50%); border:0; background:none; cursor:pointer; font-size:18px; padding:6px; border-radius:8px; }
+.pass button[aria-pressed="true"]{ background:var(--panel2); }
+</style>
+</head>
+<body>
+<section class="entrada" id="entrada" hidden>
+  <div class="small" style="color:var(--gold);font-weight:700;letter-spacing:.12em;text-transform:uppercase">Panel interno</div>
+  <h2>Diagnósticos de redes</h2>
+  <p id="entradaTxt">Entrá con tu cuenta de Google autorizada.</p>
+  <button class="btn gold" type="button" id="google">Entrar con Google</button>
+  <form id="formGrupo" hidden style="display:grid;gap:10px">
+    <label>Correo del CRM del grupo<input id="gMail" type="email" autocomplete="email" required></label>
+    <label>Contraseña<span class="pass"><input id="gPass" type="password" autocomplete="current-password" required minlength="6"><button type="button" id="gVer" aria-label="Mostrar la contraseña" aria-pressed="false">👁</button></span></label>
+    <button class="btn gold" type="submit">Conectar</button>
+    <button class="btn sm" type="button" id="gOlvide">Me olvidé la contraseña</button>
+  </form>
+  <p class="msg" id="entradaMsg" role="status"></p>
+</section>
+<div id="app" hidden>
+<header class="top">
+  <div class="fila"><a class="btn sm" href="./">← Panel</a><h1>Diagnósticos de <span>redes</span></h1></div>
+  <div class="fila">
+    <button class="btn sm" type="button" id="nuevo">+ Cargar a mano</button>
+    <a class="btn sm" id="lnkForm" href="../diagnostico-redes/" target="_blank" rel="noopener">Formulario público ↗</a>
+    <a class="btn sm" id="lnkEj" href="../devolucion/?ejemplo" target="_blank" rel="noopener">Ejemplo ↗</a>
+  </div>
+</header>
+<div class="app">
+  <aside class="lista" aria-label="Pedidos">
+    <div class="filtros" id="filtros"></div>
+    <input id="buscar" type="search" placeholder="Buscar negocio, nombre o @usuario" aria-label="Buscar" style="margin-bottom:10px">
+    <div id="items"><p class="muted">Cargando pedidos…</p></div>
+  </aside>
+  <main class="detalle" id="detalle" aria-live="polite"><div class="vacio">Elegí un pedido de la lista o cargá uno a mano.</div></main>
+</div>
+</div>
+<div id="toastRoot"></div>
+
+<script src="../config.js"></script>
+<script>window.FIREBASE_GRUPO={apiKey:"AIzaSyDTLcVzYxFdz5AOzq40zaMDHhvaKC0SW-I",authDomain:"grupo-mym-73b8d.firebaseapp.com",projectId:"grupo-mym-73b8d",appId:"1:966952304229:web:99501761762dfd290cd08c"}; /* Base del Grupo MyM: config pública. */</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" integrity="sha384-AQ3POAMqIhwS81FrUH95ekxqBZHeP5tG2JfEL3+7GuTtfRLWnrRh32UxwzM+//A9" crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js" integrity="sha384-TnlRYaR4JYz/lpaGuaiU61PjNberSA4vjLjtF+oRC/IkohkJqnWxw5EmDSOt1vA1" crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js" integrity="sha384-qn4Jh88HhJA8dplNQyGjOh9OGI4izVhrfj/qIFgaKcdgOE06pXqIKGlsCILZcLAC" crossorigin="anonymous"></script>
+<script src="acceso.js"></script>
+<script>
+(function(){
+'use strict';
+var EMP = 'agencia-ia';
+// Lo que ve el cliente (formulario, devolución y demo) vive en la web de MyM Soluciones (repo budyto/mym-soluciones).
+// En la compu se prueba con esa web servida en localhost:8788.
+var WEB_SOL = location.origin;
+// La IA (/api/ia) y la lectura de redes (/api/redes) están en el servidor del Grupo MyM (budyto/grupo-mym, worker.js).
+// En la compu se prueba con el servidor local en localhost:8787.
+var GRUPO_API = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? 'http://localhost:8787' : 'https://grupomym.online';
+var CEREBROS = [3, 44, 52, 13, 2, 9]; // marketing, redes y algoritmos, marca personal, precios, ventas, legal
+var PRUEBA = new URLSearchParams(location.search).has('prueba') && /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+var ESTADOS = [['pedido','Pedido','info'],['analizando','Analizando','warn'],['revisar','Para revisar','gold'],['enviado','Enviado','ok']];
+var S = { items:[], sel:null, filtro:'todos', q:'' };
+var fs = null, auth = null, FV = null;
+
+/* ---------- utilidades ---------- */
+var $ = function(s, r){ return (r || document).querySelector(s); };
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function toast(t){ var r = $('#toastRoot'); r.innerHTML = '<div class="toast" role="status">' + esc(t) + '</div>'; clearTimeout(toast.t); toast.t = setTimeout(function(){ r.innerHTML = ''; }, 2800); }
+function hoy(){ var d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 10); }
+function mes(){ var t = new Date().toLocaleDateString('es-AR', { month:'long', year:'numeric' }); return t.charAt(0).toUpperCase() + t.slice(1); }
+function token(){ var b = new Uint8Array(18); crypto.getRandomValues(b); return btoa(String.fromCharCode.apply(null, b)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+function fecha(x){ if (!x) return ''; var d = x.toDate ? x.toDate() : new Date(x); return isNaN(d) ? '' : d.toLocaleDateString('es-AR', { day:'2-digit', month:'2-digit' }) + ' ' + d.toLocaleTimeString('es-AR', { hour:'2-digit', minute:'2-digit' }); }
+function waNum(s){ s = String(s || '').replace(/\D/g, ''); if (s.length === 10) s = '549' + s; else if (s.length === 11 && s.indexOf('15') === 2) s = '549' + s.slice(0, 2) + s.slice(4); return s; }
+function n(x){ var v = Number(String(x == null ? '' : x).replace(/\./g, '').replace(',', '.')); return isFinite(v) ? v : 0; }
+function miles(x){ return n(x).toLocaleString('es-AR'); }
+function estadoDe(id){ return ESTADOS.filter(function(e){ return e[0] === id; })[0] || ESTADOS[0]; }
+function sel(){ return S.items.filter(function(i){ return i.id === S.sel; })[0]; }
+
+/* ---------- base de datos (Firebase real o memoria en modo prueba) ---------- */
+// Firestore no acepta listas dentro de listas (la devolución las usa): la devolución y la demo se guardan como texto JSON.
+function aBase(datos){
+  var o = Object.assign({}, datos);
+  if ('devolucion' in o){ o.devolucionJson = o.devolucion ? JSON.stringify(o.devolucion) : null; delete o.devolucion; }
+  if ('demo' in o){ o.demoJson = o.demo ? JSON.stringify(o.demo) : null; delete o.demo; }
+  return o;
+}
+function deBase(d){
+  var o = Object.assign({}, d);
+  try { o.devolucion = o.devolucionJson ? JSON.parse(o.devolucionJson) : null; } catch (e) { o.devolucion = null; }
+  try { o.demo = o.demoJson ? JSON.parse(o.demoJson) : null; } catch (e) { o.demo = null; }
+  return o;
+}
+var DB = {
+  pedidos: function(){ return fs.collection('empresas').doc(EMP).collection('diagnosticosRedes'); },
+  guardar: function(id, datos){
+    if (PRUEBA){ var it = sel(); Object.assign(it, datos); render(); return Promise.resolve(); }
+    return DB.pedidos().doc(id).set(aBase(datos), { merge:true });
+  },
+  crear: function(datos){
+    if (PRUEBA){ var id = 'p' + Date.now(); S.items.unshift(Object.assign({ id:id }, datos, { creado:new Date() })); S.sel = id; render(); return Promise.resolve(id); }
+    return DB.pedidos().add(Object.assign({}, datos, { creado:FV.serverTimestamp() })).then(function(r){ S.sel = r.id; return r.id; });
+  },
+  borrar: function(id){
+    if (PRUEBA){ S.items = S.items.filter(function(i){ return i.id !== id; }); S.sel = null; render(); return Promise.resolve(); }
+    return DB.pedidos().doc(id).delete();
+  },
+  publicar: function(col, tok, datos){
+    if (PRUEBA){ console.log('[prueba] publicar', col, tok, datos); return Promise.resolve(); }
+    return fs.collection(col).doc(tok).set(aBase(datos), { merge:true });
+  },
+  despublicar: function(col, tok){ if (PRUEBA) return Promise.resolve(); return fs.collection(col).doc(tok).delete(); },
+  leerPublicado: function(col, tok){ if (PRUEBA) return Promise.resolve({ vistas:0 }); return fs.collection(col).doc(tok).get().then(function(s){ return s.exists ? s.data() : null; }); },
+  cliente: function(datos){
+    if (PRUEBA){ console.log('[prueba] cliente', datos); return Promise.resolve('c' + Date.now()); }
+    var ref = fs.collection('empresas').doc(EMP).collection('clients').doc(crypto.randomUUID ? crypto.randomUUID() : token());
+    return ref.set(datos).then(function(){ return ref.id; });
+  }
+};
+
+/* ---------- servidor: IA y lectura de redes ---------- */
+// Si Google tiene la IA saturada («high demand», 16/11/2026) el servidor contesta 502/503: se reintenta solo
+// hasta 2 veces, esperando 8 y 16 segundos, antes de avisar.
+function api(ruta, cuerpo, intento){
+  if (PRUEBA) return pruebaApi(ruta, cuerpo);
+  intento = intento || 0;
+  return auth.currentUser.getIdToken().then(function(tk){
+    return fetch(GRUPO_API + ruta, { method:'POST', headers:{ 'Content-Type':'application/json', Authorization:'Bearer ' + tk }, body:JSON.stringify(cuerpo) });
+  }).then(function(r){ return r.json().catch(function(){ return {}; }).then(function(j){
+    if (r.ok && !j.error) return j;
+    // Cupo agotado (plan gratis de Google, 20 pedidos por día, visto el 16/11): no se reintenta, se avisa.
+    if (/quota|exceeded|rate.?limit|free.?tier/i.test(String(j.detalle || ''))) throw new Error('Se terminó el cupo diario de la IA de Google (la clave del grupo está en el plan gratis: 20 pedidos por día). Vuelve mañana, o se activa la facturación en Google AI Studio.');
+    var saturada = r.status === 503 || /demand|overloaded|unavailable|tiempo/i.test(String(j.detalle || ''));
+    if (saturada && intento < 2){
+      avisoIA('La IA de Google está saturada: reintento en ' + (8 * (intento + 1)) + ' segundos (' + (intento + 1) + ' de 2)…');
+      return new Promise(function(ok){ setTimeout(ok, 8000 * (intento + 1)); }).then(function(){ return api(ruta, cuerpo, intento + 1); });
+    }
+    throw new Error(saturada ? 'La IA de Google está saturada en este momento. Probá de nuevo en unos minutos.' : (j.error || ('Error ' + r.status)) + (j.detalle ? ' (' + j.detalle + ')' : ''));
+  }); });
+}
+function avisoIA(t){ ['estDev', 'estDemo'].forEach(function(id){ var e = $('#' + id); if (e && /Trabajando|armando|reintento|Aplicando/.test(e.textContent + (document.querySelector('[disabled]') ? 'Trabajando' : ''))) { e.textContent = t; e.className = 'estado'; } }); }
+function pedirIA(sistema, texto){
+  return api('/api/ia', { emp:EMP, sistema:sistema, texto:texto, cerebros:CEREBROS, consulta:texto.slice(0, 1500), json:true }).then(function(j){ return sacarJSON(j.texto); });
+}
+// La IA a veces envuelve el JSON en ```json … ``` o agrega texto: se toma el primer objeto completo.
+function sacarJSON(t){
+  t = String(t || '').replace(/```json|```/g, '');
+  var a = t.indexOf('{'), b = t.lastIndexOf('}');
+  if (a < 0 || b < a) throw new Error('La IA no devolvió el formato esperado. Probá de nuevo.');
+  try { return JSON.parse(t.slice(a, b + 1)); } catch (e) { throw new Error('La respuesta de la IA vino cortada o mal armada. Probá de nuevo.'); }
+}
+
+var REGLAS = 'Sos el equipo de MyM Soluciones (agencia de marketing, redes y automatizaciones del Grupo MyM, Argentina). ' +
+  'Escribís una devolución de redes para mandarle al dueño del negocio por WhatsApp. Reglas: ' +
+  '1) Español rioplatense con voseo, directo, cálido y concreto, sin adular. Le hablás a la persona ("vos") o al negocio ("ustedes") según sea una persona o una empresa. ' +
+  '2) NO INVENTES DATOS. Usá solo los números que vienen en los datos. Precios del mercado, competidores y cifras: solo los que vienen en "investigacion" o en "web"; si falta algo, escribí [FALTA] para que una persona lo complete. ' +
+  '3) Las estimaciones van marcadas como estimaciones, nunca como promesas de resultados (Ley 24.240). Nada de "garantizado". ' +
+  '4) Si algo puede traer problemas legales o de reputación (usar imágenes de terceros, datos personales, publicidad engañosa), avisalo con tacto. ' +
+  '5) Usá **negritas** para lo clave. Textos cortos: se lee en el celular. ' +
+  '6) Respondé SOLO con un objeto JSON válido, sin texto antes ni después, sin ```.';
+
+function datosParaIA(p){
+  var r = p.redes || {};
+  return {
+    negocio:p.negocio, nombre:p.nombre, rubro:p.rubro, objetivo:p.objetivo, comentario:p.comentario || '',
+    loQueContoElCliente:{ frecuenciaDePublicacion:p.frecuencia || '', queVendeYPrecio:p.vende || '', loQueMasLeCuesta:p.problema || '', mejorPublicacion:p.mejorPost || '' },
+    instagram:p.instagram ? '@' + p.instagram : '', tiktok:p.tiktok ? '@' + p.tiktok : '', web:p.web || '',
+    metricas:{ seguidores:r.seguidores || p.seguidores, seguidos:r.seguidos, publicaciones:r.publicaciones, ultimoPosteo:r.ultimoPosteo, bio:r.bio, linkBio:r.linkBio },
+    posteos:(r.posteos || []).filter(function(x){ return x.texto; }).slice(0, 15),
+    webLeida:r.webResumen || '', notasDelAnalista:r.notas || '', investigacion:r.investigacion || ''
+  };
+}
+
+function generarDevolucion(p){
+  var base = datosParaIA(p);
+  var esquemaA = '{"tema":"uno de: energia (fitness, deporte, motivación), bienestar (yoga, salud, terapias), elegante (belleza, moda, estética), tecnico (comercio, industria, servicios técnicos), soluciones (resto)",' +
+    '"nombre":"cómo se lo nombra (nombre de pila de la persona si es su marca personal, o el nombre del negocio)",' +
+    '"portada":{"titulo":"frase de portada de 4 a 8 palabras que empieza con el nombre y una coma, con \\n para cortar líneas","destacado":"2 o 3 palabras finales que remata la frase","bajada":"1 oración"},' +
+    '"fortalezas":[["título corto","texto de 1 oración"]],"leccion":"2 o 3 oraciones sobre qué funcionó y qué no, con los números de los posteos",' +
+    '"mejoras":[["título corto","texto de hasta 45 palabras"]],"bio":"bio propuesta de 3 o 4 líneas separadas con \\n, con emojis"}';
+  var pedidoA = 'Datos del negocio (JSON):\n' + JSON.stringify(base) + '\n\nDevolvé este JSON: ' + esquemaA +
+    '\nQue haya 3 a 5 fortalezas y exactamente 8 mejoras ordenadas por prioridad. La mejora 2 tiene que ser sobre la bio (la bio propuesta se muestra debajo).';
+  var A;
+  return pedirIA(REGLAS, pedidoA).then(function(a){
+    A = a;
+    var esquemaB = '{"escalera":{"titulo":"La escalera de valor (o similar para un comercio)","bajada":"1 oración","pasos":[["etiqueta de 1 palabra","producto o servicio","precio o rango (solo de los datos) o [FALTA]","texto corto"]]},' +
+      '"numeros":{"bajada":"1 oración","filas":[["cálculo de ejemplo","monto"]],"nota":"aclaración de que son estimaciones","destacado":["título","texto"]},' +
+      '"producto":{"titulo":"nombre del producto estrella propuesto","bajada":"1 oración","bloques":[["título","texto"]],"claves":["cómo lograr que funcione"]},' +
+      '"mercado":{"titulo":"¿Alguien ya lo hace? (o ¿Cuánto se cobra?)","bajada":"1 oración","filas":[["referencia","precio"]],"diferencial":"2 oraciones","fuentes":["sitio de cada dato"]},' +
+      '"plan":[["Semana 1","título","texto"]],"preguntas":["dato que hay que pedirle al cliente"],"cierre":{"titulo":"frase final potente","texto":"1 oración con el próximo paso","cta":"pregunta de cierre"}}';
+    var pedidoB = 'Datos del negocio (JSON):\n' + JSON.stringify(base) + '\n\nLo que ya dijimos en la primera parte: ' + JSON.stringify({ leccion:a.leccion, mejoras:(a.mejoras || []).map(function(m){ return m[0]; }) }) +
+      '\n\nAhora armá la parte de monetización y plan. Devolvé este JSON: ' + esquemaB +
+      '\nEscalera de 4 o 5 pasos. 3 o 4 filas de números (si no hay precios reales, los montos van como [FALTA]). Producto con 3 o 4 bloques. Mercado: solo referencias que estén en "investigacion" o "webLeida"; si no hay, dejá filas vacías y poné en la bajada que falta investigar. Plan de 4 semanas. 3 o 4 preguntas.';
+    return pedirIA(REGLAS, pedidoB);
+  }).then(function(B){ return armarDevolucion(p, A, B); });
+}
+
+// Los números (datos y posteos) los pone el sistema, no la IA: salen tal cual de lo cargado.
+function armarDevolucion(p, A, B){
+  var r = p.redes || {};
+  var datos = [];
+  var seg = (r.seguidores !== '' && r.seguidores != null) ? r.seguidores : p.seguidores;
+  if (seg) datos.push(['Seguidores', /^[\d.]+$/.test(String(seg)) ? miles(seg) : String(seg)]);
+  if (p.frecuencia) datos.push(['Publica', p.frecuencia]);
+  if (r.publicaciones) datos.push(['Publicaciones', miles(r.publicaciones)]);
+  if (r.seguidos) datos.push(['Seguidos', miles(r.seguidos)]);
+  datos.push(['Link en la bio', r.linkBio ? r.linkBio : 'No tiene']);
+  if (r.ultimoPosteo) datos.push(['Último posteo', r.ultimoPosteo]);
+  var posteos = (r.posteos || []).filter(function(x){ return x.texto; }).sort(function(a, b){ return n(b.meGusta) - n(a.meGusta); }).slice(0, 7)
+    .map(function(x){ return [x.texto.slice(0, 48), n(x.meGusta), x.comentarios === '' || x.comentarios == null ? '' : n(x.comentarios)]; });
+  return {
+    v:1, tema:A.tema || 'soluciones', nombre:A.nombre || p.negocio, marca:p.instagram ? '@' + p.instagram : (p.negocio || ''),
+    pie:(A.nombre || p.negocio) + ' · Devolución', fecha:mes(),
+    portada:A.portada || {}, hoy:{ datos:datos, fortalezas:A.fortalezas || [] },
+    posteos:{ items:posteos, leccion:A.leccion || '' }, mejoras:A.mejoras || [], bio:A.bio || '',
+    escalera:B.escalera || {}, numeros:B.numeros || {}, producto:B.producto || {}, mercado:B.mercado || {},
+    plan:B.plan || [], preguntas:B.preguntas || [], cierre:B.cierre || {}, contacto:{ whatsapp:'5491133662080' }
+  };
+}
+
+function cambiarConIA(dev, instruccion){
+  var t = 'Esta es la devolución actual (JSON):\n' + JSON.stringify(dev) + '\n\nCambio pedido por el equipo: ' + instruccion +
+    '\n\nDevolvé SOLO un objeto JSON con las claves de primer nivel que cambian, completas (por ejemplo {"mejoras":[...]}). No devuelvas las que no cambian.';
+  return pedirIA(REGLAS, t).then(function(c){ return Object.assign({}, dev, c); });
+}
+
+function generarDemo(p){
+  var base = datosParaIA(p);
+  var esquema = '{"tema":"energia|bienestar|elegante|tecnico|soluciones (según el rubro)","marca":"nombre del negocio","rubro":"rubro y zona",' +
+    '"palabraServicios":"servicios, productos o clases","hero":{"etiqueta":"rubro · zona","titulo":"promesa clara de 5 a 9 palabras","destacado":"2 o 3 palabras que la rematan","bajada":"1 o 2 oraciones","cta":"texto del botón"},' +
+    '"tituloBeneficios":"¿Por qué elegirnos?","beneficios":[["título","texto"]],"tituloServicios":"título","servicios":[["nombre","precio real de los datos o [Consultar]","texto"]],' +
+    '"notaPrecios":"aclaración de precios","como":[["paso","texto"]],"testimonios":[["frase de ejemplo","Cliente de ejemplo"]],"faq":[["pregunta","respuesta"]],' +
+    '"cierre":{"titulo":"frase","texto":"1 oración","cta":"texto del botón"},"contacto":{"direccion":"solo si está en los datos","horario":"solo si está en los datos","instagram":"usuario"}}';
+  var t = 'Datos del negocio (JSON):\n' + JSON.stringify(base) + '\n\nArmá el contenido de una landing de muestra para este negocio, para mostrarle cómo podría ser su web. Devolvé este JSON: ' + esquema +
+    '\n3 beneficios, 3 a 6 servicios, 3 pasos, 2 testimonios marcados como de ejemplo, 4 preguntas frecuentes. Precios: solo los que estén en los datos; si no, "[Consultar]". No inventes direcciones, premios ni años de experiencia.';
+  return pedirIA(REGLAS, t).then(function(d){
+    d.contacto = Object.assign({}, d.contacto || {}, { whatsapp:waNum(p.whatsapp), instagram:p.instagram || (d.contacto || {}).instagram || '' });
+    return d;
+  });
+}
+
+/* ---------- lista ---------- */
+function render(){ renderFiltros(); renderLista(); renderDetalle(); }
+function renderFiltros(){
+  var cuenta = function(e){ return S.items.filter(function(i){ return (i.estado || 'pedido') === e; }).length; };
+  $('#filtros').innerHTML = [['todos','Todos',S.items.length]].concat(ESTADOS.map(function(e){ return [e[0], e[1], cuenta(e[0])]; }))
+    .map(function(f){ return '<button type="button" class="chip' + (S.filtro === f[0] ? ' on' : '') + '" data-f="' + f[0] + '">' + esc(f[1]) + ' · ' + f[2] + '</button>'; }).join('');
+}
+function renderLista(){
+  var q = S.q.toLowerCase();
+  var L = S.items.filter(function(i){ return (S.filtro === 'todos' || (i.estado || 'pedido') === S.filtro) && (!q || [i.negocio, i.nombre, i.instagram, i.rubro].join(' ').toLowerCase().indexOf(q) >= 0); });
+  $('#items').innerHTML = L.length ? L.map(function(i){
+    var e = estadoDe(i.estado || 'pedido');
+    return '<button type="button" class="item' + (i.id === S.sel ? ' sel' : '') + '" data-id="' + esc(i.id) + '"><b>' + esc(i.negocio || '(sin nombre)') + '</b>' +
+      '<small>' + esc(i.rubro || '') + (i.instagram ? ' · @' + esc(i.instagram) : '') + '</small><div class="fila" style="margin-top:6px"><span class="chip ' + e[2] + '">' + esc(e[1]) + '</span>' +
+      (i.quiereDemo ? '<span class="chip gold">Quiere demo</span>' : '') + '<small>' + esc(fecha(i.creado)) + '</small></div></button>';
+  }).join('') : '<p class="muted">No hay pedidos ' + (S.filtro === 'todos' ? 'todavía.' : 'en este estado.') + '</p>';
+}
+
+/* ---------- detalle ---------- */
+function campo(k, label, v, extra){ return '<label' + (extra && extra.ancho ? ' class="ancho"' : '') + '>' + esc(label) + (extra && extra.area ? '<textarea data-k="' + k + '"' + (extra.ph ? ' placeholder="' + esc(extra.ph) + '"' : '') + '>' + esc(v) + '</textarea>' : '<input data-k="' + k + '" value="' + esc(v) + '"' + (extra && extra.ph ? ' placeholder="' + esc(extra.ph) + '"' : '') + '>') + '</label>'; }
+function renderDetalle(){
+  var p = sel(), box = $('#detalle');
+  if (!p){ box.innerHTML = '<div class="vacio">Elegí un pedido de la lista o cargá uno a mano.</div>'; return; }
+  var r = p.redes || {}, e = estadoDe(p.estado || 'pedido');
+  var wa = waNum(p.whatsapp);
+  var posteos = (r.posteos && r.posteos.length ? r.posteos : [{ texto:'', meGusta:'', comentarios:'' }]);
+  var linkDev = p.devolucionToken ? WEB_SOL + '/devolucion/?id=' + p.devolucionToken : '';
+  var linkDemo = p.demoToken ? WEB_SOL + '/demo/?id=' + p.demoToken : '';
+  box.innerHTML =
+  // 1. Pedido
+  '<section class="panel"><h2><span class="paso">1 · El pedido</span>' + esc(p.negocio || '') + '</h2>' +
+  '<div class="fila"><span class="chip ' + e[2] + '">' + esc(e[1]) + '</span>' + (p.quiereDemo ? '<span class="chip gold">Quiere demo web</span>' : '') +
+  '<span class="small muted">Entró ' + esc(fecha(p.creado)) + ' · ' + esc(p.origen || 'a mano') + '</span></div>' +
+  '<div class="grid" data-grupo="pedido">' + campo('nombre', 'Nombre', p.nombre) + campo('negocio', 'Negocio', p.negocio) + campo('rubro', 'Rubro', p.rubro) + campo('whatsapp', 'WhatsApp', p.whatsapp) +
+  campo('instagram', 'Instagram (usuario)', p.instagram) + campo('tiktok', 'TikTok', p.tiktok) + campo('web', 'Web', p.web) + campo('objetivo', 'Objetivo', p.objetivo) +
+  campo('frecuencia', 'Cada cuánto publica', p.frecuencia) + campo('vende', 'Qué vende y a qué precio', p.vende) +
+  campo('problema', 'Lo que más le cuesta', p.problema) + campo('mejorPost', 'Su mejor publicación (link)', p.mejorPost) +
+  campo('comentario', 'Comentario del cliente', p.comentario, { ancho:true, area:true }) + '</div>' +
+  '<div class="fila" style="margin-top:12px"><button class="btn sm gold" data-a="guardar-pedido">Guardar</button>' +
+  (wa ? '<a class="btn sm" href="https://wa.me/' + wa + '" target="_blank" rel="noopener">WhatsApp al cliente ↗</a>' : '') +
+  (p.instagram ? '<a class="btn sm" href="https://www.instagram.com/' + encodeURIComponent(p.instagram) + '/" target="_blank" rel="noopener">Ver Instagram ↗</a>' : '') +
+  (p.clienteId ? '<span class="chip ok">En el CRM de Soluciones</span>' : '<button class="btn sm" data-a="embudo">Pasar al CRM de Soluciones</button>') +
+  '<button class="btn sm bad" data-a="borrar">Borrar pedido</button></div></section>' +
+  // 2. Redes (16/11, Matías: «hacelo más simple»): arriba solo lo esencial; lo opcional, plegado.
+  '<section class="panel"><h2><span class="paso">2 · Los datos</span>Redes y web</h2>' +
+  '<p class="small muted">Tocá «Leer automático»: trae la web y, cuando esté conectada la API de Meta, también Instagram. Mientras tanto, mirá el perfil y cargá los seguidores y lo que veas.</p>' +
+  '<div class="fila"><button class="btn sm gold" data-a="leer">Leer automático</button><span class="small muted">' + (r.leido ? 'Leído el ' + esc(fecha(r.leido)) : '') + '</span></div>' +
+  '<p class="estado" id="estLeer"></p>' +
+  '<div class="grid" data-grupo="redes">' + campo('seguidores', 'Seguidores', r.seguidores || p.seguidores || '') + campo('ultimoPosteo', 'Último posteo', r.ultimoPosteo, { ph:'Ej: hace 3 semanas' }) +
+  campo('linkBio', 'Link en la bio', r.linkBio, { ph:'vacío si no tiene' }) +
+  campo('notas', 'Lo que vimos', r.notas, { ancho:true, area:true, ph:'Ej: no aparece en cámara; imágenes hechas con IA; no publica hace 5 semanas…' }) + '</div>' +
+  '<details' + (r.posteos && r.posteos.some(function(x){ return x.texto; }) ? ' open' : '') + '><summary>Más datos (opcional): posteos, bio, web e investigación</summary>' +
+  '<div class="grid" data-grupo="redes">' + campo('seguidos', 'Seguidos', r.seguidos) + campo('publicaciones', 'Publicaciones', r.publicaciones) +
+  campo('bio', 'Bio actual', r.bio, { ancho:true, area:true }) + '</div>' +
+  '<h3 style="margin:16px 0 0;font-size:15px">Posteos recientes <span class="small muted">(para que la IA compare qué funcionó)</span></h3><table><thead><tr><th>Posteo (tema o texto)</th><th style="width:90px">Me gusta</th><th style="width:90px">Comentarios</th><th style="width:40px"></th></tr></thead><tbody id="posteos">' +
+  posteos.map(function(x, i){ return '<tr><td><input data-p="texto" data-i="' + i + '" value="' + esc(x.texto) + '"></td><td><input data-p="meGusta" data-i="' + i + '" value="' + esc(x.meGusta) + '" inputmode="numeric"></td><td><input data-p="comentarios" data-i="' + i + '" value="' + esc(x.comentarios) + '" inputmode="numeric"></td><td><button class="btn sm" data-a="quitar-posteo" data-i="' + i + '" aria-label="Quitar">✕</button></td></tr>'; }).join('') +
+  '</tbody></table><button class="btn sm" data-a="sumar-posteo" style="margin-top:8px">+ Posteo</button>' +
+  '<div class="grid" data-grupo="redes">' + campo('webResumen', 'Lo que tiene la web', r.webResumen, { ancho:true, area:true, ph:'Se completa solo al leer la web.' }) +
+  campo('investigacion', 'Investigación de mercado (con fuentes)', r.investigacion, { ancho:true, area:true, ph:'Precios y competidores reales con su fuente. Si no hay, la IA pone [FALTA].' }) + '</div></details>' +
+  '<div class="fila" style="margin-top:12px"><button class="btn sm gold" data-a="guardar-redes">Guardar datos</button></div></section>' +
+  // 3. Devolución
+  '<section class="panel"><h2><span class="paso">3 · La devolución</span>PDF y link para el cliente</h2>' +
+  '<p class="small muted">La IA arma el borrador en dos partes, con los cerebros de marketing, redes, marca personal, precios, ventas y legal. <b>Una persona lo revisa antes de mandarlo:</b> buscá los [FALTA] y completalos.</p>' +
+  '<div class="fila"><button class="btn sm gold" data-a="generar">' + (p.devolucion ? 'Volver a generar' : 'Generar con IA') + '</button>' +
+  (p.devolucion ? '<label style="flex-direction:row;align-items:center;gap:6px">Estilo <select id="tema">' + ['soluciones','energia','bienestar','elegante','tecnico'].map(function(t){ return '<option' + (p.devolucion.tema === t ? ' selected' : '') + '>' + t + '</option>'; }).join('') + '</select></label>' : '') + '</div>' +
+  '<p class="estado" id="estDev"></p>' +
+  (p.devolucion ? (faltas(p.devolucion) ? '<p class="aviso">Hay <b>' + faltas(p.devolucion) + ' [FALTA]</b> para completar antes de mandar.</p>' : '') +
+    '<iframe class="vista" id="vistaDev" title="Vista previa de la devolución" src="../devolucion/?vista"></iframe>' +
+    '<div class="fila" style="margin-top:10px"><input id="cambio" placeholder="Pedile un cambio a la IA: ej. «la mejora 3 más corta» o «sumá cuotas sin interés»" style="flex:1;min-width:220px"><button class="btn sm" data-a="cambiar">Aplicar cambio</button></div>' +
+    '<details><summary>Editar el contenido a mano (avanzado)</summary><p class="small muted">Es el JSON de la devolución. Cambiá los textos entre comillas y tocá «Aplicar».</p><textarea id="json" style="min-height:260px;font-family:monospace;font-size:12px">' + esc(JSON.stringify(p.devolucion, null, 2)) + '</textarea><button class="btn sm" data-a="aplicar-json" style="margin-top:8px">Aplicar</button></details>' +
+    '<div class="fila" style="margin-top:14px"><button class="btn sm gold" data-a="publicar">' + (linkDev ? 'Actualizar el link' : 'Publicar link') + '</button>' +
+    (linkDev ? '<button class="btn sm" data-a="despublicar">Sacar el link</button>' : '') + '</div>' +
+    (linkDev ? '<div class="link"><span>' + esc(linkDev) + '</span><button class="btn sm" data-a="copiar" data-v="' + esc(linkDev) + '">Copiar</button><a class="btn sm" href="' + esc(linkDev) + '" target="_blank" rel="noopener">Abrir ↗</a>' +
+      (wa ? '<a class="btn sm gold" data-a="enviar" href="https://wa.me/' + wa + '?text=' + encodeURIComponent('¡Hola ' + (p.nombre || '') + '! Te dejo el diagnóstico de redes de ' + (p.negocio || 'tu negocio') + ' que te prometimos. Se lee desde el celular y lo podés bajar en PDF: ' + linkDev + '\n\nCualquier duda, escribime por acá.') + '" target="_blank" rel="noopener">Mandar por WhatsApp ↗</a>' : '') +
+      '<span class="small muted" id="vistas"></span></div>' : '')
+  : '') + '</section>' +
+  // 4. Demo web
+  '<section class="panel"><h2><span class="paso">4 · Opcional</span>Demo web</h2>' +
+  '<p class="small muted">Una landing de muestra con los datos del cliente' + (p.quiereDemo ? ' (la pidió en el formulario)' : '') + '. Lleva un cartel que dice que es una demo de MyM Soluciones.</p>' +
+  '<div class="fila"><button class="btn sm gold" data-a="demo">' + (p.demo ? 'Volver a generar demo' : 'Generar demo con IA') + '</button>' +
+  (p.demo ? '<button class="btn sm" data-a="publicar-demo">' + (linkDemo ? 'Actualizar link' : 'Publicar link') + '</button>' : '') + '</div><p class="estado" id="estDemo"></p>' +
+  (p.demo ? '<iframe class="vista" id="vistaDemo" title="Vista previa de la demo" src="../demo/?vista" style="height:560px;background:#fff"></iframe>' +
+    '<details><summary>Editar la demo a mano (avanzado)</summary><textarea id="jsonDemo" style="min-height:220px;font-family:monospace;font-size:12px">' + esc(JSON.stringify(p.demo, null, 2)) + '</textarea><button class="btn sm" data-a="aplicar-demo" style="margin-top:8px">Aplicar</button></details>' : '') +
+  (linkDemo ? '<div class="link"><span>' + esc(linkDemo) + '</span><button class="btn sm" data-a="copiar" data-v="' + esc(linkDemo) + '">Copiar</button><a class="btn sm" href="' + esc(linkDemo) + '" target="_blank" rel="noopener">Abrir ↗</a></div>' : '') +
+  '</section>';
+  mandarVistas();
+  if (p.devolucionToken) DB.leerPublicado('devoluciones', p.devolucionToken).then(function(d){ var v = $('#vistas'); if (v && d) v.textContent = d.vistas ? 'Lo abrió ' + d.vistas + ' ' + (d.vistas === 1 ? 'vez' : 'veces') + (d.vistoEn ? ' · última: ' + fecha(d.vistoEn) : '') : 'Todavía no lo abrió'; }).catch(function(){});
+}
+function faltas(d){ return (JSON.stringify(d).match(/\[FALTA/g) || []).length; }
+
+// Vista previa: la devolución y la demo se dibujan en un recuadro (misma web). El recuadro avisa «vista-lista»
+// y el panel le manda el contenido; con cada cambio el recuadro se vuelve a armar.
+function mandarVistas(){
+  var p = sel(); if (!p) return;
+  var fd = $('#vistaDev'), fm = $('#vistaDemo');
+  try { if (fd && fd.contentWindow && p.devolucion) fd.contentWindow.postMessage({ tipo:'devolucion', datos:p.devolucion }, WEB_SOL); } catch (e) {}
+  try { if (fm && fm.contentWindow && p.demo) fm.contentWindow.postMessage({ tipo:'demo', datos:p.demo }, WEB_SOL); } catch (e) {}
+}
+window.addEventListener('message', function(ev){
+  if (ev.origin !== WEB_SOL || !ev.data || ev.data.tipo !== 'vista-lista') return;
+  mandarVistas();
+});
+
+function leerGrupo(g){ var o = {}; Array.prototype.forEach.call(document.querySelectorAll('[data-grupo="' + g + '"] [data-k]'), function(i){ o[i.dataset.k] = i.value.trim(); }); return o; }
+function leerPosteos(){ var f = {}; Array.prototype.forEach.call(document.querySelectorAll('#posteos [data-p]'), function(i){ var k = i.dataset.i; f[k] = f[k] || {}; f[k][i.dataset.p] = i.value.trim(); }); return Object.keys(f).map(function(k){ return f[k]; }); }
+function redesDelForm(p){ return Object.assign({}, p.redes || {}, leerGrupo('redes'), { posteos:leerPosteos() }); }
+function estado(id, t, tipo){ var e = $('#' + id); if (e){ e.textContent = t; e.className = 'estado ' + (tipo || ''); } }
+function ocupado(b, si){ if (b) { b.disabled = si; if (si) b.dataset.t = b.textContent, b.textContent = 'Trabajando…'; else if (b.dataset.t) b.textContent = b.dataset.t; } }
+
+/* ---------- acciones ---------- */
+document.addEventListener('click', function(ev){
+  var f = ev.target.closest('[data-f]'); if (f){ S.filtro = f.dataset.f; render(); return; }
+  var it = ev.target.closest('.item'); if (it){ S.sel = it.dataset.id; render(); window.scrollTo({ top:0 }); return; }
+  var b = ev.target.closest('[data-a]'); if (!b) return;
+  var p = sel(), a = b.dataset.a;
+  if (a === 'guardar-pedido'){ var d = leerGrupo('pedido'); d.instagram = d.instagram.replace(/^@/, ''); d.tiktok = d.tiktok.replace(/^@/, ''); DB.guardar(p.id, d).then(function(){ toast('Pedido guardado'); }); }
+  else if (a === 'sumar-posteo'){ var r = redesDelForm(p); r.posteos.push({ texto:'', meGusta:'', comentarios:'' }); p.redes = r; renderDetalle(); }
+  else if (a === 'quitar-posteo'){ var r2 = redesDelForm(p); r2.posteos.splice(Number(b.dataset.i), 1); p.redes = r2; renderDetalle(); }
+  else if (a === 'guardar-redes'){ DB.guardar(p.id, { redes:redesDelForm(p) }).then(function(){ toast('Datos guardados'); }); }
+  else if (a === 'leer'){
+    var r3 = redesDelForm(p); ocupado(b, true); estado('estLeer', 'Leyendo Instagram y la web…');
+    api('/api/redes', { emp:EMP, instagram:p.instagram || '', web:p.web || '' }).then(function(j){
+      var avisos = [];
+      if (j.instagram && !j.instagram.error){
+        var ig = j.instagram;
+        Object.assign(r3, { seguidores:ig.seguidores, seguidos:ig.seguidos, publicaciones:ig.publicaciones, bio:ig.bio, linkBio:ig.web || '',
+          ultimoPosteo:(ig.posteos[0] || {}).fecha || r3.ultimoPosteo || '',
+          posteos:ig.posteos.map(function(x){ return { texto:x.texto || x.tipo || '(sin texto)', meGusta:x.meGusta == null ? '' : x.meGusta, comentarios:x.comentarios == null ? '' : x.comentarios, fecha:x.fecha, link:x.link }; }) });
+        avisos.push('Instagram leído (' + ig.posteos.length + ' posteos).');
+      } else if (j.instagram) avisos.push('Instagram: ' + j.instagram.error);
+      if (j.web && !j.web.error){
+        var w = j.web;
+        r3.webResumen = [w.url, 'Título: ' + w.titulo, w.descripcion ? 'Descripción: ' + w.descripcion : '', w.titulos.length ? 'Secciones: ' + w.titulos.join(' | ') : '',
+          'Precios a la vista: ' + (w.precios.length ? w.precios.join(', ') : 'ninguno'),
+          'WhatsApp: ' + (w.whatsapp ? 'sí' : 'no') + ' · Carrito: ' + (w.carrito ? 'sí' : 'no') + ' · Cuotas: ' + (w.cuotas ? 'sí' : 'no') + ' · Mercado Pago: ' + (w.mercadoPago ? 'sí' : 'no') +
+          ' · Se adapta al celular: ' + (w.celular ? 'sí' : 'no') + ' · Píxel de Meta: ' + (w.pixelMeta ? 'sí' : 'no') + ' · Analytics: ' + (w.analytics ? 'sí' : 'no')].filter(Boolean).join('\n');
+        avisos.push('Web leída.');
+      } else if (j.web) avisos.push('Web: ' + j.web.error);
+      r3.leido = j.leido;
+      return DB.guardar(p.id, { redes:r3, estado:(p.estado === 'pedido' || !p.estado) ? 'analizando' : p.estado }).then(function(){ estado('estLeer', avisos.join(' ') || 'No había redes ni web para leer.', 'ok'); });
+    }).catch(function(e){ estado('estLeer', e.message, 'error'); }).then(function(){ ocupado(b, false); });
+  }
+  else if (a === 'generar'){
+    var r4 = redesDelForm(p); p.redes = r4;
+    if (p.devolucion && !confirm('Se reemplaza la devolución actual por una nueva. ¿Seguimos?')) return;
+    ocupado(b, true); estado('estDev', 'La IA está armando la devolución (dos partes, puede tardar un minuto)…');
+    DB.guardar(p.id, { redes:r4 }).then(function(){ return generarDevolucion(p); })
+      .then(function(dev){ return DB.guardar(p.id, { devolucion:dev, estado:'revisar', generadoEn:new Date().toISOString() }).then(function(){ toast('Devolución lista para revisar'); }); })
+      .catch(function(e){ estado('estDev', e.message, 'error'); ocupado(b, false); });
+  }
+  else if (a === 'cambiar'){
+    var ins = ($('#cambio').value || '').trim(); if (!ins) return toast('Escribí qué cambiar');
+    ocupado(b, true); estado('estDev', 'Aplicando el cambio…');
+    cambiarConIA(p.devolucion, ins).then(function(dev){ return DB.guardar(p.id, { devolucion:dev }); }).then(function(){ toast('Cambio aplicado'); })
+      .catch(function(e){ estado('estDev', e.message, 'error'); ocupado(b, false); });
+  }
+  else if (a === 'aplicar-json'){
+    try { var dj = JSON.parse($('#json').value); DB.guardar(p.id, { devolucion:dj }).then(function(){ toast('Cambios aplicados'); }); } catch (e) { estado('estDev', 'El texto tiene un error de formato: ' + e.message, 'error'); }
+  }
+  else if (a === 'publicar'){
+    if (faltas(p.devolucion) && !confirm('Todavía hay ' + faltas(p.devolucion) + ' [FALTA] sin completar. ¿Publicar igual?')) return;
+    var tok = p.devolucionToken || token();
+    DB.publicar('devoluciones', tok, { devolucion:p.devolucion, negocio:p.negocio || '', pedidoId:p.id, publicada:true, actualizado:new Date().toISOString() })
+      .then(function(){ return DB.guardar(p.id, { devolucionToken:tok }); }).then(function(){ toast('Link publicado'); })
+      .catch(function(e){ estado('estDev', 'No se pudo publicar: ' + e.message, 'error'); });
+  }
+  else if (a === 'despublicar'){
+    if (!confirm('El link deja de funcionar para el cliente. ¿Seguimos?')) return;
+    DB.despublicar('devoluciones', p.devolucionToken).then(function(){ return DB.guardar(p.id, { devolucionToken:null }); }).then(function(){ toast('Link sacado'); });
+  }
+  else if (a === 'copiar'){ (navigator.clipboard ? navigator.clipboard.writeText(b.dataset.v) : Promise.reject()).then(function(){ toast('Link copiado'); }, function(){ prompt('Copiá el link:', b.dataset.v); }); }
+  else if (a === 'enviar'){ DB.guardar(p.id, { estado:'enviado', enviadoEn:new Date().toISOString() }); }
+  else if (a === 'embudo'){
+    var cli = { nombre:p.nombre || p.negocio, empresa:p.negocio || '', whatsapp:p.whatsapp || '', origen:'Página web', etapa:'diagnostico', plan:'', moneda:'ARS', creado:hoy(),
+      proximoPaso:'Mandar la devolución de redes y ofrecer Redes en automático',
+      notas:'Diagnóstico de redes. Rubro: ' + (p.rubro || '-') + '. Objetivo: ' + (p.objetivo || '-') + '. IG: ' + (p.instagram ? '@' + p.instagram : '-') + '. Web: ' + (p.web || '-') + (p.comentario ? '. Dijo: ' + p.comentario : '') };
+    DB.cliente(cli).then(function(id){ return DB.guardar(p.id, { clienteId:id }); }).then(function(){ toast('Cargado en el CRM de Soluciones, etapa Diagnóstico'); }).catch(function(e){ toast('No se pudo: ' + e.message); });
+  }
+  else if (a === 'borrar'){
+    if (!confirm('Se borra el pedido de ' + (p.negocio || 'este cliente') + ' y su devolución publicada. No se puede deshacer. ¿Seguimos?')) return;
+    var tareas = [];
+    if (p.devolucionToken) tareas.push(DB.despublicar('devoluciones', p.devolucionToken));
+    if (p.demoToken) tareas.push(DB.despublicar('demos', p.demoToken));
+    Promise.all(tareas).then(function(){ return DB.borrar(p.id); }).then(function(){ S.sel = null; toast('Pedido borrado'); });
+  }
+  else if (a === 'demo'){
+    ocupado(b, true); estado('estDemo', 'La IA está armando la demo…');
+    p.redes = redesDelForm(p);
+    generarDemo(p).then(function(d){ return DB.guardar(p.id, { demo:d }); }).then(function(){ toast('Demo lista para revisar'); })
+      .catch(function(e){ estado('estDemo', e.message, 'error'); ocupado(b, false); });
+  }
+  else if (a === 'aplicar-demo'){
+    try { var dd = JSON.parse($('#jsonDemo').value); DB.guardar(p.id, { demo:dd }).then(function(){ toast('Demo actualizada'); }); } catch (e) { estado('estDemo', 'El texto tiene un error de formato: ' + e.message, 'error'); }
+  }
+  else if (a === 'publicar-demo'){
+    var tk = p.demoToken || token();
+    DB.publicar('demos', tk, { demo:p.demo, negocio:p.negocio || '', pedidoId:p.id, publicada:true, actualizado:new Date().toISOString() })
+      .then(function(){ return DB.guardar(p.id, { demoToken:tk }); }).then(function(){ toast('Demo publicada'); })
+      .catch(function(e){ estado('estDemo', 'No se pudo publicar: ' + e.message, 'error'); });
+  }
+});
+document.addEventListener('change', function(ev){
+  if (ev.target.id === 'tema'){ var p = sel(); var d = Object.assign({}, p.devolucion, { tema:ev.target.value }); DB.guardar(p.id, { devolucion:d }); }
+});
+$('#buscar').addEventListener('input', function(){ S.q = this.value; renderLista(); });
+$('#nuevo').addEventListener('click', function(){
+  var neg = prompt('Nombre del negocio:'); if (!neg) return;
+  DB.crear({ negocio:neg.trim(), nombre:'', rubro:'', whatsapp:'', instagram:'', tiktok:'', web:'', objetivo:'', comentario:'', quiereDemo:false, consentimiento:true, estado:'pedido', origen:'cargado a mano en el CRM' })
+    .then(function(){ toast('Pedido creado: completá los datos'); });
+});
+
+/* ---------- arranque ---------- */
+function escuchar(){
+  DB.pedidos().orderBy('creado', 'desc').onSnapshot(function(qs){
+    S.items = qs.docs.map(function(d){ return Object.assign({ id:d.id }, deBase(d.data())); });
+    render();
+  }, function(e){ $('#items').innerHTML = '<p class="estado error">No se pudieron leer los pedidos: ' + esc(e.message) + '</p>'; });
+}
+function mostrarApp(){ $('#entrada').hidden = true; $('#app').hidden = false; }
+function entradaMsg(t){ $('#entradaMsg').textContent = t || ''; }
+if (PRUEBA){
+  // Modo prueba (solo en la compu, con ?prueba): sin ingreso, con datos y respuestas de IA de ejemplo.
+  mostrarApp();
+  fetch('../devolucion/ejemplo.json').then(function(r){ return r.json(); }).then(function(ej){
+    window.__ejemplo = ej;
+    S.items = [{ id:'p1', negocio:'Luna Pilates', nombre:'Ana', rubro:'Estudio de pilates', whatsapp:'11 2222-3333', instagram:'lunapilates.ejemplo', web:'maxi-marefrigeracion.com',
+      objetivo:'Conseguir más clientes', comentario:'Quiero llenar los horarios de la mañana', quiereDemo:true, frecuencia:'1 o 2 veces por semana', vende:'Clases de pilates, $ 25.000 el mes', problema:'Que me compren', mejorPost:'', estado:'pedido', origen:'mymsoluciones.online/diagnostico-redes', creado:new Date() }];
+    render();
+  });
+} else {
+  // 1) La puerta del panel: Google, igual que el resto de admin/ (acceso.js, proyecto de AppMyM).
+  // 2) Los pedidos, la IA y las devoluciones están en la base del Grupo MyM: se conecta una vez con el usuario del CRM
+  //    del grupo (queda guardado en este navegador). Las reglas de Firestore y el servidor del grupo vuelven a controlar.
+  var googleOk = false, escuchando = false;
+  function seguir(){
+    if (!googleOk) return;
+    var u = auth.currentUser;
+    if (!u){ $('#google').hidden = true; $('#formGrupo').hidden = false; $('#entradaTxt').textContent = 'Conectá la base del Grupo MyM con tu usuario del CRM. Se pide una sola vez en este navegador.'; $('#entrada').hidden = false; $('#app').hidden = true; return; }
+    if (!u.emailVerified){ entradaMsg('Tu correo del CRM todavía no está verificado.'); return; }
+    mostrarApp(); if (!escuchando){ escuchando = true; escuchar(); }
+  }
+  // Primero la puerta de Google: acceso.js arma la conexión principal solo si todavía no hay ninguna.
+  // En la compu (localhost) no hay puerta de Google: el proyecto de AppMyM no tiene habilitado localhost y no se toca.
+  // Igual se entra con el usuario del CRM del grupo, y las reglas de la base y el servidor del grupo controlan todo.
+  var LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+  if (LOCAL) setTimeout(function(){ googleOk = true; seguir(); }, 0);
+  else ACCESO.iniciar({
+    alEntrar: function(){ googleOk = true; seguir(); },
+    alSalir: function(m){ googleOk = false; $('#app').hidden = true; $('#entrada').hidden = false; $('#google').hidden = false; $('#formGrupo').hidden = true; $('#entradaTxt').textContent = 'Entrá con tu cuenta de Google autorizada.'; entradaMsg(m); }
+  });
+  var grupo = firebase.initializeApp(window.FIREBASE_GRUPO, 'grupo');
+  auth = grupo.auth(); fs = grupo.firestore(); FV = firebase.firestore.FieldValue;
+  auth.languageCode = 'es';
+  auth.onAuthStateChanged(seguir);
+  $('#google').addEventListener('click', function(){ entradaMsg(''); ACCESO.entrar(); });
+  $('#formGrupo').addEventListener('submit', function(ev){
+    ev.preventDefault(); entradaMsg('Conectando…');
+    auth.signInWithEmailAndPassword($('#gMail').value.trim(), $('#gPass').value).then(function(){ entradaMsg(''); })
+      .catch(function(e){ entradaMsg(/invalid|wrong|not-found/.test(e && e.code) ? 'Correo o contraseña incorrectos.' : 'No se pudo conectar. Probá de nuevo.'); });
+  });
+  $('#gVer').addEventListener('click', function(){
+    var i = $('#gPass'), ver = i.type === 'password';
+    i.type = ver ? 'text' : 'password'; this.setAttribute('aria-pressed', String(ver)); this.setAttribute('aria-label', ver ? 'Ocultar la contraseña' : 'Mostrar la contraseña');
+  });
+  $('#gMail').addEventListener('input', function(){ entradaMsg(''); });
+  $('#gOlvide').addEventListener('click', function(){
+    var m = $('#gMail').value.trim(); if (!m) return entradaMsg('Escribí tu correo arriba.');
+    auth.sendPasswordResetEmail(m).then(function(){ entradaMsg('Te mandamos un correo para cambiar la contraseña.'); }, function(){ entradaMsg('No se pudo mandar el correo.'); });
+  });
+}
+function pruebaApi(ruta, cuerpo){
+  var ej = window.__ejemplo || {};
+  return new Promise(function(ok){ setTimeout(ok, 400); }).then(function(){
+    if (ruta === '/api/redes') return { ok:true, leido:new Date().toISOString(), instagram:{ error:'Falta conectar la API de Meta (META_IG_TOKEN y META_IG_USER_ID en Cloudflare). Cargá los datos a mano.', sinToken:true },
+      web:{ url:'https://' + cuerpo.web, titulo:'Sitio de prueba', descripcion:'', titulos:['Inicio'], precios:['$618.000,00'], whatsapp:true, carrito:true, cuotas:false, mercadoPago:true, celular:true, pixelMeta:true, analytics:false } };
+    var t = cuerpo.texto;
+    var resp;
+    if (/Ahora armá la parte de monetización/.test(t)) resp = { escalera:ej.escalera, numeros:ej.numeros, producto:{ titulo:'Programa Espalda sana', bajada:'21 días online.', bloques:[['Semana 1','Movilidad base.'],['Semana 2','Fuerza suave.'],['Semana 3','Postura.']], claves:['Check-in diario.'] }, mercado:ej.mercado, plan:ej.plan, preguntas:ej.preguntas, cierre:ej.cierre };
+    else if (/landing de muestra/.test(t)) return fetch('../demo/ejemplo.json').then(function(r){ return r.json(); }).then(function(d){ return { texto:'```json\n' + JSON.stringify(d) + '\n```' }; });
+    else if (/Cambio pedido por el equipo/.test(t)) resp = { cierre:{ titulo:'Cambio aplicado en modo prueba', texto:'Texto nuevo.', cta:'¿Arrancamos?' } };
+    else resp = { tema:ej.tema, nombre:ej.nombre, portada:ej.portada, fortalezas:ej.hoy.fortalezas, leccion:ej.posteos.leccion, mejoras:ej.mejoras, bio:ej.bio };
+    return { texto:'```json\n' + JSON.stringify(resp) + '\n```' };
+  });
+}
+})();
+</script>
+</body>
+</html>
