@@ -11,7 +11,7 @@ window.SITE = {
   // Panel admin (12/11/2026, Matías): se entra con Google y sólo estas cuentas. La lista de verdad la
   // controla el server de MyM (variable VENTAS_SOL_PANEL_EMAILS): esta copia sólo sirve para avisar
   // antes. firebaseWeb es la configuración pública del proyecto de MyM (la misma del CRM): no es secreta.
-  adminEmails: ["matiasvale32@gmail.com", "dagiodes1@gmail.com"],
+  adminEmails: ["matiasvale32@gmail.com", "dagiodes1@gmail.com", "matiasnappe7@gmail.com"],
   firebaseWeb: {
     apiKey: "AIzaSyD8BTD9IhswuPxuCWDL1f-OiCkeIbvYDzY",
     authDomain: "appmym-5fdd1.firebaseapp.com",
