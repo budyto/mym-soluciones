@@ -70,9 +70,15 @@
     const falta = ['negocio', 'contacto', 'email', 'celular'].find((k) => !String(d[k] || '').trim());
     if (falta) { $('#error1').textContent = 'Completá todos los datos para seguir.'; f[falta].focus(); return; }
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email)) { $('#error1').textContent = 'Revisá el mail: parece que le falta algo.'; f.email.focus(); return; }
+    // Datos para la factura (17/11/2026): con ellos, la factura del primer pago sale sola. Las reglas son las de ARCA.
+    const nro = String(d.doc_nro || '').replace(/\D/g, '');
+    if (!d.condicion_iva) { $('#error1').textContent = 'Elegí tu condición frente al IVA (es para la factura).'; f.condicion_iva.focus(); return; }
+    if (['MT', 'RI'].includes(d.condicion_iva) && nro.length !== 11) { $('#error1').textContent = 'Con Monotributo o Responsable Inscripto la factura va con tu CUIT (11 números).'; f.doc_nro.focus(); return; }
+    if (!(nro.length === 11 || nro.length === 7 || nro.length === 8)) { $('#error1').textContent = 'Revisá el CUIT (11 números) o el DNI (7 u 8).'; f.doc_nro.focus(); return; }
     const b = f.querySelector('button'); b.disabled = true; b.textContent = 'Guardando…'; $('#error1').textContent = '';
     try {
-      const r = await api('/api/alta', { negocio: d.negocio, contacto: d.contacto, email: d.email, celular: d.celular, plan: d.plan, modo: d.modo });
+      const fiscal = { nombre: String(d.razon_social || '').trim() || (nro.length === 11 ? d.negocio : d.contacto), doc_nro: nro, condicion_iva: d.condicion_iva, domicilio: d.domicilio };
+      const r = await api('/api/alta', { negocio: d.negocio, contacto: d.contacto, email: d.email, celular: d.celular, plan: d.plan, modo: d.modo, fiscal });
       sesion = { id: r.cliente, llave: r.llave }; guardarSesion(sesion);
       verPaso(r.armadoPor === 'mym' ? 'mym' : 2);
     } catch (err) { $('#error1').textContent = err.message; }
