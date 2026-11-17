@@ -234,11 +234,69 @@
 
   function verSeccion(cual) {
     seccion = cual;
-    for (const s of ['charlas', 'bot', 'avisos']) $('#s-' + s).hidden = s !== cual;
+    for (const s of ['charlas', 'bot', 'seguimiento', 'avisos']) $('#s-' + s).hidden = s !== cual;
     document.querySelectorAll('.pestanas button').forEach((b) => { if (b.dataset.seccion === cual) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
     if (cual === 'bot' && fichaDe !== cliente()) cargarFicha();
     if (cual === 'charlas') refrescarLista();
+    if (cual === 'seguimiento') cargarSeguimiento();
   }
+
+  // =====================================================================================
+  // Seguimiento: la planilla de contactos con su estado (17/11/2026)
+  let seg = null; let filtroSeg = 'todos';
+  const NOMBRE_ESTADO = { 'en charla': 'En charla', esperando: 'En seguimiento', listo: 'Listo para avanzar', cerrado: 'Cerrado', perdido: 'Perdido', 'sin respuesta': 'Sin respuesta', 'no molestar': 'No quiere mensajes' };
+  const fechaCorta = (iso) => (iso ? new Date(iso).toLocaleString('es-AR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : '—');
+  async function cargarSeguimiento() {
+    const cli = cliente(); if (!cli) return;
+    $('#seg-error').textContent = '';
+    try { seg = await api('/api/panel/seguimiento', { cliente: cli }); if (cli === cliente()) pintarSeguimiento(); }
+    catch (e) { $('#seg-error').textContent = e.message; }
+  }
+  function pintarSeguimiento() {
+    if (!seg) return;
+    const listos = seg.filas.filter((f) => f.estado === 'listo').length;
+    const g = $('#globo-listos'); g.hidden = !listos; g.textContent = String(listos);
+    if (!seg.incluido) $('#seg-explica').textContent = 'El seguimiento no está incluido en tu plan. Escribinos si lo querés sumar.';
+    const p = seg.plantillas || {};
+    const pend = Object.values(p).some((x) => x !== 'APPROVED');
+    $('#seg-plantillas').textContent = seg.incluido ? (Object.keys(p).length && !pend ? 'Los mensajes de 3 y 7 días ya están aprobados por WhatsApp.' : 'Los mensajes de 3 y 7 días están en revisión de WhatsApp: hasta que los aprueben, sale sólo el de las 20 horas.') : '';
+    const filas = seg.filas.filter((f) => filtroSeg === 'todos' || f.estado === filtroSeg);
+    const tb = $('#seg-tabla tbody'); tb.textContent = '';
+    for (const f of filas) {
+      const tr = document.createElement('tr');
+      const quien = document.createElement('td'); quien.innerHTML = '<b></b><small></small>'; quien.querySelector('b').textContent = f.nombre || 'Sin nombre'; quien.querySelector('small').textContent = ' ' + (f.numero || '');
+      const est = document.createElement('td'); est.textContent = NOMBRE_ESTADO[f.estado] || f.estado; est.className = 'seg-' + f.estado.replace(/\s+/g, '-');
+      const prox = document.createElement('td'); prox.textContent = f.proximo ? fechaCorta(f.proximo) : '—';
+      const ult = document.createElement('td'); ult.textContent = fechaCorta(f.ultimo);
+      const acc = document.createElement('td');
+      const sel = document.createElement('select'); sel.setAttribute('aria-label', 'Cambiar el estado de ' + (f.nombre || 'este contacto'));
+      for (const [v, t] of [['', 'Marcar como…'], ['cerrado', 'Cerrado (compró)'], ['perdido', 'Perdido'], ['no molestar', 'No escribirle más'], ['esperando', 'Volver a seguirlo']]) { const o = document.createElement('option'); o.value = v; o.textContent = t; sel.append(o); }
+      sel.addEventListener('change', async () => {
+        if (!sel.value) return;
+        try { await api('/api/panel/seguimiento/estado', con({ contacto: f.id, estado: sel.value })); tostada('Listo, quedó marcado.'); cargarSeguimiento(); }
+        catch (e) { tostada(e.message, true); sel.value = ''; }
+      });
+      const abrir = document.createElement('button'); abrir.type = 'button'; abrir.className = 'btn-chico'; abrir.textContent = 'Ver charla';
+      abrir.addEventListener('click', () => { verSeccion('charlas'); irACharla(f.id); });
+      acc.append(sel, abrir);
+      tr.append(quien, est, prox, ult, acc); tb.append(tr);
+    }
+    const v = $('#seg-vacia'); v.hidden = filas.length > 0; v.textContent = 'Todavía no hay contactos en este grupo.';
+  }
+  document.querySelectorAll('[data-seg]').forEach((b) => b.addEventListener('click', () => {
+    filtroSeg = b.dataset.seg;
+    document.querySelectorAll('[data-seg]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    pintarSeguimiento();
+  }));
+  $('#seg-csv').addEventListener('click', () => {
+    if (!seg) return;
+    const q = (t) => '"' + String(t ?? '').replace(/"/g, '""') + '"';
+    const lineas = [['Nombre', 'Número', 'Estado', 'Desde', 'Último mensaje', 'Próximo seguimiento', 'Seguimientos enviados', 'Motivo'].map(q).join(';')]
+      .concat(seg.filas.map((f) => [f.nombre, f.numero, NOMBRE_ESTADO[f.estado] || f.estado, f.desde, f.ultimo, f.proximo, f.enviados, f.motivo].map(q).join(';')));
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob(['\ufeff' + lineas.join('\r\n')], { type: 'text/csv;charset=utf-8' }));
+    a.download = 'seguimiento.csv'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  });
   document.querySelectorAll('.pestanas button').forEach((b) => b.addEventListener('click', () => { verSeccion(b.dataset.seccion); window.scrollTo({ top: 0 }); }));
 
   // =====================================================================================

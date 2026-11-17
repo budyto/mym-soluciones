@@ -70,6 +70,9 @@
     <button type="button" data-seccion="bot">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="8" width="16" height="11" rx="3"/><path d="M12 4v4M9 13h.01M15 13h.01M9.5 16h5"/></svg>
       <span>Lo que dice tu bot</span></button>
+    <button type="button" data-seccion="seguimiento">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l3 7 4-14 3 7h4"/></svg>
+      <span>Seguimiento</span><b class="globo" id="globo-listos" hidden></b></button>
     <button type="button" data-seccion="avisos">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4l2-2zM10 21h4"/></svg>
       <span>Avisos</span></button>
@@ -175,6 +178,25 @@
   </section>
 
   <!-- ---- Avisos ---- -->
+  <!-- ---- Seguimiento (17/11/2026) ---- -->
+  <section id="s-seguimiento" class="seccion" hidden>
+    <div class="tarjeta">
+      <h2 class="titulo">Seguimiento</h2>
+      <p class="paso" id="seg-explica">A quien preguntó y no contestó más, le volvemos a escribir solos: a las 20 horas, a los 3 días y a los 7 días. Si alguien quiere avanzar, te avisamos por mail. Si pide que no le escriban, no le escribimos más.</p>
+      <p class="chica" id="seg-plantillas"></p>
+      <div class="filtros" role="group" aria-label="Qué contactos ver" id="seg-filtros">
+        <button type="button" class="filtro" data-seg="todos" aria-pressed="true">Todos</button>
+        <button type="button" class="filtro" data-seg="listo" aria-pressed="false">Listos para avanzar</button>
+        <button type="button" class="filtro" data-seg="esperando" aria-pressed="false">En seguimiento</button>
+        <button type="button" class="filtro" data-seg="cerrado" aria-pressed="false">Cerrados</button>
+      </div>
+      <p class="error" id="seg-error" role="alert"></p>
+      <div class="tabla-caja"><table class="planilla" id="seg-tabla"><thead><tr><th>Contacto</th><th>Estado</th><th>Próximo mensaje</th><th>Último</th><th></th></tr></thead><tbody></tbody></table></div>
+      <p class="lista-vacia" id="seg-vacia" hidden></p>
+      <button class="btn sec" type="button" id="seg-csv">Bajar la planilla (CSV)</button>
+    </div>
+  </section>
+
   <section id="s-avisos" class="seccion angosta" hidden>
     <form class="tarjeta" id="form-avisos" novalidate>
       <h2 class="titulo">Avisos</h2>

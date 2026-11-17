@@ -221,3 +221,13 @@ dialog .btns .btn{flex:1 1 180px}
   .charla-botones .btn{flex:0 1 auto;min-height:44px;padding:8px 18px;font-size:16px}
   .charla-acc .chica,.charla-acc .error{grid-column:1/-1}
 }
+
+/* ---- Seguimiento: planilla de contactos (17/11/2026) ---- */
+.tabla-caja { overflow-x: auto; margin: 12px 0; }
+.planilla { width: 100%; border-collapse: collapse; font-size: 14px; }
+.planilla th { text-align: left; font-weight: 600; color: #4a5878; padding: 8px 6px; border-bottom: 1px solid #dbe4f7; white-space: nowrap; }
+.planilla td { padding: 10px 6px; border-bottom: 1px solid #eef2fb; vertical-align: top; }
+.planilla td small { display: block; color: #67759a; }
+.planilla select { max-width: 160px; margin-right: 6px; }
+.seg-listo { color: #00a58f; font-weight: 700; }
+.seg-no-molestar, .seg-perdido, .seg-sin-respuesta { color: #67759a; }
