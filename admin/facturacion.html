@@ -1,0 +1,641 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Facturación ARCA · MyM Soluciones</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="../img/favicon.png" type="image/png">
+<!-- Facturación ARCA de MyM Soluciones (17/11/2026, pedido de Matías: «copiá el diseño que tenemos en AppMyM
+     para hacer todo lo que es facturación en automático, sin inventar nada»). Es la pestaña Facturación de
+     AppMyM (public/js/secciones/facturacion.js) adaptada: dos solapas, «Para facturar» (los pagos por
+     transferencia registrados en Bots de clientes que todavía no tienen factura) y «Emitidas» (el período con
+     PDF, anulación por nota de crédito y CSV). Entran las cuentas de SITE.adminEmails con el login de Google
+     del panel (admin/acceso.js); el servidor de la plataforma de bots (plataforma-bots/servidor/facturador)
+     vuelve a verificar el token en cada pedido y es el que valida y habla con ARCA. Acá no se calcula nada
+     fiscal: la letra que se muestra es la misma regla del servidor, para avisar antes de emitir. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;900&family=Martian+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--azul:#2f6bff;--agua:#00c2a8;--deg:linear-gradient(120deg,#2f6bff,#00c2a8);--ink:#0e1a33;--gris:#4a5878;--borde:#dbe4f7;--suave:#eef3ff;--ok:#0a8a60;--aviso:#9a5c00;--mal:#c2364e}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:linear-gradient(180deg,#f4f7ff,#e6eeff) fixed;color:var(--ink);font:16px/1.5 Archivo,system-ui,sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:0 18px 40px}
+header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:18px 0 12px}
+header h1{font:900 24px Archivo;margin:0;letter-spacing:-.02em}
+header a{color:var(--gris);text-decoration:none;font-weight:600}
+.der{margin-left:auto;display:flex;gap:10px;align-items:center;color:var(--gris);font-size:14px}
+.btn{border:0;border-radius:11px;padding:9px 14px;font:700 14px Archivo;cursor:pointer;background:var(--suave);color:var(--azul);white-space:nowrap}
+.btn.principal{background:var(--deg);color:#fff}
+.btn.mal{background:#fde9ed;color:var(--mal)}
+.btn.chico{padding:6px 11px;font-size:13px;border-radius:9px}
+.btn[disabled]{opacity:.55;cursor:not-allowed}
+.tarjeta{background:#fff;border-radius:20px;box-shadow:0 1px 2px rgba(23,48,120,.06),0 10px 26px -10px rgba(23,48,120,.18);padding:20px;margin-bottom:16px}
+.puerta{max-width:420px;margin:12vh auto;text-align:center}
+.gris{color:var(--gris)}.chica{font-size:13px}
+.error{color:var(--mal);font-size:14px}
+.emisor{font-size:13px;color:var(--gris);margin:-6px 0 12px}
+/* Carteles: el amarillo de PRUEBA, el verde de resultado y el rojo con el motivo que manda el servidor */
+.cartel{border-radius:14px;padding:11px 14px;margin-bottom:12px;font-weight:600;font-size:14.5px;display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap;line-height:1.45}
+.cartel .txt{flex:1;min-width:200px}
+.cartel.prueba{background:#fff3d9;color:#6b4000;border:1.5px solid #f0c060}
+.cartel.ok{background:#e2f6ee;color:#075c41;border:1.5px solid #8fd9bd}
+.cartel.mal{background:#fde9ed;color:#8f1f35;border:1.5px solid #f2a9b6}
+.cartel.aviso{background:#fff3d9;color:#6b4000;border:1.5px solid #f0c060}
+.cartel .x{border:0;background:transparent;font:700 18px Archivo;cursor:pointer;color:inherit;opacity:.6;padding:0 4px;line-height:1.2}
+.cartel ul{margin:6px 0 0;padding-left:18px;font-weight:400}
+/* Solapas tipo botón (como en AppMyM: la activa va en el color de acento) */
+.barra{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.solapa{border:1.5px solid var(--borde);background:#fff;border-radius:12px;padding:10px 18px;font:700 15px Archivo;cursor:pointer;color:var(--gris)}
+.solapa[aria-pressed=true]{background:var(--deg);border-color:transparent;color:#fff;box-shadow:0 8px 18px -8px rgba(47,107,255,.6)}
+.barra .acc{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.filtros{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:14px}
+.campo{display:flex;flex-direction:column;gap:4px;margin:0}
+.campo > span{font:500 11px "Martian Mono",monospace;color:var(--gris);text-transform:uppercase;letter-spacing:.04em}
+input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--borde);border-radius:10px;background:#f6f8fe;width:100%;color:var(--ink);min-width:0}
+input:focus,select:focus{outline:2px solid var(--azul);outline-offset:1px}
+input[type=checkbox]{width:18px;height:18px;flex:0 0 18px;padding:0;accent-color:var(--azul)}
+.filtros .campo{width:170px}.filtros .campo.mes{width:220px}.filtros .campo.busca{flex:1;min-width:200px}
+/* Los contadores grandes */
+.kpis{display:grid;grid-template-columns:repeat(var(--n,3),1fr);gap:12px;margin-bottom:14px}
+.kpi{background:#f6f8fe;border-radius:16px;padding:16px 12px;text-align:center}
+.knum{font:900 30px/1.1 Archivo;letter-spacing:-.02em;white-space:nowrap}
+.klbl{font:500 11px "Martian Mono",monospace;color:var(--gris);text-transform:uppercase;letter-spacing:.04em;margin-top:6px}
+.knum.azul{color:var(--azul)}.knum.verde{color:var(--ok)}.knum.agua{color:#008f7c}.knum.aviso{color:var(--aviso)}.knum.mal{color:var(--mal)}
+.knum small{font:600 13px Archivo;color:var(--aviso);letter-spacing:0;white-space:nowrap}.knum{white-space:normal}
+.ayuda{background:var(--suave);border:1.5px solid var(--borde);border-radius:12px;padding:10px 13px;margin-bottom:14px;font-size:13.5px;color:var(--gris);line-height:1.5}
+.ayuda b{color:var(--ink)}
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+th{text-align:left;font:500 12px "Martian Mono",monospace;color:var(--gris);padding:8px;border-bottom:1px solid var(--borde);white-space:nowrap}
+td{padding:10px 8px;border-bottom:1px solid #edf1fb;vertical-align:top}
+.num{text-align:right;white-space:nowrap}.nowrap{white-space:nowrap}
+.mono{font:12.5px "Martian Mono",monospace}
+tr.anulada td:not(.acciones){opacity:.6}
+td.principal{min-width:160px}
+#tabla{overflow-x:auto}
+.vacio{padding:26px 8px;text-align:center;color:var(--gris)}
+.estado{display:inline-block;padding:3px 10px;border-radius:99px;font-size:12.5px;font-weight:700;white-space:nowrap}
+.e-ok{background:#e2f6ee;color:var(--ok)}.e-aviso{background:#fff3d9;color:var(--aviso)}.e-mal{background:#fde9ed;color:var(--mal)}.e-otro{background:var(--suave);color:var(--gris)}
+.cbte{display:inline-block;padding:3px 9px;border-radius:8px;font:500 12.5px "Martian Mono",monospace;white-space:nowrap;background:var(--suave);color:var(--azul)}
+.cbte.b{background:#e2f6ee;color:var(--ok)}.cbte.nc{background:#fde9ed;color:var(--mal)}
+.motivo{font-size:12.5px;color:var(--mal);margin-top:4px;max-width:320px;line-height:1.35}
+.fila-acc{display:flex;gap:6px;justify-content:flex-end}
+/* Modal de emisión y de confirmación */
+.fondo{position:fixed;inset:0;background:rgba(14,26,51,.55);display:none;align-items:flex-start;justify-content:center;padding:4vh 12px;overflow:auto;z-index:50}
+.fondo.ver{display:flex}
+.modal{background:#fff;border-radius:20px;padding:22px;width:100%;max-width:600px;box-shadow:0 30px 60px -20px rgba(14,26,51,.5)}
+.modal.angosto{max-width:440px}
+.modal h3{font:900 20px Archivo;margin:0 0 6px;letter-spacing:-.01em}
+.modal .campo{margin-bottom:12px}
+.fila{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.fila > .campo{flex:1;min-width:130px}
+.renglon{display:grid;grid-template-columns:1fr 64px 130px 34px;gap:6px;margin-bottom:6px}
+.renglon .quitar{border:0;background:var(--suave);border-radius:9px;color:var(--mal);font-weight:900;cursor:pointer}
+.total-caja{display:flex;align-items:baseline;justify-content:space-between;gap:10px;background:#f6f8fe;border-radius:12px;padding:10px 14px;margin:8px 0 12px}
+.total-caja b{font:900 24px Archivo;color:var(--ok)}
+.letra{font:900 16px Archivo;border-radius:12px;padding:10px 14px;margin-bottom:10px;background:var(--suave);color:var(--azul)}
+.letra.b{background:#e2f6ee;color:var(--ok)}
+.letra small{display:block;font:400 12.5px Archivo;color:var(--gris);margin-top:2px}
+.tilde{display:flex;gap:10px;align-items:flex-start;font-size:14px;margin-bottom:12px;cursor:pointer}
+.pie-modal{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+.error-modal{background:#fde9ed;color:#8f1f35;border-radius:12px;padding:10px 13px;font-size:14px;font-weight:600;margin-bottom:12px}
+.error-modal:empty{display:none}
+@media(max-width:760px){
+  .wrap{padding:0 12px 30px}
+  header h1{font-size:21px}
+  .der{width:100%;margin-left:0;justify-content:space-between}
+  .tarjeta{padding:14px;border-radius:18px}
+  .solapa{flex:1;padding:10px 8px;text-align:center}
+  .barra .acc{margin-left:0;width:100%}.barra .acc .btn{flex:1}
+  .filtros{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+  .filtros .campo,.filtros .campo.mes{width:auto;min-width:0}.filtros .campo.mes{grid-column:1/-1}.filtros .campo.busca,.filtros .ancho{grid-column:1/-1}
+  .kpis{grid-template-columns:1fr 1fr;gap:8px}
+  .kpi{padding:12px 8px}.knum{font-size:22px}.klbl{font-size:10px}
+  .kpis.tres .kpi.plata{grid-column:1/-1;order:-1}
+  /* En el celular cada renglón de la tabla pasa a ser una ficha */
+  table,tbody,tr,td{display:block;width:100%}
+  thead{display:none}
+  tr{display:flex;flex-direction:column;border:1.5px solid var(--borde);border-radius:14px;padding:10px 12px;margin-bottom:10px}
+  td{border:0;padding:3px 0;display:flex;gap:10px;justify-content:space-between;align-items:flex-start;text-align:right}
+  td::before{content:attr(data-e);font:500 11px "Martian Mono",monospace;color:var(--gris);text-transform:uppercase;text-align:left;flex:0 0 96px;padding-top:3px}
+  td[data-e=""]::before{display:none}
+  td.principal{order:-1;min-width:0;display:block;text-align:left;font-size:16px;padding-bottom:6px}td.principal::before{display:none}
+  td .motivo{max-width:none;text-align:right}
+  td.acciones{padding-top:8px}td.acciones .fila-acc{width:100%}td.acciones .btn{flex:1;padding:10px}
+  .vacio{display:block}
+  .fondo{padding:0;align-items:flex-end}
+  .modal{border-radius:20px 20px 0 0;padding:18px 14px;max-height:94vh;overflow:auto}
+  .renglon{grid-template-columns:1fr 1fr 34px}.renglon input:first-child{grid-column:1/-1}
+  .pie-modal .btn{flex:1;padding:12px}
+  .fila > div.campo{flex:1 1 100% !important}#m-padron{width:100%}
+  input[type=date],input[type=month]{-webkit-appearance:none;appearance:none;min-height:42px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="puerta" class="tarjeta puerta" hidden>
+    <h1 style="font:900 22px Archivo;margin:0 0 6px">Facturación ARCA</h1>
+    <p class="gris">Entrá con tu cuenta de Google autorizada.</p>
+    <p class="error" id="msj-puerta"></p>
+    <button class="btn principal" id="entrar">Entrar con Google</button>
+  </div>
+
+  <div id="panel" hidden>
+    <header><a href="./">← Inicio del panel</a><h1>🧾 Facturación ARCA</h1><div class="der"><span id="quien"></span><button class="btn" id="salir">Salir</button></div></header>
+    <div class="emisor" id="emisor"></div>
+    <div id="cartel-fijo"></div>
+    <div id="cartel"></div>
+    <div class="barra">
+      <button class="solapa" data-tab="candidatos" aria-pressed="true">Para facturar</button>
+      <button class="solapa" data-tab="emitidas" aria-pressed="false">Emitidas</button>
+      <div class="acc" id="acciones"></div>
+    </div>
+    <div class="filtros" id="filtros"></div>
+    <div class="tarjeta">
+      <div class="kpis" id="kpis"></div>
+      <div id="ayuda"></div>
+      <div id="tabla"><div class="vacio">Cargando…</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="fondo" id="fondo-emitir"><div class="modal" id="modal-emitir" role="dialog" aria-modal="true"></div></div>
+<div class="fondo" id="fondo-preg" style="z-index:60"><div class="modal angosto" id="modal-preg" role="dialog" aria-modal="true"></div></div>
+
+<script src="../config.js?v=20261117b"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" integrity="sha384-AQ3POAMqIhwS81FrUH95ekxqBZHeP5tG2JfEL3+7GuTtfRLWnrRh32UxwzM+//A9" crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js" integrity="sha384-TnlRYaR4JYz/lpaGuaiU61PjNberSA4vjLjtF+oRC/IkohkJqnWxw5EmDSOt1vA1" crossorigin="anonymous"></script>
+<script src="acceso.js?v=20261117b"></script>
+<script>
+(function () {
+  const API = String((window.SITE || {}).plataformaApi || '').replace(/\/+$/, '');
+  const $ = (s) => document.querySelector(s);
+  const esc = (t) => String(t ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+  const pesos = (n) => { const v = redondo(n); return '$ ' + v.toLocaleString('es-AR', { minimumFractionDigits: Number.isInteger(v) ? 0 : 2, maximumFractionDigits: 2 }); };
+  const pesosKpi = (n) => '$ ' + Math.round(Number(n) || 0).toLocaleString('es-AR');
+  const redondo = (n) => Math.round((Number(n) || 0) * 100) / 100;
+  // Las fechas van en hora argentina: un pago de las 22 hs no puede caer en el día siguiente.
+  const diaAR = (iso) => { const t = Date.parse(iso || ''); return isNaN(t) ? String(iso || '').slice(0, 10) : new Date(t - 3 * 3600 * 1000).toISOString().slice(0, 10); };
+  const hoyAR = () => new Date(Date.now() - 3 * 3600 * 1000).toISOString().slice(0, 10);
+  const fechaCorta = (d) => { const p = String(d || '').slice(0, 10).split('-'); return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : (d || '—'); };
+  const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+  const mesLabel = (ym) => { const p = String(ym || '').split('-'); return p.length < 2 ? (ym || '') : `${MESES[Number(p[1]) - 1] || ''} ${p[0]}`; };
+  const numero = (pv, nro) => `${String(pv ?? '').padStart(5, '0')}-${String(nro ?? '').padStart(8, '0')}`;
+
+  // ---------- Las reglas de ARCA que la pantalla muestra (las mismas del servidor y de AppMyM) ----------
+  // La letra sale de la condición del receptor: Responsable Inscripto y Monotributo reciben A (con CUIT
+  // obligatorio); Consumidor Final y Exento, B. El servidor valida lo mismo: esto es para avisar antes.
+  const COND = { CF: 'Consumidor Final', RI: 'Responsable Inscripto', MT: 'Monotributo', EX: 'Exento' };
+  const LETRA = { RI: 'A', MT: 'A', CF: 'B', EX: 'B' };
+  const COND_PADRON = { 1: 'RI', 4: 'EX', 5: 'CF', 6: 'MT' };
+  const DOC_NOMBRE = { 80: 'CUIT', 96: 'DNI', 99: 'Sin documento', CUIT: 'CUIT', DNI: 'DNI', CF: 'Sin documento' };
+  const TOPE_SIN_IDENTIFICAR = 10000000;
+
+  let TAB = 'candidatos';
+  let ESTADO = null;                 // /api/facturacion/estado
+  let CANDIDATOS = [], FACTURAS = [];
+  let CAND_MES = '__todos__';        // se entra viendo todo lo pendiente, como en AppMyM
+  let MES = '';                      // AAAA-MM de Emitidas (vacío al entrar = el mes actual)
+  let R_DESDE = '', R_HASTA = '';    // el rango, uno solo para las dos solapas (como en AppMyM)
+  const BUSCA = { candidatos: '', emitidas: '' };
+  let VISTOS = [];                   // lo que quedó en pantalla después de los filtros
+  let M = null;                      // el modal de emisión abierto
+
+  const activo = () => !!(ESTADO && ESTADO.activo);
+
+  async function api(ruta, cuerpo) {
+    let r;
+    try {
+      r = await fetch(API + ruta, cuerpo === undefined
+        ? { headers: { Authorization: 'Bearer ' + await ACCESO.token() } }
+        : { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + await ACCESO.token() }, body: JSON.stringify(cuerpo) });
+    } catch (e) { const err = new Error('No se pudo conectar con el servidor de facturación. Revisá la conexión.'); err.corte = true; throw err; }
+    const d = await r.json().catch(() => ({}));
+    if (r.status === 401) { ACCESO.salir('Tu sesión venció o esa cuenta no tiene acceso.'); throw new Error(d.error || 'Sin acceso.'); }
+    if (!r.ok) { const err = new Error(d.error || `No se pudo completar (error ${r.status}).`); err.codigo = r.status; throw err; }
+    return d;
+  }
+
+  // ---------- Carteles ----------
+  // El de resultado no se va solo: trae el botón del PDF y el motivo de un rechazo hay que poder leerlo.
+  function cartel(tipo, html, pdfId) {
+    $('#cartel').innerHTML = `<div class="cartel ${tipo}" role="status"><div class="txt">${html}</div>${pdfId ? `<button class="btn chico" data-pdf="${esc(pdfId)}">Ver el PDF</button>` : ''}<button class="x" data-cerrar title="Cerrar">×</button></div>`;
+    $('#cartel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+  const cartelError = (e) => cartel('mal', '⚠️ ' + esc(e && e.message ? e.message : e));
+  $('#cartel').addEventListener('click', (e) => {
+    if (e.target.closest('[data-cerrar]')) $('#cartel').innerHTML = '';
+    const b = e.target.closest('[data-pdf]'); if (b) verPdf(b.dataset.pdf);
+  });
+
+  // Confirmación propia (no el confirm del navegador): dice con todas las letras qué se va a hacer.
+  function preguntar(titulo, html, ok, peligro) {
+    return new Promise((resolver) => {
+      $('#modal-preg').innerHTML = `<h3>${esc(titulo)}</h3><div style="font-size:14.5px;line-height:1.5;margin:8px 0 16px">${html}</div>
+        <div class="pie-modal"><button class="btn" data-r="0">Cancelar</button><button class="btn ${peligro ? 'mal' : 'principal'}" data-r="1">${esc(ok)}</button></div>`;
+      const fondo = $('#fondo-preg'); fondo.classList.add('ver');
+      $('#modal-preg').onclick = (e) => { const b = e.target.closest('[data-r]'); if (!b) return; fondo.classList.remove('ver'); resolver(b.dataset.r === '1'); };
+    });
+  }
+
+  // El PDF lleva el Bearer: se baja con fetch y se abre como blob. La pestaña se abre ANTES del pedido,
+  // porque si se abre después el navegador la toma por una ventana emergente y la bloquea.
+  async function verPdf(id) {
+    const w = window.open('', '_blank');
+    if (w) { try { w.document.write('<p style="font:16px system-ui;padding:24px">Cargando el PDF…</p>'); } catch (e) {} }
+    try {
+      const r = await fetch(API + '/api/facturacion/pdf/' + encodeURIComponent(id), { headers: { Authorization: 'Bearer ' + await ACCESO.token() } });
+      if (!r.ok) { const d = await r.json().catch(() => ({})); throw new Error(d.error || 'No se pudo traer el PDF.'); }
+      const url = URL.createObjectURL(await r.blob());
+      if (w) w.location.href = url;
+      else { const a = document.createElement('a'); a.href = url; a.download = 'comprobante-' + id + '.pdf'; document.body.appendChild(a); a.click(); a.remove(); }
+      setTimeout(() => URL.revokeObjectURL(url), 120000);
+    } catch (e) { if (w) w.close(); cartelError(e); }
+  }
+
+  // ---------- Arranque ----------
+  async function iniciar() {
+    $('#cartel-fijo').innerHTML = ''; $('#emisor').textContent = '';
+    try { ESTADO = await api('/api/facturacion/estado?ping=1'); }
+    catch (e) {
+      ESTADO = null;
+      $('#cartel-fijo').innerHTML = `<div class="cartel mal"><div class="txt">⚠️ ${esc(e.message)}</div><button class="btn chico" id="reintentar">Reintentar</button></div>`;
+      $('#reintentar').onclick = iniciar;
+      pintarTodo(); return;
+    }
+    const em = ESTADO.emisor || {};
+    $('#emisor').textContent = [em.razonSocial, em.cuit ? 'CUIT ' + String(em.cuit).replace(/^(\d{2})(\d{8})(\d)$/, '$1-$2-$3') : '', em.ptoVta ? 'punto de venta ' + em.ptoVta : '', ESTADO.auto === false ? 'facturación automática apagada' : 'facturación automática prendida'].filter(Boolean).join(' · ');
+    let fijos = '';
+    if (!ESTADO.activo) fijos += '<div class="cartel aviso"><div class="txt">⚠️ La facturación ARCA todavía no está configurada (falta el certificado). Podés mirar la pantalla, pero no se puede emitir.</div></div>';
+    else if (ESTADO.ambiente !== 'produccion') fijos += '<div class="cartel prueba"><div class="txt">🧪 Ambiente de PRUEBA (homologación): las facturas no tienen valor fiscal.</div></div>';
+    if (ESTADO.activo && ESTADO.servidores && ESTADO.servidores.error) fijos += `<div class="cartel mal"><div class="txt">⚠️ ARCA no está respondiendo: ${esc(ESTADO.servidores.error)}</div></div>`;
+    $('#cartel-fijo').innerHTML = fijos;
+    await cargar();
+  }
+
+  async function cargar() {
+    pintarAcciones(); pintarFiltros();
+    if (!activo()) { CANDIDATOS = []; FACTURAS = []; return pintarTabla(); }
+    $('#tabla').innerHTML = '<div class="vacio">Cargando…</div>';
+    try {
+      if (TAB === 'candidatos') { CANDIDATOS = (await api('/api/facturacion/candidatos')).candidatos || []; pintarFiltros(); }
+      else {
+        if (!MES) MES = hoyAR().slice(0, 7);
+        const q = (R_DESDE || R_HASTA) ? (R_DESDE ? '&desde=' + R_DESDE : '') + (R_HASTA ? '&hasta=' + R_HASTA : '') : '&mes=' + encodeURIComponent(MES);
+        FACTURAS = (await api('/api/facturacion/listar?origen=soluciones' + q)).facturas || [];
+      }
+      pintarTabla();
+    } catch (e) { $('#kpis').innerHTML = ''; $('#ayuda').innerHTML = ''; $('#tabla').innerHTML = `<div class="vacio error">⚠️ ${esc(e.message)}</div>`; }
+  }
+  const pintarTodo = () => { pintarAcciones(); pintarFiltros(); pintarTabla(); };
+
+  document.querySelectorAll('.solapa').forEach((b) => (b.onclick = () => {
+    TAB = b.dataset.tab;
+    document.querySelectorAll('.solapa').forEach((x) => x.setAttribute('aria-pressed', x === b));
+    cargar();
+  }));
+
+  function pintarAcciones() {
+    const no = activo() ? '' : 'disabled title="Falta configurar el certificado de ARCA"';
+    $('#acciones').innerHTML = TAB === 'candidatos'
+      ? `<button class="btn" id="b-suelta" ${no}>+ Factura suelta</button><button class="btn principal" id="b-todo" ${no}>Facturar todo lo listo</button>`
+      : `<button class="btn" id="b-csv" title="El período que estás viendo, para abrir con Excel">Exportar CSV</button>`;
+    if ($('#b-suelta')) $('#b-suelta').onclick = () => abrirModal(null);
+    if ($('#b-todo')) $('#b-todo').onclick = facturarTodo;
+    if ($('#b-csv')) $('#b-csv').onclick = exportarCsv;
+  }
+
+  // ---------- Filtros ----------
+  // El rango desde/hasta es uno solo para las dos solapas. Lo que mide cambia: en Para facturar es el día
+  // del pago; en Emitidas, la fecha del comprobante.
+  function pintarFiltros() {
+    const rango = (que) => `<label class="campo"><span>Desde</span><input type="date" id="f-desde" value="${esc(R_DESDE)}" title="${esc(que)}"></label>
+      <label class="campo"><span>Hasta</span><input type="date" id="f-hasta" value="${esc(R_HASTA)}" title="${esc(que)}"></label>`;
+    const busca = `<label class="campo busca"><span>Buscar</span><input type="search" id="f-busca" value="${esc(BUSCA[TAB])}" placeholder="Nombre, CUIT o DNI…"></label>`;
+    const quitar = (R_DESDE || R_HASTA) ? '<button class="btn chico ancho" id="f-quitar" title="Volver a ver todo">✕ Quitar el rango</button>' : '';
+    if (TAB === 'candidatos') {
+      const porMes = {};
+      CANDIDATOS.forEach((c) => { const m = diaAR(c.pago && c.pago.cuando).slice(0, 7); porMes[m] = (porMes[m] || 0) + 1; });
+      const meses = Object.keys(porMes).sort().reverse();
+      if (CAND_MES !== '__todos__' && !porMes[CAND_MES]) meses.unshift(CAND_MES);
+      $('#filtros').innerHTML = `<label class="campo mes"><span>Mes del pago</span><select id="f-mes"><option value="__todos__">Todos los meses · ${CANDIDATOS.length}</option>${meses.map((m) => `<option value="${m}" ${m === CAND_MES ? 'selected' : ''}>${esc(mesLabel(m))} · ${porMes[m] || 0}</option>`).join('')}</select></label>${rango('El día en que se registró el pago')}${busca}${quitar}`;
+      $('#f-mes').onchange = () => { CAND_MES = $('#f-mes').value; pintarTabla(); };
+    } else {
+      $('#filtros').innerHTML = `${(R_DESDE || R_HASTA) ? '' : `<label class="campo mes"><span>Mes</span><input type="month" id="f-mes" value="${esc(MES || hoyAR().slice(0, 7))}"></label>`}${rango('La fecha del comprobante')}${busca}${quitar}`;
+      if ($('#f-mes')) $('#f-mes').onchange = () => { MES = $('#f-mes').value || hoyAR().slice(0, 7); cargar(); };
+    }
+    const alCambiarRango = () => {
+      R_DESDE = $('#f-desde').value || ''; R_HASTA = $('#f-hasta').value || '';
+      // Al revés no filtra nada y deja la pantalla vacía sin decir por qué: se acomoda solo.
+      if (R_DESDE && R_HASTA && R_DESDE > R_HASTA) { const x = R_DESDE; R_DESDE = R_HASTA; R_HASTA = x; }
+      if (TAB === 'emitidas') cargar(); else { pintarFiltros(); pintarTabla(); }
+    };
+    $('#f-desde').onchange = alCambiarRango; $('#f-hasta').onchange = alCambiarRango;
+    if ($('#f-quitar')) $('#f-quitar').onclick = () => { R_DESDE = ''; R_HASTA = ''; if (TAB === 'emitidas') cargar(); else { pintarFiltros(); pintarTabla(); } };
+    let t; $('#f-busca').oninput = () => { clearTimeout(t); t = setTimeout(() => { BUSCA[TAB] = $('#f-busca').value.trim(); pintarTabla(); }, 250); };
+  }
+  const coincide = (q, campos) => !q || campos.some((v) => v && String(v).toLowerCase().includes(q.toLowerCase()));
+  const pintarTabla = () => (TAB === 'candidatos' ? pintarCandidatos() : pintarEmitidas());
+
+  // ---------- Solapa «Para facturar» ----------
+  function estadoCandidato(c) {
+    if (c.estado === 'emitiendo') return '<span class="estado e-aviso">Emitiendo…</span>';
+    if (c.estado === 'error' || c.estado === 'revisar' || c.error) return `<span class="estado e-mal">${c.estado === 'revisar' ? 'Revisar en ARCA' : 'Error'}</span><div class="motivo">${esc(c.error || 'No salió. Probá de nuevo.')}</div>`;
+    if (c.falta_dato) return '<span class="estado e-aviso">Falta CUIT/DNI</span>';
+    return '<span class="estado e-ok">Listo</span>';
+  }
+  function pintarCandidatos() {
+    const items = CANDIDATOS.filter((c) => {
+      const dia = diaAR(c.pago && c.pago.cuando), r = c.receptor || {};
+      return (CAND_MES === '__todos__' || dia.slice(0, 7) === CAND_MES) && (!R_DESDE || dia >= R_DESDE) && (!R_HASTA || dia <= R_HASTA)
+        && coincide(BUSCA.candidatos, [c.negocio, r.nombre, r.doc_nro]);
+    });
+    VISTOS = items;
+    // Listo = tiene los datos fiscales. Los que ya fallaron se cuentan aparte, como el «con problema» de AppMyM.
+    const conError = (c) => !c.falta_dato && (c.estado === 'error' || c.estado === 'revisar');
+    const faltan = items.filter((c) => c.falta_dato).length, errores = items.filter(conError).length, listos = items.filter((c) => !c.falta_dato && !conError(c));
+    $('#kpis').className = 'kpis tres'; $('#kpis').style.setProperty('--n', 3);
+    $('#kpis').innerHTML = `
+      <div class="kpi"><div class="knum azul">${items.length}</div><div class="klbl">Pagos sin facturar</div></div>
+      <div class="kpi plata"><div class="knum verde" title="${esc(pesos(items.reduce((s, c) => s + (Number(c.importe_final) || 0), 0)))}">${pesosKpi(items.reduce((s, c) => s + (Number(c.importe_final) || 0), 0))}</div><div class="klbl">$ a facturar</div></div>
+      <div class="kpi"><div class="knum agua">${listos.length}${faltan ? ` <small>+ ${faltan} sin datos</small>` : ''}${errores ? ` <small style="color:var(--mal)">+ ${errores} con error</small>` : ''}</div><div class="klbl">Listos para emitir</div></div>`;
+    $('#ayuda').innerHTML = '<div class="ayuda">Se factura <b>cada pago que registraste en Bots de clientes</b>. Si el cliente tiene sus datos fiscales, sale solo al registrar el pago; si no, completalos acá una vez y los próximos salen solos.</div>';
+    if (!items.length) { $('#tabla').innerHTML = `<div class="vacio">${activo() ? 'No hay pagos sin facturar con esos filtros.' : 'Cuando esté configurado el certificado, acá aparecen los pagos sin facturar.'}</div>`; return; }
+    $('#tabla').innerHTML = `<table><thead><tr><th>Negocio</th><th>Fecha</th><th>Concepto</th><th class="num">Importe</th><th>Estado</th><th></th></tr></thead><tbody>${items.map((c, ix) => {
+      const r = c.receptor || {};
+      const doc = r.doc_nro ? `${DOC_NOMBRE[r.doc_tipo] || r.doc_tipo || ''} ${r.doc_nro} · ${COND[r.condicion_iva] || r.condicion_iva || ''}` : '';
+      return `<tr>
+        <td class="principal" data-e="Negocio"><b>${esc(c.negocio)}</b>${r.nombre && r.nombre !== c.negocio ? `<div class="gris chica">${esc(r.nombre)}</div>` : ''}${doc ? `<div class="gris chica">${esc(doc)}</div>` : ''}</td>
+        <td class="nowrap" data-e="Fecha">${esc(fechaCorta(diaAR(c.pago && c.pago.cuando)))}</td>
+        <td data-e="Concepto">${esc((c.pago && c.pago.concepto) || (c.detalle && c.detalle[0] && c.detalle[0].descripcion) || '—')}</td>
+        <td class="num" data-e="Importe"><b>${pesos(c.importe_final)}</b></td>
+        <td data-e="Estado"><div>${estadoCandidato(c)}</div></td>
+        <td class="acciones" data-e=""><div class="fila-acc"><button class="btn principal chico" data-facturar="${ix}">🧾 Facturar</button></div></td>
+      </tr>`; }).join('')}</tbody></table>`;
+  }
+  $('#tabla').addEventListener('click', (e) => {
+    const f = e.target.closest('[data-facturar]'); if (f) return abrirModal(VISTOS[Number(f.dataset.facturar)]);
+    const p = e.target.closest('[data-pdf]'); if (p) return verPdf(p.dataset.pdf);
+    const a = e.target.closest('[data-anular]'); if (a) return anular(VISTOS[Number(a.dataset.anular)]);
+  });
+
+  // «Facturar todo lo listo»: primero se le pregunta al servidor QUÉ saldría (los números son los de la
+  // base en este momento, no los de la tabla) y recién con el sí se emite. Va por todos los clientes con
+  // datos fiscales, no por los filtros de la pantalla.
+  async function facturarTodo() {
+    const btn = $('#b-todo'); btn.disabled = true; btn.textContent = 'Revisando…';
+    try {
+      const s = await api('/api/facturacion/automatico', { simular: true });
+      const det = s.detalle || [], fallas = s.fallas || [];
+      const total = det.reduce((t, x) => t + (Number(x.total) || 0), 0);
+      const listaFallas = fallas.length ? `<div style="margin-top:10px;color:var(--mal)"><b>${fallas.length === 1 ? 'Una no puede salir' : fallas.length + ' no pueden salir'}:</b><ul style="margin:4px 0 0;padding-left:18px">${fallas.map((f) => `<li>${esc(f.negocio)}: ${esc(f.error)}</li>`).join('')}</ul></div>` : '';
+      if (!s.emitidas) { cartel(fallas.length ? 'mal' : 'aviso', `No hay nada listo para emitir: los pagos pendientes son de clientes sin datos fiscales. Completalos con <b>Facturar</b> en cada renglón.${listaFallas}`); return; }
+      const ok = await preguntar('Facturar todo lo listo', `Se van a emitir <b>${s.emitidas}</b> por <b>${pesos(total)}</b>. ¿Seguimos?
+        <ul style="margin:8px 0 0;padding-left:18px;max-height:30vh;overflow:auto">${det.map((x) => `<li>${esc(x.negocio)}: ${pesos(x.total)}</li>`).join('')}</ul>${listaFallas}
+        ${s.quedan ? `<p class="gris chica">Quedan ${s.quedan} para la próxima tanda.</p>` : ''}
+        <p class="gris chica" style="margin:10px 0 0">Se pide un CAE por cada una a ARCA${ESTADO.ambiente !== 'produccion' ? ' (ambiente de PRUEBA)' : ''}. Una factura emitida no se borra: se anula con nota de crédito.</p>`, 'Sí, emitir');
+      if (!ok) return;
+      btn.textContent = `Emitiendo ${s.emitidas}…`;
+      const r = await api('/api/facturacion/automatico', { simular: false });
+      const hechas = r.detalle || [], fallaron = r.fallas || [];
+      const plata = hechas.reduce((t, x) => t + (Number(x.total) || 0), 0);
+      // Las que no salieron van una por una: «fallaron 2» no le sirve a nadie, hay que saber cuál y por qué.
+      const fin = (fallaron.length ? `<ul>${fallaron.map((f) => `<li><b>${esc(f.negocio)}</b>: ${esc(f.error)}</li>`).join('')}</ul>` : '') + (r.quedan ? `<div style="font-weight:400;margin-top:4px">Quedaron ${r.quedan} para la próxima tanda: volvé a tocar el botón.</div>` : '');
+      if (r.emitidas) cartel(fallaron.length ? 'aviso' : 'ok', `✅ <b>${r.emitidas} ${r.emitidas === 1 ? 'factura emitida' : 'facturas emitidas'}</b> por ${pesos(plata)}. Están en la solapa <b>Emitidas</b>, con su PDF y su CAE.${fallaron.length ? `<div style="margin-top:6px">⚠️ ${fallaron.length === 1 ? 'Una no se pudo emitir' : fallaron.length + ' no se pudieron emitir'}:</div>` : ''}${fin}`);
+      else cartel('mal', `⚠️ No se emitió ninguna.${fin}`);
+      await cargar();
+    } catch (e) {
+      // Si se cortó no se sabe qué alcanzó a salir: se recarga contra el servidor en vez de adivinar.
+      cartel('mal', '⚠️ ' + esc(e.message) + (e.corte ? ' Fijate en la solapa <b>Emitidas</b> cuáles alcanzaron a salir antes de volver a intentar.' : ''));
+      await cargar();
+    } finally { const b = $('#b-todo'); if (b) { b.disabled = !activo(); b.textContent = 'Facturar todo lo listo'; } }
+  }
+
+  // ---------- Modal de emisión (precargado y editable; el mismo, vacío, para la factura suelta) ----------
+  function abrirModal(c) {
+    if (!activo()) return;
+    const r = (c && c.receptor) || {};
+    const hoy = hoyAR();
+    const per = (c && c.periodo) || {};
+    // La referencia de una factura suelta se genera UNA vez, al abrir: con doble clic o un reintento el
+    // servidor ve la misma y no emite dos.
+    const azar = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2, 12);
+    M = { c: c || null, referencia: c ? c.referencia : 'manual:' + azar, cliente_id: c ? c.cliente_id : null };
+    const detalle = (c && Array.isArray(c.detalle) && c.detalle.length) ? c.detalle : [{ descripcion: '', cantidad: 1, precio_unitario_final: c ? c.importe_final : '' }];
+    const docTipo = String(r.doc_tipo || 'CUIT').toUpperCase(), cond = String(r.condicion_iva || 'CF').toUpperCase();
+    $('#modal-emitir').innerHTML = `
+      <h3>🧾 ${c ? 'Facturar a ' + esc(c.negocio) : 'Factura suelta'}</h3>
+      <p class="gris chica" style="margin:0 0 14px">${c ? esc('Pago del ' + fechaCorta(diaAR(c.pago && c.pago.cuando)) + ((c.pago && c.pago.concepto) ? ' · ' + c.pago.concepto : '')) + '. ' : 'Para una venta que no pasa por los bots (una web, un plan de redes). '}Revisá todo antes de emitir: <b>una factura emitida no se borra</b>, sólo se anula con nota de crédito.</p>
+      <label class="campo"><span>Nombre / Razón social</span><input id="m-nombre" value="${esc(r.nombre || (c ? c.negocio : ''))}" maxlength="120"></label>
+      <div class="fila">
+        <label class="campo" style="flex:1"><span>Documento</span><select id="m-doctipo">${['CUIT', 'DNI', 'CF'].map((k) => `<option value="${k}" ${k === docTipo ? 'selected' : ''}>${k === 'CF' ? 'Sin documento' : k}</option>`).join('')}</select></label>
+        <label class="campo" style="flex:2"><span>Número</span><input id="m-docnro" inputmode="numeric" value="${esc(r.doc_nro || '')}" placeholder="Sin guiones"></label>
+        <div class="campo" style="flex:0 0 auto"><button class="btn" type="button" id="m-padron" title="Busca la razón social, la condición de IVA y el domicilio en el padrón de ARCA (sólo con CUIT)">🔍 Padrón</button></div>
+      </div>
+      <div id="m-padron-info" class="chica gris" style="margin:-6px 0 10px"></div>
+      <label class="campo"><span>Condición frente al IVA</span><select id="m-cond">${Object.entries(COND).map(([k, v]) => `<option value="${k}" ${k === cond ? 'selected' : ''}>${esc(v)}</option>`).join('')}</select></label>
+      <label class="campo"><span>Domicilio</span><input id="m-domicilio" value="${esc(r.domicilio || '')}" maxlength="200"></label>
+      <div class="campo" style="margin-bottom:4px"><span>Detalle: qué se vende, cantidad y precio final (con IVA)</span></div>
+      <div id="m-detalle">${detalle.map(renglonHtml).join('')}</div>
+      <button class="btn chico" type="button" id="m-mas">+ Agregar renglón</button>
+      <div class="total-caja"><span class="gris">Importe a facturar</span><b id="m-total">$ 0</b></div>
+      <div class="fila">
+        <label class="campo"><span>Período desde</span><input type="date" id="m-desde" value="${esc(per.desde || hoy)}"></label>
+        <label class="campo"><span>Hasta</span><input type="date" id="m-hasta" value="${esc(per.hasta || hoy)}"></label>
+        <label class="campo"><span>Vto. de pago</span><input type="date" id="m-vto" value="${esc((c && c.vto_pago) || hoy)}"></label>
+      </div>
+      <div class="letra" id="m-letra"></div>
+      ${M.cliente_id ? '<label class="tilde"><input type="checkbox" id="m-guardar" checked><span>Guardar estos datos del cliente para que lo próximo salga solo</span></label>' : ''}
+      <div class="error-modal" id="m-error" role="alert"></div>
+      <div class="pie-modal"><button class="btn" type="button" id="m-cancelar">Cancelar</button><button class="btn principal" type="button" id="m-emitir">✅ Emitir factura</button></div>`;
+    $('#m-cancelar').onclick = cerrarModal;
+    $('#m-mas').onclick = () => { $('#m-detalle').insertAdjacentHTML('beforeend', renglonHtml({ descripcion: '', cantidad: 1, precio_unitario_final: '' })); enVivo(); };
+    $('#m-detalle').onclick = (e) => { const q = e.target.closest('.quitar'); if (q && $('#m-detalle').children.length > 1) { q.closest('.renglon').remove(); enVivo(); } };
+    $('#modal-emitir').oninput = enVivo; $('#modal-emitir').onchange = enVivo;
+    // Con Responsable Inscripto o Monotributo sale A, y la A va sí o sí con CUIT: se acomoda solo.
+    $('#m-cond').addEventListener('change', () => { if (LETRA[$('#m-cond').value] === 'A') $('#m-doctipo').value = 'CUIT'; });
+    $('#m-padron').onclick = padron;
+    $('#m-emitir').onclick = emitir;
+    enVivo();
+    $('#fondo-emitir').classList.add('ver');
+  }
+  const renglonHtml = (d) => `<div class="renglon"><input class="d-desc" placeholder="Descripción" maxlength="300" value="${esc(d.descripcion || '')}"><input class="d-cant" type="number" min="1" step="1" title="Cantidad" value="${esc(d.cantidad || 1)}"><input class="d-precio" type="number" min="0" step="0.01" inputmode="decimal" placeholder="Precio final $" title="Precio unitario final, con IVA" value="${esc(d.precio_unitario_final ?? '')}"><button class="quitar" type="button" title="Quitar el renglón">×</button></div>`;
+  function cerrarModal() { $('#fondo-emitir').classList.remove('ver'); M = null; }
+
+  function leerModal() {
+    const detalle = [...document.querySelectorAll('#m-detalle .renglon')].map((el) => ({
+      descripcion: el.querySelector('.d-desc').value.trim(), cantidad: Number(el.querySelector('.d-cant').value) || 1, precio_unitario_final: redondo(el.querySelector('.d-precio').value)
+    }));
+    const docTipo = $('#m-doctipo').value;
+    return {
+      nombre: $('#m-nombre').value.trim(), doc_tipo: docTipo, doc_nro: docTipo === 'CF' ? '' : $('#m-docnro').value.replace(/\D/g, ''),
+      condicion_iva: $('#m-cond').value, domicilio: $('#m-domicilio').value.trim(), detalle,
+      total: redondo(detalle.reduce((s, d) => s + d.cantidad * d.precio_unitario_final, 0)),
+      desde: $('#m-desde').value, hasta: $('#m-hasta').value, vto: $('#m-vto').value
+    };
+  }
+  // Lo mismo que valida el servidor (facturador/index.js), para decirlo antes de pedir el CAE.
+  function problema(d) {
+    if (!d.nombre) return 'Falta el nombre del cliente.';
+    if (LETRA[d.condicion_iva] === 'A' && d.doc_tipo !== 'CUIT') return `Para Factura A (${COND[d.condicion_iva]}) es obligatorio el CUIT.`;
+    if (d.doc_tipo === 'CUIT' && d.doc_nro.length !== 11) return 'El CUIT tiene que tener 11 números.';
+    if (d.doc_tipo === 'DNI' && (d.doc_nro.length < 7 || d.doc_nro.length > 8)) return 'El DNI tiene que tener 7 u 8 números.';
+    if (d.doc_tipo === 'CF' && d.condicion_iva !== 'CF') return 'Sin documento sólo se le factura a un Consumidor Final.';
+    if (d.doc_tipo === 'CF' && d.total >= TOPE_SIN_IDENTIFICAR) return `Desde ${pesos(TOPE_SIN_IDENTIFICAR)} hay que identificar al cliente con DNI o CUIT.`;
+    if (d.detalle.some((x) => !x.descripcion || !(x.precio_unitario_final > 0))) return 'Falta el detalle: qué se vende y a qué precio.';
+    if (!(d.total > 0)) return 'El importe tiene que ser mayor a cero.';
+    if (!d.desde || !d.hasta || !d.vto) return 'Faltan las fechas del período o el vencimiento.';
+    if (d.desde > d.hasta) return 'El período empieza después de terminar.';
+    return '';
+  }
+  function enVivo() {
+    if (!M) return;
+    const d = leerModal(), letra = LETRA[d.condicion_iva] || 'B', falta = problema(d);
+    $('#m-docnro').disabled = d.doc_tipo === 'CF'; if (d.doc_tipo === 'CF') $('#m-docnro').value = '';
+    $('#m-total').textContent = pesos(d.total);
+    $('#m-letra').className = 'letra' + (letra === 'B' ? ' b' : '');
+    $('#m-letra').innerHTML = `Va a salir: FACTURA ${letra}<small>${letra === 'A' ? 'Responsable Inscripto o Monotributo: Factura A, con CUIT obligatorio.' : 'Consumidor Final o Exento: Factura B. Un Consumidor Final puede ir sin documento hasta ' + pesos(TOPE_SIN_IDENTIFICAR) + '.'}${falta ? `<br><b style="color:var(--mal)">${esc(falta)}</b>` : ''}</small>`;
+  }
+
+  // Consulta el padrón de ARCA con el CUIT cargado y completa razón social, condición de IVA y domicilio.
+  async function padron() {
+    const nro = $('#m-docnro').value.replace(/\D/g, ''), info = $('#m-padron-info');
+    if (nro.length !== 11) { info.innerHTML = '<span class="error">Para consultar el padrón cargá un CUIT (11 números).</span>'; return; }
+    info.textContent = 'Consultando el padrón de ARCA…'; $('#m-padron').disabled = true;
+    try {
+      const r = await api('/api/facturacion/padron/' + nro);
+      if (!M) return;
+      if (!r.disponible) { info.innerHTML = `<span class="error">⚠️ Padrón no disponible${r.motivo || r.error ? ': ' + esc(r.motivo || r.error) : ''}. Completá los datos a mano.</span>`; return; }
+      if (r.razonSocial) $('#m-nombre').value = r.razonSocial;
+      $('#m-doctipo').value = 'CUIT';
+      if (COND_PADRON[r.condIVA]) $('#m-cond').value = COND_PADRON[r.condIVA];
+      if (r.domicilio) $('#m-domicilio').value = r.domicilio;
+      info.innerHTML = `✔ ${esc(r.razonSocial || '')} · ${esc(COND[COND_PADRON[r.condIVA]] || 'condición sin informar')} · ${r.activo ? '<b style="color:var(--ok)">CUIT activo</b>' : '<b class="error">CUIT INACTIVO en ARCA</b>'}`;
+      enVivo();
+    } catch (e) { if (M) info.innerHTML = `<span class="error">⚠️ ${esc(e.message)}</span>`; }
+    finally { if ($('#m-padron')) $('#m-padron').disabled = false; }
+  }
+
+  async function emitir() {
+    if (!M || M.ocupado) return;
+    const d = leerModal(), err = $('#m-error'), btn = $('#m-emitir');
+    const falta = problema(d);
+    if (falta) { err.textContent = falta; return; }
+    err.textContent = '';
+    const letra = LETRA[d.condicion_iva];
+    if (!await preguntar(`¿Emitir FACTURA ${letra}?`, `Por <b>${pesos(d.total)}</b> a <b>${esc(d.nombre)}</b>${d.doc_nro ? ` (${d.doc_tipo} ${esc(d.doc_nro)})` : ' (sin documento)'}.<br><br>Se pide el CAE a ARCA${ESTADO.ambiente !== 'produccion' ? ' en el ambiente de PRUEBA' : ''} y queda registrada. Una factura emitida no se borra: se anula con nota de crédito.`, 'Sí, emitir')) return;
+    if (!M) return;
+    M.ocupado = true; btn.disabled = true; btn.textContent = 'Emitiendo…';
+    const receptor = { nombre: d.nombre, doc_tipo: d.doc_tipo, doc_nro: d.doc_nro, condicion_iva: d.condicion_iva, domicilio: d.domicilio };
+    const guardar = M.cliente_id && $('#m-guardar') && $('#m-guardar').checked;
+    try {
+      // Con el tilde, primero quedan guardados los datos del cliente y después se emite.
+      if (guardar) await api('/api/facturacion/fiscal', { cliente_id: M.cliente_id, ...receptor });
+      const cuerpo = { origen: 'soluciones', referencia: M.referencia, receptor, concepto: 2, detalle: d.detalle, periodo: { desde: d.desde, hasta: d.hasta }, importe_final: d.total, vto_pago: d.vto };
+      if (M.cliente_id) cuerpo.cliente_id = M.cliente_id;
+      const r = await api('/api/facturacion/emitir', cuerpo);
+      const ref = M.referencia;
+      cerrarModal();
+      // El pago facturado sale de la lista al toque, sin perder el filtro ni el lugar.
+      CANDIDATOS = CANDIDATOS.filter((x) => x.referencia !== ref);
+      if (TAB === 'candidatos') { pintarFiltros(); pintarCandidatos(); }
+      const cbte = `${esc(r.tipo || 'Factura ' + (r.letra || ''))} ${numero(r.pv, r.numero)}`;
+      cartel('ok', r.repetida
+        ? `✅ Esa venta ya estaba facturada: <b>${cbte}</b> por ${pesos(r.total)} · CAE <span class="mono">${esc(r.cae)}</span>. No se emitió otra.`
+        : `✅ <b>${cbte}</b> emitida por ${pesos(r.total)} · CAE <span class="mono">${esc(r.cae)}</span>${r.vencimiento_cae ? ' (vence ' + esc(fechaCae(r.vencimiento_cae)) + ')' : ''}. Ya está en la solapa <b>Emitidas</b>.${guardar ? ' Los datos del cliente quedaron guardados: lo próximo sale solo.' : ''}`, r.id);
+    } catch (e) {
+      // El motivo (el de ARCA incluido) queda a la vista, adentro del modal, con los datos todavía cargados.
+      if (M) {
+        M.ocupado = false; btn.disabled = false; btn.textContent = '✅ Emitir factura';
+        err.textContent = e.message + (e.corte ? ' No se sabe si llegó a salir: fijate en la solapa Emitidas antes de volver a intentar (con la misma pantalla abierta no se duplica).' : '');
+        err.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      } else cartelError(e);
+    }
+  }
+  const fechaCae = (v) => { const s = String(v || ''); return /^\d{8}$/.test(s) ? `${s.slice(6, 8)}/${s.slice(4, 6)}/${s.slice(0, 4)}` : fechaCorta(s); };
+
+  // ---------- Solapa «Emitidas» ----------
+  const esNC = (f) => !!f.anula_id;
+  const etiqueta = (f) => `${esNC(f) ? 'NC ' : ''}${f.letra || ''} ${numero(f.pto_vta, f.nro)}`;
+  const docDe = (f) => (Number(f.doc_tipo) === 99 || f.doc_tipo === 'CF' || !f.doc_nro) ? 'Sin documento' : `${DOC_NOMBRE[f.doc_tipo] || ''} ${f.doc_nro}`.trim();
+  // Qué nota de crédito anuló una factura: se busca en lo cargado y, si quedó en otro período, sale del id.
+  function ncDe(f) {
+    const nc = FACTURAS.find((x) => x.id === f.nc_id || x.anula_id === f.id);
+    if (nc) return etiqueta(nc);
+    const p = String(f.nc_id || '').split('-');
+    return p.length === 4 ? `NC ${f.letra || ''} ${numero(p[2], p[3])}` : 'nota de crédito';
+  }
+  function emitidasVistas() { return FACTURAS.filter((f) => coincide(BUSCA.emitidas, [f.receptor_nombre, f.doc_nro, f.cae, numero(f.pto_vta, f.nro), f.descripcion])); }
+  function pintarEmitidas() {
+    const items = emitidasVistas(); VISTOS = items;
+    // Las notas de crédito restan: una factura anulada y su NC, juntas, dan cero.
+    const signo = (f) => (esNC(f) ? -1 : 1);
+    const suma = (k) => items.reduce((s, f) => s + signo(f) * (Number(f[k]) || 0), 0);
+    const facturas = items.filter((f) => !esNC(f)), notas = items.length - facturas.length;
+    $('#kpis').className = 'kpis'; $('#kpis').style.setProperty('--n', 4);
+    $('#kpis').innerHTML = `
+      <div class="kpi"><div class="knum verde" title="${esc(pesos(suma('total')))}">${pesosKpi(suma('total'))}</div><div class="klbl">Facturado</div></div>
+      <div class="kpi"><div class="knum azul" title="${esc(pesos(suma('neto')))}">${pesosKpi(suma('neto'))}</div><div class="klbl">Neto</div></div>
+      <div class="kpi"><div class="knum agua" title="${esc(pesos(suma('iva')))}">${pesosKpi(suma('iva'))}</div><div class="klbl">IVA</div></div>
+      <div class="kpi"><div class="knum">${facturas.length}${notas ? ` <small style="color:var(--mal)">+ ${notas} NC</small>` : ''}</div><div class="klbl">Comprobantes</div></div>`;
+    const periodo = (R_DESDE || R_HASTA) ? `${R_DESDE ? 'desde el ' + fechaCorta(R_DESDE) : ''} ${R_HASTA ? 'hasta el ' + fechaCorta(R_HASTA) : ''}`.trim() : mesLabel(MES || hoyAR().slice(0, 7));
+    $('#ayuda').innerHTML = `<div class="ayuda">Comprobantes de <b>${esc(periodo)}</b>. Los totales ya descuentan las notas de crédito. Una factura no se borra: <b>Anular</b> emite una nota de crédito en ARCA que la deja sin efecto.</div>`;
+    if (!items.length) { $('#tabla').innerHTML = `<div class="vacio">${activo() ? 'No hay comprobantes con esos filtros.' : 'Cuando esté configurado el certificado, acá aparecen las facturas emitidas.'}</div>`; return; }
+    $('#tabla').innerHTML = `<table><thead><tr><th>Fecha</th><th>Comprobante</th><th>Cliente</th><th>Documento</th><th class="num">Total</th><th>CAE</th><th>Estado</th><th></th></tr></thead><tbody>${items.map((f, ix) => {
+      const estado = esNC(f) ? `<span class="estado e-otro">Anula ${esc(String(f.anula_label || 'una factura').replace(/^Fac\.\s*/, '').replace(': ', ' '))}</span>`
+        : f.estado === 'anulada' ? `<span class="estado e-mal">Anulada</span><div class="gris chica">por ${esc(ncDe(f))}</div>`
+        : '<span class="estado e-ok">Vigente</span>';
+      return `<tr class="${f.estado === 'anulada' ? 'anulada' : ''}">
+        <td class="nowrap" data-e="Fecha">${esc(fechaCorta(f.fecha))}</td>
+        <td data-e="Comprobante"><span class="cbte ${esNC(f) ? 'nc' : f.letra === 'B' ? 'b' : ''}">${esc(etiqueta(f))}</span></td>
+        <td class="principal" data-e="Cliente"><b>${esc(f.receptor_nombre)}</b>${f.descripcion ? `<div class="gris chica">${esc(f.descripcion)}</div>` : ''}</td>
+        <td data-e="Documento">${esc(docDe(f))}</td>
+        <td class="num" data-e="Total"><b style="color:${esNC(f) ? 'var(--mal)' : 'var(--ok)'}">${esNC(f) ? '−' : ''}${pesos(f.total)}</b></td>
+        <td class="mono nowrap" data-e="CAE">${esc(f.cae || '—')}</td>
+        <td data-e="Estado"><div>${estado}</div></td>
+        <td class="acciones" data-e=""><div class="fila-acc"><button class="btn chico" data-pdf="${esc(f.id)}">PDF</button>${f.estado === 'emitida' && !esNC(f) ? `<button class="btn mal chico" data-anular="${ix}">Anular</button>` : ''}</div></td>
+      </tr>`; }).join('')}</tbody></table>`;
+  }
+
+  async function anular(f) {
+    if (!f) return;
+    if (!await preguntar('¿Anular esta factura?', `<b>Factura ${esc(etiqueta(f))}</b> de <b>${esc(f.receptor_nombre)}</b> por <b>${pesos(f.total)}</b>.<br><br>Una factura no se borra: se emite una <b>NOTA DE CRÉDITO</b> en ARCA${ESTADO.ambiente !== 'produccion' ? ' (ambiente de PRUEBA)' : ''} que la deja sin efecto. <b>Esto no se puede deshacer.</b>`, 'Sí, anular con nota de crédito', true)) return;
+    try {
+      const r = await api('/api/facturacion/nota-credito', { factura_id: f.id });
+      cartel('ok', `✅ <b>${esc(r.tipo || 'Nota de crédito')} ${numero(r.pv ?? r.pto_vta, r.numero ?? r.nro)}</b> emitida · CAE <span class="mono">${esc(r.cae || '')}</span>. La factura ${esc(etiqueta(f))} quedó anulada.`, r.id);
+      await cargar();
+    } catch (e) { cartelError(e); if (e.corte) cargar(); }
+  }
+
+  // El CSV se arma acá, con lo que está en pantalla. Va con BOM y punto y coma para que Excel lo abra
+  // con los acentos y en columnas; los importes, con coma decimal y las notas de crédito en negativo.
+  function exportarCsv() {
+    const items = emitidasVistas();
+    if (!items.length) return cartel('aviso', 'No hay comprobantes para exportar con esos filtros.');
+    const n = (v, f) => ((esNC(f) ? -1 : 1) * (Number(v) || 0)).toFixed(2).replace('.', ',');
+    const celda = (v) => { let s = String(v ?? ''); if (/^[=+\-@]/.test(s) && isNaN(Number(s.replace(',', '.')))) s = "'" + s; return /[";\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+    const filas = [['Fecha', 'Comprobante', 'Letra', 'Punto de venta', 'Número', 'Cliente', 'Tipo de documento', 'Documento', 'Neto', 'IVA', 'Total', 'CAE', 'Vencimiento del CAE', 'Estado', 'Anula a', 'Anulada por', 'Emitida por', 'Detalle']]
+      .concat(items.map((f) => [fechaCorta(f.fecha), f.nombre_cbte || (esNC(f) ? 'Nota de crédito' : 'Factura'), f.letra, String(f.pto_vta).padStart(5, '0'), String(f.nro).padStart(8, '0'), f.receptor_nombre,
+        DOC_NOMBRE[f.doc_tipo] || '', f.doc_nro || '', n(f.neto, f), n(f.iva, f), n(f.total, f), f.cae, fechaCae(f.cae_vto),
+        esNC(f) ? 'Nota de crédito' : f.estado === 'anulada' ? 'Anulada' : 'Vigente', f.anula_label || '', f.estado === 'anulada' ? ncDe(f) : '', f.creado_por || '', f.descripcion || '']));
+    const blob = new Blob(['﻿' + filas.map((r) => r.map(celda).join(';')).join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `facturas-mym-soluciones-${(R_DESDE || R_HASTA) ? (R_DESDE || 'inicio') + '_a_' + (R_HASTA || hoyAR()) : (MES || hoyAR().slice(0, 7))}${ESTADO && ESTADO.ambiente !== 'produccion' ? '-PRUEBA' : ''}.csv`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+  }
+
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('#fondo-preg').classList.contains('ver') && M && !M.ocupado) cerrarModal(); });
+  $('#entrar').onclick = () => ACCESO.entrar();
+  $('#salir').onclick = () => ACCESO.salir('');
+  ACCESO.iniciar({
+    alEntrar(u) { $('#puerta').hidden = true; $('#panel').hidden = false; $('#quien').textContent = u.email; iniciar(); },
+    alSalir(m) { $('#panel').hidden = true; $('#puerta').hidden = false; $('#msj-puerta').textContent = m || ''; }
+  });
+})();
+</script>
+</body>
+</html>
