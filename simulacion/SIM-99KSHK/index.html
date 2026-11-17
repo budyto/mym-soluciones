@@ -21,7 +21,11 @@ section{padding:30px 0}.card{background:#fff;border:1px solid var(--line);border
 .lista{list-style:none;padding:0;margin:0}.lista li{padding:8px 0;border-bottom:1px dashed var(--line)}
 .no::before{content:"✖ ";color:#d1402b}.nd::before{content:"? ";color:#7a86a3;font-weight:800}.si::before{content:"✔ ";color:#13a36e}
 .tel{background:#fff;border:10px solid #111;border-radius:38px;padding:14px;width:min(320px,100%);margin-inline:auto;height:540px;overflow:hidden;box-shadow:0 20px 50px rgba(14,26,51,.15)}
-.tel-real{padding:0}.tel-real iframe{width:100%;height:100%;border:0;display:block;background:#fff}
+/* 17/11/2026 (Matías: «sigue viéndose mal el IG real»): la vista oficial muestra la cabecera y 6 publicaciones;
+   se recorta justo a eso (sin hueco ni barra) y se completa con la barra de arriba y un botón al perfil completo. */
+.tel-real{padding:0;height:600px;display:flex;flex-direction:column;overflow:hidden}.ig-barra.real{padding:10px 14px;font-size:15px;display:flex;justify-content:space-between;border-bottom:1px solid #efefef}
+.ig-marco{height:348px;overflow:hidden;flex:none}.ig-marco iframe{width:100%;height:540px;border:0;display:block;background:#fff;margin-top:-6px}
+.ig-ver{display:block;margin:14px 14px 6px;text-align:center;background:#efefef;color:#0e1a33;font-weight:700;font-size:13px;padding:10px;border-radius:10px;text-decoration:none}.ig-nota{margin:4px 16px;font-size:11.5px;color:var(--ink2);text-align:center}
 .pie-tel{text-align:center;font-size:13px;color:var(--ink2);margin:10px 0 0}
 .perfil{display:flex;gap:10px;align-items:center}.avatar{width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--p1),var(--p2));color:#fff;display:grid;place-items:center;font-weight:800;font-size:20px;flex:none}.avatar.gris{background:#d9dfeb}
 .usuario{font-weight:800;font-size:14px}.chico{font-size:12px;color:var(--ink2)}.bio{font-size:12px;color:var(--ink2);margin:8px 0}.bio b{color:var(--ink)}
@@ -89,7 +93,7 @@ footer{font-size:12px;color:var(--ink2);padding:24px 0 40px}
 </div></header>
 
 <section><div class="wrap"><h2>Tu Instagram: hoy y después</h2><p class="sub">A la izquierda, tu perfil como está hoy. A la derecha, cómo podría verse con Redes en automático.</p>
-<div class="dos"><div><p class="col-tit"><span class="etq">HOY</span>@sanitariosbonomi</p><div class="tel tel-real"><iframe src="https://www.instagram.com/sanitariosbonomi/embed/" title="El Instagram de Bonomi hoy" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></div>
+<div class="dos"><div><p class="col-tit"><span class="etq">HOY</span>@sanitariosbonomi</p><div class="tel tel-real"><div class="ig-barra real"><b>sanitariosbonomi</b><span>☰</span></div><div class="ig-marco"><iframe src="https://www.instagram.com/sanitariosbonomi/embed/" title="El Instagram de Bonomi hoy" loading="lazy" scrolling="no" referrerpolicy="no-referrer-when-downgrade"></iframe></div><a class="ig-ver" href="https://instagram.com/sanitariosbonomi" target="_blank" rel="noopener nofollow">Ver el perfil completo en Instagram ↗</a><p class="ig-nota">Instagram muestra acá sus últimas publicaciones, tal como están hoy.</p></div>
        <p class="pie-tel">Tu perfil real, en vivo desde Instagram. <a href="https://instagram.com/sanitariosbonomi" target="_blank" rel="noopener nofollow">Abrilo en Instagram ↗</a></p></div>
 <div><p class="col-tit"><span class="etq desp">DESPUÉS</span>Con Redes en automático</p><div class="tel tel-ig"><div class="ig">
     <div class="ig-barra"><b>sanitariosbonomi</b><span>☰</span></div>
