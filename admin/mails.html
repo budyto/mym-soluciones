@@ -411,7 +411,8 @@ function ficha(){
         + '<div class="fila"><a class="btn gold" href="' + esc(mailtoSeguimiento(i, paraSeguir(i))) + '">✉️ Abrir el seguimiento en mi correo</a>'
         + '<button class="btn sm" type="button" data-estado="seg' + paraSeguir(i) + '">✓ Ya lo mandé</button></div></section>' : '')
     + panelLlamada(i)
-    + '<section class="panel"><h2>Mandar</h2>'
+    + '<section class="panel"><h2>' + (i.estado === 'pendiente' ? 'Envío' : 'Mail') + '</h2>' + avisoEnvio(i)
+    + '<details><summary class="small" style="cursor:pointer;color:var(--gold);font-weight:700;margin-bottom:8px">Mandarlo a mano (desde el webmail)</summary>'
     + (i.estado === 'baja' ? '<div class="aviso ojo">Pidió la baja: no se le escribe más (Ley 25.326, art. 27).</div>' : '')
     + (lleno && i.estado === 'pendiente' ? '<div class="aviso ojo">Ya se mandaron ' + hoy + ' hoy, el tope del día. Seguí mañana: mandar muchos de golpe desde info@ la puede mandar a spam, y es la casilla de los clientes.</div>' : '')
     + (S.ajustes.modo === 'correo'
@@ -421,8 +422,7 @@ function ficha(){
       : '<p class="small muted">Se manda de a uno desde <b>info@mymsoluciones.online</b>, en el webmail de Hostinger. Abrilo una vez, tocá «Redactar» y pegá en orden: 1, 2 y 3. Mandalo y después tocá «Ya lo mandé».</p>'
         + '<div class="fila"' + (i.estado === 'baja' ? ' hidden' : '') + '><a class="btn sm" href="https://mail.hostinger.com/" target="_blank" rel="noopener">Abrir el webmail ↗</a>'
         + '<button class="btn gold sm" type="button" data-copiar="mail">1 · Copiar para</button><button class="btn gold sm" type="button" data-copiar="asunto">2 · Copiar asunto</button><button class="btn gold sm" type="button" data-copiar="texto">3 · Copiar texto</button>')
-    + '<a class="btn sm" href="' + esc(i.link.replace('?o=mail', '')) + '" target="_blank" rel="noopener">Ver su simulación ↗</a>'
-    + '</div><div class="fila" style="margin-top:12px">'
+    + '</div></details><div class="fila" style="margin-top:12px"><a class="btn sm" href="' + esc(i.link.replace('?o=mail', '')) + '" target="_blank" rel="noopener">Ver su simulación ↗</a>'
     + (i.estado !== 'enviado' && i.estado !== 'baja' ? '<button class="btn sm" type="button" data-estado="enviado">✓ Ya lo mandé</button>' : '')
     + (i.estado !== 'respondio' ? '<button class="btn sm" type="button" data-estado="respondio">Respondió</button>' : '')
     + (i.estado !== 'cliente' && i.estado !== 'baja' ? '<button class="btn sm" type="button" data-estado="cliente">🎉 Es cliente</button>' : '')
@@ -434,6 +434,37 @@ function ficha(){
     + '<iframe class="vista" title="Vista del mail" sandbox="allow-popups allow-popups-to-escape-sandbox" id="vistaMail"></iframe></section>';
   // Se manda el texto (copiar y pegar o mailto), así que se muestra el texto tal cual le llega.
   $('#vistaMail').srcdoc = '<base target="_blank"><div style="white-space:pre-wrap;font:15px/1.55 Arial,sans-serif;color:#1b2333;margin:18px;max-width:600px">' + esc(conBaja(i.texto)) + '</div>';
+}
+
+// 17/11/2026 (Matías: «¿cómo hago para enviarlos?» … «con opción de mandarlo ya»): salen solos con el envío
+// automático (tarea de la PC, lunes a viernes desde las 10, tope del día). Se calcula en qué lugar de la cola está, con
+// el mismo orden que envio.mjs. «Mandarlo ya» lo marca en la base (mandarYa) y la tarea «MyM - Envío inmediato» lo
+// manda en los próximos 5 minutos, de lunes a viernes de 9 a 19.
+function colaAutomatica(){
+  var porRubro = {};
+  S.items.filter(function(x){ return x.estado === 'pendiente' && x.mail; }).forEach(function(x){ (porRubro[x.rubro] = porRubro[x.rubro] || []).push(x); });
+  var filas = Object.keys(porRubro).map(function(k){ return porRubro[k].sort(function(a, b){ return a.codigo.localeCompare(b.codigo); }); });
+  var out = []; while (filas.some(function(l){ return l.length; })) filas.forEach(function(l){ if (l.length) out.push(l.shift()); });
+  return out;
+}
+function cuandoSale(i){
+  var pos = colaAutomatica().map(function(x){ return x.id; }).indexOf(i.id);
+  if (pos < 0) return '';
+  var tope = S.ajustes.tope || 25, quedanHoy = Math.max(0, tope - mandadosHoy());
+  var d = new Date(Date.now() - 3 * 3600e3), dia = d.getUTCDay(), hora = d.getUTCHours();
+  var hoyHabil = dia >= 1 && dia <= 5 && hora < 19;
+  if (hoyHabil && pos < quedanHoy) return 'hoy';
+  var n = Math.floor((pos - (hoyHabil ? quedanHoy : 0)) / tope) + 1, f = new Date(d);
+  while (n > 0){ f.setUTCDate(f.getUTCDate() + 1); if (f.getUTCDay() >= 1 && f.getUTCDay() <= 5) n--; }
+  return f.toLocaleDateString('es-AR', { weekday:'long', day:'numeric', month:'numeric', timeZone:'UTC' });
+}
+function avisoEnvio(i){
+  if (i.estado !== 'pendiente') return '';
+  if (i.mandarYa) return '<div class="aviso" style="margin-bottom:10px">⚡ <b>En cola para salir ya</b>: lo manda el envío automático en los próximos 5 minutos (lunes a viernes de 9 a 19). <button class="btn sm" type="button" data-ya="cancelar" style="margin-left:6px">Cancelar</button></div>';
+  var cuando = cuandoSale(i);
+  return '<div class="aviso" style="margin-bottom:10px">🤖 <b>Sale solo</b> con el envío automático desde info@ (lunes a viernes desde las 10, ' + (S.ajustes.tope || 25) + ' por día, de a uno). '
+    + (cuando ? 'Este sale <b>' + esc(cuando) + '</b>' + (cuando === 'hoy' ? '' : ' (a partir de las 10)') + '. ' : '') + 'No hace falta hacer nada: cuando salga, pasa solo a «Mandado».'
+    + '<div class="fila" style="margin-top:8px"><button class="btn gold sm" type="button" data-ya="mandar">⚡ Mandarlo ya</button></div></div>';
 }
 
 function mailto(i){
@@ -480,6 +511,12 @@ $('#ficha').addEventListener('click', function(e){
     var t = c.dataset.copiar === 'asunto' ? i.asunto : c.dataset.copiar === 'mail' ? i.mail : conBaja(i.texto);
     var que = { mail:'el mail del comercio', asunto:'el asunto', texto:'el texto' }[c.dataset.copiar] || '';
     navigator.clipboard.writeText(t).then(function(){ toast('Copiado ' + que); }, function(){ toast('No se pudo copiar'); });
+    return;
+  }
+  var ya = e.target.closest('[data-ya]');
+  if (ya){
+    var d = ya.dataset.ya === 'mandar' ? { mandarYa: true, mandarYaPor: quien, mandarYaEn: FV.serverTimestamp() } : { mandarYa: FV.delete(), mandarYaPor: FV.delete(), mandarYaEn: FV.delete() };
+    col().doc(i.id).update(d).then(function(){ toast(ya.dataset.ya === 'mandar' ? 'Listo: sale en los próximos 5 minutos' : 'Cancelado: vuelve a la cola normal'); }, function(er){ toast('No se pudo guardar: ' + er.message); });
     return;
   }
   var ll = e.target.closest('[data-llamada]');
