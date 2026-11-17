@@ -206,7 +206,10 @@
   .wa-tilde { display: inline-block; margin-left: 5px; font-size: 12.5px; line-height: 15px; letter-spacing: -4px; padding: 0 6px 0 3px; font-weight: 800; cursor: help;
     background: rgba(255,255,255,.95); color: #8696a0; border-radius: 6px; vertical-align: 0; }
   .wa-tilde.leido { color: #1d9bf0; }
-  .wa-tilde.cola { letter-spacing: 0; font-weight: 400; padding: 0 4px; }
+  /* 17/11/2026 (Matías: «quedó raro el reloj»): el «en cola» del número 2 va como un relojito suelto del color de la
+     hora, sin pastilla, igual que en WhatsApp. */
+  .wa-tilde.cola { background: none; padding: 0; margin-left: 4px; letter-spacing: 0; vertical-align: -2px; color: currentColor; opacity: .8; }
+  .wa-tilde.cola svg { width: 12px; height: 12px; display: block; }
   .wa-b { position: relative; }
   .wa-cita { display: block; border-left: 3px solid var(--agua); background: rgba(14,26,51,.06); border-radius: 8px; padding: 4px 8px; margin: 0 0 5px; font-size: 12.5px; color: var(--gris); white-space: pre-wrap; overflow: hidden; max-height: 4.4em; }
   .wa-cita b { display: block; font-size: 11.5px; color: var(--azul); }
@@ -539,7 +542,12 @@
     const e = m.estado || {};
     const pasos = [['Enviado', e.enviado_en], ['Entregado', e.entregado_en], ['Leído', e.leido_en]].filter((x) => x[1]).map((x) => x[0] + ': ' + hora(x[1])).join('\n');
     const notaN2 = c.por_puente ? '\n(Por el número 2: el leído llega si el cliente no apagó las confirmaciones de lectura.)' : '';
-    if (e.estado === 'en_cola') return '<span class="wa-tilde cola" title="En la cola del número 2: sale cuando el puente lo levante">🕓</span>';
+    // Lo mandado por el número 2 antes del 17/11 no tiene registro de «salió»: si pasaron más de 15 minutos no se
+    // sabe, y no se dibuja nada (antes quedaba un reloj para siempre en mensajes que sí habían salido).
+    if (e.estado === 'en_cola') {
+      if (Date.now() - new Date(m.ts).getTime() > 15 * 60 * 1000) return '';
+      return '<span class="wa-tilde cola" title="En la cola del número 2: sale cuando el puente lo levante"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="8" cy="8" r="6.3"/><path d="M8 4.6V8l2.3 1.5"/></svg></span>';
+    }
     if (e.estado === 'enviado') return '<span class="wa-tilde" title="' + esc((pasos || 'Enviado') + notaN2) + '">✓</span>';
     if (e.estado === 'entregado') return '<span class="wa-tilde entregado" title="' + esc(pasos + notaN2) + '">✓✓</span>';
     if (e.estado === 'leido') return '<span class="wa-tilde leido" title="' + esc(pasos) + '">✓✓</span>';
