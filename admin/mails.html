@@ -286,7 +286,7 @@ function panelLlamada(i){
           + '<button class="btn sm" type="button" data-wa="enviado">✓ Ya se lo mandé</button></div>')
       + '</div>' : '';
   return '<section class="panel"><h2>📞 Llamada</h2>'
-    + '<div class="aviso">Antes de llamar: el número no tiene que estar en el <b>Registro No Llame</b> (Ley 26.951). Llamá en días hábiles, en horario de comercio, decí quién sos y de dónde sacamos el dato.</div>'
+    + '<div class="aviso">Antes de llamar: el número no tiene que estar en el <b>Registro No Llame</b> (Ley 26.951): <a href="https://nollame.aaip.gob.ar" target="_blank" rel="noopener">consultalo acá, uno por uno y gratis ↗</a>. Si figura, tocá «Está en No Llame». Llamá en días hábiles, en horario de comercio, decí quién sos y de dónde sacamos el dato.</div>'
     + (faltan ? '<p class="small muted">El mail salió hace menos de 48 h: conviene esperar ' + faltan + ' h más.</p>' : '')
     + '<div class="fila" style="margin-top:10px"><a class="btn gold" href="' + esc(telLink(i)) + '">📞 Llamar al ' + esc(i.telefono) + '</a>'
     + '<a class="btn sm" href="' + esc(String(i.link || '').replace('?o=mail', '')) + '" target="_blank" rel="noopener">Ver su simulación ↗</a></div>'
