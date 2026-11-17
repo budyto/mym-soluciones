@@ -125,6 +125,15 @@
   .wa-robot { align-self: flex-end; background: var(--azul); color: #fff; border-bottom-right-radius: 4px; }
   .wa-humano { align-self: flex-end; background: #00a58f; color: #fff; border-bottom-right-radius: 4px; }
   .wa-robot .wa-t, .wa-humano .wa-t { color: rgba(255,255,255,.75); }
+  /* 17/11/2026 (Matías: «no me gusta el aviso en rojo»). Un mensaje que no salió ya no es una burbuja verde con letra
+     roja encima: queda en blanco con borde punteado (se ve que no llegó) y abajo una pastilla con el motivo, en el
+     mismo estilo de las pastillas del panel. */
+  .wa-b.wa-fallo { background: #fff; color: var(--ink); border: 1.5px dashed rgba(212,58,74,.45); }
+  .wa-b.wa-fallo .wa-t { color: var(--gris-2); }
+  .wa-b.wa-fallo .wa-verpdf { background: #eef3ff; }
+  .wa-nosalio { display: flex; align-items: center; gap: 6px; width: fit-content; max-width: 100%; margin: 6px 0 0 auto; background: #fff1f3; color: #a3202f; border-radius: 999px; padding: 3px 10px; font-size: 12px; font-weight: 700; white-space: normal; }
+  .wa-nosalio::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--rojo); flex: 0 0 auto; }
+  .wa-ulterr { align-self: flex-start; margin: 0; background: #fff1f3; color: #a3202f; border-radius: 999px; padding: 4px 12px; font-size: 12px; font-weight: 600; }
   .cerrada { background: rgba(212,58,74,.07); border: 1px solid rgba(212,58,74,.3); color: #a3202f; border-radius: 12px; padding: 9px 12px; font-size: 13px; flex: 0 0 auto; }
   .rapidas { display: flex; gap: 5px; flex-wrap: wrap; flex: 0 0 auto; }
   .rapidas button { background: #fff; border: 1px dashed #b7c8f2; color: var(--ink); border-radius: 999px; padding: 2px 10px; font-size: 12px; cursor: pointer; }
@@ -408,9 +417,9 @@
       + (c.robot_activo ? '<button class="btn" id="robot" type="button" title="El robot deja de contestar en esta charla">✋ Tomar la charla</button>' : '<button class="btn gris" id="robot" type="button" title="El robot vuelve a contestar en esta charla">🤖 Devolver al robot</button>')
       + (c.resuelta ? '<button class="btn gris" id="resolver" type="button" title="Vuelve a Esperando">Reabrir</button>' : '<button class="btn gris" id="resolver" type="button" title="Sale de Esperando hasta que vuelva a escribir">✓ Ya la atendí</button>')
       + '<button class="btn gris" id="verficha" type="button" aria-expanded="' + fichaAbierta + '">📋 Ficha</button></div></div>'
-      + '<div class="wa-burbujas scroll" id="msgs">' + (c.mensajes || []).map((m) => '<div class="wa-b wa-' + esc(m.de) + '">' + esc(m.texto) + (m.archivo ? '<br><button type="button" class="wa-verpdf" data-ruta="' + esc(m.archivo.ruta) + '" data-nombre="' + esc(m.archivo.nombre) + '">👁 Ver PDF</button>' : '') + '<span class="wa-t">' + (DE[m.de] ? DE[m.de] + ' · ' : '') + fecha(m.ts)
-      + (m.error ? ' · <span class="err">no salió: ' + esc(m.error) + '</span>' : '') + '</span></div>').join('') + '</div>'
-      + (c.ultimo_error ? '<p class="err" style="margin:0;font-size:12px">Último error de envío: ' + esc(c.ultimo_error) + '</p>' : '')
+      + '<div class="wa-burbujas scroll" id="msgs">' + (c.mensajes || []).map((m) => '<div class="wa-b wa-' + esc(m.de) + (m.error ? ' wa-fallo' : '') + '">' + esc(m.texto) + (m.archivo ? '<br><button type="button" class="wa-verpdf" data-ruta="' + esc(m.archivo.ruta) + '" data-nombre="' + esc(m.archivo.nombre) + '">👁 Ver PDF</button>' : '') + '<span class="wa-t">' + (DE[m.de] ? DE[m.de] + ' · ' : '') + fecha(m.ts)
+      + '</span>' + (m.error ? '<span class="wa-nosalio">No se envió · ' + esc(m.error) + '</span>' : '') + '</div>').join('') + '</div>'
+      + (c.ultimo_error ? '<p class="wa-ulterr">Último envío que no salió: ' + esc(c.ultimo_error) + '</p>' : '')
       + (c.propuesta && !c.propuesta.enviada && !c.propuesta.cancelada ? '<p class="wa-prop">📄 La propuesta (' + esc(c.propuesta.archivo) + ') espera que toque «Sí, mandala»' + (c.propuesta.error ? ' · <span class="err">último intento: ' + esc(c.propuesta.error) + '</span>' : '') + '</p>' : '')
       + (c.ventana_abierta
         ? (respuestas.length ? '<div class="rapidas">' + respuestas.map((r, i) => '<button type="button" data-rapida="' + i + '" title="' + esc(r.texto) + '">' + esc(r.titulo) + '</button>').join('') + '</div>' : '')

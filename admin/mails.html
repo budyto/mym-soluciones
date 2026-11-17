@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Mails de prospección · Panel · MyM Soluciones</title>
+<link rel="icon" href="../img/favicon-2.png" type="image/png">
+<!-- Mails de prospección (17/11/2026, Matías: «tengo que poder acceder desde el panel de admin y sólo puede tener acceso
+     quien tenga el mail de admin»). La tanda de comercios con su simulación y su mail listo para mandar.
+     Los datos (con los mails de los comercios) NO están en esta web: viven en la base del Grupo MyM, en
+     empresas/equipo/prospeccionMail/{código}. Según crm/firestore.rules de budyto/grupo-mym, «equipo» sin regla propia
+     sólo lo leen y escriben los admin (matiasvale32 y dagiodes1): ni los miembros de Soluciones lo ven.
+     Las simulaciones sí son públicas (por código, noindex): mymsoluciones.online/simulacion/<código>/.
+     Se mandan de a uno, desde tu correo, con el tope del día (arrancar con 30 a 40). Plan y legal:
+     grupo-mym/docs/soluciones/Prospeccion-sin-pauta.md -->
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{ color-scheme:light; --bg:#f4f7ff; --panel:#ffffff; --panel2:#eef3ff; --line:#dbe4f7; --line2:#c3d2f0;
+  --fg:#0e1a33; --muted:#4a5878; --gold:#2f6bff; --ink:#ffffff; --ok:#12a37f; --warn:#c97a12; --bad:#d43a4a;
+  --display:'Archivo',system-ui,sans-serif; --body:'Archivo',system-ui,sans-serif; }
+*{ box-sizing:border-box; }
+[hidden]{ display:none !important; }
+body{ margin:0; background:var(--bg); color:var(--fg); font:15px/1.5 var(--body); padding-bottom:env(safe-area-inset-bottom,0px); }
+a{ color:var(--gold); }
+header.top{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; padding:14px 16px; border-bottom:1px solid var(--line); position:sticky; top:0; background:#f4f7ff; z-index:5; }
+header.top h1{ font:900 24px var(--display); letter-spacing:-.02em; margin:0; }
+header.top h1 span{ color:var(--gold); }
+.fila{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.btn{ all:unset; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:9px 15px; border-radius:999px; font-weight:700; font-size:14px; border:1px solid var(--line2); color:var(--fg); text-align:center; background:#fff; }
+.btn:hover{ border-color:var(--gold); }
+.btn.gold{ background:var(--gold); color:var(--ink); border-color:var(--gold); }
+.btn.sm{ padding:6px 11px; font-size:13px; }
+.btn[disabled]{ opacity:.5; pointer-events:none; }
+.btn:focus-visible,input:focus-visible,select:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+.app{ display:grid; grid-template-columns:360px minmax(0,1fr); min-height:calc(100vh - 64px); }
+@media (max-width:900px){ .app{ grid-template-columns:minmax(0,1fr); } .lista{ border-right:0 !important; border-bottom:1px solid var(--line); max-height:none !important; position:static !important; } }
+.lista{ border-right:1px solid var(--line); padding:14px; overflow:auto; max-height:calc(100vh - 64px); position:sticky; top:64px; }
+.cifras{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:12px; }
+.cifra{ background:#fff; border:1px solid var(--line); border-radius:14px; padding:10px; }
+.cifra b{ display:block; font:900 22px var(--display); }
+.cifra small{ color:var(--muted); font-size:12px; line-height:1.2; display:block; }
+.cifra.tope b{ color:var(--gold); }
+.filtros{ display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+.chip{ display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius:999px; font-size:12px; font-weight:700; border:1px solid var(--line2); white-space:nowrap; cursor:pointer; background:#fff; color:var(--fg); font-family:var(--body); }
+.chip.on{ background:var(--gold); color:var(--ink); border-color:var(--gold); }
+.item{ display:block; width:100%; text-align:left; background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:11px 12px; margin-bottom:8px; cursor:pointer; color:var(--fg); font:inherit; }
+.item:hover,.item.sel{ border-color:var(--gold); }
+.item b{ display:block; } .item small{ color:var(--muted); }
+.item .l1{ display:flex; justify-content:space-between; gap:8px; align-items:baseline; }
+.est{ display:inline-block; padding:1px 9px; border-radius:999px; font-size:11.5px; font-weight:700; background:var(--panel2); color:var(--gold); white-space:nowrap; }
+.est.enviado{ background:#e6f6f1; color:var(--ok); } .est.respondio{ background:#e6f6f1; color:var(--ok); }
+.est.baja,.est.descartado{ background:#f1f3f8; color:var(--muted); }
+.detalle{ padding:18px 16px 60px 18px; min-width:0; display:flex; flex-direction:column; gap:16px; }
+.panel{ background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:18px; min-width:0; }
+.panel h2{ font:900 21px var(--display); letter-spacing:-.02em; margin:0 0 4px; }
+.muted{ color:var(--muted); } .small{ font-size:13px; }
+.datos{ display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px 16px; margin-top:12px; }
+.datos div small{ display:block; color:var(--muted); font-size:12px; font-weight:600; }
+.datos div span{ word-break:break-word; }
+label{ display:flex; flex-direction:column; gap:5px; font-size:13px; font-weight:600; color:var(--muted); }
+input,select{ font:inherit; color:var(--fg); background:#fff; border:1px solid var(--line2); border-radius:10px; padding:9px 11px; width:100%; }
+.vista{ width:100%; border:1px solid var(--line); border-radius:14px; background:#f4f6fb; height:560px; margin-top:12px; }
+.vacio{ border:1px dashed var(--line2); border-radius:14px; padding:28px; text-align:center; color:var(--muted); }
+.aviso{ border:1px solid #c3d2f0; background:var(--panel2); border-radius:12px; padding:10px 14px; font-size:13.5px; color:var(--fg); }
+.aviso.ojo{ border-color:#f0d9b5; background:#fff8ec; }
+.toast{ position:fixed; left:50%; transform:translateX(-50%); bottom:calc(20px + env(safe-area-inset-bottom,0px)); background:var(--gold); color:var(--ink); font-weight:700; padding:10px 18px; border-radius:999px; z-index:60; }
+.entrada{ max-width:420px; margin:14vh auto; padding:32px 26px; background:#fff; border:1px solid var(--line); border-radius:24px; box-shadow:0 20px 50px rgba(14,26,51,.08); text-align:center; display:grid; gap:12px; }
+.entrada h2{ font:900 24px var(--display); margin:0; }
+.entrada p{ color:var(--muted); margin:0; }
+.entrada .msg{ color:var(--bad); min-height:20px; font-size:14px; }
+.entrada label{ text-align:left; }
+.ajustes{ display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px; margin-top:10px; }
+.mas{ text-align:center; margin:8px 0; }
+</style>
+</head>
+<body>
+<section class="entrada" id="entrada" hidden>
+  <div class="small" style="color:var(--gold);font-weight:700;letter-spacing:.12em;text-transform:uppercase">Panel interno · sólo admin</div>
+  <h2>Mails de prospección</h2>
+  <p id="entradaTxt">Entrá con tu cuenta de Google autorizada.</p>
+  <button class="btn gold" type="button" id="google">Entrar con Google</button>
+  <form id="formGrupo" hidden style="display:grid;gap:10px">
+    <label>Correo del CRM del grupo<input id="gMail" type="email" autocomplete="email" required></label>
+    <label>Contraseña<input id="gPass" type="password" autocomplete="current-password" required minlength="6"></label>
+    <button class="btn gold" type="submit">Conectar</button>
+  </form>
+  <p class="msg" id="entradaMsg" role="status"></p>
+</section>
+
+<div id="app" hidden>
+<header class="top">
+  <div class="fila"><a class="btn sm" href="./">← Panel</a><h1>Mails de <span>prospección</span></h1></div>
+  <div class="fila">
+    <button class="btn sm" type="button" id="verAjustes">⚙️ Ajustes</button>
+    <button class="btn sm" type="button" id="bajarCsv">Bajar la lista (CSV)</button>
+  </div>
+</header>
+<div class="app">
+  <aside class="lista" aria-label="Comercios">
+    <div class="cifras">
+      <div class="cifra tope"><b id="cHoy">0/30</b><small>mandados hoy (tope)</small></div>
+      <div class="cifra"><b id="cPend">0</b><small>para mandar</small></div>
+      <div class="cifra"><b id="cEnv">0</b><small>mandados</small></div>
+      <div class="cifra"><b id="cResp">0</b><small>respondieron</small></div>
+    </div>
+    <div class="filtros" id="filtros"></div>
+    <div class="fila" style="margin-bottom:10px;flex-wrap:nowrap">
+      <select id="rubro" aria-label="Rubro"><option value="">Todos los rubros</option></select>
+    </div>
+    <input id="buscar" type="search" placeholder="Buscar comercio, zona o mail" aria-label="Buscar" style="margin-bottom:10px">
+    <div id="items"><p class="muted">Cargando…</p></div>
+  </aside>
+  <main class="detalle" id="detalle" aria-live="polite">
+    <section class="panel" id="panelAjustes" hidden>
+      <h2>Ajustes</h2>
+      <p class="muted small">Se guardan en la base del grupo y valen para las dos cuentas de admin.</p>
+      <div class="ajustes">
+        <label>Tope de mails por día<input id="aTope" type="number" min="1" max="300"></label>
+        <label>Casilla para las bajas<input id="aBaja" type="email"></label>
+      </div>
+      <p class="muted small">La casilla de bajas es la que aparece en el pie de cada mail («date de baja con un clic»). Tiene que existir y alguien tiene que leerla: cada pedido de baja se marca acá con «Pidió la baja» y no se le escribe más.</p>
+      <div class="fila"><button class="btn gold sm" type="button" id="guardarAjustes">Guardar</button></div>
+    </section>
+    <div class="vacio" id="vacio">Elegí un comercio de la lista.</div>
+    <div id="ficha"></div>
+  </main>
+</div>
+</div>
+<div id="toastRoot"></div>
+
+<script src="../config.js"></script>
+<script>window.FIREBASE_GRUPO={apiKey:"AIzaSyDTLcVzYxFdz5AOzq40zaMDHhvaKC0SW-I",authDomain:"grupo-mym-73b8d.firebaseapp.com",projectId:"grupo-mym-73b8d",appId:"1:966952304229:web:99501761762dfd290cd08c"}; /* Base del Grupo MyM: config pública. */</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" integrity="sha384-AQ3POAMqIhwS81FrUH95ekxqBZHeP5tG2JfEL3+7GuTtfRLWnrRh32UxwzM+//A9" crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js" integrity="sha384-TnlRYaR4JYz/lpaGuaiU61PjNberSA4vjLjtF+oRC/IkohkJqnWxw5EmDSOt1vA1" crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js" integrity="sha384-qn4Jh88HhJA8dplNQyGjOh9OGI4izVhrfj/qIFgaKcdgOE06pXqIKGlsCILZcLAC" crossorigin="anonymous"></script>
+<script src="acceso.js"></script>
+<script>
+(function(){
+'use strict';
+// La casilla que quedó escrita en los mails armados el 16/11. Se reemplaza por la de Ajustes al mostrar y al mandar.
+var BAJA_ORIGINAL = 'hola@novedades.mymsoluciones.online';
+var ESTADOS = [['pendiente','Para mandar'],['enviado','Mandado'],['respondio','Respondió'],['baja','Pidió la baja'],['descartado','Descartado']];
+var ADMIN = ((window.SITE || {}).adminEmails || []).map(function(e){ return String(e).toLowerCase(); });
+var S = { items:[], sel:null, filtro:'pendiente', rubro:'', q:'', ajustes:{ tope:30, baja:'info@mymsoluciones.online' }, mostrar:150 };
+var fs, auth, FV, quien = '';
+
+var $ = function(s, r){ return (r || document).querySelector(s); };
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function toast(t){ var r = $('#toastRoot'); r.innerHTML = '<div class="toast" role="status">' + esc(t) + '</div>'; clearTimeout(toast.t); toast.t = setTimeout(function(){ r.innerHTML = ''; }, 2600); }
+function hoyArg(){ return new Date(Date.now() - 3 * 3600e3).toISOString().slice(0, 10); } // Argentina, UTC−3
+function diaArg(x){ if (!x) return ''; var d = x.toDate ? x.toDate() : new Date(x); return new Date(d.getTime() - 3 * 3600e3).toISOString().slice(0, 10); }
+function fecha(x){ if (!x) return ''; var d = x.toDate ? x.toDate() : new Date(x); return d.toLocaleDateString('es-AR', { day:'2-digit', month:'2-digit' }) + ' ' + d.toLocaleTimeString('es-AR', { hour:'2-digit', minute:'2-digit' }); }
+function nombreEstado(id){ var e = ESTADOS.filter(function(x){ return x[0] === id; })[0]; return e ? e[1] : id; }
+function conBaja(t){ return String(t || '').split(BAJA_ORIGINAL).join(S.ajustes.baja || BAJA_ORIGINAL); }
+function sel(){ return S.items.filter(function(i){ return i.id === S.sel; })[0]; }
+function col(){ return fs.collection('empresas').doc('equipo').collection('prospeccionMail'); }
+function ajustesDoc(){ return fs.collection('empresas').doc('equipo').collection('prospeccionAjustes').doc('general'); }
+function mandadosHoy(){ var h = hoyArg(); return S.items.filter(function(i){ return i.enviadoEn && diaArg(i.enviadoEn) === h; }).length; }
+
+function visibles(){
+  var q = S.q.trim().toLowerCase();
+  return S.items.filter(function(i){
+    if (S.filtro !== 'todos' && i.estado !== S.filtro) return false;
+    if (S.rubro && i.rubro !== S.rubro) return false;
+    if (q && (i.nombre + ' ' + i.zona + ' ' + i.mail + ' ' + i.codigo).toLowerCase().indexOf(q) < 0) return false;
+    return true;
+  });
+}
+
+function render(){
+  var n = {}; S.items.forEach(function(i){ n[i.estado] = (n[i.estado] || 0) + 1; });
+  var hoy = mandadosHoy();
+  $('#cHoy').textContent = hoy + '/' + S.ajustes.tope;
+  $('#cPend').textContent = n.pendiente || 0; $('#cEnv').textContent = (n.enviado || 0) + (n.respondio || 0); $('#cResp').textContent = n.respondio || 0;
+  $('#filtros').innerHTML = [['todos','Todos']].concat(ESTADOS).map(function(e){
+    var c = e[0] === 'todos' ? S.items.length : (n[e[0]] || 0);
+    return '<button class="chip' + (S.filtro === e[0] ? ' on' : '') + '" type="button" data-f="' + e[0] + '">' + esc(e[1]) + ' · ' + c + '</button>';
+  }).join('');
+  var lista = visibles();
+  $('#items').innerHTML = lista.length ? lista.slice(0, S.mostrar).map(function(i){
+    return '<button class="item' + (i.id === S.sel ? ' sel' : '') + '" type="button" data-id="' + esc(i.id) + '"><span class="l1"><b>' + esc(i.nombre) + '</b><span class="est ' + esc(i.estado) + '">' + esc(nombreEstado(i.estado)) + '</span></span>'
+      + '<small>' + esc(i.rubro) + ' · ' + esc(i.zona) + '</small><br><small>' + esc(i.mail) + '</small></button>';
+  }).join('') + (lista.length > S.mostrar ? '<div class="mas"><button class="btn sm" type="button" id="verMas">Ver más (' + (lista.length - S.mostrar) + ')</button></div>' : '')
+    : '<p class="muted">No hay comercios con ese filtro.</p>';
+  ficha();
+}
+
+function ficha(){
+  var i = sel();
+  $('#vacio').hidden = !!i;
+  if (!i){ $('#ficha').innerHTML = ''; return; }
+  var hoy = mandadosHoy(), lleno = hoy >= S.ajustes.tope;
+  var ig = i.instagram ? '<a href="https://instagram.com/' + esc(i.instagram) + '" target="_blank" rel="noopener">@' + esc(i.instagram) + '</a>' : '—';
+  var web = i.web ? '<a href="' + esc(i.web) + '" target="_blank" rel="noopener">' + esc(i.web.replace(/^https?:\/\//, '')) + '</a>' : '—';
+  var hist = [];
+  if (i.enviadoEn) hist.push('Mandado el ' + fecha(i.enviadoEn) + (i.enviadoPor ? ' por ' + esc(i.enviadoPor) : ''));
+  if (i.cambiadoEn && i.estado !== 'enviado' && i.estado !== 'pendiente') hist.push(esc(nombreEstado(i.estado)) + ' el ' + fecha(i.cambiadoEn) + (i.cambiadoPor ? ' (' + esc(i.cambiadoPor) + ')' : ''));
+  $('#ficha').innerHTML =
+    '<section class="panel"><div class="fila" style="justify-content:space-between"><h2>' + esc(i.nombre) + '</h2><span class="est ' + esc(i.estado) + '">' + esc(nombreEstado(i.estado)) + '</span></div>'
+    + '<p class="muted small" style="margin:0">' + esc(i.rubro) + ' · ' + esc(i.zona) + ' · código ' + esc(i.codigo) + ' · plan sugerido: ' + esc(i.plan) + '</p>'
+    + '<div class="datos"><div><small>Mail</small><span>' + esc(i.mail) + '</span></div><div><small>Web</small><span>' + web + '</span></div><div><small>Instagram</small><span>' + ig + '</span></div>'
+    + '<div><small>Dirección</small><span>' + esc(i.direccion || '—') + '</span></div><div><small>De dónde salió</small><span>' + esc(i.mailFuente === 'web' ? 'su web' : 'OpenStreetMap') + ' · ' + esc((i.encontrado || '').slice(0, 10)) + '</span></div></div>'
+    + (hist.length ? '<p class="small muted" style="margin:10px 0 0">' + hist.join(' · ') + '</p>' : '')
+    + '</section>'
+    + '<section class="panel"><h2>Mandar</h2>'
+    + (i.estado === 'baja' ? '<div class="aviso ojo">Pidió la baja: no se le escribe más (Ley 25.326, art. 27).</div>' : '')
+    + (lleno && i.estado === 'pendiente' ? '<div class="aviso ojo">Ya se mandaron ' + hoy + ' hoy, el tope del día. Seguí mañana: mandar muchos de golpe desde una casilla nueva la manda a spam.</div>' : '')
+    + '<p class="small muted">Se manda de a uno desde tu correo. «Abrir en mi correo» arma el mail con el asunto y el texto; revisalo, mandalo y después tocá «Ya lo mandé».</p>'
+    + '<div class="fila">'
+    + '<a class="btn gold" id="abrirCorreo" href="' + esc(mailto(i)) + '"' + (i.estado === 'baja' ? ' hidden' : '') + '>✉️ Abrir en mi correo</a>'
+    + '<button class="btn sm" type="button" data-copiar="asunto">Copiar asunto</button>'
+    + '<button class="btn sm" type="button" data-copiar="texto">Copiar texto</button>'
+    + '<button class="btn sm" type="button" data-copiar="mail">Copiar mail</button>'
+    + '<a class="btn sm" href="' + esc(i.link.replace('?o=mail', '')) + '" target="_blank" rel="noopener">Ver su simulación ↗</a>'
+    + '</div><div class="fila" style="margin-top:12px">'
+    + (i.estado !== 'enviado' && i.estado !== 'baja' ? '<button class="btn sm" type="button" data-estado="enviado">✓ Ya lo mandé</button>' : '')
+    + (i.estado !== 'respondio' ? '<button class="btn sm" type="button" data-estado="respondio">Respondió</button>' : '')
+    + (i.estado !== 'baja' ? '<button class="btn sm" type="button" data-estado="baja">Pidió la baja</button>' : '')
+    + (i.estado !== 'descartado' ? '<button class="btn sm" type="button" data-estado="descartado">Descartar</button>' : '')
+    + (i.estado !== 'pendiente' ? '<button class="btn sm" type="button" data-estado="pendiente">Volver a «Para mandar»</button>' : '')
+    + '</div></section>'
+    + '<section class="panel"><h2>Así le llega</h2><p class="small muted" style="margin:0"><b>Asunto:</b> ' + esc(i.asunto) + '</p>'
+    + '<iframe class="vista" title="Vista del mail" sandbox="allow-popups allow-popups-to-escape-sandbox" id="vistaMail"></iframe></section>';
+  $('#vistaMail').srcdoc = '<base target="_blank">' + conBaja(i.html);
+}
+
+function mailto(i){
+  return 'mailto:' + encodeURIComponent(i.mail) + '?subject=' + encodeURIComponent(i.asunto) + '&body=' + encodeURIComponent(conBaja(i.texto));
+}
+
+function cambiarEstado(estado){
+  var i = sel(); if (!i) return;
+  var d = { estado:estado, cambiadoEn:FV.serverTimestamp(), cambiadoPor:quien };
+  if (estado === 'enviado'){ d.enviadoEn = FV.serverTimestamp(); d.enviadoPor = quien; }
+  if (estado === 'pendiente'){ d.enviadoEn = FV.delete(); d.enviadoPor = FV.delete(); }
+  col().doc(i.id).update(d).then(function(){
+    toast(estado === 'enviado' ? 'Anotado como mandado' : 'Quedó: ' + nombreEstado(estado));
+    if (estado === 'enviado' && S.filtro === 'pendiente'){ // pasa solo al siguiente para mandar
+      var l = visibles().filter(function(x){ return x.id !== i.id; }); S.sel = l.length ? l[0].id : null;
+    }
+  }, function(e){ toast('No se pudo guardar: ' + e.message); });
+}
+
+function bajarCsv(){
+  var cols = ['codigo','nombre','rubro','zona','mail','web','instagram','estado','enviadoEn'];
+  var filas = [cols.join(';')].concat(S.items.map(function(i){
+    return cols.map(function(c){ var v = c === 'enviadoEn' ? fecha(i.enviadoEn) : i[c]; return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; }).join(';');
+  }));
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['﻿' + filas.join('\n')], { type:'text/csv;charset=utf-8' }));
+  a.download = 'prospeccion-' + hoyArg() + '.csv'; a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); }, 2000);
+}
+
+/* ---------- eventos ---------- */
+$('#filtros').addEventListener('click', function(e){ var b = e.target.closest('[data-f]'); if (!b) return; S.filtro = b.dataset.f; S.mostrar = 150; render(); });
+$('#rubro').addEventListener('change', function(){ S.rubro = this.value; S.mostrar = 150; render(); });
+$('#buscar').addEventListener('input', function(){ S.q = this.value; S.mostrar = 150; render(); });
+$('#items').addEventListener('click', function(e){
+  if (e.target.closest('#verMas')){ S.mostrar += 150; render(); return; }
+  var b = e.target.closest('[data-id]'); if (!b) return; S.sel = b.dataset.id; render();
+  if (window.innerWidth <= 900) $('#detalle').scrollIntoView({ behavior:'smooth' });
+});
+$('#ficha').addEventListener('click', function(e){
+  var i = sel(); if (!i) return;
+  var c = e.target.closest('[data-copiar]');
+  if (c){
+    var t = c.dataset.copiar === 'asunto' ? i.asunto : c.dataset.copiar === 'mail' ? i.mail : conBaja(i.texto);
+    navigator.clipboard.writeText(t).then(function(){ toast('Copiado'); }, function(){ toast('No se pudo copiar'); });
+    return;
+  }
+  var s = e.target.closest('[data-estado]');
+  if (s){
+    if (s.dataset.estado === 'enviado' && mandadosHoy() >= S.ajustes.tope && !confirm('Ya llegaste al tope de hoy (' + S.ajustes.tope + '). ¿Lo anoto igual?')) return;
+    cambiarEstado(s.dataset.estado);
+  }
+});
+$('#verAjustes').addEventListener('click', function(){
+  var p = $('#panelAjustes'); p.hidden = !p.hidden;
+  $('#aTope').value = S.ajustes.tope; $('#aBaja').value = S.ajustes.baja;
+});
+$('#guardarAjustes').addEventListener('click', function(){
+  var tope = Math.max(1, Math.min(300, parseInt($('#aTope').value, 10) || 30));
+  var baja = $('#aBaja').value.trim().toLowerCase();
+  if (!/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/.test(baja)) return toast('Revisá la casilla de bajas');
+  ajustesDoc().set({ tope:tope, baja:baja, cambiadoEn:FV.serverTimestamp(), cambiadoPor:quien }, { merge:true })
+    .then(function(){ toast('Ajustes guardados'); $('#panelAjustes').hidden = true; }, function(e){ toast('No se pudo guardar: ' + e.message); });
+});
+$('#bajarCsv').addEventListener('click', bajarCsv);
+
+/* ---------- arranque ---------- */
+function escuchar(){
+  ajustesDoc().onSnapshot(function(d){
+    var a = d.exists ? d.data() : {};
+    S.ajustes = { tope: a.tope || 30, baja: a.baja || 'info@mymsoluciones.online' }; render();
+  }, function(){});
+  col().onSnapshot(function(qs){
+    S.items = qs.docs.map(function(d){ return Object.assign({ id:d.id }, d.data()); })
+      .sort(function(a, b){ return (a.rubro + a.nombre).localeCompare(b.rubro + b.nombre, 'es'); });
+    var rubros = Array.from(new Set(S.items.map(function(i){ return i.rubro; }))).sort();
+    $('#rubro').innerHTML = '<option value="">Todos los rubros</option>' + rubros.map(function(r){ return '<option' + (r === S.rubro ? ' selected' : '') + '>' + esc(r) + '</option>'; }).join('');
+    render();
+  }, function(e){ $('#items').innerHTML = '<p class="muted">No se pudo leer la lista: ' + esc(e.message) + '. Sólo entran las cuentas de admin.</p>'; });
+}
+function entradaMsg(t){ $('#entradaMsg').textContent = t || ''; }
+var googleOk = false, escuchando = false;
+function seguir(){
+  if (!googleOk) return;
+  var u = auth.currentUser;
+  if (!u){ $('#google').hidden = true; $('#formGrupo').hidden = false; $('#entradaTxt').textContent = 'Conectá la base del Grupo MyM con tu usuario del CRM. Se pide una sola vez en este navegador.'; $('#entrada').hidden = false; $('#app').hidden = true; return; }
+  if (!u.emailVerified){ entradaMsg('Tu correo del CRM todavía no está verificado.'); return; }
+  if (ADMIN.indexOf(String(u.email || '').toLowerCase()) < 0){ entradaMsg(u.email + ' no es una cuenta de admin.'); auth.signOut(); return; }
+  quien = u.email;
+  $('#entrada').hidden = true; $('#app').hidden = false;
+  if (!escuchando){ escuchando = true; escuchar(); }
+}
+ACCESO.iniciar({
+  alEntrar: function(){ googleOk = true; seguir(); },
+  alSalir: function(m){ googleOk = false; $('#app').hidden = true; $('#entrada').hidden = false; $('#google').hidden = false; $('#formGrupo').hidden = true; $('#entradaTxt').textContent = 'Entrá con tu cuenta de Google autorizada.'; entradaMsg(m); }
+});
+var grupo = firebase.initializeApp(window.FIREBASE_GRUPO, 'grupo');
+auth = grupo.auth(); fs = grupo.firestore(); FV = firebase.firestore.FieldValue;
+auth.languageCode = 'es';
+auth.onAuthStateChanged(seguir);
+$('#google').addEventListener('click', function(){ entradaMsg(''); ACCESO.entrar(); });
+$('#formGrupo').addEventListener('submit', function(ev){
+  ev.preventDefault(); entradaMsg('Conectando…');
+  auth.signInWithEmailAndPassword($('#gMail').value.trim(), $('#gPass').value).then(function(){ entradaMsg(''); })
+    .catch(function(e){ entradaMsg(/invalid|wrong|not-found/.test(e && e.code) ? 'Correo o contraseña incorrectos.' : 'No se pudo conectar. Probá de nuevo.'); });
+});
+})();
+</script>
+</body>
+</html>
