@@ -266,7 +266,7 @@ td.principal{min-width:160px}
       pintarTodo(); return;
     }
     const em = ESTADO.emisor || {};
-    $('#emisor').textContent = [em.razonSocial, em.cuit ? 'CUIT ' + String(em.cuit).replace(/^(\d{2})(\d{8})(\d)$/, '$1-$2-$3') : '', em.ptoVta ? 'punto de venta ' + em.ptoVta : '', ESTADO.auto === false ? 'facturación automática apagada' : 'facturación automática prendida'].filter(Boolean).join(' · ');
+    $('#emisor').textContent = [em.razonSocial, em.cuit ? 'CUIT ' + String(em.cuit).replace(/^(\d{2})(\d{8})(\d)$/, '$1‑$2‑$3') : '', em.ptoVta ? 'punto de venta ' + em.ptoVta : '', ESTADO.auto === false ? 'facturación automática apagada' : 'facturación automática prendida'].filter(Boolean).join(' · ');
     let fijos = '';
     if (!ESTADO.activo) fijos += '<div class="cartel aviso"><div class="txt">⚠️ La facturación ARCA todavía no está configurada (falta el certificado). Podés mirar la pantalla, pero no se puede emitir.</div></div>';
     else if (ESTADO.ambiente !== 'produccion') fijos += '<div class="cartel prueba"><div class="txt">🧪 Ambiente de PRUEBA (homologación): las facturas no tienen valor fiscal.</div></div>';
