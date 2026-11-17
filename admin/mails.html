@@ -72,6 +72,14 @@ input,select{ font:inherit; color:var(--fg); background:#fff; border:1px solid v
 .entrada label{ text-align:left; }
 .ajustes{ display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px; margin-top:10px; }
 .mas{ text-align:center; margin:8px 0; }
+.embudo{ background:#fff; border:1px solid var(--line); border-radius:14px; padding:10px 12px; margin-bottom:12px; }
+.embudo h3{ font:800 12px var(--display); margin:0 0 6px; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; }
+.emb{ display:grid; grid-template-columns:130px 1fr 34px; gap:8px; align-items:center; font-size:12.5px; margin:3px 0; }
+.emb .barra{ height:8px; background:var(--panel2); border-radius:99px; overflow:hidden; }
+.emb .barra i{ display:block; height:100%; background:linear-gradient(90deg,#2f6bff,#00c2a8); border-radius:99px; }
+.emb b{ text-align:right; }
+.seg{ display:inline-block; padding:1px 8px; border-radius:999px; font-size:11px; font-weight:700; background:#fff8ec; color:var(--warn); margin-right:4px; }
+.est.cliente{ background:#e6f6f1; color:var(--ok); }
 </style>
 </head>
 <body>
@@ -104,6 +112,7 @@ input,select{ font:inherit; color:var(--fg); background:#fff; border:1px solid v
       <div class="cifra"><b id="cEnv">0</b><small>mandados</small></div>
       <div class="cifra"><b id="cResp">0</b><small>respondieron</small></div>
     </div>
+    <div class="embudo" id="embudo"><h3>Embudo de los mails</h3><div id="embudoFilas"><p class="muted small" style="margin:0">Cargando…</p></div><p class="muted small" id="embudoNota" style="margin:6px 0 0"></p></div>
     <div class="filtros" id="filtros"></div>
     <div class="fila" style="margin-bottom:10px;flex-wrap:nowrap">
       <select id="rubro" aria-label="Rubro"><option value="">Todos los rubros</option></select>
@@ -140,9 +149,11 @@ input,select{ font:inherit; color:var(--fg); background:#fff; border:1px solid v
 'use strict';
 // La casilla que quedó escrita en los mails armados el 16/11. Se reemplaza por la de Ajustes al mostrar y al mandar.
 var BAJA_ORIGINAL = 'hola@novedades.mymsoluciones.online';
-var ESTADOS = [['pendiente','Para mandar'],['enviado','Mandado'],['respondio','Respondió'],['baja','Pidió la baja'],['descartado','Descartado']];
+var ESTADOS = [['pendiente','Para mandar'],['enviado','Mandado'],['respondio','Respondió'],['cliente','Cliente'],['baja','Pidió la baja'],['descartado','Descartado']];
+var API = String((window.SITE || {}).ventasApi || '').replace(/\/+$/, '');
+var WA = String((window.SITE || {}).whatsapp || '5491133662080');
 var ADMIN = ((window.SITE || {}).adminEmails || []).map(function(e){ return String(e).toLowerCase(); });
-var S = { items:[], sel:null, filtro:'pendiente', rubro:'', q:'', ajustes:{ tope:30, baja:'info@mymsoluciones.online' }, mostrar:150 };
+var S = { items:[], sel:null, filtro:'pendiente', rubro:'', q:'', ajustes:{ tope:30, baja:'info@mymsoluciones.online' }, mostrar:150, seg:{}, segOk:null };
 var fs, auth, FV, quien = '';
 
 var $ = function(s, r){ return (r || document).querySelector(s); };
@@ -158,10 +169,60 @@ function col(){ return fs.collection('empresas').doc('equipo').collection('prosp
 function ajustesDoc(){ return fs.collection('empresas').doc('equipo').collection('prospeccionAjustes').doc('general'); }
 function mandadosHoy(){ var h = hoyArg(); return S.items.filter(function(i){ return i.enviadoEn && diaArg(i.enviadoEn) === h; }).length; }
 
+/* ---------- seguimiento (visitas y clics de la simulación, y si escribió al WhatsApp) ----------
+   Lo mide el server de MyM (AppMyM): las páginas de simulación avisan cada visita y cada clic en «Hablemos por
+   WhatsApp», y el robot anota cuando el comercio escribe con su código. Sin datos personales: sólo contadores. */
+function seg(i){ return S.seg[i.codigo] || {}; }
+function horasDesde(x){ if (!x) return 0; var d = x.toDate ? x.toDate() : new Date(x); return (Date.now() - d.getTime()) / 3600e3; }
+// 17/11/2026 (Matías: «a las 24 h y 72 h»). A las 24 h sólo a los que abrieron la simulación o tocaron WhatsApp
+// (están tibios); a las 72 h, un último mail a los que no contestaron. Después no se les escribe más.
+function paraSeguir(i){
+  if (i.estado !== 'enviado' || !i.enviadoEn) return null;
+  var g = seg(i), h = horasDesde(i.enviadoEn);
+  if (g.escribio) return null;
+  if (!i.seg72En && h >= 72) return '72';
+  if (!i.seg24En && h >= 24 && ((g.visitas || 0) > 0 || (g.whatsapp || 0) > 0)) return '24';
+  return null;
+}
+function linkWa(i){ return 'https://wa.me/' + WA + '?text=' + encodeURIComponent('Hola! Vi la simulación ' + i.codigo + ' de ' + i.nombre + ' y quiero saber más.'); }
+function pieLegal(){
+  return '\n\n—\nESTO ES PUBLICIDAD. Si no querés recibir más mails nuestros, respondé BAJA o escribí a ' + (S.ajustes.baja || BAJA_ORIGINAL) + '.'
+    + '\nMyM CRÉDITOS S.A. (MyM Soluciones) · CUIT 30-71917577-1 · Cañada de Gómez 1411, PB, dto. 2, CABA. Podés pedir acceso, corrección o supresión de tus datos (Ley 25.326).';
+}
+function textoSeguimiento(i, cual){
+  var link = i.link.replace('?o=mail', '?o=seguimiento');
+  if (cual === '24') return 'Hola, equipo de ' + i.nombre + ':\n\nTe escribí ayer con la simulación de cómo podrían verse las redes de ' + i.nombre + '. ¿Pudieron mirarla?\n\n'
+    + 'Si quieren, lo charlamos 10 minutos por WhatsApp y les cuento cómo sería con su contenido real: ' + linkWa(i) + '\n\nLa simulación: ' + link + pieLegal();
+  return 'Hola, equipo de ' + i.nombre + ':\n\nÚltimo mensaje, para no molestar: la simulación de las redes de ' + i.nombre + ' sigue acá: ' + link + '\n\n'
+    + 'Si en algún momento quieren que la armemos de verdad, nos escriben por WhatsApp: ' + linkWa(i) + pieLegal();
+}
+function mailtoSeguimiento(i, cual){
+  return 'mailto:' + encodeURIComponent(i.mail) + '?subject=' + encodeURIComponent('Re: ' + i.asunto) + '&body=' + encodeURIComponent(textoSeguimiento(i, cual));
+}
+function cargarSeguimiento(){
+  if (!API) return;
+  ACCESO.token().then(function(t){ return fetch(API + '/api/ventas-sol/simulaciones/resumen', { headers:{ Authorization:'Bearer ' + t } }); })
+    .then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(function(j){ S.seg = (j && j.porCodigo) || {}; S.segOk = true; render(); })
+    .catch(function(e){ S.segOk = false; S.segErr = e.message; render(); });
+}
+function pintarEmbudo(){
+  var env = S.items.filter(function(i){ return i.enviadoEn && ['enviado','respondio','cliente'].indexOf(i.estado) >= 0; });
+  var abr = env.filter(function(i){ return (seg(i).visitas || 0) > 0; }).length;
+  var wa = env.filter(function(i){ return (seg(i).whatsapp || 0) > 0; }).length;
+  var esc2 = env.filter(function(i){ return seg(i).escribio || i.estado === 'respondio' || i.estado === 'cliente'; }).length;
+  var cli = env.filter(function(i){ return i.estado === 'cliente'; }).length;
+  var filas = [['Mandados', env.length], ['Abrieron la simulación', abr], ['Tocaron WhatsApp', wa], ['Escribieron o respondieron', esc2], ['Clientes', cli]];
+  var max = Math.max(1, env.length);
+  $('#embudoFilas').innerHTML = filas.map(function(f){ return '<div class="emb"><span>' + esc(f[0]) + '</span><span class="barra"><i style="width:' + Math.round(f[1] / max * 100) + '%"></i></span><b>' + f[1] + '</b></div>'; }).join('');
+  $('#embudoNota').textContent = S.segOk === false ? 'Las visitas y los clics se van a ver cuando se publique el seguimiento en el server de MyM.' : '';
+}
+
 function visibles(){
   var q = S.q.trim().toLowerCase();
   return S.items.filter(function(i){
-    if (S.filtro !== 'todos' && i.estado !== S.filtro) return false;
+    if (S.filtro === 'seguir'){ if (!paraSeguir(i)) return false; }
+    else if (S.filtro !== 'todos' && i.estado !== S.filtro) return false;
     if (S.rubro && i.rubro !== S.rubro) return false;
     if (q && (i.nombre + ' ' + i.zona + ' ' + i.mail + ' ' + i.codigo).toLowerCase().indexOf(q) < 0) return false;
     return true;
@@ -173,13 +234,16 @@ function render(){
   var hoy = mandadosHoy();
   $('#cHoy').textContent = hoy + '/' + S.ajustes.tope;
   $('#cPend').textContent = n.pendiente || 0; $('#cEnv').textContent = (n.enviado || 0) + (n.respondio || 0); $('#cResp').textContent = n.respondio || 0;
-  $('#filtros').innerHTML = [['todos','Todos']].concat(ESTADOS).map(function(e){
-    var c = e[0] === 'todos' ? S.items.length : (n[e[0]] || 0);
+  var nSeguir = S.items.filter(paraSeguir).length;
+  pintarEmbudo();
+  $('#filtros').innerHTML = [['seguir','⏰ Para seguir hoy'],['todos','Todos']].concat(ESTADOS).map(function(e){
+    var c = e[0] === 'todos' ? S.items.length : e[0] === 'seguir' ? nSeguir : (n[e[0]] || 0);
     return '<button class="chip' + (S.filtro === e[0] ? ' on' : '') + '" type="button" data-f="' + e[0] + '">' + esc(e[1]) + ' · ' + c + '</button>';
   }).join('');
   var lista = visibles();
   $('#items').innerHTML = lista.length ? lista.slice(0, S.mostrar).map(function(i){
     return '<button class="item' + (i.id === S.sel ? ' sel' : '') + '" type="button" data-id="' + esc(i.id) + '"><span class="l1"><b>' + esc(i.nombre) + '</b><span class="est ' + esc(i.estado) + '">' + esc(nombreEstado(i.estado)) + '</span></span>'
+      + (paraSeguir(i) ? '<span class="seg">seguir ' + paraSeguir(i) + ' h</span>' : '')
       + '<small>' + esc(i.rubro) + ' · ' + esc(i.zona) + '</small><br><small>' + esc(i.mail) + '</small></button>';
   }).join('') + (lista.length > S.mostrar ? '<div class="mas"><button class="btn sm" type="button" id="verMas">Ver más (' + (lista.length - S.mostrar) + ')</button></div>' : '')
     : '<p class="muted">No hay comercios con ese filtro.</p>';
@@ -202,7 +266,16 @@ function ficha(){
     + '<div class="datos"><div><small>Mail</small><span>' + esc(i.mail) + '</span></div><div><small>Web</small><span>' + web + '</span></div><div><small>Instagram</small><span>' + ig + '</span></div>'
     + '<div><small>Dirección</small><span>' + esc(i.direccion || '—') + '</span></div><div><small>De dónde salió</small><span>' + esc(i.mailFuente === 'web' ? 'su web' : 'OpenStreetMap') + ' · ' + esc((i.encontrado || '').slice(0, 10)) + '</span></div></div>'
     + (hist.length ? '<p class="small muted" style="margin:10px 0 0">' + hist.join(' · ') + '</p>' : '')
+    + (S.segOk ? '<p class="small" style="margin:8px 0 0">👀 Abrió la simulación: <b>' + (seg(i).visitas || 0) + '</b> ' + ((seg(i).visitas || 0) === 1 ? 'vez' : 'veces')
+        + (seg(i).ultima_visita ? ' (última: ' + fecha(seg(i).ultima_visita) + ')' : '') + ' · 💬 Tocó WhatsApp: <b>' + (seg(i).whatsapp || 0) + '</b>'
+        + (seg(i).escribio ? ' · ✅ Escribió al WhatsApp' + (seg(i).escribio_en ? ' el ' + fecha(seg(i).escribio_en) : '') : '') + '</p>' : '')
+    + (i.seg24En ? '<p class="small muted" style="margin:4px 0 0">Seguimiento de 24 h mandado el ' + fecha(i.seg24En) + '</p>' : '')
+    + (i.seg72En ? '<p class="small muted" style="margin:4px 0 0">Último mail (72 h) mandado el ' + fecha(i.seg72En) + '</p>' : '')
     + '</section>'
+    + (paraSeguir(i) ? '<section class="panel"><h2>⏰ Toca seguimiento (' + paraSeguir(i) + ' h)</h2>'
+        + '<p class="small muted">' + (paraSeguir(i) === '24' ? 'Abrió la simulación o tocó WhatsApp y todavía no escribió. Un mail corto, como respuesta al primero.' : 'Pasaron 3 días sin respuesta. Es el último mail: después no se le escribe más.') + '</p>'
+        + '<div class="fila"><a class="btn gold" href="' + esc(mailtoSeguimiento(i, paraSeguir(i))) + '">✉️ Abrir el seguimiento en mi correo</a>'
+        + '<button class="btn sm" type="button" data-estado="seg' + paraSeguir(i) + '">✓ Ya lo mandé</button></div></section>' : '')
     + '<section class="panel"><h2>Mandar</h2>'
     + (i.estado === 'baja' ? '<div class="aviso ojo">Pidió la baja: no se le escribe más (Ley 25.326, art. 27).</div>' : '')
     + (lleno && i.estado === 'pendiente' ? '<div class="aviso ojo">Ya se mandaron ' + hoy + ' hoy, el tope del día. Seguí mañana: mandar muchos de golpe desde una casilla nueva la manda a spam.</div>' : '')
@@ -216,6 +289,7 @@ function ficha(){
     + '</div><div class="fila" style="margin-top:12px">'
     + (i.estado !== 'enviado' && i.estado !== 'baja' ? '<button class="btn sm" type="button" data-estado="enviado">✓ Ya lo mandé</button>' : '')
     + (i.estado !== 'respondio' ? '<button class="btn sm" type="button" data-estado="respondio">Respondió</button>' : '')
+    + (i.estado !== 'cliente' && i.estado !== 'baja' ? '<button class="btn sm" type="button" data-estado="cliente">🎉 Es cliente</button>' : '')
     + (i.estado !== 'baja' ? '<button class="btn sm" type="button" data-estado="baja">Pidió la baja</button>' : '')
     + (i.estado !== 'descartado' ? '<button class="btn sm" type="button" data-estado="descartado">Descartar</button>' : '')
     + (i.estado !== 'pendiente' ? '<button class="btn sm" type="button" data-estado="pendiente">Volver a «Para mandar»</button>' : '')
@@ -234,8 +308,9 @@ function cambiarEstado(estado){
   var d = { estado:estado, cambiadoEn:FV.serverTimestamp(), cambiadoPor:quien };
   if (estado === 'enviado'){ d.enviadoEn = FV.serverTimestamp(); d.enviadoPor = quien; }
   if (estado === 'pendiente'){ d.enviadoEn = FV.delete(); d.enviadoPor = FV.delete(); }
+  if (estado === 'seg24' || estado === 'seg72'){ d = {}; d[estado + 'En'] = FV.serverTimestamp(); d[estado + 'Por'] = quien; }
   col().doc(i.id).update(d).then(function(){
-    toast(estado === 'enviado' ? 'Anotado como mandado' : 'Quedó: ' + nombreEstado(estado));
+    toast(estado === 'enviado' || estado.indexOf('seg') === 0 ? 'Anotado como mandado' : 'Quedó: ' + nombreEstado(estado));
     if (estado === 'enviado' && S.filtro === 'pendiente'){ // pasa solo al siguiente para mandar
       var l = visibles().filter(function(x){ return x.id !== i.id; }); S.sel = l.length ? l[0].id : null;
     }
@@ -312,7 +387,7 @@ function seguir(){
   if (ADMIN.indexOf(String(u.email || '').toLowerCase()) < 0){ entradaMsg(u.email + ' no es una cuenta de admin.'); auth.signOut(); return; }
   quien = u.email;
   $('#entrada').hidden = true; $('#app').hidden = false;
-  if (!escuchando){ escuchando = true; escuchar(); }
+  if (!escuchando){ escuchando = true; escuchar(); cargarSeguimiento(); setInterval(function(){ if (!document.hidden) cargarSeguimiento(); }, 300000); }
 }
 ACCESO.iniciar({
   alEntrar: function(){ googleOk = true; seguir(); },
