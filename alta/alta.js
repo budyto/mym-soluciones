@@ -228,8 +228,8 @@
   }
   if (new URLSearchParams(location.search).get('pago') === 'error') $('#estado').innerHTML = '<p class="aviso">El pago no se completó. Podés intentarlo de nuevo con el botón de abajo.</p>';
 
-  // Promo del Paquete completo (instalación $ 64.950 + IVA hasta el 30/11/2026 inclusive), igual que en la web.
-  if (Date.now() < Date.UTC(2026, 11, 1, 3)) $('#op-paquete').textContent = 'Paquete completo: $ 64.950 + IVA de instalación (hasta el 30/11) y $ 64.900 + IVA por mes';
+  // Promo del Paquete completo (instalación $ 200.000 + IVA hasta el 30/11/2026 inclusive), igual que en la web.
+  if (Date.now() < Date.UTC(2026, 11, 1, 3)) $('#op-paquete').textContent = 'Paquete completo: $ 200.000 + IVA de instalación (hasta el 30/11) y $ 64.900 + IVA por mes';
   $('#adelantar').addEventListener('click', (e) => { e.preventDefault(); retomar(); });
   $('#ir-conectar').addEventListener('click', (e) => { e.preventDefault(); verPaso(2); });
 
