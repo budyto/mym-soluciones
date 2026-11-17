@@ -78,6 +78,7 @@ input,select{ font:inherit; color:var(--fg); background:#fff; border:1px solid v
 .emb .barra{ height:8px; background:var(--panel2); border-radius:99px; overflow:hidden; }
 .emb .barra i{ display:block; height:100%; background:linear-gradient(90deg,#2f6bff,#00c2a8); border-radius:99px; }
 .emb b{ text-align:right; }
+.vio{ display:inline-block; padding:1px 8px; border-radius:999px; font-size:11px; font-weight:700; background:#e6f6f1; color:var(--ok); margin-right:4px; }
 .seg{ display:inline-block; padding:1px 8px; border-radius:999px; font-size:11px; font-weight:700; background:#fff8ec; color:var(--warn); margin-right:4px; }
 .est.cliente{ background:#e6f6f1; color:var(--ok); }
 .tel{ display:inline-block; padding:1px 8px; border-radius:999px; font-size:11px; font-weight:700; background:#eef3ff; color:var(--gold); margin-right:4px; }
@@ -353,6 +354,7 @@ function visibles(){
   return S.items.filter(function(i){
     if (S.filtro === 'llamar'){ if (!paraLlamar(i)) return false; }
     else if (S.filtro === 'seguir'){ if (!paraSeguir(i)) return false; }
+    else if (S.filtro === 'abrieron'){ if (!abrio(i)) return false; }
     else if (S.filtro !== 'todos' && i.estado !== S.filtro) return false;
     if (S.rubro && i.rubro !== S.rubro) return false;
     if (q && (i.nombre + ' ' + i.zona + ' ' + i.mail + ' ' + i.codigo).toLowerCase().indexOf(q) < 0) return false;
@@ -360,23 +362,32 @@ function visibles(){
   });
 }
 
+// Quién abrió la simulación o tocó WhatsApp (17/11/2026, Matías: «¿cómo sé quién abrió?»): etiqueta en la lista y filtro.
+function abrio(i){ var g = seg(i); return !!i.enviadoEn && ((g.visitas || 0) > 0 || (g.whatsapp || 0) > 0); }
+function etiquetaAbrio(i){
+  var g = seg(i), v = g.visitas || 0, w = g.whatsapp || 0;
+  if (!i.enviadoEn || (!v && !w)) return '';
+  return (v ? '<span class="vio">👀 abrió' + (v > 1 ? ' ' + v + ' veces' : '') + '</span>' : '') + (w ? '<span class="vio">💬 tocó WhatsApp</span>' : '');
+}
 function render(){
   var n = {}; S.items.forEach(function(i){ n[i.estado] = (n[i.estado] || 0) + 1; });
   var hoy = mandadosHoy();
   $('#cHoy').textContent = hoy + '/' + S.ajustes.tope;
   $('#cPend').textContent = n.pendiente || 0; $('#cEnv').textContent = (n.enviado || 0) + (n.respondio || 0); $('#cResp').textContent = n.respondio || 0;
-  var nSeguir = S.items.filter(paraSeguir).length, nLlamar = S.items.filter(paraLlamar).length;
+  var nSeguir = S.items.filter(paraSeguir).length, nLlamar = S.items.filter(paraLlamar).length, nAbrieron = S.items.filter(abrio).length;
   if (!$('#panelResultados').hidden) pintarResultados();
   pintarEmbudo();
-  $('#filtros').innerHTML = [['llamar','📞 Llamar hoy'],['seguir','⏰ Para seguir hoy'],['todos','Todos']].concat(ESTADOS).map(function(e){
-    var c = e[0] === 'todos' ? S.items.length : e[0] === 'seguir' ? nSeguir : e[0] === 'llamar' ? nLlamar : (n[e[0]] || 0);
+  $('#filtros').innerHTML = [['llamar','📞 Llamar hoy'],['seguir','⏰ Para seguir hoy'],['abrieron','👀 Abrieron'],['todos','Todos']].concat(ESTADOS).map(function(e){
+    var c = e[0] === 'todos' ? S.items.length : e[0] === 'seguir' ? nSeguir : e[0] === 'llamar' ? nLlamar : e[0] === 'abrieron' ? nAbrieron : (n[e[0]] || 0);
     return '<button class="chip' + (S.filtro === e[0] ? ' on' : '') + '" type="button" data-f="' + e[0] + '">' + esc(e[1]) + ' · ' + c + '</button>';
   }).join('');
   var lista = visibles();
   if (S.filtro === 'llamar') lista.sort(function(a, b){ return interes(b) - interes(a) || horasDesdeEnvio(b) - horasDesdeEnvio(a); });
+  if (S.filtro === 'abrieron') lista.sort(function(a, b){ return interes(b) - interes(a) || (seg(b).visitas || 0) - (seg(a).visitas || 0); });
   $('#items').innerHTML = lista.length ? lista.slice(0, S.mostrar).map(function(i){
     return '<button class="item' + (i.id === S.sel ? ' sel' : '') + '" type="button" data-id="' + esc(i.id) + '"><span class="l1"><b>' + esc(i.nombre) + '</b><span class="est ' + esc(i.estado) + '">' + esc(nombreEstado(i.estado)) + '</span></span>'
       + (paraSeguir(i) ? '<span class="seg">seguir ' + paraSeguir(i) + ' h</span>' : '')
+      + (S.filtro !== 'llamar' ? etiquetaAbrio(i) : '')
       + (S.filtro === 'llamar' ? '<span class="tel">' + (i.llamadaResultado === 'interesado' ? '💬 mandar WhatsApp' : i.llamadaResultado ? RESULTADOS[i.llamadaResultado] : '📞 ' + esc(i.telefono || '')) + '</span>' + (interes(i) ? '<span class="seg">' + (seg(i).escribio ? 'escribió' : (seg(i).whatsapp || 0) > 0 ? 'tocó WhatsApp' : i.estado === 'respondio' ? 'respondió' : 'abrió') + '</span>' : '') : '')
       + '<small>' + esc(i.rubro) + ' · ' + esc(i.zona) + '</small><br><small>' + esc(i.mail) + '</small></button>';
   }).join('') + (lista.length > S.mostrar ? '<div class="mas"><button class="btn sm" type="button" id="verMas">Ver más (' + (lista.length - S.mostrar) + ')</button></div>' : '')
