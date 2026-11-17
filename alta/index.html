@@ -83,13 +83,27 @@
       </div>
       <label>¿Qué querés contratar?
         <select name="plan" required>
-          <option value="bot">Bot de WhatsApp: $ 99.900 de instalación y $ 39.900 por mes</option>
-          <option value="paquete">Paquete completo: $ 219.900 de instalación y $ 64.900 por mes</option>
+          <option value="bot">Bot de WhatsApp: $ 99.900 + IVA de instalación y $ 39.900 + IVA por mes</option>
+          <option value="paquete" id="op-paquete">Paquete completo: $ 219.900 + IVA de instalación y $ 64.900 + IVA por mes</option>
         </select></label>
+      <p class="leyenda" id="ley-modo">¿Quién lo arma?</p>
+      <div class="planes" role="radiogroup" aria-labelledby="ley-modo" style="margin-bottom:16px">
+        <label class="opcion"><input type="radio" name="modo" value="cliente" checked><b>Lo armo yo</b><span>Te lleva unos minutos: conectás tu WhatsApp, nos contás de tu negocio y probás el bot.</span></label>
+        <label class="opcion"><input type="radio" name="modo" value="mym"><b>Que lo arme MyM Soluciones</b><span>Te escribimos por WhatsApp y lo armamos juntos en una llamada corta. No tenés que configurar nada.</span></label>
+      </div>
       <label class="trampa" aria-hidden="true">No completar<input name="web" tabindex="-1" autocomplete="off"></label>
       <p class="error" id="error1" role="alert"></p>
       <button class="btn" type="submit">Seguir</button>
+      <p class="nota">Precios en pesos, más IVA (21 %). El pago es por transferencia: te pasamos los datos cuando tu bot esté listo.</p>
     </form>
+
+    <!-- «Que lo arme MyM» (17/11/2026, pedido de Matías): el cliente no configura nada; MyM lo llama y completa el alta. -->
+    <section class="tarjeta paso-alta" id="paso-mym">
+      <div class="sello"><span class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><h2>¡Listo! Lo armamos nosotros</h2></div>
+      <p class="paso">Te escribimos por WhatsApp para coordinar una llamada corta. En esa llamada conectamos tu número y armamos el bot con vos: no tenés que configurar nada.</p>
+      <p class="paso">Para la llamada tené a mano el celular con tu WhatsApp y, si lo tenés, el usuario de tu Facebook.</p>
+      <p class="nota">¿Preferís adelantar algo por tu cuenta? <a href="#" id="adelantar">Seguir yo con el alta</a>.</p>
+    </section>
 
     <!-- Paso 2: conectar WhatsApp con Meta -->
     <section class="tarjeta paso-alta" id="paso2">
@@ -124,7 +138,8 @@
     <!-- Paso 3: la ficha del negocio (se guarda sola a medida que escribís) -->
     <section class="paso-alta" id="paso3">
       <div class="tarjeta" style="margin-bottom:16px">
-        <div class="sello"><span class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><h2 id="titulo3">Tu WhatsApp quedó conectado</h2></div>
+        <div class="sello"><span class="ok" id="sello3"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><h2 id="titulo3">Tu WhatsApp quedó conectado</h2></div>
+        <p class="aviso" id="falta-wa" hidden>Todavía falta conectar el WhatsApp del negocio. Podés completar los datos ahora y conectarlo después. <a href="#" id="ir-conectar">Conectar el WhatsApp</a></p>
         <p class="paso">Ahora contanos cómo trabaja tu negocio: con eso se arma tu bot solo. <b>Lo que no esté acá, el bot no lo dice</b>, así nunca inventa.</p>
         <p class="paso" id="link-seguir"></p>
       </div>
@@ -203,6 +218,7 @@
       <div id="caja-listo">
         <div class="sello"><span class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><h2>¡Listo! Lo estamos revisando</h2></div>
         <p class="paso">Aprobaste tu bot. Lo revisamos y, cuando lo prendamos, empieza a contestar en tu WhatsApp. Te avisamos por mail.</p>
+        <p class="paso">El pago es por transferencia: te pasamos los datos por WhatsApp o por mail. Cuando el bot esté andando, en tu <a href="../panel/">panel</a> vas a ver todas las charlas y las que te esperan.</p>
       </div>
     </section>
   </main>
@@ -210,6 +226,6 @@
   <footer>MyM Soluciones · WhatsApp 11 3366-2080 · <a href="mailto:info@mymsoluciones.online">info@mymsoluciones.online</a><br><a href="../privacidad.html">Política de privacidad</a> · <a href="../arrepentimiento/">Botón de arrepentimiento</a> · <a href="../baja/">Botón de baja</a></footer>
 </div>
 <script src="../config.js?v=202611142100"></script>
-<script src="alta.js?v=202611160100"></script>
+<script src="alta.js?v=202611171200"></script>
 </body>
 </html>

@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tu panel de WhatsApp · MyM Soluciones</title>
+<meta name="description" content="El panel de tu bot de WhatsApp: tus charlas, lo que dice tu bot y tus avisos.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#f4f7ff">
+<link rel="icon" href="../img/favicon-2.png" type="image/png">
+<!-- Panel del cliente de la plataforma de bots (17/11/2026, pedido de Matías). Lo usa el dueño del negocio,
+     sobre todo desde el celular: ve sus charlas de WhatsApp (primero las que esperan a una persona), contesta,
+     toma o devuelve una charla, pausa el bot, cambia lo que dice el bot y elige a qué mail le llegan los avisos.
+     Se entra con un link que llega por mail (sin contraseña). El servidor es SITE.plataformaApi (config.js). -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;900&family=Instrument+Serif:ital@1&family=Michroma&family=Martian+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../tramites/tramite.css?v=202611141900">
+<link rel="stylesheet" href="panel.css?v=202611171830">
+</head>
+<body>
+
+<!-- ============ Entrada: se pide el link por mail ============ -->
+<div class="wrap" id="v-entrada" hidden>
+  <header><a class="logo" href="../"><b class="deg">MyM</b><span>SOLUCIONES</span></a></header>
+  <main>
+    <p class="rotulo">El panel de tu negocio</p>
+    <h1>Tus charlas<em>de WhatsApp.</em></h1>
+    <p class="bajada">Mirá lo que te escriben, contestá vos cuando haga falta y controlá lo que dice tu bot. Se entra sin contraseña: te mandamos un link a tu mail.</p>
+    <div id="entrada-estado" aria-live="polite"></div>
+    <form class="tarjeta" id="form-entrar" novalidate>
+      <label><span class="rot">Tu mail</span><small>El mismo que nos diste cuando contrataste el bot.</small>
+        <input name="email" id="entrar-email" type="email" autocomplete="email" inputmode="email" placeholder="tunombre@mail.com" required></label>
+      <p class="error" id="entrar-error" role="alert"></p>
+      <button class="btn grande" type="submit" id="entrar-btn">Mandarme el link</button>
+      <p class="nota">¿No te llega? Fijate en el correo no deseado, o escribinos por WhatsApp al 11 3366-2080.</p>
+    </form>
+  </main>
+  <footer>MyM Soluciones · WhatsApp 11 3366-2080 · <a href="mailto:info@mymsoluciones.online">info@mymsoluciones.online</a></footer>
+</div>
+
+<!-- ============ Panel ============ -->
+<div class="app" id="v-panel" hidden>
+  <div class="barra">
+    <a class="logo" href="../"><b class="deg">MyM</b><span>SOLUCIONES</span></a>
+    <div class="barra-der">
+      <label class="negocios" id="caja-negocios" hidden><span class="oculto">Negocio</span><select id="negocios" aria-label="Elegir negocio"></select></label>
+      <span class="quien-soy" id="quien-soy"></span>
+      <button class="btn-chico" type="button" id="salir">Salir</button>
+    </div>
+  </div>
+
+  <section class="tarjeta resumen" aria-label="Tu negocio">
+    <div class="resumen-datos">
+      <h1 class="negocio" id="r-negocio">Cargando…</h1>
+      <p class="resumen-linea"><span class="numero" id="r-numero"></span><span class="estado" id="r-estado" hidden></span></p>
+      <p class="resumen-espera" id="r-espera" aria-live="polite"></p>
+    </div>
+    <div class="resumen-boton">
+      <button class="btn sec" type="button" id="r-pausar" hidden>Pausar el bot</button>
+      <button class="btn" type="button" id="r-prender" hidden>Prender el bot</button>
+      <p class="error" id="r-error" role="alert"></p>
+    </div>
+  </section>
+
+  <nav class="pestanas" aria-label="Secciones del panel">
+    <button type="button" data-seccion="charlas" aria-current="page">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>
+      <span>Charlas</span><b class="globo" id="globo-espera" hidden></b></button>
+    <button type="button" data-seccion="bot">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="8" width="16" height="11" rx="3"/><path d="M12 4v4M9 13h.01M15 13h.01M9.5 16h5"/></svg>
+      <span>Lo que dice tu bot</span></button>
+    <button type="button" data-seccion="avisos">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4l2-2zM10 21h4"/></svg>
+      <span>Avisos</span></button>
+  </nav>
+
+  <!-- ---- Charlas ---- -->
+  <section id="s-charlas" class="seccion">
+    <div class="dos-paneles">
+      <div class="tarjeta lista-caja">
+        <div class="filtros" role="group" aria-label="Qué charlas ver">
+          <button type="button" class="filtro" data-filtro="todas" aria-pressed="true">Todas</button>
+          <button type="button" class="filtro" data-filtro="esperan" aria-pressed="false">Te esperan <b id="f-cuantas"></b></button>
+        </div>
+        <p class="error" id="lista-error" role="alert"></p>
+        <ul class="lista" id="lista" aria-label="Charlas"></ul>
+        <p class="lista-vacia" id="lista-vacia" hidden></p>
+      </div>
+
+      <div class="tarjeta charla" id="charla">
+        <p class="charla-vacia" id="charla-vacia">Elegí una charla de la lista para verla acá.</p>
+        <div class="charla-abierta" id="charla-abierta" hidden>
+          <div class="charla-cab">
+            <button type="button" class="volver" id="volver" aria-label="Volver a la lista de charlas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+            <div class="charla-quien"><b id="c-nombre"></b><span id="c-numero"></span></div>
+          </div>
+          <div class="charla-acc">
+            <div class="marcas" id="c-marcas"></div>
+            <div class="charla-botones" id="c-botones"></div>
+            <p class="chica" id="c-explica">Cuando contestás vos (desde acá o desde tu celular), el bot se corre 12 horas de esta charla.</p>
+            <p class="error" id="c-acc-error" role="alert"></p>
+          </div>
+          <div class="mensajes" id="mensajes" role="log" aria-label="Mensajes de la charla" tabindex="0"></div>
+          <p class="cerrada" id="c-cerrada" hidden>Pasaron más de 24 h desde su último mensaje: WhatsApp no deja escribirle hasta que vuelva a escribir.</p>
+          <form class="redactar" id="redactar" novalidate>
+            <div class="adjunto" id="adjunto" hidden><span class="adjunto-nombre" id="adjunto-nombre"></span><button type="button" class="btn-chico" id="adjunto-quitar">Quitar</button></div>
+            <p class="error" id="c-error" role="alert"></p>
+            <div class="redactar-fila">
+              <input type="file" id="archivo" class="oculto" accept="image/*,video/*,audio/*,application/pdf" tabindex="-1" aria-hidden="true">
+              <button type="button" class="redondo" id="clip" aria-label="Adjuntar una foto, un video, un PDF o un audio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11.5l-8 8a5 5 0 0 1-7-7l8.5-8.5a3.3 3.3 0 0 1 4.7 4.7L9.8 17.1a1.7 1.7 0 0 1-2.4-2.4L15 7"/></svg></button>
+              <textarea id="texto" rows="1" placeholder="Escribí tu respuesta" aria-label="Tu respuesta"></textarea>
+              <button type="submit" class="redondo enviar" id="enviar" aria-label="Enviar"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.4 20.4l17.5-7.5a1 1 0 0 0 0-1.8L3.4 3.6a1 1 0 0 0-1.4 1.2L4.5 11l9.5 1-9.5 1L2 19.2a1 1 0 0 0 1.4 1.2z"/></svg></button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---- Lo que dice tu bot ---- -->
+  <section id="s-bot" class="seccion angosta" hidden>
+    <div class="tarjeta" style="margin-bottom:16px">
+      <h2 class="titulo">Lo que dice tu bot</h2>
+      <p class="paso">Estos son los datos de tu negocio. <b>Lo que no esté acá, el bot no lo dice</b>, así nunca inventa. Cambiá lo que quieras y tocá «Guardar»: antes de aplicarlo, lo probamos solos.</p>
+      <p class="chica" id="ficha-version"></p>
+    </div>
+    <form class="tarjeta" id="ficha" novalidate style="margin-bottom:16px">
+      <p class="error" id="ficha-carga" role="alert"></p>
+      <div class="dos">
+        <label><span class="rot">Rubro</span><input name="rubro" placeholder="Ej.: verdulería, peluquería, taller"></label>
+        <label><span class="rot">Horarios</span><input name="horarios" placeholder="Ej.: lunes a sábado de 8 a 20"></label>
+      </div>
+      <label><span class="rot">Qué vendés y a quién</span><textarea name="queVende" rows="2" placeholder="Ej.: frutas y verduras frescas para familias y comercios del barrio"></textarea></label>
+      <label><span class="rot">Tus precios</span><small>Uno por renglón, con el precio final. Son los únicos que va a dar el bot.</small><textarea name="precios" rows="4" placeholder="Cajón de tomate: $ 12.000&#10;Kilo de papa: $ 900"></textarea></label>
+      <div class="dos">
+        <label><span class="rot">Dirección</span><small>Si atendés en un local.</small><input name="direccion"></label>
+        <label><span class="rot">Medios de pago</span><input name="mediosPago" placeholder="Ej.: efectivo, transferencia y Mercado Pago"></label>
+      </div>
+      <label><span class="rot">Zona y envíos</span><textarea name="zonaEnvios" rows="2" placeholder="Ej.: envíos en Haedo y Ramos Mejía, $ 1.000; retiro en el local sin cargo"></textarea></label>
+      <label><span class="rot">Preguntas que te hacen siempre</span><small>Una por renglón: la pregunta con «?» y después la respuesta.</small><textarea name="preguntas" rows="4" placeholder="¿Hacen envíos? Sí, en Haedo y Ramos Mejía.&#10;¿Venden por mayor? Sí, desde 5 cajones."></textarea></label>
+      <div class="dos">
+        <label><span class="rot">¿A quién le pasa la charla?</span><small>Nombre o área.</small><input name="derivarA" placeholder="Ej.: Ana, de ventas"></label>
+        <label><span class="rot">¿Cómo querés que hable?</span><input name="tono" placeholder="Ej.: cercano, con buena onda, sin emojis"></label>
+      </div>
+      <label><span class="rot">¿Cuándo tiene que pasarle la charla a una persona?</span><textarea name="derivarCuando" rows="2" placeholder="Ej.: pedidos de más de 10 cajones, reclamos, o si preguntan por algo que no está acá"></textarea></label>
+      <label><span class="rot">Lo que el bot no tiene que decir nunca</span><textarea name="nuncaDecir" rows="2" placeholder="Ej.: no prometer entregas para el mismo día"></textarea></label>
+      <label><span class="rot">Catálogo o fotos</span><small>Link a tu catálogo, a un álbum o a tu Instagram.</small><input name="catalogo" inputmode="url"></label>
+      <div class="dos">
+        <label><span class="rot">Instagram</span><input name="instagram" placeholder="@tunegocio"></label>
+        <label><span class="rot">Web</span><input name="web" inputmode="url" placeholder="tunegocio.com.ar"></label>
+      </div>
+      <label><span class="rot">¿Qué IA querés que conteste?</span><small>La IA la pagás vos, al costo y sin recargo. Lo podés cambiar cuando quieras.</small>
+        <select name="modelo">
+          <option value="recomendado">Recomendada: la mejor redacción (cerca de $ 1 por mensaje; $ 850 a $ 1.650 cada 1.000)</option>
+          <option value="economico">Económica: más simple (cerca de $ 0,35 por mensaje; $ 320 a $ 580 cada 1.000)</option>
+        </select></label>
+      <div id="ficha-resultado" aria-live="polite"></div>
+      <p class="error" id="ficha-error" role="alert"></p>
+      <button class="btn grande" type="submit" id="ficha-guardar">Guardar y probar mi bot</button>
+      <p class="nota">Los campos con * son obligatorios. Al guardar, le hacemos unas preguntas de prueba al bot: si contesta bien, empieza a usar los datos nuevos; si no, queda como estaba y te mostramos qué falló.</p>
+    </form>
+    <div class="tarjeta" id="caja-pruebas" hidden style="margin-bottom:16px">
+      <h3 class="subtitulo">Las pruebas que le hicimos</h3>
+      <p class="paso" id="resumen-pruebas"></p>
+      <div id="lista-pruebas"></div>
+    </div>
+    <div class="tarjeta">
+      <h3 class="subtitulo">Probalo</h3>
+      <p class="paso">Escribile como si fueras un cliente. Esto no le llega a nadie.</p>
+      <div class="chat" id="chat" role="log" aria-label="Chat de prueba" aria-live="polite"></div>
+      <form class="fila-ia" id="form-ensayo"><input id="txt-ensayo" placeholder="Escribí un mensaje" autocomplete="off" aria-label="Mensaje de prueba"><button class="btn sec" type="submit" id="btn-ensayo">Enviar</button></form>
+      <button type="button" class="btn-chico" id="ensayo-borrar" style="margin-top:10px">Empezar de nuevo</button>
+    </div>
+  </section>
+
+  <!-- ---- Avisos ---- -->
+  <section id="s-avisos" class="seccion angosta" hidden>
+    <form class="tarjeta" id="form-avisos" novalidate>
+      <h2 class="titulo">Avisos</h2>
+      <p class="paso">Te mandamos un mail al instante cuando alguien pide hablar con una persona o el bot no puede contestar.</p>
+      <label class="interruptor"><input type="checkbox" role="switch" id="avisos-si"><span class="pista" aria-hidden="true"></span><span class="interruptor-texto"><b>Avisarme por mail</b><small id="avisos-estado"></small></span></label>
+      <label><span class="rot">¿A qué mail te avisamos?</span><input type="email" id="avisos-email" autocomplete="email" inputmode="email"></label>
+      <p class="error" id="avisos-error" role="alert"></p>
+      <p class="ok-linea" id="avisos-ok" aria-live="polite"></p>
+      <button class="btn grande" type="submit" id="avisos-guardar">Guardar</button>
+      <p class="nota">El mail trae un botón que te abre esa charla directamente acá, en tu panel.</p>
+    </form>
+  </section>
+
+  <p class="pie">¿Necesitás una mano? WhatsApp 11 3366-2080</p>
+</div>
+
+<!-- Confirmación (pausar el bot, etc.) -->
+<dialog id="confirmar" aria-labelledby="confirmar-titulo">
+  <h2 id="confirmar-titulo"></h2>
+  <p id="confirmar-texto"></p>
+  <div class="btns"><button class="btn" type="button" id="confirmar-si"></button><button class="btn sec" type="button" id="confirmar-no">No, dejarlo así</button></div>
+</dialog>
+
+<div class="tostada" id="tostada" role="status" aria-live="polite"></div>
+
+<script src="../config.js?v=202611142100"></script>
+<script src="panel.js?v=202611171830"></script>
+</body>
+</html>

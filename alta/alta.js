@@ -3,7 +3,9 @@
 // 2) Botón «Conectar WhatsApp»: registro insertado de Meta (código por FB.login; cuenta y número por mensaje).
 // 3) Ficha completa del negocio: se guarda sola mientras escribís; la IA puede armar un borrador desde la web o Instagram.
 // 4) El bot se arma solo, pasa 6 pruebas y el dueño lo prueba en un chat.
-// 5) El dueño lo aprueba y queda para la revisión de MyM (modo espectador). Ninguna persona de MyM configura nada.
+// 5) El dueño lo aprueba y queda para la revisión de MyM (modo espectador).
+// 17/11/2026 (Matías): quien no se lleva con la tecnología elige «Que lo arme MyM» y no configura nada; con su link,
+// MyM completa la ficha antes de conectar el WhatsApp. El pago es por transferencia.
 (function () {
   'use strict';
   const cfg = window.SITE || {};
@@ -23,6 +25,7 @@
 
   function verPaso(n) {
     ['paso1', 'paso2', 'paso3', 'paso4', 'paso5'].forEach((id, i) => $('#' + id).classList.toggle('ver', i === n - 1));
+    $('#paso-mym').classList.toggle('ver', n === 'mym');
     document.querySelectorAll('.pasos-alta li').forEach((li, i) => li.classList.toggle('si', i < n));
     window.scrollTo({ top: 0 });
   }
@@ -45,7 +48,9 @@
     if (!sesion) return verPaso(1);
     try {
       const v = await api('/api/ficha/obtener', conLlave());
-      if (!v.whatsapp || !v.whatsapp.conectado) return verPaso(2);
+      conectado = !!(v.whatsapp && v.whatsapp.conectado);
+      // Lo arma MyM: se puede completar la ficha antes de conectar el número (el número se conecta en la llamada).
+      if (!conectado && v.armadoPor !== 'mym' && !['aprobar', 'pruebas', 'revision', 'activo', 'pausado'].includes(v.estado)) return verPaso(2);
       if (['revision', 'activo'].includes(v.estado)) return mostrarListo();
       if (v.estado === 'pago') return mostrarPago();
       if (['pruebas', 'aprobar'].includes(v.estado) && v.pruebas) { mostrarPruebas(v); return verPaso(4); }
@@ -67,9 +72,9 @@
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email)) { $('#error1').textContent = 'Revisá el mail: parece que le falta algo.'; f.email.focus(); return; }
     const b = f.querySelector('button'); b.disabled = true; b.textContent = 'Guardando…'; $('#error1').textContent = '';
     try {
-      const r = await api('/api/alta', { negocio: d.negocio, contacto: d.contacto, email: d.email, celular: d.celular, plan: d.plan });
+      const r = await api('/api/alta', { negocio: d.negocio, contacto: d.contacto, email: d.email, celular: d.celular, plan: d.plan, modo: d.modo });
       sesion = { id: r.cliente, llave: r.llave }; guardarSesion(sesion);
-      verPaso(2);
+      verPaso(r.armadoPor === 'mym' ? 'mym' : 2);
     } catch (err) { $('#error1').textContent = err.message; }
     b.disabled = false; b.textContent = 'Seguir';
   });
@@ -112,15 +117,20 @@
     enviando = true; const b = $('#conectar'); b.disabled = true; b.lastChild.textContent = 'Conectando tu número…';
     try {
       const r = await api('/api/meta/registro', conLlave({ code: codigo, waba_id: datosWa.waba_id, phone_number_id: datosWa.phone_number_id, coexistencia: tipoNumero() === 'app' }));
+      conectado = true;
       $('#titulo3').textContent = `Tu WhatsApp ${r.numero || ''} quedó conectado`.replace('  ', ' ');
-      cargarFicha(await api('/api/ficha/obtener', conLlave())); verPaso(3);
+      await retomar();
     } catch (err) { $('#error2').textContent = err.message; }
     enviando = false; b.disabled = false; b.lastChild.textContent = 'Conectar WhatsApp';
   }
 
   // ---------- Paso 3: la ficha, con guardado automático ----------
   const ficha = $('#ficha');
+  let conectado = false;
   function cargarFicha(v) {
+    $('#falta-wa').hidden = conectado;
+    $('#sello3').style.display = conectado ? '' : 'none';
+    if (!conectado) $('#titulo3').textContent = `Contanos de ${v.negocio || 'tu negocio'}`;
     const datos = { ...(v.borrador || {}), ...(v.ficha || {}) };
     for (const [k, val] of Object.entries(datos)) if (ficha.elements[k]) ficha.elements[k].value = val;
     const link = `${location.origin}${location.pathname}#c=${encodeURIComponent(sesion.id)}&k=${encodeURIComponent(sesion.llave)}`;
@@ -217,6 +227,11 @@
     setTimeout(esperarPago, 3000);
   }
   if (new URLSearchParams(location.search).get('pago') === 'error') $('#estado').innerHTML = '<p class="aviso">El pago no se completó. Podés intentarlo de nuevo con el botón de abajo.</p>';
+
+  // Promo del Paquete completo (instalación $ 64.950 + IVA hasta el 30/11/2026 inclusive), igual que en la web.
+  if (Date.now() < Date.UTC(2026, 11, 1, 3)) $('#op-paquete').textContent = 'Paquete completo: $ 64.950 + IVA de instalación (hasta el 30/11) y $ 64.900 + IVA por mes';
+  $('#adelantar').addEventListener('click', (e) => { e.preventDefault(); retomar(); });
+  $('#ir-conectar').addEventListener('click', (e) => { e.preventDefault(); verPaso(2); });
 
   retomar();
 })();
