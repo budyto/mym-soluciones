@@ -71,6 +71,15 @@ h3{font:800 17px "Archivo",sans-serif;margin:0}
 .tag{display:inline-block;font-size:11px;font-weight:700;border-radius:999px;padding:2px 8px;background:#eef3ff;color:var(--azul);white-space:nowrap}
 .tag.rojo{background:#ffe9ec;color:var(--rojo)}
 .tag.verde{background:#e3f7f1;color:var(--verde)}
+.cita{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-top:1px solid #eef2fb}
+.cita:first-child{border-top:0}
+.cita .h{font:800 15px Archivo,system-ui,sans-serif;min-width:52px;color:var(--azul)}
+.cita .tx{flex:1;min-width:0}.cita .tx b{display:block}.cita .tx small{color:var(--gris);display:block;overflow:hidden;text-overflow:ellipsis}
+.cita .acc{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.cita.paso{opacity:.55}
+.ia-num{font:900 30px Archivo,system-ui,sans-serif;letter-spacing:-.02em}
+.ia-fila{display:grid;grid-template-columns:1fr auto;gap:8px;font-size:13px;padding:4px 0;border-top:1px solid #eef2fb}
+.ia-fila:first-child{border-top:0}
 /* Embudo */
 .emb{display:grid;grid-template-columns:110px 1fr 28px;gap:8px;align-items:center;font-size:13px;margin:6px 0}
 .emb .barra{height:10px;border-radius:999px;background:#eef3ff;overflow:hidden}
@@ -129,6 +138,10 @@ h3{font:800 17px "Archivo",sans-serif;margin:0}
     <div class="tablero">
       <div>
         <section class="caja">
+          <div class="cab"><h3>Hoy</h3><span class="grow"></span><small style="color:var(--gris)">agenda de diagnósticos</small></div>
+          <div id="hoyAgenda"><p class="vacio">Cargando…</p></div>
+        </section>
+        <section class="caja">
           <div class="cab"><h3>Para atender ahora</h3><span class="grow"></span><a href="whatsapp.html">Abrir el WhatsApp →</a></div>
           <div id="atender"><p class="vacio">Cargando…</p></div>
         </section>
@@ -143,6 +156,10 @@ h3{font:800 17px "Archivo",sans-serif;margin:0}
         </section>
       </div>
       <div>
+        <section class="caja">
+          <div class="cab"><h3>IA este mes</h3><span class="grow"></span><small style="color:var(--gris)" id="iaMes"></small></div>
+          <div id="ia"><p class="vacio">Cargando…</p></div>
+        </section>
         <section class="caja">
           <div class="cab"><h3>Embudo</h3><span class="grow"></span><small style="color:var(--gris)">últimas 300 charlas</small></div>
           <div id="embudo"><p class="vacio">Cargando…</p></div>
@@ -258,11 +275,79 @@ h3{font:800 17px "Archivo",sans-serif;margin:0}
       : '<p class="vacio">Sin datos del embudo.</p>';
   }
 
+  // ---------- Hoy: los diagnósticos del día (Google Calendar, sólo lectura) ----------
+  // El robot agenda con el link de citas de Google Calendar (SOL_AGENDA_URL): cada reserva cae como un evento en
+  // el calendario de la cuenta dueña de esa agenda. Acá se leen los eventos de hoy del calendario principal de la
+  // cuenta con la que se conecta (hay que conectar la cuenta dueña de la agenda).
+  let charlasCache = [], ultimosEventos = null;
+  const horaCorta = (iso) => new Date(iso).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+  function charlaDeEvento(ev) {
+    const t = [ev.description || '', ev.summary || '', ...(ev.attendees || []).map((a) => (a.displayName || '') + ' ' + (a.email || ''))].join(' ');
+    const digitos = (t.match(/\+?\d[\d\s-]{8,}\d/g) || []).map((x) => x.replace(/\D/g, '').slice(-10));
+    return charlasCache.find((c) => digitos.some((d) => d && String(c.telefono || '').endsWith(d)))
+      || charlasCache.find((c) => { const m = ((c.datos || {}).mail || '').toLowerCase(); return m && t.toLowerCase().includes(m); });
+  }
+  function pintarAgenda(eventos) {
+    ultimosEventos = eventos;
+    const ahora = Date.now();
+    const lista = eventos.filter((e) => e.start && (e.start.dateTime || e.start.date) && e.status !== 'cancelled');
+    $('#hoyAgenda').innerHTML = lista.length ? lista.map((e) => {
+      const ini = e.start.dateTime || e.start.date, fin = (e.end && (e.end.dateTime || e.end.date)) || ini;
+      const meet = e.hangoutLink || ((e.conferenceData || {}).entryPoints || []).filter((p) => p.entryPointType === 'video').map((p) => p.uri)[0] || '';
+      const quien = (e.attendees || []).filter((a) => !a.self && !a.organizer).map((a) => a.displayName || a.email).join(', ');
+      const c = charlaDeEvento(e);
+      return '<div class="cita' + (new Date(fin).getTime() < ahora ? ' paso' : '') + '"><span class="h">' + (e.start.dateTime ? esc(horaCorta(ini)) : 'Todo el día') + '</span><span class="tx"><b>' + esc(e.summary || '(sin título)') + '</b>'
+        + (quien ? '<small>' + esc(quien) + '</small>' : '')
+        + '<span class="acc">' + (meet ? '<a class="btn" href="' + esc(meet) + '" target="_blank" rel="noopener">🎥 Entrar a la videollamada</a>' : '')
+        + (c ? '<a class="btn gris" href="' + linkCharla(c) + '">💬 Abrir la charla</a>' : '')
+        + (e.htmlLink ? '<a class="btn gris" href="' + esc(e.htmlLink) + '" target="_blank" rel="noopener">Ver en Calendar</a>' : '') + '</span></span></div>';
+    }).join('') : '<p class="vacio">📅 Hoy no hay diagnósticos agendados.</p>';
+  }
+  async function cargarAgenda(token) {
+    const t = token || ACCESO.tokenCalendarioGuardado();
+    if (!t) {
+      $('#hoyAgenda').innerHTML = '<p class="vacio" style="margin-bottom:10px">Conectá el Google Calendar de la cuenta que tiene la agenda de diagnósticos (sólo lectura; el permiso dura una hora y se vuelve a pedir con un clic).</p><button class="btn" id="conectarCal" type="button">📅 Conectar Google Calendar</button>';
+      return;
+    }
+    const d0 = new Date(); d0.setHours(0, 0, 0, 0); const d1 = new Date(d0.getTime() + 86400000);
+    const u = 'https://www.googleapis.com/calendar/v3/calendars/primary/events?singleEvents=true&orderBy=startTime&maxResults=50&timeMin=' + encodeURIComponent(d0.toISOString()) + '&timeMax=' + encodeURIComponent(d1.toISOString());
+    try {
+      const r = await fetch(u, { headers: { Authorization: 'Bearer ' + t } });
+      if (r.status === 401) { try { sessionStorage.removeItem('cal_token'); } catch (e) {} return cargarAgenda(''); }
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      pintarAgenda((await r.json()).items || []);
+    } catch (e) { $('#hoyAgenda').innerHTML = '<p class="vacio">No se pudo leer el calendario: ' + esc(e.message) + '.</p>'; }
+  }
+  $('#hoyAgenda').addEventListener('click', async (e) => {
+    if (!e.target.closest('#conectarCal')) return;
+    try { cargarAgenda(await ACCESO.conectarCalendario()); }
+    catch (er) { if (!/popup-closed|cancelled-popup/.test(er && er.code)) $('#hoyAgenda').insertAdjacentHTML('beforeend', '<p class="vacio">No se pudo conectar: ' + esc(er.message || er) + '</p>'); }
+  });
+
+  // ---------- IA este mes (medido por tokens en el server de MyM) ----------
+  const usd = (n) => 'US$ ' + Number(n || 0).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  async function cargarIa() {
+    try {
+      const j = await pedir('/api/ventas-sol/ia-consumo');
+      const e = j.este || {}, a = j.anterior || {};
+      const nombreMes = (m) => { const [y, mm] = String(m).split('-'); const t = new Date(Date.UTC(+y, +mm - 1, 15)).toLocaleDateString('es-AR', { month: 'long' }); return t.charAt(0).toUpperCase() + t.slice(1); };
+      $('#iaMes').textContent = nombreMes(j.mes);
+      const filas = (e.por_origen || []).slice(0, 6);
+      $('#ia').innerHTML = '<div class="ia-num">' + usd(e.soluciones_usd) + '</div>'
+        + '<p class="sub" style="margin:0 0 8px;font-size:13px">Robot de WhatsApp de Soluciones: ' + (e.soluciones_llamadas || 0) + ' respuestas y audios. ' + nombreMes(j.mes_anterior) + ': ' + usd(a.soluciones_usd) + '.</p>'
+        + (filas.length ? '<details><summary style="cursor:pointer;color:var(--azul);font-weight:700;font-size:13px">Todo MyM: ' + usd(e.total_usd) + ' en ' + (e.llamadas || 0) + ' pedidos</summary>'
+          + filas.map((f) => '<div class="ia-fila"><span>' + esc(f.nombre) + ' · ' + f.llamadas + '</span><b>' + usd(f.usd) + '</b></div>').join('') + '</details>' : '')
+        + '<p class="sub" style="margin:8px 0 0;font-size:12px">Medido: los tokens de cada respuesta por el precio de lista. Se cuenta desde el 17/11/2026; la factura de Google puede diferir unos centavos.</p>';
+    } catch (er) { $('#ia').innerHTML = '<p class="vacio">' + (/404/.test(er.message) ? 'El contador se prende cuando se publique en el server de MyM.' : 'No se pudo leer el gasto de IA: ' + esc(er.message) + '.') + '</p>'; }
+  }
+
   async function cargar() {
     try {
       const [j, k] = await Promise.all([pedir('/api/ventas-sol/resumen'), pedir('/api/ventas-sol/charlas')]);
       if (j.etapas) ETAPAS = j.etapas;
       const res = j.resumen || {};
+      charlasCache = k.charlas || [];
+      if (ultimosEventos) pintarAgenda(ultimosEventos);   // la agenda puede llegar antes que las charlas
       pintar(res, k.charlas || [], !!(j.robot_pausado ?? res.robot_pausado));
       $('#aviso').hidden = true;
     } catch (e) {
@@ -278,13 +363,14 @@ h3{font:800 17px "Archivo",sans-serif;margin:0}
       $('#fecha').textContent = new Date().toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' });
       $('#correo').textContent = u.email;
       if (u.foto) { $('#foto').src = u.foto; $('#foto').hidden = false; }
-      cargar();
+      cargar(); cargarAgenda(); cargarIa();
     },
     alSalir: mostrarEntrada
   });
   $('#google').addEventListener('click', () => { $('#msg').textContent = ''; ACCESO.entrar(); });
   $('#salir').addEventListener('click', () => ACCESO.salir(''));
-  setInterval(() => { if (!document.hidden && !$('#panel').hidden) cargar(); }, 60000);
+  setInterval(() => { if (!document.hidden && !$('#panel').hidden) { cargar(); cargarIa(); } }, 60000);
+  setInterval(() => { if (!document.hidden && !$('#panel').hidden && ACCESO.tokenCalendarioGuardado()) cargarAgenda(); }, 300000);
 })();
 </script>
 </body></html>

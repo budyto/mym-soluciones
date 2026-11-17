@@ -45,7 +45,25 @@
     return u.getIdToken();
   }
 
-  function salir(mensaje) { if (auth) auth.signOut(); cb.alSalir(mensaje || ''); }
+  function salir(mensaje) { if (auth) auth.signOut(); try { sessionStorage.removeItem('cal_token'); } catch (e) {} cb.alSalir(mensaje || ''); }
 
-  window.ACCESO = { iniciar, entrar, salir, token };
+  // Google Calendar (17/11/2026, Matías: «agenda de diagnósticos del día»). Permiso de SÓLO LECTURA, pedido aparte
+  // con un botón (no al entrar). Google da un token que dura 1 hora: se guarda en esta pestaña (sessionStorage) y
+  // después se vuelve a pedir con un clic. No se guarda en ningún server.
+  const SCOPE_CAL = 'https://www.googleapis.com/auth/calendar.readonly';
+  function tokenCalendarioGuardado() {
+    try { const t = JSON.parse(sessionStorage.getItem('cal_token') || 'null'); return t && t.vence > Date.now() + 60000 ? t.token : ''; } catch (e) { return ''; }
+  }
+  async function conectarCalendario() {
+    const p = new firebase.auth.GoogleAuthProvider();
+    p.addScope(SCOPE_CAL);
+    p.setCustomParameters({ prompt: 'consent', login_hint: (auth.currentUser && auth.currentUser.email) || '' });
+    const r = await auth.currentUser.reauthenticateWithPopup(p);
+    const t = r && r.credential && r.credential.accessToken;
+    if (!t) throw new Error('Google no dio permiso para leer el calendario');
+    try { sessionStorage.setItem('cal_token', JSON.stringify({ token: t, vence: Date.now() + 55 * 60000 })); } catch (e) {}
+    return t;
+  }
+
+  window.ACCESO = { iniciar, entrar, salir, token, conectarCalendario, tokenCalendarioGuardado };
 })();
