@@ -127,6 +127,7 @@ input,select{ font:inherit; color:var(--fg); background:#fff; border:1px solid v
       <div class="ajustes">
         <label>Tope de mails por día<input id="aTope" type="number" min="1" max="300"></label>
         <label>Casilla para las bajas<input id="aBaja" type="email"></label>
+        <label>Cómo mandás<select id="aModo"><option value="webmail">Webmail de Hostinger (copiar y pegar)</option><option value="correo">Mi programa de correo con info@ (Gmail, Outlook)</option></select></label>
       </div>
       <p class="muted small">La casilla de bajas es la que aparece en el pie de cada mail («date de baja con un clic»). Tiene que existir y alguien tiene que leerla: cada pedido de baja se marca acá con «Pidió la baja» y no se le escribe más.</p>
       <div class="fila"><button class="btn gold sm" type="button" id="guardarAjustes">Guardar</button></div>
@@ -153,7 +154,7 @@ var ESTADOS = [['pendiente','Para mandar'],['enviado','Mandado'],['respondio','R
 var API = String((window.SITE || {}).ventasApi || '').replace(/\/+$/, '');
 var WA = String((window.SITE || {}).whatsapp || '5491133662080');
 var ADMIN = ((window.SITE || {}).adminEmails || []).map(function(e){ return String(e).toLowerCase(); });
-var S = { items:[], sel:null, filtro:'pendiente', rubro:'', q:'', ajustes:{ tope:30, baja:'info@mymsoluciones.online' }, mostrar:150, seg:{}, segOk:null };
+var S = { items:[], sel:null, filtro:'pendiente', rubro:'', q:'', ajustes:{ tope:25, baja:'info@mymsoluciones.online', modo:'webmail' }, mostrar:150, seg:{}, segOk:null };
 var fs, auth, FV, quien = '';
 
 var $ = function(s, r){ return (r || document).querySelector(s); };
@@ -278,13 +279,14 @@ function ficha(){
         + '<button class="btn sm" type="button" data-estado="seg' + paraSeguir(i) + '">✓ Ya lo mandé</button></div></section>' : '')
     + '<section class="panel"><h2>Mandar</h2>'
     + (i.estado === 'baja' ? '<div class="aviso ojo">Pidió la baja: no se le escribe más (Ley 25.326, art. 27).</div>' : '')
-    + (lleno && i.estado === 'pendiente' ? '<div class="aviso ojo">Ya se mandaron ' + hoy + ' hoy, el tope del día. Seguí mañana: mandar muchos de golpe desde una casilla nueva la manda a spam.</div>' : '')
-    + '<p class="small muted">Se manda de a uno desde tu correo. «Abrir en mi correo» arma el mail con el asunto y el texto; revisalo, mandalo y después tocá «Ya lo mandé».</p>'
-    + '<div class="fila">'
-    + '<a class="btn gold" id="abrirCorreo" href="' + esc(mailto(i)) + '"' + (i.estado === 'baja' ? ' hidden' : '') + '>✉️ Abrir en mi correo</a>'
-    + '<button class="btn sm" type="button" data-copiar="asunto">Copiar asunto</button>'
-    + '<button class="btn sm" type="button" data-copiar="texto">Copiar texto</button>'
-    + '<button class="btn sm" type="button" data-copiar="mail">Copiar mail</button>'
+    + (lleno && i.estado === 'pendiente' ? '<div class="aviso ojo">Ya se mandaron ' + hoy + ' hoy, el tope del día. Seguí mañana: mandar muchos de golpe desde info@ la puede mandar a spam, y es la casilla de los clientes.</div>' : '')
+    + (S.ajustes.modo === 'correo'
+      ? '<p class="small muted">Se manda de a uno desde <b>info@mymsoluciones.online</b>. «Abrir en mi correo» arma el mail con el asunto y el texto: fijate que el remitente sea info@, mandalo y después tocá «Ya lo mandé».</p>'
+        + '<div class="fila"><a class="btn gold" id="abrirCorreo" href="' + esc(mailto(i)) + '"' + (i.estado === 'baja' ? ' hidden' : '') + '>✉️ Abrir en mi correo</a>'
+        + '<button class="btn sm" type="button" data-copiar="asunto">Copiar asunto</button><button class="btn sm" type="button" data-copiar="texto">Copiar texto</button><button class="btn sm" type="button" data-copiar="mail">Copiar mail</button>'
+      : '<p class="small muted">Se manda de a uno desde <b>info@mymsoluciones.online</b>, en el webmail de Hostinger. Abrilo una vez, tocá «Redactar» y pegá en orden: 1, 2 y 3. Mandalo y después tocá «Ya lo mandé».</p>'
+        + '<div class="fila"' + (i.estado === 'baja' ? ' hidden' : '') + '><a class="btn sm" href="https://mail.hostinger.com/" target="_blank" rel="noopener">Abrir el webmail ↗</a>'
+        + '<button class="btn gold sm" type="button" data-copiar="mail">1 · Copiar para</button><button class="btn gold sm" type="button" data-copiar="asunto">2 · Copiar asunto</button><button class="btn gold sm" type="button" data-copiar="texto">3 · Copiar texto</button>')
     + '<a class="btn sm" href="' + esc(i.link.replace('?o=mail', '')) + '" target="_blank" rel="noopener">Ver su simulación ↗</a>'
     + '</div><div class="fila" style="margin-top:12px">'
     + (i.estado !== 'enviado' && i.estado !== 'baja' ? '<button class="btn sm" type="button" data-estado="enviado">✓ Ya lo mandé</button>' : '')
@@ -296,7 +298,8 @@ function ficha(){
     + '</div></section>'
     + '<section class="panel"><h2>Así le llega</h2><p class="small muted" style="margin:0"><b>Asunto:</b> ' + esc(i.asunto) + '</p>'
     + '<iframe class="vista" title="Vista del mail" sandbox="allow-popups allow-popups-to-escape-sandbox" id="vistaMail"></iframe></section>';
-  $('#vistaMail').srcdoc = '<base target="_blank">' + conBaja(i.html);
+  // Se manda el texto (copiar y pegar o mailto), así que se muestra el texto tal cual le llega.
+  $('#vistaMail').srcdoc = '<base target="_blank"><div style="white-space:pre-wrap;font:15px/1.55 Arial,sans-serif;color:#1b2333;margin:18px;max-width:600px">' + esc(conBaja(i.texto)) + '</div>';
 }
 
 function mailto(i){
@@ -341,7 +344,8 @@ $('#ficha').addEventListener('click', function(e){
   var c = e.target.closest('[data-copiar]');
   if (c){
     var t = c.dataset.copiar === 'asunto' ? i.asunto : c.dataset.copiar === 'mail' ? i.mail : conBaja(i.texto);
-    navigator.clipboard.writeText(t).then(function(){ toast('Copiado'); }, function(){ toast('No se pudo copiar'); });
+    var que = { mail:'el mail del comercio', asunto:'el asunto', texto:'el texto' }[c.dataset.copiar] || '';
+    navigator.clipboard.writeText(t).then(function(){ toast('Copiado ' + que); }, function(){ toast('No se pudo copiar'); });
     return;
   }
   var s = e.target.closest('[data-estado]');
@@ -352,13 +356,14 @@ $('#ficha').addEventListener('click', function(e){
 });
 $('#verAjustes').addEventListener('click', function(){
   var p = $('#panelAjustes'); p.hidden = !p.hidden;
-  $('#aTope').value = S.ajustes.tope; $('#aBaja').value = S.ajustes.baja;
+  $('#aTope').value = S.ajustes.tope; $('#aBaja').value = S.ajustes.baja; $('#aModo').value = S.ajustes.modo;
 });
 $('#guardarAjustes').addEventListener('click', function(){
-  var tope = Math.max(1, Math.min(300, parseInt($('#aTope').value, 10) || 30));
+  var tope = Math.max(1, Math.min(300, parseInt($('#aTope').value, 10) || 25));
+  var modo = $('#aModo').value === 'correo' ? 'correo' : 'webmail';
   var baja = $('#aBaja').value.trim().toLowerCase();
   if (!/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/.test(baja)) return toast('Revisá la casilla de bajas');
-  ajustesDoc().set({ tope:tope, baja:baja, cambiadoEn:FV.serverTimestamp(), cambiadoPor:quien }, { merge:true })
+  ajustesDoc().set({ tope:tope, baja:baja, modo:modo, cambiadoEn:FV.serverTimestamp(), cambiadoPor:quien }, { merge:true })
     .then(function(){ toast('Ajustes guardados'); $('#panelAjustes').hidden = true; }, function(e){ toast('No se pudo guardar: ' + e.message); });
 });
 $('#bajarCsv').addEventListener('click', bajarCsv);
@@ -367,7 +372,7 @@ $('#bajarCsv').addEventListener('click', bajarCsv);
 function escuchar(){
   ajustesDoc().onSnapshot(function(d){
     var a = d.exists ? d.data() : {};
-    S.ajustes = { tope: a.tope || 30, baja: a.baja || 'info@mymsoluciones.online' }; render();
+    S.ajustes = { tope: a.tope || 25, baja: a.baja || 'info@mymsoluciones.online', modo: a.modo === 'correo' ? 'correo' : 'webmail' }; render();
   }, function(){});
   col().onSnapshot(function(qs){
     S.items = qs.docs.map(function(d){ return Object.assign({ id:d.id }, d.data()); })
