@@ -190,7 +190,7 @@ function pieLegal(){
     + '\nMyM CRÉDITOS S.A. (MyM Soluciones) · CUIT 30-71917577-1 · Cañada de Gómez 1411, PB, dto. 2, CABA. Podés pedir acceso, corrección o supresión de tus datos (Ley 25.326).';
 }
 function textoSeguimiento(i, cual){
-  var link = i.link.replace('?o=mail', '?o=seguimiento');
+  var link = i.link;
   if (cual === '24') return 'Hola, equipo de ' + i.nombre + ':\n\nTe escribí ayer con la simulación de cómo podrían verse las redes de ' + i.nombre + '. ¿Pudieron mirarla?\n\n'
     + 'Si quieren, lo charlamos 10 minutos por WhatsApp y les cuento cómo sería con su contenido real: ' + linkWa(i) + '\n\nLa simulación: ' + link + pieLegal();
   return 'Hola, equipo de ' + i.nombre + ':\n\nÚltimo mensaje, para no molestar: la simulación de las redes de ' + i.nombre + ' sigue acá: ' + link + '\n\n'
