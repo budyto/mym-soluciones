@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Mails de prospección · Panel · MyM Soluciones</title>
+<title>Prospección · Panel · MyM Soluciones</title>
 <link rel="icon" href="../img/favicon-2.png" type="image/png">
 <!-- Mails de prospección (17/11/2026, Matías: «tengo que poder acceder desde el panel de admin y sólo puede tener acceso
      quien tenga el mail de admin»). La tanda de comercios con su simulación y su mail listo para mandar.
@@ -80,6 +80,12 @@ input,select{ font:inherit; color:var(--fg); background:#fff; border:1px solid v
 .emb b{ text-align:right; }
 .seg{ display:inline-block; padding:1px 8px; border-radius:999px; font-size:11px; font-weight:700; background:#fff8ec; color:var(--warn); margin-right:4px; }
 .est.cliente{ background:#e6f6f1; color:var(--ok); }
+.tel{ display:inline-block; padding:1px 8px; border-radius:999px; font-size:11px; font-weight:700; background:#eef3ff; color:var(--gold); margin-right:4px; }
+.guion{ background:var(--panel2); border-radius:12px; padding:12px 14px; font-size:14px; line-height:1.55; margin:10px 0; }
+.guion p{ margin:6px 0; } .guion b{ color:var(--fg); }
+.hist{ font-size:13px; color:var(--muted); margin:8px 0 0; padding-left:18px; }
+.tabla{ width:100%; border-collapse:collapse; font-size:13px; margin-top:8px; } .tabla th,.tabla td{ border-bottom:1px solid var(--line); padding:6px 6px; text-align:right; } .tabla th:first-child,.tabla td:first-child{ text-align:left; }
+.tabla th{ color:var(--muted); font-weight:700; }
 </style>
 </head>
 <body>
@@ -98,8 +104,9 @@ input,select{ font:inherit; color:var(--fg); background:#fff; border:1px solid v
 
 <div id="app" hidden>
 <header class="top">
-  <div class="fila"><a class="btn sm" href="./">← Panel</a><h1>Mails de <span>prospección</span></h1></div>
+  <div class="fila"><a class="btn sm" href="./">← Panel</a><h1>Prospección: <span>mails, llamadas y WhatsApp</span></h1></div>
   <div class="fila">
+    <button class="btn sm" type="button" id="verResultados">📊 Resultados</button>
     <button class="btn sm" type="button" id="verAjustes">⚙️ Ajustes</button>
     <button class="btn sm" type="button" id="bajarCsv">Bajar la lista (CSV)</button>
   </div>
@@ -132,6 +139,7 @@ input,select{ font:inherit; color:var(--fg); background:#fff; border:1px solid v
       <p class="muted small">La casilla de bajas es la que aparece en el pie de cada mail («date de baja con un clic»). Tiene que existir y alguien tiene que leerla: cada pedido de baja se marca acá con «Pidió la baja» y no se le escribe más.</p>
       <div class="fila"><button class="btn gold sm" type="button" id="guardarAjustes">Guardar</button></div>
     </section>
+    <section class="panel" id="panelResultados" hidden></section>
     <div class="vacio" id="vacio">Elegí un comercio de la lista.</div>
     <div id="ficha"></div>
   </main>
@@ -219,10 +227,132 @@ function pintarEmbudo(){
   $('#embudoNota').textContent = S.segOk === false ? 'Las visitas y los clics se van a ver cuando se publique el seguimiento en el server de MyM.' : '';
 }
 
+/* ---------- llamadas y WhatsApp (17/11/2026, Mati Jefe) ----------
+   Orden: mail → a las 48 h, llamada (primero los que abrieron la simulación o tocaron WhatsApp) → si en la llamada
+   dicen que sí, WhatsApp con el link desde el número 2 (sin WhatsApp en frío: con el «sí» queda anotado).
+   Ley 26.951 (No Llame): antes de llamar se cruza el número con el registro; si piden que no los llamemos, no se
+   los llama más. Todo queda en la misma ficha (llamadas, resultado, próxima llamada, WhatsApp, reunión). */
+var RESULTADOS = { no_atendio:'No atendió', volver:'Volver a llamar', interesado:'Interesado', no_interesa:'No le interesa', no_llamar:'No llamar más', no_llame:'Está en No Llame' };
+var TOPE_WA = 10;   // contactos manuales por día desde el número 2 (regla del puente)
+function digitos(t){ return String(t || '').replace(/\D/g, ''); }
+// Teléfono argentino → número nacional de 10 dígitos (área + número, sin 0 ni 15). '' si no se puede.
+function nacional(t){
+  var d = digitos(t);
+  if (d.indexOf('54') === 0) d = d.slice(2);
+  if (d.charAt(0) === '9' && d.length === 11) d = d.slice(1);
+  if (d.charAt(0) === '0') d = d.slice(1);
+  if (d.length === 12 && d.slice(2, 4) === '15') d = d.slice(0, 2) + d.slice(4);       // 11 15 xxxx xxxx
+  if (d.length === 12 && d.slice(3, 5) === '15') d = d.slice(0, 3) + d.slice(5);       // 3 dígitos de área
+  if (d.length === 8) d = '11' + d;                                                    // CABA sin área
+  return d.length === 10 ? d : '';
+}
+function telLink(i){ var n = nacional(i.telefono); return n ? 'tel:+54' + n : ''; }
+function waLink(i, texto){ var n = nacional(i.telefono); return n ? 'https://wa.me/549' + n + '?text=' + encodeURIComponent(texto) : ''; }
+function horasDesdeEnvio(i){ return i.enviadoEn ? horasDesde(i.enviadoEn) : 0; }
+function interes(i){ var g = seg(i); return (g.escribio ? 4 : 0) + ((g.whatsapp || 0) > 0 ? 2 : 0) + ((g.visitas || 0) > 0 ? 1 : 0) + (i.estado === 'respondio' ? 3 : 0); }
+function llamadoHoy(i){ return i.llamadaUltima && diaArg(i.llamadaUltima) === hoyArg(); }
+function paraLlamar(i){
+  if (['enviado', 'respondio'].indexOf(i.estado) < 0 || !nacional(i.telefono) || i.noLlamar) return false;
+  if (horasDesdeEnvio(i) < 48 || llamadoHoy(i)) return false;
+  if (['no_interesa', 'no_llamar', 'no_llame'].indexOf(i.llamadaResultado) >= 0) return false;
+  if (i.llamadaResultado === 'interesado') return !i.waEnviadoEn;                     // falta mandarle el WhatsApp
+  if (i.llamadaProxima && new Date(i.llamadaProxima) > new Date()) return false;
+  return true;
+}
+function waHoy(){ var h = hoyArg(); return S.items.filter(function(i){ return i.waEnviadoEn && diaArg(i.waEnviadoEn) === h; }).length; }
+function guion(i){
+  var dia = i.enviadoEn ? fecha(i.enviadoEn).slice(0, 5) : '';
+  return '<div class="guion"><p><b>1.</b> «Hola, ¿hablo con ' + esc(i.nombre) + '? Te llamo de <b>MyM Soluciones</b>, una empresa dedicada a potenciar y automatizar procesos de negocios.»</p>'
+    + '<p><b>2.</b> «Te mandamos un mail' + (dia ? ' el ' + dia : '') + ' con una simulación de cómo podrían verse sus redes y su web. ¿Pudieron verla?»</p>'
+    + '<p><b>Si la vio:</b> «¿Qué te pareció? La idea es que cada consulta de Instagram termine sola en tu WhatsApp. ¿Te la mando por WhatsApp así la tenés a mano?»</p>'
+    + '<p><b>Si no la vio:</b> «Te la mando por WhatsApp así la mirás en dos minutos, ¿te parece?»</p>'
+    + '<p><b>Si no le interesa:</b> «Perfecto, gracias por tu tiempo. ¿Preferís que no te volvamos a llamar?» (si dice que sí → «No llamar más»).</p>'
+    + '<p class="small muted"><b>Si pregunta de dónde sacamos el número:</b> «Está publicado ' + esc(i.mailFuente === 'web' ? 'en tu web' : 'en un mapa público') + '.»</p></div>';
+}
+function textoWa(i){
+  return 'Hola, equipo de ' + i.nombre + '. Te escribo de MyM Soluciones, recién hablamos por teléfono. Te paso la simulación que les armamos: '
+    + String(i.link || '').replace('?o=mail', '') + ' Cualquier duda, escribime por acá. ¡Gracias!';
+}
+function panelLlamada(i){
+  if (['enviado', 'respondio', 'cliente'].indexOf(i.estado) < 0) return '';
+  if (!nacional(i.telefono)) return '<section class="panel"><h2>📞 Llamada</h2><p class="muted small">No tiene un teléfono publicado que se pueda usar' + (i.telefono ? ' (figura «' + esc(i.telefono) + '»)' : '') + '.</p></section>';
+  var hist = (i.llamadas || []).slice().reverse().map(function(l){ return '<li>' + esc(fecha(l.fecha)) + ' · <b>' + esc(RESULTADOS[l.resultado] || l.resultado) + '</b>' + (l.nota ? ' · ' + esc(l.nota) : '') + (l.quien ? ' <span class="muted">(' + esc(l.quien) + ')</span>' : '') + '</li>'; }).join('');
+  var faltan = horasDesdeEnvio(i) < 48 ? Math.ceil(48 - horasDesdeEnvio(i)) : 0;
+  var wa = i.llamadaResultado === 'interesado'
+    ? '<div class="panel" style="margin-top:12px;background:#f7fbf9"><h3 style="margin:0 0 6px">💬 WhatsApp (dijo que sí en la llamada)</h3>'
+      + (i.waEnviadoEn ? '<p class="small">✅ Mandado el ' + esc(fecha(i.waEnviadoEn)) + (i.waEnviadoPor ? ' por ' + esc(i.waEnviadoPor) : '') + '.</p>'
+        : '<p class="small muted">Abrilo desde el WhatsApp del <b>número 2</b> (11 3358-8684). Hoy van ' + waHoy() + ' de ' + TOPE_WA + '.</p>'
+          + '<div class="fila"><a class="btn gold sm" href="' + esc(waLink(i, textoWa(i))) + '" target="_blank" rel="noopener">Abrir WhatsApp con el mensaje</a>'
+          + '<button class="btn sm" type="button" data-wa="enviado">✓ Ya se lo mandé</button></div>')
+      + '</div>' : '';
+  return '<section class="panel"><h2>📞 Llamada</h2>'
+    + '<div class="aviso">Antes de llamar: el número no tiene que estar en el <b>Registro No Llame</b> (Ley 26.951). Llamá en días hábiles, en horario de comercio, decí quién sos y de dónde sacamos el dato.</div>'
+    + (faltan ? '<p class="small muted">El mail salió hace menos de 48 h: conviene esperar ' + faltan + ' h más.</p>' : '')
+    + '<div class="fila" style="margin-top:10px"><a class="btn gold" href="' + esc(telLink(i)) + '">📞 Llamar al ' + esc(i.telefono) + '</a>'
+    + '<a class="btn sm" href="' + esc(String(i.link || '').replace('?o=mail', '')) + '" target="_blank" rel="noopener">Ver su simulación ↗</a></div>'
+    + guion(i)
+    + '<label>Nota de la llamada<input id="notaLlamada" type="text" placeholder="Con quién hablaste, qué te dijo…"></label>'
+    + '<div class="fila" style="margin-top:8px">' + Object.keys(RESULTADOS).map(function(k){ return '<button class="btn sm" type="button" data-llamada="' + k + '">' + esc(RESULTADOS[k]) + '</button>'; }).join('') + '</div>'
+    + '<label style="margin-top:8px;max-width:260px">Volver a llamar el<input id="proximaLlamada" type="date"></label>'
+    + (hist ? '<ul class="hist">' + hist + '</ul>' : '')
+    + wa
+    + '<div class="fila" style="margin-top:12px">' + (i.reunionEn ? '<span class="small">📅 Reunión anotada el ' + esc(fecha(i.reunionEn)) + '</span>' : '<button class="btn sm" type="button" data-reunion="1">📅 Reunión agendada</button>') + '</div>'
+    + '</section>';
+}
+function anotarLlamada(resultado){
+  var i = sel(); if (!i) return;
+  var nota = ($('#notaLlamada') || {}).value || '', prox = ($('#proximaLlamada') || {}).value || '';
+  if (resultado === 'volver' && !prox){ var d = new Date(Date.now() + 2 * 86400e3); prox = d.toISOString().slice(0, 10); }
+  var d2 = { llamadas: FV.arrayUnion({ fecha: new Date().toISOString(), resultado: resultado, nota: nota.slice(0, 300), quien: quien }),
+    llamadaResultado: resultado, llamadaUltima: FV.serverTimestamp(), llamadaPor: quien,
+    llamadaProxima: prox ? new Date(prox + 'T12:00:00-03:00').toISOString() : FV.delete() };
+  if (resultado === 'no_llamar' || resultado === 'no_llame') d2.noLlamar = true;
+  col().doc(i.id).update(d2).then(function(){ toast('Llamada anotada: ' + RESULTADOS[resultado]); }, function(e){ toast('No se pudo guardar: ' + e.message); });
+}
+
+/* ---------- resultados por canal y por estrategia ---------- */
+var NOMBRE_ESTRATEGIA = { curiosidad:'Curiosidad', 'antes-despues':'Antes y después', reconocimiento:'Se reconocen', contraste:'Contraste', regalo:'Regalo', zona:'Barrio', tiempo:'Sin tiempo', web:'Web y redes', promo:'Promo 30/11', whatsapp:'Comentario a WhatsApp', pregunta:'Pregunta directa' };
+function contar(lista){
+  var c = { mandados:0, abrieron:0, tocaronWa:0, respondieron:0, llamados:0, atendieron:0, interesados:0, wa:0, reuniones:0, clientes:0 };
+  lista.forEach(function(i){
+    if (!i.enviadoEn) return;
+    var g = seg(i); c.mandados++;
+    if ((g.visitas || 0) > 0) c.abrieron++;
+    if ((g.whatsapp || 0) > 0) c.tocaronWa++;
+    if (g.escribio || i.estado === 'respondio') c.respondieron++;
+    if ((i.llamadas || []).length){ c.llamados++; if (i.llamadas.some(function(l){ return l.resultado !== 'no_atendio'; })) c.atendieron++; }
+    if (i.llamadaResultado === 'interesado') c.interesados++;
+    if (i.waEnviadoEn) c.wa++;
+    if (i.reunionEn) c.reuniones++;
+    if (i.estado === 'cliente') c.clientes++;
+  });
+  return c;
+}
+var pct = function(a, b){ return b ? Math.round(a * 100 / b) + ' %' : '—'; };
+function pintarResultados(){
+  var t = contar(S.items);
+  var filas = [['✉️ Mails mandados', t.mandados, ''], ['👀 Abrieron la simulación', t.abrieron, pct(t.abrieron, t.mandados)], ['💬 Tocaron WhatsApp en la simulación', t.tocaronWa, pct(t.tocaronWa, t.mandados)],
+    ['↩️ Respondieron o escribieron', t.respondieron, pct(t.respondieron, t.mandados)], ['📞 Llamados', t.llamados, pct(t.llamados, t.mandados)], ['🗣️ Atendieron', t.atendieron, pct(t.atendieron, t.llamados)],
+    ['⭐ Interesados', t.interesados, pct(t.interesados, t.atendieron)], ['📲 WhatsApp mandado (con su sí)', t.wa, pct(t.wa, t.interesados)], ['📅 Reuniones', t.reuniones, pct(t.reuniones, t.mandados)], ['🎉 Clientes', t.clientes, pct(t.clientes, t.mandados)]];
+  var porE = {};
+  S.items.forEach(function(i){ var e = i.estrategia || 'sin dato'; (porE[e] = porE[e] || []).push(i); });
+  var filasE = Object.keys(porE).map(function(e){ var c = contar(porE[e]); return [e, c]; }).filter(function(x){ return x[1].mandados; })
+    .sort(function(a, b){ return (b[1].respondieron + b[1].interesados + b[1].clientes * 3) - (a[1].respondieron + a[1].interesados + a[1].clientes * 3) || b[1].abrieron - a[1].abrieron; });
+  $('#panelResultados').innerHTML = '<div class="fila" style="justify-content:space-between"><h2>📊 Resultados</h2><button class="btn sm" type="button" id="cerrarResultados">Cerrar</button></div>'
+    + '<p class="small muted">Todo junto: mail, simulación, llamada y WhatsApp. Las visitas y los clics los mide la simulación; las llamadas y el WhatsApp, lo que anotan acá.</p>'
+    + '<table class="tabla"><thead><tr><th>Paso</th><th>Cantidad</th><th>Sobre el paso anterior</th></tr></thead><tbody>' + filas.map(function(f){ return '<tr><td>' + f[0] + '</td><td><b>' + f[1] + '</b></td><td>' + f[2] + '</td></tr>'; }).join('') + '</tbody></table>'
+    + '<h3 style="margin:18px 0 0">Por estrategia del mail</h3><p class="small muted" style="margin:2px 0 0">Ordenadas por lo que más trae (respuestas, interesados y clientes).</p>'
+    + (filasE.length ? '<table class="tabla"><thead><tr><th>Estrategia</th><th>Mandados</th><th>Abrieron</th><th>WhatsApp</th><th>Respondieron</th><th>Interesados</th><th>Clientes</th></tr></thead><tbody>'
+      + filasE.map(function(x){ var c = x[1]; return '<tr><td>' + esc(NOMBRE_ESTRATEGIA[x[0]] || x[0]) + '</td><td>' + c.mandados + '</td><td>' + c.abrieron + ' <span class="muted">(' + pct(c.abrieron, c.mandados) + ')</span></td><td>' + c.tocaronWa + '</td><td>' + c.respondieron + '</td><td>' + c.interesados + '</td><td>' + c.clientes + '</td></tr>'; }).join('')
+      + '</tbody></table>' : '<p class="muted">Todavía no hay mails mandados con estrategia.</p>')
+    + (S.segOk === false ? '<p class="small muted">Las visitas y los clics todavía no se pueden leer del server de MyM.</p>' : '');
+}
+
 function visibles(){
   var q = S.q.trim().toLowerCase();
   return S.items.filter(function(i){
-    if (S.filtro === 'seguir'){ if (!paraSeguir(i)) return false; }
+    if (S.filtro === 'llamar'){ if (!paraLlamar(i)) return false; }
+    else if (S.filtro === 'seguir'){ if (!paraSeguir(i)) return false; }
     else if (S.filtro !== 'todos' && i.estado !== S.filtro) return false;
     if (S.rubro && i.rubro !== S.rubro) return false;
     if (q && (i.nombre + ' ' + i.zona + ' ' + i.mail + ' ' + i.codigo).toLowerCase().indexOf(q) < 0) return false;
@@ -235,16 +365,19 @@ function render(){
   var hoy = mandadosHoy();
   $('#cHoy').textContent = hoy + '/' + S.ajustes.tope;
   $('#cPend').textContent = n.pendiente || 0; $('#cEnv').textContent = (n.enviado || 0) + (n.respondio || 0); $('#cResp').textContent = n.respondio || 0;
-  var nSeguir = S.items.filter(paraSeguir).length;
+  var nSeguir = S.items.filter(paraSeguir).length, nLlamar = S.items.filter(paraLlamar).length;
+  if (!$('#panelResultados').hidden) pintarResultados();
   pintarEmbudo();
-  $('#filtros').innerHTML = [['seguir','⏰ Para seguir hoy'],['todos','Todos']].concat(ESTADOS).map(function(e){
-    var c = e[0] === 'todos' ? S.items.length : e[0] === 'seguir' ? nSeguir : (n[e[0]] || 0);
+  $('#filtros').innerHTML = [['llamar','📞 Llamar hoy'],['seguir','⏰ Para seguir hoy'],['todos','Todos']].concat(ESTADOS).map(function(e){
+    var c = e[0] === 'todos' ? S.items.length : e[0] === 'seguir' ? nSeguir : e[0] === 'llamar' ? nLlamar : (n[e[0]] || 0);
     return '<button class="chip' + (S.filtro === e[0] ? ' on' : '') + '" type="button" data-f="' + e[0] + '">' + esc(e[1]) + ' · ' + c + '</button>';
   }).join('');
   var lista = visibles();
+  if (S.filtro === 'llamar') lista.sort(function(a, b){ return interes(b) - interes(a) || horasDesdeEnvio(b) - horasDesdeEnvio(a); });
   $('#items').innerHTML = lista.length ? lista.slice(0, S.mostrar).map(function(i){
     return '<button class="item' + (i.id === S.sel ? ' sel' : '') + '" type="button" data-id="' + esc(i.id) + '"><span class="l1"><b>' + esc(i.nombre) + '</b><span class="est ' + esc(i.estado) + '">' + esc(nombreEstado(i.estado)) + '</span></span>'
       + (paraSeguir(i) ? '<span class="seg">seguir ' + paraSeguir(i) + ' h</span>' : '')
+      + (S.filtro === 'llamar' ? '<span class="tel">' + (i.llamadaResultado === 'interesado' ? '💬 mandar WhatsApp' : i.llamadaResultado ? RESULTADOS[i.llamadaResultado] : '📞 ' + esc(i.telefono || '')) + '</span>' + (interes(i) ? '<span class="seg">' + (seg(i).escribio ? 'escribió' : (seg(i).whatsapp || 0) > 0 ? 'tocó WhatsApp' : i.estado === 'respondio' ? 'respondió' : 'abrió') + '</span>' : '') : '')
       + '<small>' + esc(i.rubro) + ' · ' + esc(i.zona) + '</small><br><small>' + esc(i.mail) + '</small></button>';
   }).join('') + (lista.length > S.mostrar ? '<div class="mas"><button class="btn sm" type="button" id="verMas">Ver más (' + (lista.length - S.mostrar) + ')</button></div>' : '')
     : '<p class="muted">No hay comercios con ese filtro.</p>';
@@ -265,7 +398,7 @@ function ficha(){
     '<section class="panel"><div class="fila" style="justify-content:space-between"><h2>' + esc(i.nombre) + '</h2><span class="est ' + esc(i.estado) + '">' + esc(nombreEstado(i.estado)) + '</span></div>'
     + '<p class="muted small" style="margin:0">' + esc(i.rubro) + ' · ' + esc(i.zona) + ' · código ' + esc(i.codigo) + ' · plan sugerido: ' + esc(i.plan) + '</p>'
     + '<div class="datos"><div><small>Mail</small><span>' + esc(i.mail) + '</span></div><div><small>Web</small><span>' + web + '</span></div><div><small>Instagram</small><span>' + ig + '</span></div>'
-    + '<div><small>Dirección</small><span>' + esc(i.direccion || '—') + '</span></div><div><small>De dónde salió</small><span>' + esc(i.mailFuente === 'web' ? 'su web' : 'OpenStreetMap') + ' · ' + esc((i.encontrado || '').slice(0, 10)) + '</span></div></div>'
+    + '<div><small>Teléfono</small><span>' + esc(i.telefono || '—') + '</span></div><div><small>Dirección</small><span>' + esc(i.direccion || '—') + '</span></div><div><small>De dónde salió</small><span>' + esc(i.mailFuente === 'web' ? 'su web' : 'OpenStreetMap') + ' · ' + esc((i.encontrado || '').slice(0, 10)) + '</span></div></div>'
     + (hist.length ? '<p class="small muted" style="margin:10px 0 0">' + hist.join(' · ') + '</p>' : '')
     + (S.segOk ? '<p class="small" style="margin:8px 0 0">👀 Abrió la simulación: <b>' + (seg(i).visitas || 0) + '</b> ' + ((seg(i).visitas || 0) === 1 ? 'vez' : 'veces')
         + (seg(i).ultima_visita ? ' (última: ' + fecha(seg(i).ultima_visita) + ')' : '') + ' · 💬 Tocó WhatsApp: <b>' + (seg(i).whatsapp || 0) + '</b>'
@@ -277,6 +410,7 @@ function ficha(){
         + '<p class="small muted">' + (paraSeguir(i) === '24' ? 'Abrió la simulación o tocó WhatsApp y todavía no escribió. Un mail corto, como respuesta al primero.' : 'Pasaron 3 días sin respuesta. Es el último mail: después no se le escribe más.') + '</p>'
         + '<div class="fila"><a class="btn gold" href="' + esc(mailtoSeguimiento(i, paraSeguir(i))) + '">✉️ Abrir el seguimiento en mi correo</a>'
         + '<button class="btn sm" type="button" data-estado="seg' + paraSeguir(i) + '">✓ Ya lo mandé</button></div></section>' : '')
+    + panelLlamada(i)
     + '<section class="panel"><h2>Mandar</h2>'
     + (i.estado === 'baja' ? '<div class="aviso ojo">Pidió la baja: no se le escribe más (Ley 25.326, art. 27).</div>' : '')
     + (lleno && i.estado === 'pendiente' ? '<div class="aviso ojo">Ya se mandaron ' + hoy + ' hoy, el tope del día. Seguí mañana: mandar muchos de golpe desde info@ la puede mandar a spam, y es la casilla de los clientes.</div>' : '')
@@ -321,9 +455,9 @@ function cambiarEstado(estado){
 }
 
 function bajarCsv(){
-  var cols = ['codigo','nombre','rubro','zona','mail','web','instagram','estado','enviadoEn'];
+  var cols = ['codigo','nombre','rubro','zona','mail','telefono','web','instagram','estrategia','estado','enviadoEn','llamadaResultado','waEnviadoEn','reunionEn'];
   var filas = [cols.join(';')].concat(S.items.map(function(i){
-    return cols.map(function(c){ var v = c === 'enviadoEn' ? fecha(i.enviadoEn) : i[c]; return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; }).join(';');
+    return cols.map(function(c){ var v = /En$/.test(c) ? fecha(i[c]) : i[c]; return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; }).join(';');
   }));
   var a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob(['﻿' + filas.join('\n')], { type:'text/csv;charset=utf-8' }));
@@ -348,6 +482,17 @@ $('#ficha').addEventListener('click', function(e){
     navigator.clipboard.writeText(t).then(function(){ toast('Copiado ' + que); }, function(){ toast('No se pudo copiar'); });
     return;
   }
+  var ll = e.target.closest('[data-llamada]');
+  if (ll){ anotarLlamada(ll.dataset.llamada); return; }
+  if (e.target.closest('[data-wa]')){
+    if (waHoy() >= TOPE_WA && !confirm('Ya van ' + TOPE_WA + ' WhatsApp hoy desde el número 2. ¿Lo anoto igual?')) return;
+    col().doc(i.id).update({ waEnviadoEn: FV.serverTimestamp(), waEnviadoPor: quien }).then(function(){ toast('WhatsApp anotado'); }, function(er){ toast('No se pudo guardar: ' + er.message); });
+    return;
+  }
+  if (e.target.closest('[data-reunion]')){
+    col().doc(i.id).update({ reunionEn: FV.serverTimestamp(), reunionPor: quien }).then(function(){ toast('Reunión anotada'); }, function(er){ toast('No se pudo guardar: ' + er.message); });
+    return;
+  }
   var s = e.target.closest('[data-estado]');
   if (s){
     if (s.dataset.estado === 'enviado' && mandadosHoy() >= S.ajustes.tope && !confirm('Ya llegaste al tope de hoy (' + S.ajustes.tope + '). ¿Lo anoto igual?')) return;
@@ -367,6 +512,8 @@ $('#guardarAjustes').addEventListener('click', function(){
     .then(function(){ toast('Ajustes guardados'); $('#panelAjustes').hidden = true; }, function(e){ toast('No se pudo guardar: ' + e.message); });
 });
 $('#bajarCsv').addEventListener('click', bajarCsv);
+$('#verResultados').addEventListener('click', function(){ var p = $('#panelResultados'); p.hidden = !p.hidden; if (!p.hidden){ pintarResultados(); p.scrollIntoView({ behavior:'smooth' }); } });
+$('#panelResultados').addEventListener('click', function(e){ if (e.target.closest('#cerrarResultados')) $('#panelResultados').hidden = true; });
 
 /* ---------- arranque ---------- */
 function escuchar(){
