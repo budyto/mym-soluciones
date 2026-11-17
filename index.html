@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Instrument+Serif:ital@1&family=Michroma&family=Martian+Mono:wght@500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=202611161800">
+<link rel="stylesheet" href="styles.css?v=202611171900">
 <script>document.documentElement.classList.remove('no-js')</script>
 </head>
 <body>
@@ -53,14 +53,75 @@
           <a href="#contacto" class="btn btn-primary">Pedí tu diagnóstico gratis <span class="arr">→</span></a>
           <a href="#servicios" class="btn">Qué hacemos</a>
         </div>
+        <!-- Reproductor (17/11/2026): un <audio> real con controles propios. preload="none": los 500 KB no bajan hasta tocar play.
+             Sin JavaScript queda el reproductor del navegador. -->
+        <div class="rep" id="rep" role="group" aria-label="Audio: qué hacemos en MyM Soluciones">
+          <audio id="rep-audio" src="audio/mym-que-hacemos.mp3" preload="none" controls></audio>
+          <span class="rep-logo" aria-hidden="true"><span class="deg">M<small>y</small>M</span><span class="rep-mic"><svg viewBox="0 0 24 24" width="11" height="11"><rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></span></span>
+          <button type="button" class="rep-play" aria-label="Reproducir el audio: qué hacemos, en 30 segundos">
+            <svg class="rep-i-play" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M8 5.200v13.600a1 1 0 0 0 1.5.9l11-6.800a1 1 0 0 0 0-1.700l-11-6.800A1 1 0 0 0 8 5.200z" fill="currentColor"/></svg>
+            <svg class="rep-i-pausa" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><rect x="6" y="5" width="4.2" height="14" rx="1.2" fill="currentColor"/><rect x="13.8" y="5" width="4.2" height="14" rx="1.2" fill="currentColor"/></svg>
+          </button>
+          <div class="rep-centro">
+            <div class="rep-onda" role="slider" tabindex="0" aria-label="Avance del audio" aria-valuemin="0" aria-valuemax="32" aria-valuenow="0" aria-valuetext="0 segundos de 32"></div>
+            <span class="rep-estado">Escuchá en 30 segundos qué hacemos</span>
+          </div>
+          <div class="rep-lado">
+            <button type="button" class="rep-vel" aria-label="Velocidad 1×. Tocá para cambiarla">1×</button>
+            <span class="rep-tiempo" aria-hidden="true">0:31</span>
+          </div>
+        </div>
         <ul class="hero-chips" aria-label="Servicios">
           <li>Orquestador de IA</li><li>Automatización</li><li>Software a medida</li><li>Bots de WhatsApp</li><li>Webs y landings</li>
         </ul>
       </div>
       <div>
-        <div class="phone" aria-label="Demo de un bot de WhatsApp">
-          <div class="phone-bar"><span class="av">MyM</span><div>Tu negocio<small id="wa-status">en línea</small></div></div>
-          <div class="chat" id="chat"><div class="msg in c1">Hola! Hacen envíos a Córdoba?</div><div class="msg out c2">¡Hola! 😊 Sí, enviamos a todo el país. ¿Qué producto estás buscando?</div><div class="msg in c3">Las zapatillas negras, talle 42</div><div class="msg out c4">Tengo talle 42 en stock. ¿Me pasás tu nombre y localidad así te armo el pedido?</div><div class="msg in c5">Lucía, Villa Carlos Paz</div><div class="msg sys c6">✓ Datos guardados · pedido armado</div><div class="msg out c7">¡Gracias, Lucía! Te paso con Martín del equipo para cerrar el envío 👋🏻</div></div>
+        <!-- Celular que contesta solo (17/11/2026): marco, barra de estado, encabezado y barra de WhatsApp. La charla la mueve main.js;
+             sin JavaScript o con «reducir movimiento» se ve entera y quieta. Para quien usa lector de pantalla es una imagen con su descripción. -->
+        <div class="tel" id="tel" role="img" aria-label="Demo de un bot de WhatsApp: una clienta pregunta por un envío a Córdoba, el bot le contesta al instante, le pide los datos, arma el pedido y le pasa la charla a una persona del equipo.">
+          <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="tel-i-tilde" viewBox="0 0 18 12"><path d="M1 6.6l3.3 3.3L11.2 2M7.6 9.2l.8.7L15.3 2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol></svg>
+          <div class="tel-pant">
+            <div class="tel-est">
+              <span>10:44</span>
+              <span class="tel-est-ic">
+                <svg viewBox="0 0 16 12" width="15" height="11"><path fill="currentColor" d="M0 9h2.6v3H0zM4.4 6.4H7V12H4.4zM8.8 3.4h2.6V12H8.8zM13.2 0h2.6v12h-2.6z"/></svg>
+                <svg viewBox="0 0 16 12" width="15" height="11"><path fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" d="M1.2 4.2a9.8 9.8 0 0 1 13.6 0M3.6 6.8a6.4 6.4 0 0 1 8.8 0"/><circle cx="8" cy="10" r="1.5" fill="currentColor"/></svg>
+                <svg viewBox="0 0 26 12" width="24" height="11"><rect x=".7" y=".7" width="21.6" height="10.6" rx="3" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".7"/><rect x="2.4" y="2.4" width="14.5" height="7.2" rx="1.6" fill="currentColor"/><path fill="currentColor" d="M23.6 4h1.2a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-1.2z" opacity=".7"/></svg>
+              </span>
+            </div>
+            <div class="tel-cab">
+              <svg viewBox="0 0 24 24" width="22" height="22"><path d="M19 12H5.500M11 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span class="tel-foto"><svg viewBox="0 0 24 24" width="20" height="20"><path d="M4.5 10.500V19h15v-8.500M3 7l1.5-3h15L21 7a3 3 0 0 1-4.5 2.2 3 3 0 0 1-4.5 0 3 3 0 0 1-4.5 0A3 3 0 0 1 3 7zM10 19v-4.500h4V19" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="tel-quien-cab"><b>Tu negocio</b><small id="tel-estado">en línea</small></span>
+              <svg viewBox="0 0 24 24" width="22" height="22"><path d="M3.5 8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-8a2 2 0 0 1-2-2zM15.5 10.500l5-3v9l-5-3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+              <svg viewBox="0 0 24 24" width="20" height="20"><path d="M6.6 3.500h2.700l1.4 4-2 1.500a12 12 0 0 0 6.3 6.300l1.5-2 4 1.400v2.700a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.6 5.700a2 2 0 0 1 2-2.200z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+              <svg viewBox="0 0 24 24" width="20" height="20"><circle cx="12" cy="5" r="1.8" fill="currentColor"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/><circle cx="12" cy="19" r="1.8" fill="currentColor"/></svg>
+            </div>
+            <div class="tel-chat" id="tel-chat">
+              <div class="tel-sis tel-hoy">Hoy</div>
+              <div class="tel-m tel-sale"><span class="tel-tx">Hola! Hacen envíos a Córdoba?</span><span class="tel-h">10:41<svg class="tel-tilde leido" viewBox="0 0 18 12" aria-hidden="true"><use href="#tel-i-tilde"/></svg></span></div>
+              <div class="tel-m tel-entra"><span class="tel-tx">¡Hola! 😊 Sí, enviamos a todo el país. ¿Qué producto estás buscando?</span><span class="tel-h">10:41</span></div>
+              <div class="tel-m tel-sale tel-luego"><span class="tel-tx">Las zapatillas negras, talle 42</span><span class="tel-h">10:42<svg class="tel-tilde leido" viewBox="0 0 18 12" aria-hidden="true"><use href="#tel-i-tilde"/></svg></span></div>
+              <div class="tel-m tel-entra tel-luego"><span class="tel-tx">Tengo talle 42 en stock 🙌 ¿Me pasás tu nombre y tu localidad, así te armo el pedido?</span><span class="tel-h">10:42</span></div>
+              <div class="tel-m tel-sale tel-luego"><span class="tel-tx">Lucía, de Villa Carlos Paz</span><span class="tel-h">10:43<svg class="tel-tilde leido" viewBox="0 0 18 12" aria-hidden="true"><use href="#tel-i-tilde"/></svg></span></div>
+              <div class="tel-sis tel-nota tel-luego">✓ Datos guardados · pedido armado</div>
+              <div class="tel-m tel-entra tel-luego"><span class="tel-tx">¡Gracias, Lucía! Ya quedó anotado tu pedido. Para coordinar el envío y el pago te paso con Martín, del equipo 👋</span><span class="tel-h">10:43</span></div>
+              <div class="tel-sis tel-nota tel-luego">Martín se sumó a la charla</div>
+              <div class="tel-m tel-entra tel-luego"><b class="tel-quien">Martín · del equipo</b><span class="tel-tx">Hola, Lucía. Soy Martín: ya vi tu pedido, seguimos por acá.</span><span class="tel-h">10:44</span></div>
+            </div>
+            <div class="tel-barra">
+              <div class="tel-caja">
+                <svg viewBox="0 0 24 24" width="21" height="21"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M8.3 14.200a4.4 4.4 0 0 0 7.4 0" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="9" cy="10" r="1.1" fill="currentColor"/><circle cx="15" cy="10" r="1.1" fill="currentColor"/></svg>
+                <span class="tel-campo" id="tel-campo">Mensaje</span>
+                <svg viewBox="0 0 24 24" width="20" height="20"><path d="M20 11.500l-7.8 7.800a5 5 0 0 1-7-7l8.3-8.300a3.3 3.3 0 0 1 4.7 4.700l-8.2 8.200a1.7 1.7 0 0 1-2.4-2.400l7.3-7.3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <svg viewBox="0 0 24 24" width="20" height="20"><path d="M4 8.500a2 2 0 0 1 2-2h2l1.5-2h5l1.5 2h2a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="12" cy="12.5" r="3.2" fill="none" stroke="currentColor" stroke-width="1.7"/></svg>
+              </div>
+              <span class="tel-boton">
+                <svg class="tel-mic" viewBox="0 0 24 24" width="20" height="20"><rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                <svg class="tel-enviar" viewBox="0 0 24 24" width="20" height="20"><path d="M4 4.5 21 12 4 19.500l2.3-7.500z" fill="currentColor" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+              </span>
+            </div>
+          </div>
         </div>
         <p class="demo-note">Charla de ejemplo de un bot de WhatsApp</p>
       </div>
@@ -630,6 +691,6 @@
 </a>
 
 <script src="config.js?v=202611041700"></script>
-<script src="main.js?v=202611141000"></script>
+<script src="main.js?v=202611171900"></script>
 </body>
 </html>

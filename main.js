@@ -121,7 +121,188 @@
     solve(b.textContent);
   }));
 
-  /* ---------- Demo del bot de WhatsApp: ahora es una animación de CSS (styles.css, .chat .msg); no usa temporizadores y no se traba. */
+  /* ---------- Celular que contesta solo (17/11/2026) ----------
+     Los mensajes ya están en el HTML; acá solo se van mostrando de a uno. El que escribe la clienta se tipea en la barra de abajo
+     y sale con el doble tilde; antes de cada respuesta del negocio aparecen los tres puntitos y el encabezado dice «escribiendo…».
+     Al terminar vuelve a empezar. Se frena si el celular no está en pantalla o la pestaña está oculta.
+     Sin movimiento (?motion=0 o «reducir movimiento» del sistema) la charla queda entera y quieta. */
+  const sinMovimiento = document.documentElement.classList.contains("reduced") || (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
+  const tel = $("#tel");
+  if (tel) {
+    const chat = $("#tel-chat"), telEstado = $("#tel-estado"), campo = $("#tel-campo"), barra = $(".tel-barra", tel);
+    const luego = $$(".tel-luego", chat);
+    const alFinal = (suave) => {
+      if (suave && chat.scrollTo) chat.scrollTo({ top: chat.scrollHeight, behavior: "smooth" });
+      else chat.scrollTop = chat.scrollHeight;
+    };
+    if (sinMovimiento) {
+      luego.forEach((el) => el.classList.remove("tel-luego"));
+      alFinal(false);
+      addEventListener("load", () => alFinal(false)); // por si la letra cambia el alto al terminar de cargar
+    } else {
+      let enPantalla = true;
+      const cola = [];
+      const sigue = () => enPantalla && !document.hidden;
+      const despierta = () => { if (sigue()) cola.splice(0).forEach((f) => f()); };
+      const espera = (ms) => new Promise((ok) => setTimeout(() => (sigue() ? ok() : cola.push(ok)), ms));
+      document.addEventListener("visibilitychange", despierta);
+      if ("IntersectionObserver" in window) {
+        new IntersectionObserver((en) => { enPantalla = en[en.length - 1].isIntersecting; despierta(); }).observe(tel);
+      }
+      const puntos = document.createElement("div");
+      puntos.className = "tel-m tel-entra tel-puntos";
+      puntos.innerHTML = "<i></i><i></i><i></i>";
+      const muestra = (el) => { el.classList.remove("tel-luego"); el.classList.add("tel-nuevo"); alFinal(true); };
+
+      (async () => {
+        for (;;) {
+          await espera(2200);
+          for (const el of luego) {
+            if (el.classList.contains("tel-sale")) {
+              // La clienta escribe en la barra, manda, y el tilde pasa de gris a azul
+              const tilde = $(".tel-tilde", el);
+              barra.classList.add("escribe");
+              campo.textContent = "";
+              for (const letra of Array.from($(".tel-tx", el).textContent)) {
+                campo.textContent += letra;
+                campo.scrollLeft = campo.scrollWidth;
+                await espera(34 + Math.random() * 46);
+              }
+              await espera(380);
+              barra.classList.remove("escribe");
+              campo.textContent = "Mensaje";
+              campo.scrollLeft = 0;
+              tilde.classList.remove("leido");
+              muestra(el);
+              await espera(750);
+              tilde.classList.add("leido");
+              await espera(350);
+            } else if (el.classList.contains("tel-entra")) {
+              // El negocio contesta: «escribiendo…» y los tres puntitos, después el mensaje
+              telEstado.textContent = "escribiendo…";
+              chat.appendChild(puntos);
+              alFinal(true);
+              await espera(1000 + Math.min(1300, el.textContent.length * 14));
+              puntos.remove();
+              telEstado.textContent = "en línea";
+              muestra(el);
+              await espera(1300);
+            } else {
+              muestra(el);
+              await espera(1000);
+            }
+          }
+          await espera(5200);
+          // Vuelve a empezar: se apaga, quedan los dos primeros mensajes y se prende
+          chat.classList.add("tel-reinicia");
+          await espera(450);
+          luego.forEach((el) => { el.classList.add("tel-luego"); el.classList.remove("tel-nuevo"); });
+          chat.scrollTop = 0;
+          chat.classList.remove("tel-reinicia");
+        }
+      })();
+    }
+  }
+
+  /* ---------- Reproductor del hero (17/11/2026) ----------
+     Un <audio> real con controles propios: play/pausa, la onda (un slider: se toca, se arrastra o se mueve con las flechas),
+     la velocidad y el tiempo. El audio no se baja hasta tocar play (preload="none"). */
+  const rep = $("#rep");
+  if (rep) {
+    const audio = $("audio", rep), play = $(".rep-play", rep), onda = $(".rep-onda", rep);
+    const repEstado = $(".rep-estado", rep), vel = $(".rep-vel", rep), tiempo = $(".rep-tiempo", rep);
+    // Volumen real del audio en 48 tramos (medido del mp3), para que la onda sea la de la voz y no un dibujo cualquiera
+    const PICOS = [100, 65, 85, 44, 72, 63, 66, 66, 20, 89, 77, 56, 48, 77, 56, 82, 63, 30, 79, 73, 79, 53, 64, 89, 78, 54, 74, 67, 76, 56, 74, 84, 57, 44, 66, 68, 92, 54, 22, 83, 67, 75, 94, 62, 73, 41, 65, 68];
+    const DURACION = 31.52; // la del archivo (decodificado), hasta que el navegador la lea
+    const TEXTO = { quieto: repEstado.textContent, sonando: "Te estamos contando…", pausa: "En pausa · tocá para seguir", cargando: "Cargando el audio…", error: "No pudimos cargar el audio. Escribinos por WhatsApp." };
+    const dur = () => (isFinite(audio.duration) && audio.duration > 0 ? audio.duration : DURACION);
+    const reloj = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
+    let pos = 0; // segundo en el que está, aunque el audio todavía no haya cargado
+
+    audio.removeAttribute("controls");
+    const barras = PICOS.map((v, i) => {
+      const b = document.createElement("i"), k = i / (PICOS.length - 1);
+      b.style.setProperty("--h", `${Math.round(16 + 84 * Math.pow(v / 100, 1.7))}%`);
+      // del azul al verde agua de la marca
+      b.style.setProperty("--c", `rgb(${Math.round(47 - 47 * k)}, ${Math.round(107 + 87 * k)}, ${Math.round(255 - 87 * k)})`);
+      onda.appendChild(b);
+      return b;
+    });
+
+    const pinta = () => {
+      const d = dur(), hasta = Math.round((pos / d) * barras.length);
+      barras.forEach((b, i) => b.classList.toggle("on", i < hasta && pos > 0));
+      onda.setAttribute("aria-valuemax", Math.round(d));
+      onda.setAttribute("aria-valuenow", Math.round(pos));
+      onda.setAttribute("aria-valuetext", `${Math.round(pos)} segundos de ${Math.round(d)}`);
+      tiempo.textContent = reloj(pos > 0 || !audio.paused ? pos : d);
+    };
+    const salta = (s) => {
+      pos = Math.max(0, Math.min(dur(), s));
+      try { audio.currentTime = pos; } catch (e) { /* todavía sin cargar: se aplica cuando carga */ }
+      pinta();
+    };
+    const cartel = (cual) => { repEstado.textContent = TEXTO[cual]; };
+
+    play.addEventListener("click", () => {
+      if (!audio.paused) { audio.pause(); return; }
+      if (pos >= dur() - 0.05) salta(0);
+      const p = audio.play();
+      if (p && p.catch) p.catch(() => { rep.classList.remove("suena"); cartel("error"); });
+    });
+    audio.addEventListener("play", () => {
+      rep.classList.add("suena");
+      play.setAttribute("aria-label", "Pausar el audio");
+      cartel(audio.readyState < 3 ? "cargando" : "sonando");
+    });
+    audio.addEventListener("loadedmetadata", () => { if (Math.abs(audio.currentTime - pos) > 0.3) audio.currentTime = pos; pinta(); });
+    audio.addEventListener("playing", () => cartel("sonando"));
+    audio.addEventListener("waiting", () => { if (!audio.paused) cartel("cargando"); });
+    audio.addEventListener("timeupdate", () => { if (audio.readyState > 0 && !audio.seeking) { pos = audio.currentTime; pinta(); } });
+    audio.addEventListener("pause", () => {
+      rep.classList.remove("suena");
+      play.setAttribute("aria-label", "Seguir escuchando el audio");
+      if (!audio.ended) cartel("pausa");
+    });
+    audio.addEventListener("ended", () => {
+      pos = 0; audio.currentTime = 0;
+      play.setAttribute("aria-label", "Volver a escuchar el audio: qué hacemos, en 30 segundos");
+      cartel("quieto"); pinta();
+    });
+    audio.addEventListener("error", () => { rep.classList.remove("suena"); cartel("error"); });
+
+    // La onda: tocar o arrastrar para saltar; con teclado, flechas (2 s), Re Pág / Av Pág (10 s), Inicio y Fin
+    const aSegundos = (e) => { const r = onda.getBoundingClientRect(); return ((e.clientX - r.left) / r.width) * dur(); };
+    let arrastra = false;
+    onda.addEventListener("pointerdown", (e) => {
+      if (e.button) return;
+      arrastra = true;
+      if (onda.setPointerCapture) { try { onda.setPointerCapture(e.pointerId); } catch (err) { /* puntero sin captura */ } }
+      salta(aSegundos(e));
+    });
+    onda.addEventListener("pointermove", (e) => { if (arrastra) salta(aSegundos(e)); });
+    ["pointerup", "pointercancel"].forEach((t) => onda.addEventListener(t, () => { arrastra = false; }));
+    onda.addEventListener("keydown", (e) => {
+      const paso = { ArrowRight: 2, ArrowUp: 2, ArrowLeft: -2, ArrowDown: -2, PageUp: 10, PageDown: -10 }[e.key];
+      if (paso) salta(pos + paso);
+      else if (e.key === "Home") salta(0);
+      else if (e.key === "End") salta(dur());
+      else return;
+      e.preventDefault();
+    });
+
+    // Velocidad: 1× → 1,5× → 2× → 1×
+    const VELOCIDADES = [1, 1.5, 2];
+    vel.addEventListener("click", () => {
+      const v = VELOCIDADES[(VELOCIDADES.indexOf(audio.playbackRate) + 1) % VELOCIDADES.length];
+      audio.defaultPlaybackRate = v; // para que no vuelva a 1× cuando el audio termina de cargar
+      audio.playbackRate = v;
+      const txt = `${String(v).replace(".", ",")}×`;
+      vel.textContent = txt;
+      vel.setAttribute("aria-label", `Velocidad ${txt}. Tocá para cambiarla`);
+    });
+    pinta();
+  }
 
   /* ---------- Calculadora ---------- */
   // Calcula siempre en dólares; en pesos solo cambia cómo se muestra y el rango del costo.
