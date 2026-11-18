@@ -45,6 +45,12 @@ td{padding:10px 8px;border-bottom:1px solid #edf1fb;vertical-align:top}
 .gris{color:var(--gris)}.chica{font-size:13px}
 .error{color:var(--mal);font-size:14px}
 a.wa{color:var(--azul);font-weight:700;text-decoration:none}
+tr.fila{cursor:pointer}tr.fila:hover td{background:#f8faff}
+td.charla{background:#f6f8fe;padding:12px}
+.burbuja{max-width:520px;padding:8px 12px;border-radius:12px;margin:6px 0;font-size:14px;white-space:pre-wrap;word-wrap:break-word}
+.b-cliente{background:#fff;border:1px solid var(--borde)}
+.b-nos{background:#e2f6ee;margin-left:auto}
+.b-hora{display:block;font-size:11.5px;color:var(--gris);margin-top:2px}
 @media(max-width:700px){.ocultar-cel{display:none}td,th{padding:8px 5px}}
 </style>
 </head>
@@ -59,7 +65,7 @@ a.wa{color:var(--azul);font-weight:700;text-decoration:none}
 
   <div id="panel" hidden>
     <header><a href="./">← Inicio del panel</a><h1>Campaña a clientes de Créditos</h1><div class="der"><span id="quien"></span><button class="btn" id="salir">Salir</button></div></header>
-    <p class="gris chica" style="margin-top:-6px">Por WhatsApp sale del celu de ventas de Créditos; por mail, de info@. «Abrió» quiere decir que contestó algo: no se puede saber si alguien sólo lo leyó. Se actualiza sola cada minuto.</p>
+    <p class="gris chica" style="margin-top:-6px">Por WhatsApp sale del celu de ventas de Créditos; por mail, de info@. «Abrió» quiere decir que contestó algo: no se puede saber si alguien sólo lo leyó. Se actualiza sola cada minuto. Tocá un cliente para ver la charla.</p>
     <div class="cifras" id="cifras"></div>
     <div class="barra"><i id="avance" style="width:0"></i></div>
     <div class="tarjeta">
@@ -130,10 +136,38 @@ a.wa{color:var(--azul);font-weight:700;text-decoration:none}
       const [txt, cls] = ESTADO[f.estado] || [f.estado, 'e-falta'];
       const contacto = f.canal === 'whatsapp'
         ? `<a class="wa" href="https://wa.me/${esc(f.contacto)}" target="_blank" rel="noopener">${esc('+' + f.contacto)}</a>` : esc(f.contacto);
-      return `<tr><td><b>${esc(linda(f.nombre))}</b><div class="gris chica">N.º ${esc(f.cliente_id)} · ${esc(linda(f.rubro) || 'sin rubro')} · ${esc(f.estado_cliente)} · ${contacto}</div></td>`
+      return `<tr class="fila" data-canal="${esc(f.canal)}" data-tel="${esc(f.contacto)}" data-estado="${esc(f.estado)}" title="Tocá para ver la charla"><td><b>${esc(linda(f.nombre))}</b><div class="gris chica">N.º ${esc(f.cliente_id)} · ${esc(linda(f.rubro) || 'sin rubro')} · ${esc(f.estado_cliente)} · ${contacto}</div></td>`
         + `<td><span class="estado ${cls}">${esc(txt)}</span>${f.derivaciones ? `<div class="gris chica">derivado a Soluciones ${f.derivaciones}×</div>` : ''}</td>`
         + `<td class="ocultar-cel">${f.canal === 'whatsapp' ? '💬 WhatsApp' : '✉️ Mail'}</td><td class="ocultar-cel gris chica">${fecha(f.enviado_en)}</td><td class="ocultar-cel gris chica">${fecha(f.respondio_en)}</td></tr>`;
     }).join('') || '<tr><td colspan="5" class="gris">No hay nadie en este grupo.</td></tr>';
+    document.querySelectorAll('tr.fila').forEach((tr) => (tr.onclick = (e) => { if (e.target.closest('a')) return; verCharla(tr); }));
+  }
+
+  // La charla con el celu de ventas, abajo de la fila (Matías, 18/11/2026: «¿cómo entro a ver lo que contestaron?»).
+  async function verCharla(tr) {
+    const abierta = tr.nextElementSibling && tr.nextElementSibling.classList.contains('det');
+    document.querySelectorAll('tr.det').forEach((x) => x.remove());
+    if (abierta) return;
+    const det = document.createElement('tr'); det.className = 'det';
+    det.innerHTML = '<td colspan="5" class="charla gris">Cargando la charla…</td>';
+    tr.after(det);
+    const celda = det.firstElementChild;
+    if (tr.dataset.canal === 'mail') {
+      celda.innerHTML = tr.dataset.estado === 'falta' ? 'Todavía no se le mandó el mail.'
+        : 'Las respuestas por mail llegan a <b>info@mymsoluciones.online</b>: miralas en el webmail. Acá se marca si contestó o pidió la baja (se revisa cada hora).';
+      return;
+    }
+    if (tr.dataset.estado === 'falta') { celda.textContent = 'Todavía no se le mandó el WhatsApp.'; return; }
+    try {
+      const r = await fetch(API + '/api/ventas-sol/campana/charla?tel=' + encodeURIComponent(tr.dataset.tel), { headers: { Authorization: 'Bearer ' + await ACCESO.token() } });
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(d.error || 'No se pudo cargar la charla.');
+      const quien = (m) => m.de === 'cliente' ? 'b-cliente' : 'b-nos';
+      const hora = (t) => t ? new Date(t).toLocaleString('es-AR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
+      const etiqueta = (m) => m.de === 'cliente' ? (m.audio_transcripto ? '🎤 audio (transcripto)' : 'cliente') : (m.por === 'campaña Soluciones' ? 'campaña' : m.de === 'bot' ? 'Boti de Créditos' : 'equipo');
+      celda.innerHTML = (d.mensajes || []).map((m) => `<div style="display:flex"><div class="burbuja ${quien(m)}">${m.tipo === 'imagen' ? '🖼️ ' : ''}${esc(m.texto)}<span class="b-hora">${esc(etiqueta(m))} · ${esc(hora(m.ts))}</span></div></div>`).join('')
+        + `<p class="chica" style="margin:10px 0 0"><a class="wa" href="https://wa.me/${esc(tr.dataset.tel)}" target="_blank" rel="noopener">Abrir en WhatsApp</a> · la charla completa está en el panel de Créditos (WhatsApp, celu de ventas).</p>`;
+    } catch (e) { celda.innerHTML = `<span class="error">${esc(e.message)}</span>`; }
   }
   document.querySelectorAll('#filtros button').forEach((b) => (b.onclick = () => { filtro = b.dataset.f; document.querySelectorAll('#filtros button').forEach((x) => x.setAttribute('aria-pressed', x === b)); dibujar(); }));
   $('#buscar').oninput = dibujar;
