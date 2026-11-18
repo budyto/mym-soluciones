@@ -143,7 +143,7 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
         <form id="form-link" class="grilla">
           <select name="servicio" aria-label="Qué se cobra"><option value="bot">Bot de WhatsApp</option><option value="web">Página web / landing</option><option value="redes">Redes sociales</option><option value="otro">Otro servicio</option></select>
           <input name="concepto" maxlength="80" placeholder="Qué se cobra (ej.: instalación y primer mes)" required>
-          <input name="monto" type="number" step="0.01" min="1" placeholder="Total a cobrar, con IVA ($)" required>
+          <input name="monto" type="number" step="0.01" min="25" placeholder="Total a cobrar, con IVA (desde $ 25)" required>
           <button class="btn principal" type="submit">Generar link</button>
         </form>
         <div id="link-pago"></div>
