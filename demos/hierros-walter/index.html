@@ -420,9 +420,9 @@ const PRODS=[
 ];
 /* Opiniones reales de las fichas de Google (texto tal cual, con cortes marcados; 18/11/2026) */
 const RESENAS=[
- {n:'South Dream',l:'Hierros Walter',f:'Hace 5 años',a:'https://lh3.googleusercontent.com/a-/ALV-UjW2Yz97KqBnB8pxq50NWy-nIUC2IsWOVLYhF91BPO6ctOGbeTYOvQ=s96-c',t:'Llegue a las 17:55 sin dinero y sin transporte porque me habían fallado una camioneta, le conté la situación y sin conocerme no solamente me dio buen precio en el hierro […] sino que me puso a mí disposición el vehículo para llevar los hierros. […] Buen número, buena gente, buen hierro.'},
- {n:'Damian maximiliano Guzmán chaile',l:'Hierros Walter',f:'Hace un año',a:'https://lh3.googleusercontent.com/a/ACg8ocJ7Gzf3hsJ3mBcWx-nkdIS0b92wwwW1Afh_jK0GN5qc9MLbPQ=s96-c',t:'Muy buena atención.. buenos precios'},
- {n:'Puertas Blindadas Sam',l:'Todo Durlock',f:'Hace 5 años',a:'https://lh3.googleusercontent.com/a-/ALV-UjU_-ia1BpFolZbb8spRvvLo69_DkaHdiYDxf1hkT6srwEa5yn3k=s96-c',t:'Muy bueno te llevan las cosas'}
+ {n:'South Dream',l:'Hierros Walter',f:'Hace 5 años',a:'img/resenas/south-dream.jpg',t:'Llegue a las 17:55 sin dinero y sin transporte porque me habían fallado una camioneta, le conté la situación y sin conocerme no solamente me dio buen precio en el hierro […] sino que me puso a mí disposición el vehículo para llevar los hierros. […] Buen número, buena gente, buen hierro.'},
+ {n:'Damian maximiliano Guzmán chaile',l:'Hierros Walter',f:'Hace un año',a:'img/resenas/damian-guzman.jpg',t:'Muy buena atención.. buenos precios'},
+ {n:'Puertas Blindadas Sam',l:'Todo Durlock',f:'Hace 5 años',a:'img/resenas/puertas-blindadas-sam.jpg',t:'Muy bueno te llevan las cosas'}
 ];
 const HOR={h:{1:[8,17],2:[8,17],3:[8,17],4:[8,17],5:[8,17],6:[8,13]},d:{1:[8,16],2:[8,16],3:[8,16],4:[8,16],5:[8,16],6:[8,13]}};
 const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -434,7 +434,7 @@ cont.innerHTML=PRODS.map((p,k)=>`<article class="prod" data-cat="${p.c}" data-k=
  <div class="prod-ctl"><span class="uni">Cantidad (${p.u})</span>
  <div class="cant"><button aria-label="Restar ${p.n}" data-d="-1">−</button><output aria-live="polite">0</output><button aria-label="Sumar ${p.n}" data-d="1">+</button></div></div></article>`).join('');
 document.getElementById('citas').innerHTML=RESENAS.map(r=>{const ini=r.n.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
- return `<div class="cita"><div class="cita-top"><img src="${r.a}" alt="" referrerpolicy="no-referrer" data-ini="${ini}"><div><b>${esc(r.n)}</b><small>${r.f} · ${r.l}</small></div><svg class="g-logo" role="img" aria-label="Google"><use href="#i-g"/></svg></div><div class="estrellas" aria-label="5 de 5 estrellas">★★★★★</div><p>${esc(r.t)}</p></div>`}).join('');
+ return `<div class="cita"><div class="cita-top"><img src="${r.a}" alt="" data-ini="${ini}"><div><b>${esc(r.n)}</b><small>${r.f} · ${r.l}</small></div><svg class="g-logo" role="img" aria-label="Google"><use href="#i-g"/></svg></div><div class="estrellas" aria-label="5 de 5 estrellas">★★★★★</div><p>${esc(r.t)}</p></div>`}).join('');
 document.querySelectorAll('.cita-top img').forEach(i=>i.addEventListener('error',()=>{const s=document.createElement('span');s.className='ini';s.textContent=i.dataset.ini;i.replaceWith(s);}));
 cont.addEventListener('click',e=>{const b=e.target.closest('button[data-d]');if(!b)return;const art=b.closest('.prod'),k=art.dataset.k;
  cant[k]=Math.max(0,(cant[k]||0)+Number(b.dataset.d));art.querySelector('output').textContent=cant[k];art.classList.toggle('con',cant[k]>0);actualizar();});
