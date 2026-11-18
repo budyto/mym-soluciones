@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- DEMO DE MUESTRA de MyM Soluciones (18/11/2026) para Hierros Walter S.A y Todo Durlock (Isidro Casanova).
+     Datos sacados de sus dos fichas de Google Maps. Fotos: recortes de esas fichas, en baja calidad; en la web final van fotos nuevas.
+     Productos: rubros típicos, sin precios; fotos de Wikimedia Commons con licencia libre (créditos en img/prod/creditos.json). Opiniones: reales, de las fichas de Google al 18/11/2026.
+     El botón de WhatsApp de la demo no manda nada: muestra cómo llegaría el pedido (falta confirmar su número de WhatsApp). -->
+<meta name="robots" content="noindex">
+<title>Hierros Walter · Todo Durlock · Corralón en Isidro Casanova</title>
+<meta name="description" content="Hierros, mallas, perfiles y materiales para construcción en seco en Isidro Casanova. Solicite su presupuesto por WhatsApp. Entrega en obra.">
+<meta name="theme-color" content="#141414">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23141414'/%3E%3Cpath d='M14 46h36M14 36h36M14 26h36' stroke='%23ffc21a' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+ {"@type":"HardwareStore","name":"Hierros Walter S.A","address":{"@type":"PostalAddress","streetAddress":"José Bernaldes Polledo 178","postalCode":"B1765HHD","addressLocality":"Isidro Casanova","addressRegion":"Buenos Aires","addressCountry":"AR"},"telephone":"+541144861559"},
+ {"@type":"HardwareStore","name":"Todo Durlock","address":{"@type":"PostalAddress","streetAddress":"José Bernaldes Polledo 150","addressLocality":"Isidro Casanova","addressRegion":"Buenos Aires","addressCountry":"AR"},"telephone":"+541144861559"}
+]}
+</script>
+<style>
+:root{--negro:#141414;--negro2:#1f1f1f;--acero:#2b2f36;--ama:#ffc21a;--ama-osc:#9a6e00;--rojo:#d9361e;--azul:#1d5fb8;--tinta:#16181c;--gris:#59606b;--borde:#e4e1da;--fondo:#f5f3ee;--wa:#25d366;--wa-tinta:#04260f;--tit:"Barlow Condensed","Arial Narrow",Impact,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{font:16px/1.6 Inter,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:var(--tinta);background:#fff;overflow-x:hidden}
+img{display:block;max-width:100%}
+a{color:inherit}
+button{font:inherit}
+:focus-visible{outline:3px solid var(--ama);outline-offset:3px;border-radius:6px}
+.wrap{max-width:1140px;margin:0 auto;padding:0 16px}
+@media(min-width:700px){.wrap{padding:0 24px}}
+.demo-barra{background:var(--ama);color:var(--negro);font:600 13px/1.35 Inter,sans-serif;text-align:center;padding:7px 12px}
+.demo-barra b{font-weight:800}
+
+header{position:sticky;top:0;z-index:30;background:var(--negro);color:#fff;border-bottom:3px solid var(--ama)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;height:64px}
+.marca{text-decoration:none;display:flex;align-items:center;gap:10px}
+.marca-ico{width:38px;height:38px;border-radius:9px;background:var(--ama);display:grid;place-items:center;flex:none}
+.marca-txt{font:900 21px/.9 var(--tit);text-transform:uppercase;letter-spacing:.01em}
+.marca-txt small{display:block;font:700 12.5px/1.2 var(--tit);color:var(--ama);letter-spacing:.08em}
+nav{display:none;gap:22px;font-weight:600;font-size:15px}
+nav a{text-decoration:none;color:#cfcfcf}
+nav a:hover{color:#fff}
+@media(min-width:960px){nav{display:flex}}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:48px;border-radius:12px;padding:12px 20px;font:800 18px/1.1 var(--tit);letter-spacing:.02em;text-transform:uppercase;text-decoration:none;border:0;cursor:pointer;text-align:center}
+.btn svg{width:22px;height:22px;flex:none}
+.btn.wa{background:var(--wa);color:var(--wa-tinta);box-shadow:0 10px 24px rgba(37,211,102,.25)}
+.btn.ama{background:var(--ama);color:var(--negro)}
+.btn.linea{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.4)}
+.btn.chico{min-height:40px;padding:8px 14px;font-size:16px;border-radius:10px}
+
+/* HERO */
+.hero{background:radial-gradient(1200px 500px at 85% -10%,#3a3020 0,transparent 60%),var(--negro);color:#fff;padding:34px 0 0;overflow:hidden}
+.hero .wrap{display:grid;gap:28px}
+@media(min-width:900px){.hero .wrap{grid-template-columns:1.05fr .95fr;align-items:center;padding-bottom:40px}}
+.eti{display:inline-flex;align-items:center;gap:8px;font:800 14px var(--tit);letter-spacing:.14em;text-transform:uppercase;color:var(--ama)}
+.eti:before{content:"";width:24px;height:3px;background:var(--ama);border-radius:2px}
+.hero h1{font:900 clamp(40px,9vw,74px)/.92 var(--tit);text-transform:uppercase;margin:12px 0 14px;letter-spacing:-.005em}
+.hero h1 em{font-style:normal;color:var(--ama)}
+.hero p.lead{color:#d6d6d6;font-size:17px;max-width:540px}
+.hero-acc{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0 18px}
+.hero-datos{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:#bdbdbd;padding-bottom:6px}
+.hero-datos span{display:inline-flex;gap:6px;align-items:center}
+.hero-datos b{color:#fff}
+.estrellas{color:var(--ama);letter-spacing:1px}
+.hero-fotos{display:grid;grid-template-columns:1.2fr 1fr;grid-template-rows:1fr 1fr;gap:10px;height:330px}
+.hero-fotos figure{position:relative;border-radius:16px;overflow:hidden;background:#222}
+.hero-fotos figure:first-child{grid-row:1/3}
+.hero-fotos img{width:100%;height:100%;object-fit:cover;filter:saturate(1.05) contrast(1.05)}
+.hero-fotos figcaption{position:absolute;left:10px;bottom:10px;background:rgba(0,0,0,.72);color:#fff;font:800 14px var(--tit);letter-spacing:.06em;text-transform:uppercase;padding:4px 9px;border-radius:7px}
+@media(max-width:899px){.hero-fotos{height:260px;margin:0 -16px;border-radius:0}}
+
+.cinta{background:var(--ama);color:var(--negro);overflow:hidden;white-space:nowrap;font:900 20px/1 var(--tit);text-transform:uppercase;letter-spacing:.04em;padding:12px 0}
+.cinta-in{display:inline-flex;gap:28px;animation:cinta 28s linear infinite}
+.cinta-in span:after{content:"■";margin-left:28px;font-size:11px;vertical-align:3px}
+@keyframes cinta{to{transform:translateX(-50%)}}
+@media(prefers-reduced-motion:reduce){.cinta-in{animation:none}}
+
+.sec{padding:60px 0}
+.sec.gris{background:var(--fondo)}
+.sec-head{margin-bottom:26px}
+.sec-head .eti{color:var(--ama-osc)}
+.sec-head .eti:before{background:var(--ama)}
+.sec h2{font:900 clamp(36px,7.5vw,56px)/.95 var(--tit);text-transform:uppercase;margin-top:8px}
+.sec h2 em{font-style:normal;color:var(--rojo)}
+.sec-head p{color:var(--gris);margin-top:10px;max-width:640px}
+
+/* DOS LOCALES */
+.locales{display:grid;gap:16px}
+@media(min-width:800px){.locales{grid-template-columns:1fr 1fr}}
+.local{border-radius:20px;overflow:hidden;background:#fff;border:1px solid var(--borde);display:flex;flex-direction:column}
+.local-foto{height:200px;position:relative}
+.local-foto img{width:100%;height:100%;object-fit:cover}
+.local-tag{position:absolute;top:12px;left:12px;font:800 14px var(--tit);letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;border-radius:8px}
+.local.h .local-tag{background:var(--rojo);color:#fff}
+.local.d .local-tag{background:var(--azul);color:#fff}
+.local-cuerpo{padding:20px;display:flex;flex-direction:column;gap:10px;flex:1}
+.local h3{font:900 32px/1 var(--tit);text-transform:uppercase}
+.local p{color:var(--gris);font-size:15px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips span{background:var(--fondo);border:1px solid var(--borde);font-size:13px;font-weight:600;padding:4px 10px;border-radius:99px}
+.local-pie{margin-top:auto;display:flex;flex-wrap:wrap;gap:8px 16px;font-size:14px;color:var(--gris);padding-top:8px;border-top:1px dashed var(--borde)}
+.local-pie b{color:var(--tinta)}
+
+/* CATALOGO + PEDIDO */
+.filtros{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.filtro{border:2px solid var(--negro);background:#fff;color:var(--negro);font:800 16px var(--tit);text-transform:uppercase;letter-spacing:.04em;padding:7px 14px;border-radius:99px;cursor:pointer}
+.filtro[aria-pressed="true"]{background:var(--negro);color:var(--ama)}
+.prods{display:grid;gap:12px;grid-template-columns:1fr}
+@media(min-width:620px){.prods{grid-template-columns:1fr 1fr}}
+@media(min-width:980px){.prods{grid-template-columns:1fr 1fr 1fr}}
+.prod{background:#fff;border:1px solid var(--borde);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+.prod-foto{position:relative;aspect-ratio:16/10;background:#ddd}
+.prod-foto{overflow:hidden;flex:none}
+.prod-foto img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.prod-foto span{position:absolute;top:10px;left:10px;font:800 13px var(--tit);letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:6px;color:#fff}
+.prod[data-cat="hierros"] .prod-foto span{background:var(--rojo)}
+.prod[data-cat="seco"] .prod-foto span{background:var(--azul)}
+.prod-txt{padding:12px 14px 0}
+.prod h4{font:800 22px/1.05 var(--tit);text-transform:uppercase}
+.prod small{display:block;color:var(--gris);font-size:13.5px;line-height:1.35;margin-top:3px}
+.prod-ctl{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px solid var(--borde);padding:10px 14px;margin-top:12px}
+.prod-ctl .uni{font-size:13px;color:var(--gris);font-weight:600}
+.cant{display:flex;align-items:center;border:2px solid var(--negro);border-radius:11px;overflow:hidden}
+.cant button{width:40px;height:38px;border:0;background:#fff;font-size:22px;font-weight:700;cursor:pointer;color:var(--negro)}
+.cant button:hover{background:var(--ama)}
+.cant output{min-width:40px;text-align:center;font:800 19px var(--tit)}
+.prod.con{border-color:var(--ama);box-shadow:0 0 0 2px var(--ama)}
+
+.pedido-bar{position:fixed;left:12px;right:12px;bottom:12px;z-index:40;background:var(--negro);color:#fff;border-radius:16px;padding:10px 10px 10px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 14px 40px rgba(0,0,0,.35);transform:translateY(140%);transition:transform .25s}
+.pedido-bar.ver{transform:none}
+.pedido-bar b{font:900 22px var(--tit);color:var(--ama)}
+.pedido-bar span{font-size:13px;color:#ccc;display:block}
+@media(min-width:700px){.pedido-bar{left:auto;right:24px;bottom:24px;width:420px}}
+
+/* COMO */
+.pasos{display:grid;gap:12px;counter-reset:p}
+@media(min-width:800px){.pasos{grid-template-columns:repeat(4,1fr)}}
+.paso{background:#fff;border-radius:16px;padding:18px;border:1px solid var(--borde);position:relative}
+.paso:before{counter-increment:p;content:"0" counter(p);font:900 44px/1 var(--tit);color:var(--ama);display:block;margin-bottom:6px}
+.paso h3{font:800 23px/1.05 var(--tit);text-transform:uppercase;margin-bottom:4px}
+.paso p{font-size:14.5px;color:var(--gris)}
+
+/* RESEÑAS */
+.resenas{display:grid;gap:14px}
+@media(min-width:860px){.resenas{grid-template-columns:.85fr 1.15fr;align-items:start}}
+.nota-g{background:var(--negro);color:#fff;border-radius:20px;padding:24px}
+.nota-g .num{font:900 84px/.9 var(--tit);color:var(--ama)}
+.nota-g .fila{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid #333;font-size:15px}
+.nota-g .fila:first-of-type{margin-top:12px}
+.citas{display:grid;gap:10px}
+.cita{background:#fff;border:1px solid var(--borde);border-radius:14px;padding:16px}
+.cita-top{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.cita-top img,.cita-top .ini{width:44px;height:44px;border-radius:50%;object-fit:cover;flex:none;background:var(--acero);color:#fff;display:grid;place-items:center;font:800 18px var(--tit)}
+.cita-top b{display:block;font-size:15px;line-height:1.2}
+.cita-top small{color:var(--gris);font-size:13px}
+.cita .estrellas{font-size:15px}
+.cita p{font-size:15px;color:#2a2e35}
+.cita .g-logo{margin-left:auto;width:20px;height:20px;flex:none}
+.ico{width:18px;height:18px;flex:none;color:var(--ama)}
+.abierto{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:13px;padding:3px 10px;border-radius:99px;background:#e6f7ec;color:#0d6b2f}
+.abierto.no{background:#fde8e5;color:#9b2414}
+.abierto:before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.horarios table{width:100%;border-collapse:collapse;font-size:15px;margin-bottom:6px}
+.horarios th{text-align:left;font:800 18px var(--tit);text-transform:uppercase;padding:14px 0 4px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.horarios td{padding:7px 0;border-bottom:1px dashed var(--borde)}
+.horarios td+td{text-align:right;font-weight:700}
+.creditos{margin-top:8px;font-size:12px;color:#8a8a8a}
+.creditos summary{cursor:pointer;font:600 12px Inter,sans-serif;text-transform:none;padding:0;display:inline;color:#bdbdbd}
+.creditos summary:after{content:""}
+footer details{background:none;border:0;padding:0;margin:0}
+footer details p{color:#8a8a8a;padding:6px 0 0;font-size:12px;line-height:1.5}
+.btn-resena{margin-top:16px;width:100%}
+
+/* ZONA */
+.zona{display:grid;gap:16px}
+@media(min-width:860px){.zona{grid-template-columns:1.2fr .8fr}}
+.mapa{border-radius:20px;overflow:hidden;border:1px solid var(--borde);min-height:300px;background:#e9e6df}
+.mapa iframe{width:100%;height:100%;min-height:300px;border:0;display:block}
+.horarios{background:#fff;border:1px solid var(--borde);border-radius:20px;padding:20px}
+.horarios h3{font:900 26px var(--tit);text-transform:uppercase;margin-bottom:8px}
+.horarios li{list-style:none;display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px dashed var(--borde);font-size:15px}
+.horarios .ojo{font-size:13px;color:var(--gris);margin-top:10px}
+
+/* FAQ */
+details{background:#fff;border:1px solid var(--borde);border-radius:14px;padding:4px 16px;margin-bottom:10px}
+summary{cursor:pointer;font:800 21px/1.2 var(--tit);text-transform:uppercase;padding:12px 0;list-style:none;display:flex;justify-content:space-between;gap:10px}
+summary:after{content:"+";color:var(--ama-osc);font-size:26px;line-height:.9}
+details[open] summary:after{content:"–"}
+details p{color:var(--gris);padding-bottom:14px}
+
+.cierre{background:var(--ama);padding:56px 0 110px;text-align:center}
+.cierre h2{font:900 clamp(40px,9vw,72px)/.92 var(--tit);text-transform:uppercase}
+.cierre p{max-width:520px;margin:12px auto 20px;font-weight:500}
+footer{background:var(--negro);color:#9a9a9a;font-size:13px;padding:24px 0 100px}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
+footer b{color:#fff}
+
+.wa-flota{position:fixed;right:16px;bottom:16px;z-index:35;width:58px;height:58px;border-radius:50%;background:var(--wa);display:grid;place-items:center;box-shadow:0 10px 26px rgba(0,0,0,.3);border:0;cursor:pointer}
+.wa-flota svg{width:30px;height:30px}
+body.con-pedido .wa-flota{display:none}
+
+/* MODAL WHATSAPP (demo) */
+.modal{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.6);display:none;align-items:flex-end;justify-content:center;padding:12px}
+.modal.ver{display:flex}
+@media(min-width:700px){.modal{align-items:center}}
+.chat{width:100%;max-width:400px;border-radius:20px;overflow:hidden;background:#efe7dd;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.chat-top{background:#075e54;color:#fff;display:flex;align-items:center;gap:10px;padding:12px 14px}
+.chat-top .av{width:36px;height:36px;border-radius:50%;background:var(--ama);display:grid;place-items:center;font:900 16px var(--tit);color:var(--negro)}
+.chat-top b{display:block;font-size:15px}
+.chat-top small{font-size:12px;opacity:.85}
+.chat-top button{margin-left:auto;background:none;border:0;color:#fff;font-size:26px;cursor:pointer;line-height:1}
+.chat-cuerpo{padding:16px 12px;max-height:55vh;overflow:auto}
+.burbuja{background:#dcf8c6;border-radius:12px 12px 2px 12px;padding:10px 12px;margin-left:auto;max-width:88%;font-size:14px;white-space:pre-wrap;box-shadow:0 1px 1px rgba(0,0,0,.1)}
+.burbuja.resp{background:#fff;border-radius:12px 12px 12px 2px;margin:10px auto 0 0}
+.chat-nota{font-size:12.5px;color:#4b4b4b;background:#fff8d6;padding:10px 12px;line-height:1.4}
+</style>
+</head>
+<body>
+<div class="demo-barra"><b>Demo de muestra</b> preparada por MyM Soluciones para Hierros Walter y Todo Durlock</div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-wa" viewBox="0 0 32 32"><path fill="currentColor" d="M16 3a13 13 0 0 0-11.2 19.6L3 29l6.6-1.7A13 13 0 1 0 16 3zm0 23.6c-2 0-4-.5-5.7-1.6l-.4-.2-3.9 1 1-3.8-.3-.4A10.6 10.6 0 1 1 16 26.6zm5.8-7.9c-.3-.2-1.9-.9-2.2-1s-.5-.2-.7.2-.8 1-1 1.2-.4.2-.7.1a8.7 8.7 0 0 1-4.3-3.8c-.3-.6.3-.5.9-1.7.1-.2 0-.4 0-.5l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6a1.2 1.2 0 0 0-.9.4 3.7 3.7 0 0 0-1.1 2.7 6.4 6.4 0 0 0 1.3 3.4 14.7 14.7 0 0 0 5.6 5c2.1.9 2.9 1 4 .8.6-.1 1.9-.8 2.2-1.5s.3-1.4.2-1.5-.3-.2-.6-.3z"/></symbol>
+  <symbol id="i-camion" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M2 6h12v10H2zM14 10h4l3 3v3h-7z"/><circle cx="6" cy="17.5" r="2" fill="currentColor"/><circle cx="17" cy="17.5" r="2" fill="currentColor"/></symbol>
+  <symbol id="i-tel" viewBox="0 0 24 24"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></symbol>
+  <symbol id="i-g" viewBox="0 0 48 48"><path fill="#4285F4" d="M45 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h11.8a10 10 0 0 1-4.4 6.6v5.5h7.1c4.2-3.8 6.5-9.5 6.5-16.1z"/><path fill="#34A853" d="M24 46c5.9 0 10.9-2 14.5-5.4l-7.1-5.5c-2 1.3-4.5 2.1-7.4 2.1-5.7 0-10.6-3.9-12.3-9.1H4.4v5.7A22 22 0 0 0 24 46z"/><path fill="#FBBC05" d="M11.7 28.1a13.2 13.2 0 0 1 0-8.2v-5.7H4.4a22 22 0 0 0 0 19.6z"/><path fill="#EA4335" d="M24 10.8c3.2 0 6.1 1.1 8.4 3.3l6.3-6.3A22 22 0 0 0 4.4 14.2l7.3 5.7C13.4 14.7 18.3 10.8 24 10.8z"/></symbol>
+</svg>
+
+<header>
+  <div class="wrap">
+    <a class="marca" href="#inicio" aria-label="Hierros Walter y Todo Durlock, inicio">
+      <span class="marca-ico" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24"><path d="M3 18h18M3 12h18M3 6h18" stroke="#141414" stroke-width="3" stroke-linecap="round"/></svg></span>
+      <span class="marca-txt">Hierros Walter<small>+ Todo Durlock</small></span>
+    </a>
+    <nav aria-label="Secciones">
+      <a href="#locales">Nuestros locales</a><a href="#pedido">Productos</a><a href="#como">Cómo comprar</a><a href="#opiniones">Opiniones</a><a href="#donde">Horarios y ubicación</a>
+    </nav>
+    <button class="btn wa chico" data-wa="Buenos días, quisiera solicitar un presupuesto.">Presupuesto</button>
+  </div>
+</header>
+
+<main id="inicio">
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <span class="eti">Isidro Casanova · La Matanza</span>
+      <h1>Hierros y<br>construcción en seco<br><em>en una misma cuadra.</em></h1>
+      <p class="lead">Hierro para construcción, mallas, perfiles y chapas en <b>Hierros Walter</b>. Placas de yeso, perfiles, masillas y aislantes en <b>Todo Durlock</b>. Envíe su lista de materiales y le respondemos con el presupuesto por WhatsApp.</p>
+      <div class="hero-acc">
+        <a class="btn ama" href="#pedido">Armar pedido <span aria-hidden="true">→</span></a>
+        <button class="btn wa" data-wa="Buenos días, quisiera solicitar un presupuesto."><svg aria-hidden="true"><use href="#i-wa"/></svg>Consultar por WhatsApp</button>
+      </div>
+      <div class="hero-datos">
+        <span><span class="estrellas" aria-hidden="true">★★★★☆</span> <b>4,3</b> en Google · 88 opiniones</span>
+        <span><svg class="ico" aria-hidden="true"><use href="#i-camion"/></svg><b>Entrega en obra</b></span>
+        <span><svg class="ico" aria-hidden="true"><use href="#i-tel"/></svg><b>011 4486-1559</b></span>
+        <span id="estadoHero"></span>
+      </div>
+    </div>
+    <div class="hero-fotos">
+      <figure><img src="img/hierros.jpg" alt="Estanterías con barras y perfiles de hierro de Hierros Walter"><figcaption>Hierros Walter</figcaption></figure>
+      <figure><img src="img/frente-camion.jpg" alt="Camión de reparto frente al local"><figcaption>Reparto propio</figcaption></figure>
+      <figure><img src="img/durlock.jpg" alt="Frente del local Todo Durlock" style="object-position:center 30%"><figcaption>Todo Durlock</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<div class="cinta" aria-hidden="true"><div class="cinta-in">
+  <span>Hierro aletado</span><span>Mallas sima</span><span>Perfiles y caños</span><span>Chapas</span><span>Placas de yeso</span><span>Masillas y cintas</span><span>Aislantes</span><span>Entrega en obra</span>
+  <span>Hierro aletado</span><span>Mallas sima</span><span>Perfiles y caños</span><span>Chapas</span><span>Placas de yeso</span><span>Masillas y cintas</span><span>Aislantes</span><span>Entrega en obra</span>
+</div></div>
+
+<section class="sec" id="locales">
+  <div class="wrap">
+    <div class="sec-head"><span class="eti">Dos locales, un mismo equipo</span><h2>Estructura y terminación <em>en un solo lugar.</em></h2><p>Una única consulta para el hierro de la losa y el durlock de tabiques y cielorrasos, con una sola entrega en obra.</p></div>
+    <div class="locales">
+      <article class="local h">
+        <div class="local-foto"><img src="img/frente-calle.jpg" alt="Frente de Hierros Walter sobre Bernaldes Polledo"><span class="local-tag">Hierros</span></div>
+        <div class="local-cuerpo">
+          <h3>Hierros Walter S.A</h3>
+          <p>Hierro para construcción, mallas, perfiles, caños estructurales, chapas y alambres, con entrega en obra.</p>
+          <div class="chips"><span>Hierro aletado</span><span>Mallas sima</span><span>Perfiles C</span><span>Caño estructural</span><span>Chapas</span><span>Alambre</span></div>
+          <div class="local-pie"><span><b>Bernaldes Polledo 178</b></span><span>Lun. a vie. 8 a 17 h · Sáb. 8 a 13 h</span><span><b>4,3</b> en Google (88 opiniones)</span></div>
+        </div>
+      </article>
+      <article class="local d">
+        <div class="local-foto"><img src="img/durlock.jpg" alt="Frente de Todo Durlock, materiales para la construcción en seco" style="object-position:center 25%"><span class="local-tag">Construcción en seco</span></div>
+        <div class="local-cuerpo">
+          <h3>Todo Durlock</h3>
+          <p>Materiales para la construcción en seco: placas de yeso, perfiles, masillas, cintas, tornillería, aislantes y accesorios.</p>
+          <div class="chips"><span>Placas de yeso</span><span>Montantes y soleras</span><span>Masillas</span><span>Aislantes</span><span>Tornillería</span><span>Accesorios</span></div>
+          <div class="local-pie"><span><b>Bernaldes Polledo 150</b></span><span>Lun. a vie. 8 a 16 h · Sáb. 8 a 13 h</span><span><b>3,7</b> en Google (12 opiniones)</span></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="sec gris" id="pedido">
+  <div class="wrap">
+    <div class="sec-head"><span class="eti">Productos</span><h2>Arme su pedido <em>y le cotizamos.</em></h2><p>Seleccione las cantidades y envíenos la lista por WhatsApp. Le respondemos con precio, disponibilidad y fecha de entrega.</p></div>
+    <div class="filtros" role="group" aria-label="Filtrar productos">
+      <button class="filtro" aria-pressed="true" data-f="todo">Todos</button>
+      <button class="filtro" aria-pressed="false" data-f="hierros">Hierros</button>
+      <button class="filtro" aria-pressed="false" data-f="seco">Construcción en seco</button>
+    </div>
+    <div class="prods" id="prods"></div>
+  </div>
+</section>
+
+<section class="sec" id="como">
+  <div class="wrap">
+    <div class="sec-head"><span class="eti">Cómo comprar</span><h2>Un proceso <em>simple y claro.</em></h2></div>
+    <div class="pasos">
+      <div class="paso"><h3>Envíe su lista</h3><p>Desde esta página o con una foto del cómputo de materiales de su profesional.</p></div>
+      <div class="paso"><h3>Reciba el presupuesto</h3><p>Precio, disponibilidad y costo de envío por WhatsApp, en el día.</p></div>
+      <div class="paso"><h3>Confirme el pedido</h3><p>Acordamos la forma de pago y coordinamos día y horario de entrega.</p></div>
+      <div class="paso"><h3>Entrega en obra</h3><p>Con nuestro propio camión, o con retiro por el local en Isidro Casanova.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec gris" id="opiniones">
+  <div class="wrap">
+    <div class="sec-head"><span class="eti">Opiniones en Google</span><h2>Lo que dicen <em>nuestros clientes.</em></h2></div>
+    <div class="resenas">
+      <div class="nota-g">
+        <div class="num">4,3</div>
+        <div class="estrellas" style="font-size:22px" aria-label="4,3 de 5 estrellas">★★★★☆</div>
+        <div class="fila"><span>Hierros Walter</span><b>4,3 · 88 opiniones</b></div>
+        <div class="fila"><span>Todo Durlock</span><b>3,7 · 12 opiniones</b></div>
+        <button class="btn ama btn-resena" data-resena>Dejar una opinión</button>
+      </div>
+      <div class="citas" id="citas"></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="donde">
+  <div class="wrap">
+    <div class="sec-head"><span class="eti">Horarios y ubicación</span><h2>Bernaldes Polledo <em>150 y 178.</em></h2><p>Isidro Casanova, La Matanza. Ambos locales se encuentran en la misma cuadra.</p></div>
+    <div class="zona">
+      <div class="mapa"><iframe title="Mapa de Hierros Walter y Todo Durlock" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=Jos%C3%A9%20Bernaldes%20Polledo%20178%2C%20Isidro%20Casanova&output=embed"></iframe></div>
+      <div class="horarios">
+        <h3>Horarios de atención</h3>
+        <table>
+          <tr><th colspan="2">Hierros Walter <span class="abierto" data-local="h"></span></th></tr>
+          <tr><td>Lunes a viernes</td><td>8 a 17 h</td></tr>
+          <tr><td>Sábados</td><td>8 a 13 h</td></tr>
+          <tr><td>Domingos</td><td>Cerrado</td></tr>
+          <tr><th colspan="2">Todo Durlock <span class="abierto" data-local="d"></span></th></tr>
+          <tr><td>Lunes a viernes</td><td>8 a 16 h</td></tr>
+          <tr><td>Sábados</td><td>8 a 13 h</td></tr>
+          <tr><td>Domingos</td><td>Cerrado</td></tr>
+        </table>
+        <p class="ojo">Teléfono para ambos locales: <b>011 4486-1559</b></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec gris" id="preguntas">
+  <div class="wrap">
+    <div class="sec-head"><span class="eti">Preguntas frecuentes</span><h2>Consultas <em>habituales.</em></h2></div>
+    <details><summary>¿Realizan envíos a obra?</summary><p>Sí, con camión propio. El costo depende de la zona y del volumen, y se informa junto con el presupuesto.</p></details>
+    <details><summary>¿Cortan el hierro a medida?</summary><p>Consúltenos por WhatsApp indicando medidas y cantidades y le confirmamos.</p></details>
+    <details><summary>¿Puedo enviar el cómputo de mi obra?</summary><p>Sí. Envíe una foto de la lista o del plano y le preparamos un único presupuesto con los materiales de ambos locales.</p></details>
+    <details><summary>¿Qué medios de pago aceptan?</summary><p>Se los detallamos junto con el presupuesto.</p></details>
+  </div>
+</section>
+
+<section class="cierre">
+  <div class="wrap">
+    <h2>¿Tiene una obra<br>en marcha?</h2>
+    <p>Envíenos la lista de materiales o una foto del cómputo. Le respondemos con precio y fecha de entrega.</p>
+    <button class="btn wa" data-wa="Buenos días, tengo una obra en marcha y quisiera solicitar un presupuesto."><svg aria-hidden="true"><use href="#i-wa"/></svg>Solicitar presupuesto</button>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap">
+  <span><b>Hierros Walter S.A · Todo Durlock</b> · Bernaldes Polledo 150 y 178, Isidro Casanova</span>
+  <span>Demo preparada por <b>MyM Soluciones</b></span>
+  <details class="creditos" style="flex-basis:100%"><summary>Créditos de las fotos de producto</summary><p id="creditos">Fotos de Wikimedia Commons con licencias libres. En la web final se reemplazan por fotos propias.</p></details>
+</div></footer>
+
+<button class="wa-flota" data-wa="Buenos días, quisiera solicitar un presupuesto." aria-label="Consultar por WhatsApp"><svg style="color:#fff" aria-hidden="true"><use href="#i-wa"/></svg></button>
+
+<div class="pedido-bar" id="pedidoBar" role="region" aria-label="Su pedido">
+  <div><b id="pedidoCant">0 productos</b><span>en su lista</span></div>
+  <button class="btn wa chico" id="pedidoEnviar">Enviar pedido</button>
+</div>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="chatTit">
+  <div class="chat">
+    <div class="chat-top"><span class="av">HW</span><div><b id="chatTit">Hierros Walter · Todo Durlock</b><small>WhatsApp</small></div><button id="cerrar" aria-label="Cerrar">×</button></div>
+    <div class="chat-nota"><b>Demo:</b> así llega el mensaje a su WhatsApp. En la web publicada, este botón abre WhatsApp con el texto ya escrito.</div>
+    <div class="chat-cuerpo"><div class="burbuja" id="burbuja"></div><div class="burbuja resp" id="resp"></div></div>
+  </div>
+</div>
+
+<script>
+const PRODS=[
+ {c:'hierros',n:'Hierro aletado',d:'Barras de 12 m, del 6 al 25 mm',u:'barras',f:'prod/hierro.jpg'},
+ {c:'hierros',n:'Malla sima',d:'Para contrapisos, plateas y losas',u:'paños',f:'prod/malla.jpg'},
+ {c:'hierros',n:'Perfiles',d:'Perfil C, ángulos y planchuelas',u:'unidades',f:'hierros.jpg'},
+ {c:'hierros',n:'Caños',d:'Estructurales, redondos y cuadrados',u:'unidades',f:'prod/canos.jpg'},
+ {c:'hierros',n:'Chapas',d:'Lisas, sinusoidales y trapezoidales',u:'unidades',f:'prod/chapa.jpg'},
+ {c:'hierros',n:'Alambre',d:'De atar y galvanizado, por kilo',u:'kg',f:'prod/alambre.jpg'},
+ {c:'seco',n:'Placas de yeso',d:'Estándar, resistente a la humedad y al fuego',u:'placas',f:'prod/placas.jpg'},
+ {c:'seco',n:'Montantes y soleras',d:'Perfiles para tabiques y cielorrasos',u:'unidades',f:'prod/montantes.jpg'},
+ {c:'seco',n:'Masillas',d:'Para juntas y terminación',u:'baldes',f:'prod/masilla.jpg'},
+ {c:'seco',n:'Cintas y cantoneras',d:'Cinta de papel, de malla y esquineros',u:'unidades',f:'prod/cinta.jpg'},
+ {c:'seco',n:'Aislantes',d:'Lana de vidrio y lana mineral',u:'rollos',f:'prod/lana.jpg'},
+ {c:'seco',n:'Tornillería',d:'Tornillos T1 y T2 para placa y perfil',u:'cajas',f:'prod/tornillos.jpg'}
+];
+/* Opiniones reales de las fichas de Google (texto tal cual, con cortes marcados; 18/11/2026) */
+const RESENAS=[
+ {n:'South Dream',l:'Hierros Walter',f:'Hace 5 años',a:'https://lh3.googleusercontent.com/a-/ALV-UjW2Yz97KqBnB8pxq50NWy-nIUC2IsWOVLYhF91BPO6ctOGbeTYOvQ=s96-c',t:'Llegue a las 17:55 sin dinero y sin transporte porque me habían fallado una camioneta, le conté la situación y sin conocerme no solamente me dio buen precio en el hierro […] sino que me puso a mí disposición el vehículo para llevar los hierros. […] Buen número, buena gente, buen hierro.'},
+ {n:'Damian maximiliano Guzmán chaile',l:'Hierros Walter',f:'Hace un año',a:'https://lh3.googleusercontent.com/a/ACg8ocJ7Gzf3hsJ3mBcWx-nkdIS0b92wwwW1Afh_jK0GN5qc9MLbPQ=s96-c',t:'Muy buena atención.. buenos precios'},
+ {n:'Puertas Blindadas Sam',l:'Todo Durlock',f:'Hace 5 años',a:'https://lh3.googleusercontent.com/a-/ALV-UjU_-ia1BpFolZbb8spRvvLo69_DkaHdiYDxf1hkT6srwEa5yn3k=s96-c',t:'Muy bueno te llevan las cosas'}
+];
+const HOR={h:{1:[8,17],2:[8,17],3:[8,17],4:[8,17],5:[8,17],6:[8,13]},d:{1:[8,16],2:[8,16],3:[8,16],4:[8,16],5:[8,16],6:[8,13]}};
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const cant={};
+const cont=document.getElementById('prods');
+cont.innerHTML=PRODS.map((p,k)=>`<article class="prod" data-cat="${p.c}" data-k="${k}">
+ <div class="prod-foto"><img src="img/${p.f}" alt="${p.n}" loading="lazy"><span>${p.c==='hierros'?'Hierros Walter':'Todo Durlock'}</span></div>
+ <div class="prod-txt"><h4>${p.n}</h4><small>${p.d}</small></div>
+ <div class="prod-ctl"><span class="uni">Cantidad (${p.u})</span>
+ <div class="cant"><button aria-label="Restar ${p.n}" data-d="-1">−</button><output aria-live="polite">0</output><button aria-label="Sumar ${p.n}" data-d="1">+</button></div></div></article>`).join('');
+document.getElementById('citas').innerHTML=RESENAS.map(r=>{const ini=r.n.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+ return `<div class="cita"><div class="cita-top"><img src="${r.a}" alt="" referrerpolicy="no-referrer" data-ini="${ini}"><div><b>${esc(r.n)}</b><small>${r.f} · ${r.l}</small></div><svg class="g-logo" role="img" aria-label="Google"><use href="#i-g"/></svg></div><div class="estrellas" aria-label="5 de 5 estrellas">★★★★★</div><p>${esc(r.t)}</p></div>`}).join('');
+document.querySelectorAll('.cita-top img').forEach(i=>i.addEventListener('error',()=>{const s=document.createElement('span');s.className='ini';s.textContent=i.dataset.ini;i.replaceWith(s);}));
+cont.addEventListener('click',e=>{const b=e.target.closest('button[data-d]');if(!b)return;const art=b.closest('.prod'),k=art.dataset.k;
+ cant[k]=Math.max(0,(cant[k]||0)+Number(b.dataset.d));art.querySelector('output').textContent=cant[k];art.classList.toggle('con',cant[k]>0);actualizar();});
+function lista(){return Object.entries(cant).filter(([,v])=>v>0).map(([k,v])=>({p:PRODS[k],v}));}
+function actualizar(){const l=lista(),n=l.length;document.getElementById('pedidoCant').textContent=n+(n===1?' producto':' productos');
+ document.getElementById('pedidoBar').classList.toggle('ver',n>0);document.body.classList.toggle('con-pedido',n>0);}
+document.querySelectorAll('.filtro').forEach(f=>f.addEventListener('click',()=>{document.querySelectorAll('.filtro').forEach(x=>x.setAttribute('aria-pressed',x===f));
+ document.querySelectorAll('.prod').forEach(p=>p.hidden=!(f.dataset.f==='todo'||p.dataset.cat===f.dataset.f));}));
+/* Abierto o cerrado según la hora de Buenos Aires */
+function abiertoAhora(loc){const ahora=new Date(new Date().toLocaleString('en-US',{timeZone:'America/Argentina/Buenos_Aires'}));const r=HOR[loc][ahora.getDay()];const h=ahora.getHours()+ahora.getMinutes()/60;return !!r&&h>=r[0]&&h<r[1];}
+function pintarEstado(el,loc){const a=abiertoAhora(loc);el.className='abierto'+(a?'':' no');el.textContent=a?'Abierto ahora':'Cerrado ahora';}
+document.querySelectorAll('.abierto').forEach(el=>pintarEstado(el,el.dataset.local));
+pintarEstado(document.getElementById('estadoHero'),'h');
+fetch('img/prod/creditos.json').then(r=>r.json()).then(c=>{document.getElementById('creditos').textContent='Fotos de Wikimedia Commons con licencias libres; en la web final se reemplazan por fotos propias. '+c.map(x=>`${x.archivo.replace('.jpg','')}: ${x.autor||'autor sin indicar'} (${x.licencia})`).join(' · ');}).catch(()=>{});
+const modal=document.getElementById('modal');
+function abrir(txt,resp){document.getElementById('burbuja').textContent=txt;document.getElementById('resp').textContent=resp;modal.classList.add('ver');document.getElementById('cerrar').focus();}
+document.getElementById('pedidoEnviar').addEventListener('click',()=>{const l=lista();
+ const h=l.filter(x=>x.p.c==='hierros'),s=l.filter(x=>x.p.c==='seco');
+ let t='Buenos días, quisiera un presupuesto del siguiente pedido:\n';
+ const lin=x=>`• ${x.p.n}: ${x.v} ${x.p.u}`;
+ if(h.length)t+='\nHIERROS WALTER\n'+h.map(lin).join('\n');
+ if(s.length)t+=(h.length?'\n\n':'\n')+'TODO DURLOCK\n'+s.map(lin).join('\n');
+ t+='\n\nLugar de entrega: (localidad o dirección de la obra)';
+ abrir(t,'Buenos días, gracias por su consulta. Verificamos disponibilidad y le enviamos el presupuesto con el costo de envío.');});
+document.querySelectorAll('[data-wa]').forEach(b=>b.addEventListener('click',()=>abrir(b.dataset.wa,'Buenos días, gracias por comunicarse. Indíquenos qué materiales necesita o envíenos una foto de la lista.')));
+document.querySelectorAll('[data-resena]').forEach(b=>b.addEventListener('click',()=>window.open('https://search.google.com/local/writereview?placeid=ChIJsZrDM_bGvJURaGJ7pYXZJyU','_blank','noopener')));
+document.getElementById('cerrar').addEventListener('click',()=>modal.classList.remove('ver'));
+modal.addEventListener('click',e=>{if(e.target===modal)modal.classList.remove('ver');});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')modal.classList.remove('ver');});
+</script>
+</body>
+</html>
