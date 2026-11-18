@@ -38,7 +38,7 @@ Soy Matías, de MyM Soluciones. Te paso la propuesta que armamos para [EMPRESA]:
 
 Ahí están los seis planes de automatización (Bot de WhatsApp, Seguimiento de clientes, Landing de ventas, Paquete completo, Orquestador y Empresa en automático) y los tres planes de Redes en automático (Esencial, Profesional y Premium), que hacen, publican y miden el contenido de tus redes todos los meses. De cada uno vas a ver qué hace, qué necesitamos de tu lado para arrancar, en cuánto tiempo queda andando y cuánto cuesta. Los precios son finales, en pesos. Casi todos los planes tienen un video corto que lo explica.
 
-Hay una promoción con fecha: contratando hasta el 30/11/2026, la instalación del Paquete completo queda en $ 200.000 + IVA, y la del Orquestador y la de Empresa en automático van a mitad de precio. El detalle está en la propuesta.
+Hay una promoción con fecha: contratando hasta el 30/11/2026, la instalación del Orquestador y la de Empresa en automático van a mitad de precio. El detalle está en la propuesta.
 
 Si alguno te sirve, el paso siguiente es un diagnóstico gratis de 30 minutos por videollamada. Ahí vemos tu caso y te pasamos el alcance por escrito antes de empezar. El abono es mensual y sin permanencia.
 

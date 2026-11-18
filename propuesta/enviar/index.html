@@ -94,7 +94,7 @@ body{background:linear-gradient(180deg,#f4f7ff,#e6eeff);color:#0e1a33;min-height
       'Cualquier duda, escribime por acá.';
   }
   function textoMail(d, l) {
-    var promo = new Date() < PROMO_HASTA ? 'Hay dos promociones con fecha, contratando hasta el 30/11/2026: 15 días de prueba totalmente gratis en Bot de WhatsApp, Seguimiento de clientes, Paquete completo y Redes en automático (no pagás nada al empezar y, si no seguís, no debés nada); y la instalación en promoción: Paquete completo a $ 200.000 + IVA, y Orquestador y Empresa en automático a mitad de precio. El detalle está en la propuesta.\n\n' : '';
+    var promo = new Date() < PROMO_HASTA ? 'Hay dos promociones con fecha, contratando hasta el 30/11/2026: 15 días de prueba totalmente gratis en Bot de WhatsApp, Seguimiento de clientes, Paquete completo y Redes en automático (no pagás nada al empezar y, si no seguís, no debés nada); y la instalación del Orquestador y la de Empresa en automático a mitad de precio. El detalle está en la propuesta.\n\n' : '';
     return 'Hola' + (d.con ? ' ' + d.con : '') + ':\n\n' +
       'Soy Matías, de MyM Soluciones. Te paso la propuesta que armamos' + (d.emp ? ' para ' + d.emp : '') + ':\n\n' + l + '\n\n' +
       'Ahí están los seis planes de automatización (Bot de WhatsApp, Seguimiento de clientes, Landing de ventas, Paquete completo, Orquestador y Empresa en automático) y los tres planes de Redes en automático. De cada uno vas a ver qué hace, qué necesitamos de tu lado para arrancar, en cuánto tiempo queda andando y cuánto cuesta. Los precios son finales, en pesos. Casi todos los planes tienen un video corto que lo explica.\n\n' +
