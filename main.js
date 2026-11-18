@@ -1,5 +1,7 @@
 (() => {
   const cfg = window.SITE || {};
+  // La promoción vale hasta el 30/11/2026 inclusive (hora de Argentina): después no se muestra más (igual que propuesta/propuesta.js)
+  if (Date.now() >= Date.parse("2026-12-01T00:00:00-03:00")) document.documentElement.classList.add("promo-vencida");
   // ?motion=0 apaga las animaciones (versión estática).
   const reduced = /[?&]motion=0/.test(location.search);
   const $ = (s, el = document) => el.querySelector(s);

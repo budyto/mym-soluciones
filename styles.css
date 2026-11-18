@@ -747,3 +747,8 @@ body::after { content: ""; position: fixed; inset: -20vmax; z-index: -2; pointer
 .redes-metodo b { display: block; font-size: 18px; font-weight: 900; }
 .redes-metodo span { display: block; margin-top: 4px; font-size: 14.5px; color: var(--ink-2); }
 @media (max-width: 760px) { .redes-metodo { grid-template-columns: 1fr; } }
+
+/* La promoción tiene fecha: pasado el 30/11/2026, main.js la saca y queda el precio de lista (mismo mecanismo que propuesta/propuesta.css) */
+.pp-promo-fin { display: none; }
+.promo-vencida .pp-promo { display: none !important; }
+.promo-vencida .pp-promo-fin { display: inline; }
