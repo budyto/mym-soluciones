@@ -84,11 +84,16 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
           <label><input type="radio" name="redes" value="redesEsencial"> Esencial</label>
           <label><input type="radio" name="redes" value="redesProfesional"> Profesional</label>
           <label><input type="radio" name="redes" value="redesPremium"> Premium</label>
-          <p class="gris chica" style="margin:6px 0 0">El paquete y el precio se arman solos. La IA del bot se suma sola al abono. Orquestador y software a medida se cotizan aparte.</p>
+          <p class="sub">Con diagnóstico (el precio depende del cliente)</p>
+          <label><input type="checkbox" name="servicio" value="orquestador"> Orquestador de IA</label>
+          <label><input type="checkbox" name="servicio" value="empresaAutomatica"> Empresa en automático</label>
+          <label><input type="checkbox" name="servicio" value="agenteExtra"> Agente extra</label>
+          <label><input type="checkbox" name="servicio" value="aMedida"> Software a medida</label>
+          <p class="gris chica" style="margin:6px 0 0">El paquete y el precio se arman solos. La IA del bot se suma sola al abono. La página web y los servicios con diagnóstico piden el precio acordado.</p>
         </fieldset>
         <!-- Precio acordado (Budy, 19/11/2026): opcional; manda sobre el de lista. Obligatorio con la web (no tiene precio fijo). -->
         <fieldset class="servicios"><legend>Precio acordado (opcional)</legend>
-          <p class="gris chica" style="margin:0 0 6px">Si arreglaste otro precio, ponelo acá y manda sobre el de lista. Con la página web es obligatorio.</p>
+          <p class="gris chica" style="margin:0 0 6px">Si arreglaste otro precio, ponelo acá y manda sobre el de lista. Con la página web o un servicio con diagnóstico es obligatorio.</p>
           <div class="grilla" style="margin:0"><input name="acInstalacion" inputmode="decimal" placeholder="Instalación en $ (vacío = 0)"><input name="acAbono" inputmode="decimal" placeholder="Abono por mes en $"></div>
           <label><input type="checkbox" name="acConIva"> Los montos ya incluyen IVA</label>
           <label><input type="checkbox" name="acIa"> La IA del bot va incluida (no se cobra aparte)</label>
@@ -294,7 +299,7 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
   }
 
   NOMBRE.servicios = 'Con servicios, sin bot'; // clientes sin bot (19/11/2026): se ven en «Todos»
-  const SERVICIO = { bot: 'Bot de WhatsApp', seguimiento: 'Seguimiento de clientes', landing: 'Landing de ventas', web: 'Página web institucional', redesEsencial: 'Redes en automático Esencial', redesProfesional: 'Redes en automático Profesional', redesPremium: 'Redes en automático Premium' };
+  const SERVICIO = { bot: 'Bot de WhatsApp', seguimiento: 'Seguimiento de clientes', landing: 'Landing de ventas', web: 'Página web institucional', orquestador: 'Orquestador de IA', empresaAutomatica: 'Empresa en automático', agenteExtra: 'Agente extra', aMedida: 'Software a medida', redesEsencial: 'Redes en automático Esencial', redesProfesional: 'Redes en automático Profesional', redesPremium: 'Redes en automático Premium' };
   $('#form-nuevo').onsubmit = async (e) => {
     e.preventDefault(); const f = e.target; const fd = new FormData(f); $('#error-nuevo').textContent = '';
     const monto = (k) => String(fd.get(k) || '').replace(/\./g, '').replace(',', '.').replace(/[^\d.]/g, '');

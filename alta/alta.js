@@ -85,7 +85,7 @@
       if (r.sinBot) {
         // Sin bot no hay alta que seguir: se muestra lo pedido y MyM le escribe.
         const p = r.precio || {}; const $p = (n) => '$ ' + Number(n || 0).toLocaleString('es-AR');
-        $('#resumen-servicios').textContent = `Pediste ${p.nombre}: ${p.instalacion ? 'instalación ' + $p(p.instalacion) + ' + IVA y ' : ''}${$p(p.abono)} + IVA por mes${(p.aCotizar || []).length ? `. ${p.aCotizar.join(' y ')} te la cotizamos aparte` : ''}.`;
+        $('#resumen-servicios').textContent = `Pediste ${p.nombre}: ${p.instalacion ? 'instalación ' + $p(p.instalacion) + ' + IVA y ' : ''}${$p(p.abono)} + IVA por mes${(p.aCotizar || []).length ? `. ${p.aCotizar.join(', ')}: te pasamos el precio después del diagnóstico` : ''}.`;
         return verPaso('servicios');
       }
       sesion = { id: r.cliente, llave: r.llave }; guardarSesion(sesion);
