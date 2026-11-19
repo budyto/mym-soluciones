@@ -374,6 +374,17 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
         catch (err) {
           btn.disabled = false;
           const rep = err.datos && err.datos.repetido;
+          // Monto único (19/11/2026): si el cliente tiene un pedido de transferencia abierto por ese monto, el servidor
+          // pregunta si el pago es el de ese pedido. Con el pedido queda pagado y no espera más; sin el pedido va suelto.
+          const abiertos = err.datos && err.datos.confirmar === 'sinEspera' ? (err.datos.esperas || [err.datos.espera]).filter(Boolean) : [];
+          if (abiertos.length) {
+            const reintentar = async (extra, boton) => { boton.disabled = true; try { await api('/api/admin/pago', { ...cuerpo, ...extra }); await listo(); } catch (e2) { $('#error-pago').textContent = e2.message; boton.disabled = false; } };
+            $('#pago-repetido').innerHTML = `<div class="peligro" style="margin-top:8px"><p class="error" style="margin:0 0 6px">Este cliente tiene un pedido de transferencia abierto por ese monto. ¿Es este pago?</p>${abiertos.map((x) => `<div class="acciones" style="margin:0 0 6px"><button class="btn principal" type="button" data-es-pedido="${esc(x.id)}">Sí, es el pedido ${esc(x.ref)}: ${esc(x.concepto)} · ${esc(montoPedido(x))}</button></div>`).join('')}<div class="acciones" style="margin:0"><button class="btn" type="button" id="b-sin-pedido">No, es otro pago</button><button class="btn" type="button" id="b-no-pago">Cancelar</button></div></div>`;
+            document.querySelectorAll('[data-es-pedido]').forEach((bt) => (bt.onclick = () => reintentar({ espera: bt.dataset.esPedido, monto: undefined }, bt)));
+            $('#b-sin-pedido').onclick = (ev) => reintentar({ sinEspera: true }, ev.target);
+            $('#b-no-pago').onclick = () => { $('#pago-repetido').innerHTML = ''; };
+            return;
+          }
           if (!rep) { $('#error-pago').textContent = err.message; return; }
           const lista = (err.datos.repetidos || [rep]).map((x) => `<li>${esc(pesos(x.monto))} · ${esc(fecha(x.cuando))} · ${esc(x.como)}</li>`).join('');
           $('#pago-repetido').innerHTML = `<div class="peligro" style="margin-top:8px"><p class="error" style="margin:0 0 6px">${esc(err.message)}</p><p class="gris chica" style="margin:0">Pagos de este cliente por ese monto en los últimos 7 días:</p><ul class="chica" style="margin:4px 0 8px">${lista}</ul><p class="gris chica" style="margin:0 0 8px">Antes de confirmar, fijate en la app de Ualá si entraron dos transferencias. Si es la misma plata, no hagas nada.</p><div class="acciones" style="margin:0"><button class="btn principal" type="button" id="b-otro-pago">Es otro pago, registrarlo</button><button class="btn" type="button" id="b-no-pago">No, es el mismo</button></div></div>`;
@@ -428,9 +439,12 @@ Con ese mail va a entrar a su panel y ahí le van a llegar los mails.`)) return;
         if (fc.querySelector('[data-preset=abono][aria-pressed=true]')) fc.monto.value = numero(cuenta.abono);
       }).catch(() => { if ($('#abono-detalle')) $('#abono-detalle').textContent = 'sin la IA (no se pudo calcular): sumala a mano.'; });
       // Los cobros de este cliente que esperan la transferencia, para no pedir dos veces lo mismo.
+      // Monto único (19/11/2026): el pedido se hace por unos pesos menos que el precio, para reconocer el pago.
+      // Lo que tiene que transferir el cliente es `monto`; `montoOriginal` es el precio.
+      const montoPedido = (x) => pesos(x.monto) + (x.montoOriginal && Number(x.montoOriginal) !== Number(x.monto) ? ` exactos (precio ${pesos(x.montoOriginal)})` : '');
       const verEsperando = () => api('/api/admin/transferencias').then(({ esperas }) => {
         const mias = (esperas || []).filter((x) => x.cliente === id);
-        if ($('#cobro-esperando')) $('#cobro-esperando').innerHTML = mias.length ? `<p class="chica" style="margin:12px 0 0"><b>Esperando su transferencia:</b> ${mias.map((x) => esc(`${x.concepto} · ${pesos(x.monto)} (pedido el ${fecha(x.creado)}, ${x.ref})`)).join(' — ')}. Se registra sola cuando entra.</p>` : '';
+        if ($('#cobro-esperando')) $('#cobro-esperando').innerHTML = mias.length ? `<p class="chica" style="margin:12px 0 0"><b>Esperando su transferencia:</b> ${mias.map((x) => esc(`${x.concepto} · ${montoPedido(x)} (pedido el ${fecha(x.creado)}, ${x.ref})`)).join(' — ')}. Se registra sola cuando entra.</p>` : '';
       }).catch(() => {});
       verEsperando();
       fc.onsubmit = async (e) => {
@@ -439,7 +453,7 @@ Con ese mail va a entrar a su panel y ahí le van a llegar los mails.`)) return;
         const d = Object.fromEntries(new FormData(fc).entries()); const monto = leerMonto(d.monto); const concepto = String(d.concepto || '').trim();
         if (!concepto) { $('#error-cobro').textContent = 'Escribí el concepto: qué se le cobra.'; fc.concepto.focus(); return; }
         if (!(monto >= (via === 'link' ? 25 : 1))) { $('#error-cobro').textContent = via === 'link' ? 'Poné el total con IVA. Ualá acepta desde $ 25.' : 'Poné el total a cobrar, con IVA.'; fc.monto.focus(); return; }
-        const aviso = via === 'link' ? `¿Generar un link de pago de Ualá por ${pesos(monto)} (${concepto}) para ${c.negocio}?\n\nDespués lo mandás vos por WhatsApp o lo copiás.` : `¿Pedirle a ${c.negocio} una transferencia de ${pesos(monto)} (${concepto})?\n\nLe llega un mail${c.email ? ' a ' + c.email : ''} con el alias y el monto.`;
+        const aviso = via === 'link' ? `¿Generar un link de pago de Ualá por ${pesos(monto)} (${concepto}) para ${c.negocio}?\n\nDespués lo mandás vos por WhatsApp o lo copiás.` : `¿Pedirle a ${c.negocio} una transferencia de ${pesos(monto)} (${concepto})?\n\nLe llega un mail${c.email ? ' a ' + c.email : ''} con el alias y el monto exacto a transferir: puede ser unos pesos menos que el precio, para reconocer su pago.`;
         if (!confirm(aviso)) return;
         const btns = fc.querySelectorAll('button[type=submit]'); btns.forEach((b) => (b.disabled = true));
         const tel = String(c.celular || '').replace(/\D/g, '');
@@ -452,7 +466,7 @@ Con ese mail va a entrar a su panel y ahí le van a llegar los mails.`)) return;
             $('#copiar-cobro').onclick = () => navigator.clipboard.writeText(r.link).then(() => ($('#copiar-cobro').textContent = 'Copiado')).catch(() => {});
           } else {
             const r = await api('/api/admin/pedir-transferencia', { id, servicio: d.servicio, concepto, monto });
-            $('#cobro-resultado').innerHTML = `<p class="ok">Listo: pedido ${esc(r.ref)}. Le mandamos el mail con el alias. Si querés, mandale también este mensaje:</p><div class="link-caja">${esc(r.mensaje)}</div><div class="acciones">${wa(r.mensaje)}<button class="btn" type="button" id="copiar-cobro">Copiar el mensaje</button></div>`;
+            $('#cobro-resultado').innerHTML = `<p class="ok">Listo: pedido ${esc(r.ref)}${r.monto ? `. Tiene que transferir <b>${esc(montoPedido(r))}</b>` : ''}. Le mandamos el mail con el alias. Si querés, mandale también este mensaje:</p>${r.soloAMano ? '<p class="gris chica">Este monto es muy chico para ajustarlo: cuando entre, el pago no se registra solo. Anotalo vos en «¿Ya te pagó?».</p>' : ''}<div class="link-caja">${esc(r.mensaje)}</div><div class="acciones">${wa(r.mensaje)}<button class="btn" type="button" id="copiar-cobro">Copiar el mensaje</button></div>`;
             $('#copiar-cobro').onclick = () => navigator.clipboard.writeText(r.mensaje).then(() => ($('#copiar-cobro').textContent = 'Copiado')).catch(() => {});
             verEsperando(); cargarTransferencias();
           }
@@ -489,7 +503,7 @@ Con ese mail va a entrar a su panel y ahí le van a llegar los mails.`)) return;
       $('#caja-transf').hidden = !esperas.length && !sinAsignar.length;
       const opciones = esperas.map((e) => `<option value="${esc(e.id)}">${esc(e.negocio)} · ${esc(e.concepto)} · ${pesos(e.monto)}</option>`).join('');
       $('#transf-sin').innerHTML = sinAsignar.length ? `<p><b>Entraron y no se asignaron solas (${sinAsignar.length})</b></p>` + sinAsignar.map((a) => `<div class="prueba" data-aviso="${esc(a.id)}"><b>${a.monto ? pesos(a.monto) : 'monto sin leer'}</b>${a.nombre ? ' de ' + esc(a.nombre) : ''} · <span class="gris chica">${esc(fecha(a.recibido))}</span><br>${a.motivo ? `<span class="chica"><b>Por qué no se asignó:</b> ${esc(a.motivo)}</span><br>` : ''}${(a.pagosPrevios || []).length ? `<span class="gris chica">Pagos de ese cliente por ese monto: ${a.pagosPrevios.map((x) => esc(`${pesos(x.monto)} del ${fecha(x.cuando)} (${x.como})`)).join(' · ')}. Fijate en la app de Ualá si entraron dos.</span><br>` : ''}<span class="gris chica">«${esc(a.titulo)} ${esc(a.texto)}»</span><div class="acciones"><select aria-label="A qué cobro va">${opciones || '<option value="">No hay cobros esperando</option>'}</select><button class="btn principal" data-asignar>Asignar</button><button class="btn" data-descartar title="No era un cobro de Soluciones">No es de un cliente</button></div></div>`).join('') : '';
-      $('#transf-esperando').innerHTML = esperas.length ? `<p style="margin-top:12px"><b>Esperando la transferencia (${esperas.length})</b></p>` + esperas.map((e) => `<div class="gris chica" style="margin:4px 0">${esc(fecha(e.creado))} · ${esc(e.ref)} · <b>${esc(e.negocio)}</b> · ${esc(e.concepto)} · ${pesos(e.monto)} <button class="btn" style="padding:2px 8px" data-cancelar="${esc(e.id)}">Cancelar</button></div>`).join('') : '';
+      $('#transf-esperando').innerHTML = esperas.length ? `<p style="margin-top:12px"><b>Esperando la transferencia (${esperas.length})</b></p>` + esperas.map((e) => `<div class="gris chica" style="margin:4px 0">${esc(fecha(e.creado))} · ${esc(e.ref)} · <b>${esc(e.negocio)}</b> · ${esc(e.concepto)} · ${pesos(e.monto)}${e.montoOriginal && Number(e.montoOriginal) !== Number(e.monto) ? ` (precio ${pesos(e.montoOriginal)})` : ''} <button class="btn" style="padding:2px 8px" data-cancelar="${esc(e.id)}">Cancelar</button></div>`).join('') : '';
       document.querySelectorAll('[data-asignar]').forEach((b) => (b.onclick = async () => {
         const caja = b.closest('[data-aviso]'); const espera = caja.querySelector('select').value; if (!espera) return;
         try { await api('/api/admin/asignar-transferencia', { aviso: caja.dataset.aviso, espera }); }

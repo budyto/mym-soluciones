@@ -372,14 +372,27 @@ td.principal{min-width:160px}
         <td data-e="Concepto">${esc((c.pago && c.pago.concepto) || (c.detalle && c.detalle[0] && c.detalle[0].descripcion) || '—')}</td>
         <td class="num" data-e="Importe"><b>${pesos(c.importe_final)}</b></td>
         <td data-e="Estado"><div>${estadoCandidato(c)}</div></td>
-        <td class="acciones" data-e=""><div class="fila-acc"><button class="btn principal chico" data-facturar="${ix}">🧾 Facturar</button></div></td>
+        <td class="acciones" data-e=""><div class="fila-acc"><button class="btn principal chico" data-facturar="${ix}">🧾 Facturar</button>${c.estado === 'emitiendo' || c.estado === 'revisar' ? '' : `<button class="btn chico" data-nofacturar="${ix}" title="No es una venta (una prueba, un pago anotado por error): sale de esta lista">No facturar</button>`}</div></td>
       </tr>`; }).join('')}</tbody></table>`;
   }
   $('#tabla').addEventListener('click', (e) => {
     const f = e.target.closest('[data-facturar]'); if (f) return abrirModal(VISTOS[Number(f.dataset.facturar)]);
+    const n = e.target.closest('[data-nofacturar]'); if (n) return noFacturar(VISTOS[Number(n.dataset.nofacturar)], n);
     const p = e.target.closest('[data-pdf]'); if (p) return verPdf(p.dataset.pdf);
     const a = e.target.closest('[data-anular]'); if (a) return anular(VISTOS[Number(a.dataset.anular)]);
   });
+
+  // «No facturar» (19/11/2026): para un pago que no es una venta (una prueba, uno anotado por error). El pago no se
+  // borra: queda guardado en el cliente con quién lo marcó, cuándo y por qué, y sale de esta lista.
+  async function noFacturar(c, boton) {
+    if (!c) return;
+    const motivo = prompt(`${c.negocio}: ${pesos(c.importe_final)} del ${fechaCorta(diaAR(c.pago && c.pago.cuando))}.\n\nEste pago sale de «Para facturar» y no se factura. No se puede deshacer desde el panel.\n\n¿Por qué no se factura? (queda guardado)`);
+    if (motivo === null) return;
+    if (motivo.trim().length < 3) { alert('Escribí por qué no se factura.'); return; }
+    boton.disabled = true;
+    try { await api('/api/facturacion/no-facturar', { cliente_id: c.cliente_id, referencia: c.referencia, motivo: motivo.trim() }); CANDIDATOS = CANDIDATOS.filter((x) => x !== c); pintarCandidatos(); }
+    catch (err) { boton.disabled = false; alert(err.message); }
+  }
 
   // «Facturar todo lo listo»: primero se le pregunta al servidor QUÉ saldría (los números son los de la
   // base en este momento, no los de la tabla) y recién con el sí se emite. Va por todos los clientes con
