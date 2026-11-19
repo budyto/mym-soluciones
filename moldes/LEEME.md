@@ -1,6 +1,6 @@
 # Moldes de landing de MyM Soluciones
 
-19/11/2026 · Armado por Claude por decisión de Budy del 19/11 («dos o tres moldes por tipo de negocio; armá varias, yo las apruebo»). **Estado: 🟡 a la espera de la aprobación de Budy. Nada de esto está publicado.**
+19/11/2026 · Armado por Claude por decisión de Budy del 19/11 («dos o tres moldes por tipo de negocio; armá varias, yo las apruebo»). **Estado: ✅ los tres moldes aprobados por Budy el 19/11/2026, viendo las muestras en el navegador. 🟡 Todavía en la rama `moldes-landing`, sin subir a `main` y sin publicar.**
 
 Cada cliente es **un archivo de datos** (`cliente.js`) y una carpeta de fotos. Nadie escribe el HTML de un cliente. Un cambio legal o de diseño se hace una vez en el molde y se vuelven a generar todas las landings con un comando.
 
@@ -119,7 +119,6 @@ Prueba del 19/11/2026 con un negocio inventado (`electricista-ejemplo`, molde `s
 
 ## Lo que falta o no se pudo verificar
 
-- 🔴 **Aprobación de Budy** de los tres diseños.
 - 🔴 **PageSpeed en celular:** no se midió; hace falta una dirección de prueba pública. El plan pedía 90 o más.
 - 🔴 **Revisión legal:** los textos de los trámites y de la privacidad son una lectura de Claude de la Disposición 954/2025 y de la Ley 25.326, no un dictamen. Falta que los mire la abogada. Tampoco se verificaron normas de la Ciudad ni de la Provincia de Buenos Aires sobre los mismos botones.
 - 🔴 **El código del trámite se genera en el navegador** y llega al cliente dentro del mensaje. No queda guardado en ningún servidor: si el cliente necesita registro propio, hay que sumarlo.
