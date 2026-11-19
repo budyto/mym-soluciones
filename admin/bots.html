@@ -516,9 +516,11 @@ Con ese mail va a entrar a su panel y ahí le van a llegar los mails.`)) return;
         if (!espera) { $('#error-transf').textContent = 'Elegí a qué cobro va esta transferencia.'; return; }
         const av = sinAsignar.find((x) => x.id === caja.dataset.aviso) || {}; const ped = esperas.find((x) => x.id === espera) || {};
         const montoAviso = Number(av.monto || av.montoLeido || 0);
-        if (montoAviso ? Math.round(montoAviso * 100) !== Math.round(Number(ped.monto) * 100) : true) {
-          const dice = montoAviso ? `El aviso ${av.monto ? 'dice' : 'parece decir'} ${pesos(montoAviso)}` : 'No se pudo leer el monto del aviso';
-          if (!confirm(`${dice} y el pedido ${ped.ref || ''} de ${ped.negocio || ''} es de ${pesos(ped.monto)}.\n\nNo coinciden. Fijate en la app de Ualá cuánto entró antes de seguir.\n\n¿Lo mando igual?`)) return;
+        // Si el aviso trae un monto (leído o «parece decir») y no es el del pedido, no se manda: el servidor lo rechaza
+        // siempre (no hay pagos en partes). Sin ningún monto, el servidor pide confirmar y se pregunta abajo.
+        if (montoAviso && Math.round(montoAviso * 100) !== Math.round(Number(ped.monto) * 100)) {
+          $('#error-transf').textContent = `El aviso ${av.monto ? 'dice' : 'parece decir'} ${pesos(montoAviso)} y el pedido ${ped.ref || ''} de ${ped.negocio || ''} es de ${pesos(ped.monto)}: no coinciden, así que no se asigna. Fijate en la app de Ualá cuánto entró. Si pagó otro monto, cancelá el pedido y pedí otro, o anotá el pago suelto en el cliente y descartá este aviso.`;
+          return;
         }
         try { await api('/api/admin/asignar-transferencia', { aviso: caja.dataset.aviso, espera }); }
         catch (err) {
