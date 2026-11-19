@@ -27,7 +27,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;900&family=Martian+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--azul:#2f6bff;--agua:#00c2a8;--deg:linear-gradient(120deg,#2f6bff,#00c2a8);--ink:#0e1a33;--gris:#4a5878;--borde:#dbe4f7;--suave:#eef3ff;--ok:#0a8a60;--aviso:#9a5c00;--mal:#c2364e}
+:root{--azul:#2f6bff;--azul-t:#1f57e6;--agua:#00c2a8;--deg:linear-gradient(120deg,#2458e6,#007a6a);--ink:#0e1a33;--gris:#4a5878;--borde:#dbe4f7;--suave:#eef3ff;--ok:#0a8a60;--aviso:#9a5c00;--mal:#c2364e}
 *{box-sizing:border-box}
 body{margin:0;min-height:100vh;background:linear-gradient(180deg,#f4f7ff,#e6eeff) fixed;color:var(--ink);font:16px/1.5 Archivo,system-ui,sans-serif}
 .wrap{max-width:1100px;margin:0 auto;padding:0 18px 40px}
@@ -35,7 +35,7 @@ header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:18px 0}
 header h1{font:900 24px Archivo;margin:0;letter-spacing:-.02em}
 header a{color:var(--gris);text-decoration:none;font-weight:600}
 .der{margin-left:auto;display:flex;gap:10px;align-items:center;color:var(--gris);font-size:14px}
-.btn{border:0;border-radius:11px;padding:9px 14px;font:700 14px Archivo;cursor:pointer;background:var(--suave);color:var(--azul)}
+.btn{border:0;border-radius:11px;padding:9px 14px;font:700 14px Archivo;cursor:pointer;background:var(--suave);color:var(--azul-t)}
 .btn.principal{background:var(--deg);color:#fff}
 .btn.mal{background:#fde9ed;color:var(--mal)}
 .btn[disabled]{opacity:.6;cursor:progress}
@@ -43,7 +43,7 @@ header a{color:var(--gris);text-decoration:none;font-weight:600}
 .puerta{max-width:420px;margin:12vh auto;text-align:center}
 .filtros{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
 .filtros button{border:1.5px solid var(--borde);background:#fff;border-radius:99px;padding:6px 12px;font:600 13.5px Archivo;cursor:pointer;color:var(--gris)}
-.filtros button[aria-pressed=true]{border-color:var(--azul);color:var(--azul);background:var(--suave)}
+.filtros button[aria-pressed=true]{border-color:var(--azul);color:var(--azul-t);background:var(--suave)}
 table{width:100%;border-collapse:collapse;font-size:14.5px}
 th{text-align:left;font:500 12px "Martian Mono",monospace;color:var(--gris);padding:8px;border-bottom:1px solid var(--borde)}
 td{padding:10px 8px;border-bottom:1px solid #edf1fb;vertical-align:top;overflow-wrap:anywhere}
@@ -65,6 +65,8 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
 .link-caja{word-break:break-all;background:#f6f8fe;border-radius:10px;padding:10px;font:12.5px "Martian Mono",monospace;margin:8px 0}
 /* Cobros (19/11/2026, Budy: «que sea más entendible»): una sola caja con lo que debe, un formulario para cobrar con
    dos caminos (transferencia o link) y, aparte, «ya me pagó». Las pruebas del bot van en su propia sección. */
+.indice{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0 4px}.indice a{padding:6px 12px;border-radius:99px;background:var(--suave);color:var(--azul-t);font-weight:700;font-size:14px;text-decoration:none}
+#det-datos,#caja-cobros,#det-ficha{scroll-margin-top:12px}
 .caja{border:1.5px solid var(--borde);border-radius:16px;padding:16px;margin-top:20px;background:#fbfcff}
 .caja-tit{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.caja-tit h3{margin:0;font:900 19px Archivo}
 .paso{font:500 12px "Martian Mono",monospace;color:var(--gris);text-transform:uppercase;letter-spacing:.05em;margin:16px 0 8px}
@@ -267,10 +269,11 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
       $('#detalle').innerHTML = `<div class="tarjeta">
         <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap"><h2 style="font:900 22px Archivo;margin:0">${esc(c.negocio)}</h2><span class="estado ${clase(c.estado)}">${esc(NOMBRE[c.estado] || c.estado)}</span><div style="margin-left:auto">${boton}</div></div>
         <div id="pausa-motivo" hidden class="peligro" style="margin-top:10px"><b>¿Por qué lo pausás?</b><p class="gris chica" style="margin:4px 0 8px">Si es por falta de pago, el dueño no lo puede prender desde su panel y el bot vuelve solo cuando se registra el pago del abono (concepto «abono…», o el que cubre el abono del mes con el vencimiento a menos de 5 días).</p><div class="acciones" style="margin:0"><button class="btn mal" type="button" data-motivo="falta_de_pago">Por falta de pago</button><button class="btn mal" type="button" data-motivo="otro">Por otro motivo</button><button class="btn" type="button" id="pausa-cancelar">Cancelar</button></div></div>
+        <nav class="indice" aria-label="Partes del detalle"><a href="#det-datos">Datos</a><a href="#caja-cobros">Cobros</a><a href="#det-ficha">Ficha</a></nav>
         <p class="error" id="error-det"></p>
         ${vivo && resumen.noContesta ? `<p class="peligro" style="margin-top:8px"><b style="color:var(--mal)">No está contestando:</b> ${esc(resumen.noContesta.texto)}.</p>` : ''}
         ${vivo ? '' : `<p class="peligro" style="margin-top:8px">Eliminado el ${esc(fecha(el.cuando))} por ${esc(el.por || '—')}${el.motivo ? ' · motivo: ' + esc(el.motivo) : ''}. Estaba «${esc(NOMBRE[el.estadoAnterior] || el.estadoAnterior || '—')}». WhatsApp: ${esc(el.meta || '—')}. Los pagos quedan registrados para la facturación.</p>`}
-        <dl>
+        <dl id="det-datos">
           <dt>Contacto</dt><dd>${esc(c.contacto)} · <span id="mail-actual">${esc(c.email)}</span> · ${esc(c.celular)}${vivo ? ' <button class="btn" type="button" id="b-mail" style="padding:3px 10px;font-size:13px">Cambiar el mail</button>' : ''}
             <form id="form-mail" hidden style="margin:8px 0 0;display:none;gap:8px;flex-wrap:wrap;max-width:520px"><input name="email" type="email" required autocomplete="off" value="${esc(c.email)}" aria-label="Mail nuevo del cliente" style="flex:1 1 220px"><button class="btn principal" type="submit">Guardar</button><button class="btn" type="button" id="mail-cancelar">Cancelar</button></form>
             <p class="error chica" id="error-mail" style="margin:4px 0 0"></p></dd>
@@ -320,7 +323,7 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
           </div>
           ${historial ? `<p class="paso">Últimos movimientos</p><div class="chica">${historial}</div>` : ''}
         </section>
-        ${Object.keys(f).length ? `<h3 style="margin:22px 0 4px">Ficha del negocio</h3><pre>${esc(Object.entries(f).map(([k, v]) => k + ': ' + v).join('\n'))}</pre>` : `<p class="gris chica" style="margin-top:18px">Todavía no completó la ficha del negocio: se completa en su alta.</p>`}
+        ${Object.keys(f).length ? `<h3 id="det-ficha" style="margin:22px 0 4px">Ficha del negocio</h3><pre>${esc(Object.entries(f).map(([k, v]) => k + ': ' + v).join('\n'))}</pre>` : `<p id="det-ficha" class="gris chica" style="margin-top:18px">Todavía no completó la ficha del negocio: se completa en su alta.</p>`}
         ${c.bot ? `<details><summary class="gris">Instrucciones que recibe la IA (versión ${esc(c.bot.version)})</summary><pre>${esc(c.bot.instrucciones)}</pre></details>` : ''}
         ${vivo ? `<div class="peligro">
           <h3 style="margin:0 0 4px;color:var(--mal)">Eliminar cliente</h3>

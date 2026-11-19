@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;900&family=Martian+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--azul:#2f6bff;--agua:#00c2a8;--deg:linear-gradient(120deg,#2f6bff,#00c2a8);--ink:#0e1a33;--gris:#4a5878;--borde:#dbe4f7;--suave:#eef3ff;--ok:#0a8a60;--aviso:#9a5c00;--mal:#c2364e}
+:root{--azul:#2f6bff;--azul-t:#1f57e6;--agua:#00c2a8;--deg:linear-gradient(120deg,#2458e6,#007a6a);--ink:#0e1a33;--gris:#4a5878;--borde:#dbe4f7;--suave:#eef3ff;--ok:#0a8a60;--aviso:#9a5c00;--mal:#c2364e}
 *{box-sizing:border-box}
 body{margin:0;min-height:100vh;background:linear-gradient(180deg,#f4f7ff,#e6eeff) fixed;color:var(--ink);font:16px/1.5 Archivo,system-ui,sans-serif}
 .wrap{max-width:1100px;margin:0 auto;padding:0 16px 40px}
@@ -22,7 +22,7 @@ header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:18px 0}
 header h1{font:900 24px Archivo;margin:0;letter-spacing:-.02em}
 header a{color:var(--gris);text-decoration:none;font-weight:600}
 .der{margin-left:auto;display:flex;gap:10px;align-items:center;color:var(--gris);font-size:14px}
-.btn{border:0;border-radius:11px;padding:9px 14px;font:700 14px Archivo;cursor:pointer;background:var(--suave);color:var(--azul)}
+.btn{border:0;border-radius:11px;padding:9px 14px;font:700 14px Archivo;cursor:pointer;background:var(--suave);color:var(--azul-t)}
 .btn.principal{background:var(--deg);color:#fff}
 .tarjeta{background:#fff;border-radius:20px;box-shadow:0 1px 2px rgba(23,48,120,.06),0 10px 26px -10px rgba(23,48,120,.18);padding:20px;margin-bottom:16px}
 .puerta{max-width:420px;margin:12vh auto;text-align:center}
@@ -30,21 +30,21 @@ header a{color:var(--gris);text-decoration:none;font-weight:600}
 .cifra{background:#fff;border-radius:16px;padding:14px 16px;box-shadow:0 1px 2px rgba(23,48,120,.06)}
 .cifra b{display:block;font:900 28px Archivo;letter-spacing:-.02em}
 .cifra span{color:var(--gris);font-size:13px}
-.cifra.ok b{color:var(--ok)}.cifra.az b{color:var(--azul)}.cifra.mal b{color:var(--mal)}
+.cifra.ok b{color:var(--ok)}.cifra.az b{color:var(--azul-t)}.cifra.mal b{color:var(--mal)}
 .barra{height:10px;border-radius:99px;background:var(--suave);overflow:hidden;margin:4px 0 16px}
 .barra i{display:block;height:100%;background:var(--deg)}
 .filtros{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
 .filtros button{border:1.5px solid var(--borde);background:#fff;border-radius:99px;padding:6px 12px;font:600 13.5px Archivo;cursor:pointer;color:var(--gris)}
-.filtros button[aria-pressed=true]{border-color:var(--azul);color:var(--azul);background:var(--suave)}
+.filtros button[aria-pressed=true]{border-color:var(--azul);color:var(--azul-t);background:var(--suave)}
 .filtros input{flex:1;min-width:180px;font:400 15px Archivo;padding:8px 11px;border:1.5px solid var(--borde);border-radius:10px;background:#f6f8fe}
 table{width:100%;border-collapse:collapse;font-size:14.5px}
 th{text-align:left;font:500 12px "Martian Mono",monospace;color:var(--gris);padding:8px;border-bottom:1px solid var(--borde)}
 td{padding:10px 8px;border-bottom:1px solid #edf1fb;vertical-align:top}
 .estado{display:inline-block;padding:3px 10px;border-radius:99px;font-size:12.5px;font-weight:700;white-space:nowrap}
-.e-falta{background:#f1f3f8;color:var(--gris)}.e-enviado{background:var(--suave);color:var(--azul)}.e-abrio{background:#e2f6ee;color:var(--ok)}.e-pdf{background:#d9f7f2;color:#037a6b}.e-baja{background:#fde9ed;color:var(--mal)}.e-error{background:#fff3d9;color:var(--aviso)}
+.e-falta{background:#f1f3f8;color:var(--gris)}.e-enviado{background:var(--suave);color:var(--azul-t)}.e-abrio{background:#e2f6ee;color:var(--ok)}.e-pdf{background:#d9f7f2;color:#037a6b}.e-baja{background:#fde9ed;color:var(--mal)}.e-error{background:#fff3d9;color:var(--aviso)}
 .gris{color:var(--gris)}.chica{font-size:13px}
 .error{color:var(--mal);font-size:14px}
-a.wa{color:var(--azul);font-weight:700;text-decoration:none}
+a.wa{color:var(--azul-t);font-weight:700;text-decoration:none}
 tr.fila{cursor:pointer}tr.fila:hover td{background:#f8faff}
 td.charla{background:#f6f8fe;padding:12px}
 .burbuja{max-width:520px;padding:8px 12px;border-radius:12px;margin:6px 0;font-size:14px;white-space:pre-wrap;word-wrap:break-word}

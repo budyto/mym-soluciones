@@ -10,11 +10,11 @@
      accesos agrupados. Cada charla abre whatsapp.html#tel=... directo en esa conversación. -->
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;900&family=Martian+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
-:root{--azul:#2f6bff;--agua:#00c2a8;--deg:linear-gradient(120deg,#2f6bff,#00c2a8);--ink:#0e1a33;--gris:#4a5878;--borde:#dbe4f7;--fondo:#f4f7ff;--rojo:#d43a4a;--verde:#12a37f;--naranja:#e08a1e}
+:root{--azul:#2f6bff;--azul-t:#1f57e6;--agua:#00c2a8;--deg:linear-gradient(120deg,#2458e6,#007a6a);--ink:#0e1a33;--gris:#4a5878;--borde:#dbe4f7;--fondo:#f4f7ff;--rojo:#d43a4a;--verde:#12a37f;--naranja:#e08a1e}
 *{box-sizing:border-box}[hidden]{display:none!important}
 body{margin:0;min-height:100vh;background:linear-gradient(180deg,#f4f7ff,#e6eeff) fixed #f4f7ff;color:var(--ink);font:15px/1.5 "Archivo",ui-sans-serif,system-ui,sans-serif}
 a{color:inherit}
-.eti{font:500 11px "Martian Mono",monospace;letter-spacing:.14em;color:var(--azul);text-transform:uppercase}
+.eti{font:500 11px "Martian Mono",monospace;letter-spacing:.14em;color:var(--azul-t);text-transform:uppercase}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:var(--deg);color:#fff;border:0;border-radius:999px;padding:12px 22px;font:600 15px "Archivo",sans-serif;cursor:pointer;text-decoration:none;box-shadow:0 12px 30px rgba(47,107,255,.25)}
 .btn.gris{background:#fff;color:var(--ink);border:1px solid var(--borde);box-shadow:none}
 .btn.chico{padding:8px 14px;font-size:13px}
@@ -57,7 +57,7 @@ h3{font:800 17px "Archivo",sans-serif;margin:0}
 .caja + .caja{margin-top:16px}
 .caja .cab{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .caja .cab .grow{flex:1}
-.caja .cab a{font-size:13px;color:var(--azul);text-decoration:none;font-weight:600}
+.caja .cab a{font-size:13px;color:var(--azul-t);text-decoration:none;font-weight:600}
 .vacio{color:var(--gris);font-size:14px;padding:6px 0 10px}
 /* Charlas */
 .charla{display:flex;gap:12px;align-items:center;padding:10px 8px;margin:0 -8px;border-radius:14px;text-decoration:none}
@@ -68,12 +68,12 @@ h3{font:800 17px "Archivo",sans-serif;margin:0}
 .charla .l1 b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .charla .l1 small{margin-left:auto;color:var(--gris);font-size:12px;white-space:nowrap}
 .charla .l2{display:block;color:var(--gris);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tag{display:inline-block;font-size:11px;font-weight:700;border-radius:999px;padding:2px 8px;background:#eef3ff;color:var(--azul);white-space:nowrap}
+.tag{display:inline-block;font-size:11px;font-weight:700;border-radius:999px;padding:2px 8px;background:#eef3ff;color:var(--azul-t);white-space:nowrap}
 .tag.rojo{background:#ffe9ec;color:var(--rojo)}
 .tag.verde{background:#e3f7f1;color:var(--verde)}
 .cita{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-top:1px solid #eef2fb}
 .cita:first-child{border-top:0}
-.cita .h{font:800 15px Archivo,system-ui,sans-serif;min-width:52px;color:var(--azul)}
+.cita .h{font:800 15px Archivo,system-ui,sans-serif;min-width:52px;color:var(--azul-t)}
 .cita .tx{flex:1;min-width:0}.cita .tx b{display:block}.cita .tx small{color:var(--gris);display:block;overflow:hidden;text-overflow:ellipsis}
 .cita .acc{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
 .cita.paso{opacity:.55}
@@ -95,7 +95,7 @@ h3{font:800 17px "Archivo",sans-serif;margin:0}
 /* Guías */
 .guia{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;padding:10px 0;border-top:1px solid #edf1fa}
 .guia:first-of-type{border-top:0}
-.guia .pal{font:500 11px "Martian Mono",monospace;letter-spacing:.1em;background:#eef3ff;color:var(--azul);border-radius:999px;padding:4px 10px}
+.guia .pal{font:500 11px "Martian Mono",monospace;letter-spacing:.1em;background:#eef3ff;color:var(--azul-t);border-radius:999px;padding:4px 10px}
 .guia b{flex:1 1 180px;font-size:14.5px}
 .guia .acc{display:flex;gap:6px}
 .guia .acc .btn{padding:6px 12px;font-size:12.5px;box-shadow:none}
@@ -348,7 +348,7 @@ h3{font:800 17px "Archivo",sans-serif;margin:0}
       const filas = (e.por_origen || []).slice(0, 6);
       $('#ia').innerHTML = '<div class="ia-num">' + usd(e.soluciones_usd) + '</div>'
         + '<p class="sub" style="margin:0 0 8px;font-size:13px">Robot de WhatsApp de Soluciones: ' + (e.soluciones_llamadas || 0) + ' respuestas y audios. ' + nombreMes(j.mes_anterior) + ': ' + usd(a.soluciones_usd) + '.</p>'
-        + (filas.length ? '<details><summary style="cursor:pointer;color:var(--azul);font-weight:700;font-size:13px">Todo MyM: ' + usd(e.total_usd) + ' en ' + (e.llamadas || 0) + ' pedidos</summary>'
+        + (filas.length ? '<details><summary style="cursor:pointer;color:var(--azul-t);font-weight:700;font-size:13px">Todo MyM: ' + usd(e.total_usd) + ' en ' + (e.llamadas || 0) + ' pedidos</summary>'
           + filas.map((f) => '<div class="ia-fila"><span>' + esc(f.nombre) + ' · ' + f.llamadas + '</span><b>' + usd(f.usd) + '</b></div>').join('') + '</details>' : '')
         + '<p class="sub" style="margin:8px 0 0;font-size:12px">Medido: los tokens de cada respuesta por el precio de lista. Se cuenta desde el 17/11/2026; la factura de Google puede diferir unos centavos.</p>';
     } catch (er) { $('#ia').innerHTML = '<p class="vacio">' + (/404/.test(er.message) ? 'El contador se prende cuando se publique en el server de MyM.' : 'No se pudo leer el gasto de IA: ' + esc(er.message) + '.') + '</p>'; }

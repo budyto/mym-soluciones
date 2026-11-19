@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;900&family=Martian+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{--azul:#2f6bff;--agua:#00c2a8;--deg:linear-gradient(120deg,#2f6bff,#00c2a8);--ink:#0e1a33;--gris:#4a5878;--borde:#dbe4f7;--suave:#eef3ff;--ok:#0a8a60;--aviso:#9a5c00;--mal:#c2364e}
+:root{--azul:#2f6bff;--azul-t:#1f57e6;--agua:#00c2a8;--deg:linear-gradient(120deg,#2458e6,#007a6a);--ink:#0e1a33;--gris:#4a5878;--borde:#dbe4f7;--suave:#eef3ff;--ok:#0a8a60;--aviso:#9a5c00;--mal:#c2364e}
 *{box-sizing:border-box}
 body{margin:0;min-height:100vh;background:linear-gradient(180deg,#f4f7ff,#e6eeff) fixed;color:var(--ink);font:16px/1.5 Archivo,system-ui,sans-serif}
 .wrap{max-width:1180px;margin:0 auto;padding:0 18px 40px}
@@ -26,7 +26,7 @@ header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:18px 0 12
 header h1{font:900 24px Archivo;margin:0;letter-spacing:-.02em}
 header a{color:var(--gris);text-decoration:none;font-weight:600}
 .der{margin-left:auto;display:flex;gap:10px;align-items:center;color:var(--gris);font-size:14px}
-.btn{border:0;border-radius:11px;padding:9px 14px;font:700 14px Archivo;cursor:pointer;background:var(--suave);color:var(--azul);white-space:nowrap}
+.btn{border:0;border-radius:11px;padding:9px 14px;font:700 14px Archivo;cursor:pointer;background:var(--suave);color:var(--azul-t);white-space:nowrap}
 .btn.principal{background:var(--deg);color:#fff}
 .btn.mal{background:#fde9ed;color:var(--mal)}
 .btn.chico{padding:6px 11px;font-size:13px;border-radius:9px}
@@ -62,7 +62,7 @@ input[type=checkbox]{width:18px;height:18px;flex:0 0 18px;padding:0;accent-color
 .kpi{background:#f6f8fe;border-radius:16px;padding:16px 12px;text-align:center}
 .knum{font:900 30px/1.1 Archivo;letter-spacing:-.02em;white-space:nowrap}
 .klbl{font:500 11px "Martian Mono",monospace;color:var(--gris);text-transform:uppercase;letter-spacing:.04em;margin-top:6px}
-.knum.azul{color:var(--azul)}.knum.verde{color:var(--ok)}.knum.agua{color:#008f7c}.knum.aviso{color:var(--aviso)}.knum.mal{color:var(--mal)}
+.knum.azul{color:var(--azul-t)}.knum.verde{color:var(--ok)}.knum.agua{color:#008f7c}.knum.aviso{color:var(--aviso)}.knum.mal{color:var(--mal)}
 .knum small{font:600 13px Archivo;color:var(--aviso);letter-spacing:0;white-space:nowrap}.knum{white-space:normal}
 .ayuda{background:var(--suave);border:1.5px solid var(--borde);border-radius:12px;padding:10px 13px;margin-bottom:14px;font-size:13.5px;color:var(--gris);line-height:1.5}
 .ayuda b{color:var(--ink)}
@@ -77,7 +77,7 @@ td.principal{min-width:160px}
 .vacio{padding:26px 8px;text-align:center;color:var(--gris)}
 .estado{display:inline-block;padding:3px 10px;border-radius:99px;font-size:12.5px;font-weight:700;white-space:nowrap}
 .e-ok{background:#e2f6ee;color:var(--ok)}.e-aviso{background:#fff3d9;color:var(--aviso)}.e-mal{background:#fde9ed;color:var(--mal)}.e-otro{background:var(--suave);color:var(--gris)}
-.cbte{display:inline-block;padding:3px 9px;border-radius:8px;font:500 12.5px "Martian Mono",monospace;white-space:nowrap;background:var(--suave);color:var(--azul)}
+.cbte{display:inline-block;padding:3px 9px;border-radius:8px;font:500 12.5px "Martian Mono",monospace;white-space:nowrap;background:var(--suave);color:var(--azul-t)}
 .cbte.b{background:#e2f6ee;color:var(--ok)}.cbte.nc{background:#fde9ed;color:var(--mal)}
 .motivo{font-size:12.5px;color:var(--mal);margin-top:4px;max-width:320px;line-height:1.35}
 .fila-acc{display:flex;gap:6px;justify-content:flex-end}
@@ -94,7 +94,7 @@ td.principal{min-width:160px}
 .renglon .quitar{border:0;background:var(--suave);border-radius:9px;color:var(--mal);font-weight:900;cursor:pointer}
 .total-caja{display:flex;align-items:baseline;justify-content:space-between;gap:10px;background:#f6f8fe;border-radius:12px;padding:10px 14px;margin:8px 0 12px}
 .total-caja b{font:900 24px Archivo;color:var(--ok)}
-.letra{font:900 16px Archivo;border-radius:12px;padding:10px 14px;margin-bottom:10px;background:var(--suave);color:var(--azul)}
+.letra{font:900 16px Archivo;border-radius:12px;padding:10px 14px;margin-bottom:10px;background:var(--suave);color:var(--azul-t)}
 .letra.b{background:#e2f6ee;color:var(--ok)}
 .letra small{display:block;font:400 12.5px Archivo;color:var(--gris);margin-top:2px}
 .tilde{display:flex;gap:10px;align-items:flex-start;font-size:14px;margin-bottom:12px;cursor:pointer}

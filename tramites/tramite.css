@@ -1,8 +1,8 @@
 /* Páginas de trámites (botón de arrepentimiento y botón de baja), 14/11/2026. Mismo diseño que /sorteo/ y /guias/. */
-:root{--azul:#2f6bff;--agua:#00c2a8;--deg:linear-gradient(120deg,#2f6bff,#00c2a8);--ink:#0e1a33;--gris:#4a5878;--borde:#dbe4f7;--suave:#eef3ff;--ok:#0a8a60}
+:root{--azul:#2f6bff;--azul-t:#1f57e6;--agua:#00c2a8;--deg:linear-gradient(120deg,#2458e6,#007a6a);--ink:#0e1a33;--gris:#4a5878;--borde:#dbe4f7;--suave:#eef3ff;--ok:#0a8a60}
 *{box-sizing:border-box}
 body{margin:0;min-height:100vh;background:linear-gradient(180deg,#f4f7ff,#e6eeff 640px) #e6eeff;color:var(--ink);font:17px/1.6 "Archivo",ui-sans-serif,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
-a{color:var(--azul)}
+a{color:var(--azul-t)}
 :focus-visible{outline:3px solid var(--azul);outline-offset:2px;border-radius:6px}
 .wrap{max-width:720px;margin:0 auto;padding:0 20px}
 .deg{background:var(--deg);-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -13,7 +13,7 @@ header{padding:18px 0;display:flex;align-items:center;justify-content:space-betw
 .menu{display:flex;flex-wrap:wrap;gap:4px 16px;font:600 15px "Archivo",sans-serif}
 .menu a{color:var(--gris);text-decoration:none}
 .menu a:hover,.menu a[aria-current]{color:var(--ink)}
-.rotulo{font:500 12.5px "Martian Mono",monospace;color:var(--azul);margin:26px 0 0}
+.rotulo{font:500 12.5px "Martian Mono",monospace;color:var(--azul-t);margin:26px 0 0}
 h1{font:900 clamp(34px,7vw,52px)/1.03 "Archivo",sans-serif;letter-spacing:-.03em;margin:10px 0 6px}
 h1 em{display:block;font:italic 400 clamp(38px,8vw,60px)/1.05 "Instrument Serif",serif;letter-spacing:0;background:var(--deg);-webkit-background-clip:text;background-clip:text;color:transparent;width:fit-content;padding-right:.08em}
 .bajada{color:var(--gris);font-size:18.5px;margin:14px 0 26px;max-width:600px}
@@ -30,7 +30,7 @@ input:focus,select:focus,textarea:focus{outline:0;border-color:var(--azul);backg
 .dos{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
 .trampa{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 .btn{border:0;border-radius:14px;padding:14px 22px;font:700 16px "Archivo",sans-serif;cursor:pointer;background:var(--deg);color:#fff;box-shadow:0 10px 22px -8px rgba(47,107,255,.6);display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none}
-.btn.sec{background:var(--suave);color:var(--azul);box-shadow:none}
+.btn.sec{background:var(--suave);color:var(--azul-t);box-shadow:none}
 .btn svg{width:20px;height:20px;flex:none}
 .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
 .error{color:#c2364e;font-size:14.5px;margin:0 0 12px;min-height:1px}
@@ -48,3 +48,7 @@ input:focus,select:focus,textarea:focus{outline:0;border-color:var(--azul);backg
 footer{color:var(--gris);font:400 12.5px/1.7 "Martian Mono",monospace;text-align:center;padding:40px 0 44px}
 footer a{color:var(--gris)}
 @media (max-width:600px){.dos{grid-template-columns:1fr}.tarjeta{padding:20px;border-radius:22px}.btns .btn{width:100%}}
+
+/* 19/11/2026 (análisis de diseño): casillas y botones redondos con el azul de la marca (antes salían rojos o grises, los del navegador). */
+input[type=checkbox],input[type=radio]{accent-color:var(--azul-t)}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
