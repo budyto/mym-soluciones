@@ -1,7 +1,11 @@
 /* MOLDE 1 · Servicio a domicilio. Claro, directo y de pulgar: letra de cartel de oficio (Bricolage Grotesque),
    una pregunta con botones grandes arriba de todo y, en el celular, una barra fija con «Llamar» y «WhatsApp».
    Formas: una sola esquina grande redondeada (como una ficha de trabajo doblada), sin sombras. */
-.molde-servicio{--f-tit:"Bricolage Grotesque","Arial Narrow",system-ui,sans-serif;--f-txt:"Public Sans",system-ui,sans-serif;--radio:6px;--radio-btn:10px;--btn-peso:700;--btn-tam:1.02rem;--ancho:1160px;--pie-nombre:800 1.5rem/1 var(--f-tit)}
+/* Letra de reserva: mientras llega la letra del molde se muestra una del equipo, achicada o agrandada para que
+   ocupe el mismo ancho. Así los renglones no cambian de lugar cuando entra la definitiva (medido el 19/11/2026). */
+@font-face{font-family:"Reserva titulos";src:local("Arial Bold"),local("Arial-BoldMT"),local("Arial");font-weight:600 800;size-adjust:79.2%}
+@font-face{font-family:"Reserva texto";src:local("Arial"),local("ArialMT");size-adjust:103%}
+.molde-servicio{--f-tit:"Bricolage Grotesque","Reserva titulos",system-ui,sans-serif;--f-txt:"Public Sans","Reserva texto",system-ui,sans-serif;--radio:6px;--radio-btn:10px;--btn-peso:700;--btn-tam:1.02rem;--ancho:1160px;--pie-nombre:800 1.5rem/1 var(--f-tit)}
 .molde-servicio h1,.molde-servicio h2{font-weight:800;letter-spacing:-.025em;font-variation-settings:"opsz" 96}
 .molde-servicio h3{font-weight:800;letter-spacing:-.01em}
 

@@ -1,7 +1,11 @@
 /* MOLDE 2 · Local con productos. Habla como el cartel del frente del local: letra condensada y en mayúsculas
    (Barlow Condensed), fondo profundo con el color de la marca, una cinta que corre con los rubros y un
    catálogo donde se marcan cantidades. Formas rectas, bordes gruesos, nada de sombras suaves. */
-.molde-local{--f-tit:"Barlow Condensed","Arial Narrow",Impact,sans-serif;--f-txt:"Barlow",system-ui,sans-serif;--f-btn:var(--f-tit);--radio:4px;--radio-btn:4px;--btn-peso:800;--btn-tam:1.15rem;--btn-caja:uppercase;--btn-esp:.03em;--tit-caja:uppercase;--ancho:1180px;--pie-nombre:800 1.6rem/1 var(--f-tit);--legal-fondo:var(--oscuro);--legal-texto:#e8e8e8}
+/* Letra de reserva: mientras llega la letra del molde se muestra una del equipo, achicada o agrandada para que
+   ocupe el mismo ancho. Así los renglones no cambian de lugar cuando entra la definitiva (medido el 19/11/2026). */
+@font-face{font-family:"Reserva titulos";src:local("Arial Bold"),local("Arial-BoldMT"),local("Arial");font-weight:700 800;size-adjust:61.2%}
+@font-face{font-family:"Reserva texto";src:local("Arial"),local("ArialMT");size-adjust:96.2%}
+.molde-local{--f-tit:"Barlow Condensed","Reserva titulos","Arial Narrow",sans-serif;--f-txt:"Barlow","Reserva texto",system-ui,sans-serif;--f-btn:var(--f-tit);--radio:4px;--radio-btn:4px;--btn-peso:800;--btn-tam:1.15rem;--btn-caja:uppercase;--btn-esp:.03em;--tit-caja:uppercase;--ancho:1180px;--pie-nombre:800 1.6rem/1 var(--f-tit);--legal-fondo:var(--oscuro);--legal-texto:#e8e8e8}
 .molde-local .legal-arriba{border-bottom-color:rgba(255,255,255,.18)}
 .molde-local h1,.molde-local h2,.molde-local h3,.molde-local h4{text-transform:uppercase;font-weight:800;letter-spacing:.005em;line-height:.95}
 .molde-local .pie-nombre{text-transform:uppercase}

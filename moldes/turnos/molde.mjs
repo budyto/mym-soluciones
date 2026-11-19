@@ -4,7 +4,8 @@
 import { esc, titular, linkTel, linkMapa, mapaInsertado } from '../nucleo/util.mjs';
 import { documento, franjaLegal, pie, extras, botonWa, medio, preguntas, abiertoAhora, listaHorarios, ICONOS, mensajeBase } from '../nucleo/partes.mjs';
 
-export const fuentes = 'https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700&display=swap';
+// Las letras están en letras/ (se bajan con nucleo/bajar-letras.mjs). Se precargan las que se ven arriba de todo.
+export const precargar = ['letras/fraunces-400-600.woff2', 'letras/nunito-sans-400-700.woff2'];
 export const colorNavegador = 'c1-suave';
 
 export function controlar(c) {
@@ -143,5 +144,5 @@ ${c.preguntas?.items?.length ? `<section class="bloque bloque-tinte" id="pregunt
 ${pie(c)}
 ${extras(c, { mensajeFlotante: t.saludo })}`;
 
-  return documento({ c, p, molde: { fuentes, colorNavegador }, cuerpo, titulo: c.seo.titulo, descripcion: c.seo.descripcion, version });
+  return documento({ c, p, molde: { precargar, colorNavegador }, cuerpo, titulo: c.seo.titulo, descripcion: c.seo.descripcion, version });
 }

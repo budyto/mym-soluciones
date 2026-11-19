@@ -55,7 +55,8 @@ async function generar(slug) {
   }
 
   const p = paleta(c.tema);
-  const css = achicarCss(await readFile(path.join(AQUI, 'nucleo', 'base.css'), 'utf8') + await readFile(path.join(AQUI, c.molde, 'molde.css'), 'utf8'));
+  const letras = path.join(AQUI, c.molde, 'letras');
+  const css = achicarCss(await readFile(path.join(letras, 'letras.css'), 'utf8') + await readFile(path.join(AQUI, 'nucleo', 'base.css'), 'utf8') + await readFile(path.join(AQUI, c.molde, 'molde.css'), 'utf8'));
   const jsMolde = path.join(AQUI, c.molde, 'molde.js');
   const js = await readFile(path.join(AQUI, 'nucleo', 'sitio.js'), 'utf8') + (existsSync(jsMolde) ? '\n' + await readFile(jsMolde, 'utf8') : '');
   const version = createHash('sha1').update(css + js).digest('hex').slice(0, 8);
@@ -68,6 +69,9 @@ async function generar(slug) {
     if (e.name === 'cliente.js' || e.name.startsWith('.') || /\.md$/i.test(e.name)) continue;
     await cp(path.join(carpeta, e.name), path.join(destino, e.name), { recursive: true });
   }
+  // Las letras del molde viajan con la página: no se piden a ningún servicio de afuera.
+  await mkdir(path.join(destino, 'letras'), { recursive: true });
+  for (const e of await readdir(letras)) if (e.endsWith('.woff2')) await cp(path.join(letras, e), path.join(destino, 'letras', e));
   const inicio = molde.pagina(c, p, version);
   await writeFile(path.join(destino, 'index.html'), inicio);
   await writeFile(path.join(destino, 'estilo.css'), css);
@@ -94,6 +98,7 @@ async function generar(slug) {
   if (b.arrepentimiento && !inicio.includes(NOMBRE_ARREPENTIMIENTO)) problemas.push('no aparece el botón de arrepentimiento');
   if (b.baja && !inicio.includes(NOMBRE_BAJA)) problemas.push('no aparece el botón de baja');
   if (/\u{1F916}/u.test(inicio)) problemas.push('aparece el emoji de robot');
+  if (/fonts\.(googleapis|gstatic)\.com/.test(inicio + css)) problemas.push('la página pide letras a Google en vez de usar las propias');
   const sinAlt = (inicio.match(/<img(?![^>]*\balt=)[^>]*>/g) || []).length;
   if (sinAlt) problemas.push(`${sinAlt} imagen(es) sin texto alternativo`);
   const pesoHtml = Buffer.byteLength(inicio) + Buffer.byteLength(css) + Buffer.byteLength(js);

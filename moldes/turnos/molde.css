@@ -1,7 +1,10 @@
 /* MOLDE 3 · Profesional con turnos. Tranquilo y centrado: letra con serifa (Fraunces), mucha pausa entre
    bloques, la foto principal en forma de arco (como un espejo de salón) y una carta de servicios con línea
    de puntos, como la lista de precios colgada en la pared. El color fuerte se guarda para pedir el turno. */
-.molde-turnos{--f-tit:"Fraunces",Georgia,serif;--f-txt:"Nunito Sans",system-ui,sans-serif;--radio:20px;--radio-btn:999px;--btn-peso:700;--btn-tam:1rem;--ancho:1080px;--pie-nombre:400 1.7rem/1 var(--f-tit);--pie-fondo:var(--c1-suave);--pie-texto:var(--tinta);--pie-fuerte:var(--tinta);--legal-fondo:var(--papel)}
+/* Letra de reserva: mientras llega la letra del molde se muestra una del equipo, achicada o agrandada para que
+   ocupe el mismo ancho. Así los renglones no cambian de lugar cuando entra la definitiva (medido el 19/11/2026). */
+@font-face{font-family:"Reserva titulos";src:local("Georgia");size-adjust:84.1%}
+.molde-turnos{--f-tit:"Fraunces","Reserva titulos",Georgia,serif;--f-txt:"Nunito Sans",system-ui,sans-serif;--radio:20px;--radio-btn:999px;--btn-peso:700;--btn-tam:1rem;--ancho:1080px;--pie-nombre:400 1.7rem/1 var(--f-tit);--pie-fondo:var(--c1-suave);--pie-texto:var(--tinta);--pie-fuerte:var(--tinta);--legal-fondo:var(--papel)}
 .molde-turnos h1,.molde-turnos h2{font-weight:400;letter-spacing:-.02em;font-variation-settings:"opsz" 144}
 .molde-turnos h3{font-weight:600;letter-spacing:-.005em}
 .molde-turnos .pie{border-top:1px solid var(--borde)}

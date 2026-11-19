@@ -76,9 +76,7 @@ ${canonica && !demo ? `<link rel="canonical" href="${esc(canonica)}">` : ''}
 ${imagen && dominio ? `<meta property="og:image" content="${esc(dominio + '/' + imagen)}">` : ''}
 <link rel="icon" href="${c.marca.icono ? esc(ruta + c.marca.icono) : favicon(c, p)}">
 ${!ruta && c.inicio?.video && c.inicio?.foto ? `<link rel="preload" as="image" href="${esc(c.inicio.foto)}" fetchpriority="high">` : ''}
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="${molde.fuentes}" rel="stylesheet">
+${(molde.precargar || []).map((f) => `<link rel="preload" as="font" type="font/woff2" href="${ruta}${f}" crossorigin>`).join('\n')}
 <style>${variablesCss(p)}</style>
 <link rel="stylesheet" href="${ruta}estilo.css?v=${version}">
 ${ld}
@@ -264,7 +262,7 @@ export function paginaPrivacidad(c, p, molde, version) {
 <p><b>Trámites de arrepentimiento y de baja.</b> Los datos de esos formularios se usan sólo para registrar y contestar el trámite.</p>
 <p><b>Navegación.</b> ${hayMedicion
     ? `Si aceptás el aviso de cookies, usamos ${[m.ga4 && 'Google Analytics', m.metaPixel && 'el píxel de Meta'].filter(Boolean).join(' y ')} para saber cuánta gente entra y qué botones se usan. Si lo rechazás, no se cargan. Podés cambiar tu elección borrando los datos del sitio en tu navegador.`
-    : 'No usamos cookies de publicidad ni herramientas de seguimiento.'} El servidor que aloja la página registra datos técnicos de la visita (como la dirección IP y el navegador) por seguridad. Las letras se cargan desde Google Fonts${c.zona?.mapa ? ' y el mapa desde Google Maps' : ''}: esos servicios reciben tu dirección IP, como cualquier sitio que visitás.</p>
+    : 'No usamos cookies de publicidad ni herramientas de seguimiento.'} El servidor que aloja la página registra datos técnicos de la visita (como la dirección IP y el navegador) por seguridad.${c.zona?.mapa ? ' El mapa se carga desde Google Maps, que recibe tu dirección IP como cualquier sitio que visitás.' : ''}</p>
 <p>No vendemos ni alquilamos tus datos, y no te mandamos publicidad si no nos la pediste.</p>
 <h2>Con quién se comparten</h2>
 <p>Sólo con los proveedores que hacen falta para funcionar: Meta (WhatsApp), el proveedor donde está alojada la página${hayMedicion ? ', y los servicios de medición nombrados arriba' : ''}. Algunos tienen servidores fuera de la Argentina; al escribirnos prestás tu consentimiento para que tus datos se procesen ahí con estos fines (art. 12 de la Ley 25.326).</p>

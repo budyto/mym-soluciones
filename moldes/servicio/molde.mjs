@@ -4,7 +4,8 @@
 import { esc, titular, linkTel, linkMapa, mapaInsertado } from '../nucleo/util.mjs';
 import { documento, franjaLegal, pie, extras, botonWa, medio, preguntas, abiertoAhora, listaHorarios, ICONOS, waMostrar, mensajeBase } from '../nucleo/partes.mjs';
 
-export const fuentes = 'https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Public+Sans:wght@400;600;700&display=swap';
+// Las letras están en letras/ (se bajan con nucleo/bajar-letras.mjs). Se precargan las que se ven arriba de todo.
+export const precargar = ['letras/bricolage-grotesque-600-800.woff2', 'letras/public-sans-400-700.woff2'];
 export const colorNavegador = 'papel';
 
 export function controlar(c) {
@@ -124,5 +125,5 @@ ${pie(c)}
 <div class="barra-fija">${tel ? `<a class="btn btn-linea" href="${linkTel(tel)}">${ICONOS.tel}<span>Llamar</span></a>` : ''}${botonWa(c, { texto: 'WhatsApp', lugar: 'barra fija' })}</div>
 ${extras(c)}`;
 
-  return documento({ c, p, molde: { fuentes, colorNavegador }, cuerpo, titulo: c.seo.titulo, descripcion: c.seo.descripcion, version });
+  return documento({ c, p, molde: { precargar, colorNavegador }, cuerpo, titulo: c.seo.titulo, descripcion: c.seo.descripcion, version });
 }
