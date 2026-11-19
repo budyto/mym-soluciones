@@ -5,6 +5,8 @@
 // (B.O. 4/9/2025), arts. 1, 4, 5 y 6. Texto abierto en argentina.gob.ar/normativa/nacional/norma-417152/texto
 // el 19/11/2026. Los enlaces se llaman exactamente «BOTÓN DE ARREPENTIMIENTO» y «BOTÓN DE BAJA DE SERVICIO»
 // y van «a simple vista, en lugar destacado y en el primer acceso», sin pedir registro.
+// Acá van en el pie de la página de inicio. Que el pie alcance como «lugar destacado» es una lectura, no un
+// dictamen: queda para que lo confirme la abogada.
 import { esc, linkWa, linkTel, cuitLindo, soloNumeros, rangoLindo, horariosSchema, variablesCss, tablaHorarios } from './util.mjs';
 
 export const NOMBRE_ARREPENTIMIENTO = 'BOTÓN DE ARREPENTIMIENTO';
@@ -111,9 +113,12 @@ function esquema(c, dominio) {
   return { '@context': 'https://schema.org', '@graph': locales };
 }
 
-// ---------- Los dos botones legales, arriba de todo (primer acceso) ----------
+// ---------- Los dos botones legales ----------
+// Van siempre en el pie de la página de inicio, destacados (decisión de Budy del 19/11/2026: sólo en el pie).
+// Si la abogada pide que además estén arriba de todo, se prende en la ficha con legal.botonesArriba: true.
 export function franjaLegal(c, ruta = '') {
   const b = botonesLegales(c);
+  if (c.legal?.botonesArriba !== true) return '';
   if (!b.arrepentimiento && !b.baja) return '';
   return `<nav class="legal-arriba" aria-label="Trámites del consumidor">
 ${b.arrepentimiento ? `<a href="${ir(c, ruta + 'arrepentimiento/')}">${NOMBRE_ARREPENTIMIENTO}</a>` : ''}

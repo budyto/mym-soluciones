@@ -138,7 +138,7 @@ code{background:#e6edff;padding:2px 6px;border-radius:5px;font-size:14px}
 </style></head><body><main>
 <h1>Moldes de landing de <span>MyM Soluciones</span></h1>
 <p>Cada página de abajo salió de una ficha de datos (<code>cliente.js</code>) y de un molde. Nadie escribió su HTML a mano. Son muestras para aprobar: no están publicadas en ningún dominio de cliente.</p>
-<p>Mirá cada una en el celular y en la computadora. Arriba de todo están los dos botones que pide la Disposición 954/2025 y al pie los datos del responsable, que son los del cliente.</p>
+<p>Mirá cada una en el celular y en la computadora. Al pie de cada una están los dos botones que pide la Disposición 954/2025 y los datos del responsable, que son los del cliente.</p>
 <div class="grilla">
 ${filas}
 </div>

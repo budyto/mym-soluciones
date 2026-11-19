@@ -58,7 +58,7 @@ ul,ol{padding:0;list-style:none}
 .pie-redes a{width:44px;height:44px;border-radius:10px;border:1px solid rgba(255,255,255,.25);display:grid;place-items:center}
 .pie-redes svg{width:20px;height:20px}
 .pie-tramites{display:flex;flex-direction:column;align-items:flex-start;gap:.55rem}
-.btn-legal{display:inline-block;border:1.5px solid currentColor;border-radius:6px;padding:.5rem .75rem;font-weight:700;font-size:.74rem;letter-spacing:.03em;text-decoration:none;color:var(--pie-fuerte,#fff)}
+.btn-legal{display:inline-flex;align-items:center;min-height:44px;border:2px solid currentColor;border-radius:6px;padding:.55rem .9rem;font-weight:700;font-size:.8rem;letter-spacing:.03em;text-decoration:none;color:var(--pie-fuerte,#fff)}
 .btn-legal:hover{background:rgba(255,255,255,.1)}
 .pie-base{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.5rem 1.5rem;margin-top:2.2rem;padding-top:1.2rem;border-top:1px solid rgba(255,255,255,.16);font-size:.82rem;opacity:.85}
 .pie-creditos{margin-top:1rem;font-size:.75rem;opacity:.75}
