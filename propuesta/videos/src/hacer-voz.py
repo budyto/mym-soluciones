@@ -5,6 +5,9 @@ Lee guiones-de-voz.md, toma la voz de cada tramo, le da a cada tramo de la anima
 la voz (reescribe los tiempos de <plan>.html) y deja la pista completa, con el volumen parejo, en voz/<plan>.m4a.
 Después se corre hacer-videos.mjs.
 
+Cortina de fondo (19/11/2026): si existe voz/cortina.m4a (la arma hacer-cortina.py), queda mezclada debajo de la voz,
+más baja mientras se habla y un poco más alta en los huecos, para que no queden silencios. Con --sin-cortina sale sólo la voz.
+
 Dos fuentes de voz:
   --fuente elevenlabs (la que se usa desde el 16/11/2026): voz «Mauricio - Publicidad cálida | Argentina» de la
     biblioteca de ElevenLabs (voice_id jIgvw3W75cbd6IP0JYwL, modelo eleven_v4). No es la voz de nadie del equipo.
@@ -33,6 +36,10 @@ ACA = pathlib.Path(__file__).resolve().parent
 FUENTE = 'elevenlabs'
 if '--fuente' in sys.argv:
     i = sys.argv.index('--fuente'); FUENTE = sys.argv[i + 1]; del sys.argv[i:i + 2]
+SIN_CORTINA = '--sin-cortina' in sys.argv
+if SIN_CORTINA: sys.argv.remove('--sin-cortina')
+CORTINA = ACA / 'voz' / 'cortina.m4a'
+CORTINA_LUFS = float(os.environ.get('CORTINA_LUFS', '-21'))   # volumen de la música cuando nadie habla (la voz va a -16)
 if FUENTE not in ('elevenlabs', 'gemini', 'kokoro'): sys.exit('--fuente tiene que ser elevenlabs, gemini o kokoro')
 VOZ, IDIOMA, VELOCIDAD = 'ef_dora', 'es-419', float(os.environ.get('VELOCIDAD', '1.1'))
 ONCE = {'voz': 'Mauricio - Publicidad cálida | Argentina', 'voice_id': 'jIgvw3W75cbd6IP0JYwL', 'modelo': 'eleven_v4'}
@@ -95,6 +102,12 @@ def mp3_del_tramo(planes, plan, n):
         for m, (_, t) in enumerate(d['tramos'], 1):
             if t == texto and (carpeta / f'{otro}-{m}.mp3').exists(): return carpeta / f'{otro}-{m}.mp3'
     sys.exit(f'{plan}: falta la voz del tramo {n} ({f.name}). Generala con el texto del guion (en ElevenLabs, o con hacer-voz-gemini.mjs).')
+
+def volumen_de(f):
+    """Volumen medio de una pista, en LUFS (lo mide ffmpeg)."""
+    r = subprocess.run(['ffmpeg', '-hide_banner', '-i', str(f), '-af', 'loudnorm=print_format=json', '-f', 'null', '-'],
+                       capture_output=True, text=True).stderr
+    return float(json.loads(r[r.rindex('{'):r.rindex('}') + 1])['input_i'])
 
 def recortar(s, umbral=0.012):
     act = np.where(np.abs(s) > umbral)[0]
@@ -160,8 +173,20 @@ def main():
         m = json.loads(r[r.rindex('{'):r.rindex('}') + 1])
         filtro = (f"loudnorm=I=-16:TP=-1.5:LRA=11:measured_I={m['input_i']}:measured_TP={m['input_tp']}:measured_LRA={m['input_lra']}"
                   f":measured_thresh={m['input_thresh']}:offset={m['target_offset']}:linear=true,aresample=48000")
-        subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', str(crudo), '-af', filtro, '-ac', '2', '-c:a', 'aac', '-b:a', '128k',
-                        '-t', f'{lim[-1]:g}', str(ACA / 'voz' / f'{plan}.m4a')], check=True)
+        con_cortina = CORTINA.exists() and not SIN_CORTINA
+        if con_cortina:
+            # La música se lleva a un volumen fijo, se baja sola cuando habla la voz (sidechaincompress) y se apaga al final
+            sube = CORTINA_LUFS - volumen_de(CORTINA)
+            grafo = (f"[0:a]{filtro},aformat=channel_layouts=stereo,asplit=2[voz][guia];"
+                     f"[1:a]aresample=48000,aformat=channel_layouts=stereo,volume={sube:.2f}dB,atrim=0:{lim[-1]:g},"
+                     f"afade=t=in:d=0.5,afade=t=out:st={lim[-1] - 1.6:g}:d=1.6[musica];"
+                     f"[musica][guia]sidechaincompress=threshold=0.03:ratio=4:attack=20:release=450[baja];"
+                     f"[voz][baja]amix=inputs=2:normalize=0:duration=first,alimiter=limit=0.84[a]")
+            subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', str(crudo), '-stream_loop', '-1', '-i', str(CORTINA), '-filter_complex', grafo,
+                            '-map', '[a]', '-ac', '2', '-c:a', 'aac', '-b:a', '160k', '-t', f'{lim[-1]:g}', str(ACA / 'voz' / f'{plan}.m4a')], check=True)
+        else:
+            subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', str(crudo), '-af', filtro, '-ac', '2', '-c:a', 'aac', '-b:a', '128k',
+                            '-t', f'{lim[-1]:g}', str(ACA / 'voz' / f'{plan}.m4a')], check=True)
         if FUENTE == 'kokoro':
             resumen[plan] = {'dura': lim[-1], 'fuente': 'kokoro', 'voz': VOZ, 'idioma': IDIOMA, 'velocidad': VELOCIDAD, 'tramos': filas}
         else:
@@ -172,6 +197,7 @@ def main():
             else:
                 resumen[plan] = {'dura': lim[-1], 'fuente': 'elevenlabs', **ONCE, 'velocidad': tempo, 'tramos': filas}
         print(f"\n{plan}: {lim[-1]:g} s" + (f" · voz acelerada {tempo:g}×" if tempo != 1.0 else ''))
+        resumen[plan]['cortina'] = CORTINA.name if con_cortina else None
         for x in filas: print(f"  {x['tramo']}. {x['se_ve'][:38]:38} pantalla {x['pantalla_desde']:5.1f}–{x['pantalla_hasta']:5.1f} ({x['pantalla_dura']:4.1f} s) · voz {x['voz_dura']:5.2f} s · aire {x['aire_al_final']:.2f} s")
     (ACA / 'voz' / 'tramos.json').write_text(json.dumps(resumen, ensure_ascii=False, indent=1) + '\n', encoding='utf-8')
     if mal: sys.exit(1)

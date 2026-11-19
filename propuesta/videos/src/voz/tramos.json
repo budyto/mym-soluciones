@@ -1,6 +1,6 @@
 {
  "bot-de-whatsapp": {
-  "dura": 40.0,
+  "dura": 31.5,
   "fuente": "gemini",
   "modelo": "gemini-3.8-flash-tts",
   "voz": "es-419-csagent-10",
@@ -74,19 +74,20 @@
    },
    {
     "tramo": 7,
-    "se_ve": "Prueba gratis y contacto",
+    "se_ve": "Contacto",
     "pantalla_desde": 28.8,
-    "pantalla_hasta": 40.0,
-    "pantalla_dura": 11.2,
+    "pantalla_hasta": 31.5,
+    "pantalla_dura": 2.7,
     "voz_desde": 29.15,
-    "voz_dura": 9.63,
-    "aire_al_final": 1.22,
+    "voz_dura": 1.1,
+    "aire_al_final": 1.25,
     "mp3": "bot-de-whatsapp-7.mp3"
    }
-  ]
+  ],
+  "cortina": "cortina.m4a"
  },
  "seguimiento-de-clientes": {
-  "dura": 42.3,
+  "dura": 33.8,
   "fuente": "gemini",
   "modelo": "gemini-3.8-flash-tts",
   "voz": "es-419-csagent-10",
@@ -171,19 +172,20 @@
    },
    {
     "tramo": 8,
-    "se_ve": "Prueba gratis y contacto",
+    "se_ve": "Contacto",
     "pantalla_desde": 31.1,
-    "pantalla_hasta": 42.3,
-    "pantalla_dura": 11.2,
+    "pantalla_hasta": 33.8,
+    "pantalla_dura": 2.7,
     "voz_desde": 31.45,
-    "voz_dura": 9.63,
-    "aire_al_final": 1.22,
+    "voz_dura": 1.1,
+    "aire_al_final": 1.25,
     "mp3": "seguimiento-de-clientes-8.mp3"
    }
-  ]
+  ],
+  "cortina": "cortina.m4a"
  },
  "paquete-completo": {
-  "dura": 42.8,
+  "dura": 28.7,
   "fuente": "gemini",
   "modelo": "gemini-3.8-flash-tts",
   "voz": "es-419-csagent-10",
@@ -248,39 +250,29 @@
     "tramo": 6,
     "se_ve": "Precio",
     "pantalla_desde": 18.3,
-    "pantalla_hasta": 25.6,
-    "pantalla_dura": 7.3,
+    "pantalla_hasta": 26.0,
+    "pantalla_dura": 7.7,
     "voz_desde": 18.65,
-    "voz_dura": 6.54,
-    "aire_al_final": 0.41,
+    "voz_dura": 6.95,
+    "aire_al_final": 0.4,
     "mp3": "paquete-completo-6.mp3"
    },
    {
     "tramo": 7,
-    "se_ve": "Promoción de instalación",
-    "pantalla_desde": 25.6,
-    "pantalla_hasta": 32.1,
-    "pantalla_dura": 6.5,
-    "voz_desde": 25.95,
-    "voz_dura": 5.71,
-    "aire_al_final": 0.44,
+    "se_ve": "Contacto",
+    "pantalla_desde": 26.0,
+    "pantalla_hasta": 28.7,
+    "pantalla_dura": 2.7,
+    "voz_desde": 26.35,
+    "voz_dura": 1.1,
+    "aire_al_final": 1.25,
     "mp3": "paquete-completo-7.mp3"
-   },
-   {
-    "tramo": 8,
-    "se_ve": "Prueba gratis y contacto",
-    "pantalla_desde": 32.1,
-    "pantalla_hasta": 42.8,
-    "pantalla_dura": 10.7,
-    "voz_desde": 32.45,
-    "voz_dura": 9.16,
-    "aire_al_final": 1.19,
-    "mp3": "paquete-completo-8.mp3"
    }
-  ]
+  ],
+  "cortina": "cortina.m4a"
  },
  "orquestador": {
-  "dura": 42.4,
+  "dura": 35.2,
   "fuente": "gemini",
   "modelo": "gemini-3.8-flash-tts",
   "voz": "es-419-csagent-10",
@@ -354,19 +346,20 @@
    },
    {
     "tramo": 7,
-    "se_ve": "Promoción de instalación y contacto",
+    "se_ve": "Contacto",
     "pantalla_desde": 32.5,
-    "pantalla_hasta": 42.4,
-    "pantalla_dura": 9.9,
+    "pantalla_hasta": 35.2,
+    "pantalla_dura": 2.7,
     "voz_desde": 32.85,
-    "voz_dura": 8.36,
-    "aire_al_final": 1.19,
+    "voz_dura": 1.1,
+    "aire_al_final": 1.25,
     "mp3": "orquestador-7.mp3"
    }
-  ]
+  ],
+  "cortina": "cortina.m4a"
  },
  "empresa-en-automatico": {
-  "dura": 43.4,
+  "dura": 36.6,
   "fuente": "gemini",
   "modelo": "gemini-3.8-flash-tts",
   "voz": "es-419-csagent-10",
@@ -451,19 +444,20 @@
    },
    {
     "tramo": 8,
-    "se_ve": "Promoción de instalación y contacto",
+    "se_ve": "Contacto",
     "pantalla_desde": 33.9,
-    "pantalla_hasta": 43.4,
-    "pantalla_dura": 9.5,
+    "pantalla_hasta": 36.6,
+    "pantalla_dura": 2.7,
     "voz_desde": 34.25,
-    "voz_dura": 7.9,
+    "voz_dura": 1.1,
     "aire_al_final": 1.25,
     "mp3": "empresa-en-automatico-8.mp3"
    }
-  ]
+  ],
+  "cortina": "cortina.m4a"
  },
  "redes-esencial": {
-  "dura": 44.2,
+  "dura": 35.7,
   "fuente": "gemini",
   "modelo": "gemini-3.8-flash-tts",
   "voz": "es-419-csagent-10",
@@ -526,19 +520,20 @@
    },
    {
     "tramo": 6,
-    "se_ve": "Prueba gratis y contacto",
+    "se_ve": "Contacto",
     "pantalla_desde": 33.0,
-    "pantalla_hasta": 44.2,
-    "pantalla_dura": 11.2,
+    "pantalla_hasta": 35.7,
+    "pantalla_dura": 2.7,
     "voz_desde": 33.35,
-    "voz_dura": 9.63,
-    "aire_al_final": 1.22,
+    "voz_dura": 1.1,
+    "aire_al_final": 1.25,
     "mp3": "redes-esencial-6.mp3"
    }
-  ]
+  ],
+  "cortina": "cortina.m4a"
  },
  "redes-profesional": {
-  "dura": 42.7,
+  "dura": 34.2,
   "fuente": "gemini",
   "modelo": "gemini-3.8-flash-tts",
   "voz": "es-419-csagent-10",
@@ -601,19 +596,20 @@
    },
    {
     "tramo": 6,
-    "se_ve": "Prueba gratis y contacto",
+    "se_ve": "Contacto",
     "pantalla_desde": 31.5,
-    "pantalla_hasta": 42.7,
-    "pantalla_dura": 11.2,
+    "pantalla_hasta": 34.2,
+    "pantalla_dura": 2.7,
     "voz_desde": 31.85,
-    "voz_dura": 9.63,
-    "aire_al_final": 1.22,
+    "voz_dura": 1.1,
+    "aire_al_final": 1.25,
     "mp3": "redes-profesional-6.mp3"
    }
-  ]
+  ],
+  "cortina": "cortina.m4a"
  },
  "redes-premium": {
-  "dura": 36.4,
+  "dura": 28.3,
   "fuente": "gemini",
   "modelo": "gemini-3.8-flash-tts",
   "voz": "es-419-csagent-10",
@@ -634,20 +630,20 @@
     "tramo": 2,
     "se_ve": "El reel pasa a anuncio",
     "pantalla_desde": 4.8,
-    "pantalla_hasta": 8.8,
-    "pantalla_dura": 4.0,
+    "pantalla_hasta": 9.2,
+    "pantalla_dura": 4.4,
     "voz_desde": 5.15,
-    "voz_dura": 3.24,
-    "aire_al_final": 0.41,
+    "voz_dura": 3.62,
+    "aire_al_final": 0.43,
     "mp3": "redes-premium-2.mp3"
    },
    {
     "tramo": 3,
     "se_ve": "Botón a WhatsApp",
-    "pantalla_desde": 8.8,
-    "pantalla_hasta": 13.0,
+    "pantalla_desde": 9.2,
+    "pantalla_hasta": 13.4,
     "pantalla_dura": 4.2,
-    "voz_desde": 9.15,
+    "voz_desde": 9.55,
     "voz_dura": 3.46,
     "aire_al_final": 0.39,
     "mp3": "redes-premium-3.mp3"
@@ -655,10 +651,10 @@
    {
     "tramo": 4,
     "se_ve": "Qué incluye",
-    "pantalla_desde": 13.0,
-    "pantalla_hasta": 19.0,
+    "pantalla_desde": 13.4,
+    "pantalla_hasta": 19.4,
     "pantalla_dura": 6.0,
-    "voz_desde": 13.35,
+    "voz_desde": 13.75,
     "voz_dura": 5.25,
     "aire_al_final": 0.4,
     "mp3": "redes-premium-4.mp3"
@@ -666,25 +662,26 @@
    {
     "tramo": 5,
     "se_ve": "Precio",
-    "pantalla_desde": 19.0,
-    "pantalla_hasta": 25.2,
+    "pantalla_desde": 19.4,
+    "pantalla_hasta": 25.6,
     "pantalla_dura": 6.2,
-    "voz_desde": 19.35,
+    "voz_desde": 19.75,
     "voz_dura": 5.49,
     "aire_al_final": 0.36,
     "mp3": "redes-premium-5.mp3"
    },
    {
     "tramo": 6,
-    "se_ve": "Prueba gratis y contacto",
-    "pantalla_desde": 25.2,
-    "pantalla_hasta": 36.4,
-    "pantalla_dura": 11.2,
-    "voz_desde": 25.55,
-    "voz_dura": 9.63,
-    "aire_al_final": 1.22,
+    "se_ve": "Contacto",
+    "pantalla_desde": 25.6,
+    "pantalla_hasta": 28.3,
+    "pantalla_dura": 2.7,
+    "voz_desde": 25.95,
+    "voz_dura": 1.1,
+    "aire_al_final": 1.25,
     "mp3": "redes-premium-6.mp3"
    }
-  ]
+  ],
+  "cortina": "cortina.m4a"
  }
 }

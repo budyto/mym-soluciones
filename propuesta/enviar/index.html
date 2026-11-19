@@ -70,9 +70,8 @@ body{background:linear-gradient(180deg,#f4f7ff,#e6eeff);color:#0e1a33;min-height
 <script>
 (function () {
   var BASE = 'https://mymsoluciones.online/propuesta/';
-  var VER = '?v=202611165';   // versión de los MP4: se sube cada vez que se rehacen los videos (igual que en ../index.html)
+  var VER = '?v=202611192';   // versión de los MP4: se sube cada vez que se rehacen los videos (igual que en ../index.html)
   var VIDEOS = [['bot-de-whatsapp', 'Bot de WhatsApp'], ['seguimiento-de-clientes', 'Seguimiento de clientes'], ['paquete-completo', 'Paquete completo'], ['orquestador', 'Orquestador'], ['empresa-en-automatico', 'Empresa en automático'], ['redes-esencial', 'Redes en automático · Esencial'], ['redes-profesional', 'Redes en automático · Profesional'], ['redes-premium', 'Redes en automático · Premium']];
-  var PROMO_HASTA = new Date('2026-12-01T03:00:00Z'); // 30/11/2026 23:59, hora de Argentina
   var $ = function (id) { return document.getElementById(id); };
   var tocado = { wa: false, ml: false, asu: false };
 
@@ -89,15 +88,14 @@ body{background:linear-gradient(180deg,#f4f7ff,#e6eeff);color:#0e1a33;min-height
     return 'Hola' + (d.con ? ' ' + d.con : '') + ', soy Matías, de MyM Soluciones.\n' +
       'Te armé la propuesta' + (d.emp ? ' para ' + d.emp : '') + ' con los planes de automatización y de Redes en automático.\n' +
       'Cada uno dice qué hace y su precio (más IVA), y casi todos tienen un video corto que lo explica.\n' + l + '\n' +
-      (new Date() < PROMO_HASTA ? 'Empezando hasta el 30/11 tenés 15 días de prueba totalmente gratis: no pagás nada al empezar y, si no te sirve, no debés nada. Vale para el Bot de WhatsApp, el Seguimiento, el Paquete completo y Redes en automático.\n' : '') +
       'Mirala tranquilo. Si alguno te sirve, lo vemos en un diagnóstico gratis de 30 minutos por videollamada.\n' +
       'Cualquier duda, escribime por acá.';
   }
   function textoMail(d, l) {
-    var promo = new Date() < PROMO_HASTA ? 'Hay dos promociones con fecha, contratando hasta el 30/11/2026: 15 días de prueba totalmente gratis en Bot de WhatsApp, Seguimiento de clientes, Paquete completo y Redes en automático (no pagás nada al empezar y, si no seguís, no debés nada); y la instalación del Orquestador y la de Empresa en automático a mitad de precio. El detalle está en la propuesta.\n\n' : '';
+    var promo = '';
     return 'Hola' + (d.con ? ' ' + d.con : '') + ':\n\n' +
       'Soy Matías, de MyM Soluciones. Te paso la propuesta que armamos' + (d.emp ? ' para ' + d.emp : '') + ':\n\n' + l + '\n\n' +
-      'Ahí están los seis planes de automatización (Bot de WhatsApp, Seguimiento de clientes, Landing de ventas, Paquete completo, Orquestador y Empresa en automático) y los tres planes de Redes en automático. De cada uno vas a ver qué hace, qué necesitamos de tu lado para arrancar, en cuánto tiempo queda andando y cuánto cuesta. Los precios son finales, en pesos. Casi todos los planes tienen un video corto que lo explica.\n\n' +
+      'Ahí están los seis planes de automatización (Bot de WhatsApp, Seguimiento de clientes, Landing de ventas, Paquete completo, Orquestador y Empresa en automático) y los tres planes de Redes en automático. De cada uno vas a ver qué hace, qué necesitamos de tu lado para arrancar, en cuánto tiempo queda andando y cuánto cuesta. Los precios son en pesos, más IVA (21 %). Casi todos los planes tienen un video corto que lo explica.\n\n' +
       promo +
       'Si alguno te sirve, el paso siguiente es un diagnóstico gratis de 30 minutos por videollamada. Ahí vemos tu caso y te pasamos el alcance por escrito antes de empezar. El abono es mensual y sin permanencia.\n\n' +
       'Me podés responder este mail o escribirme por WhatsApp al 11 3366-2080.\n\nSaludos,\nMatías\nMyM Soluciones\nmymsoluciones.online';

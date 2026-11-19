@@ -25,7 +25,7 @@
   "modelo": "gemini-3.8-flash-tts"
  },
  "redes-esencial-6.mp3": {
-  "texto": "Empezando hasta el treinta de noviembre, tenés quince días de prueba totalmente gratis: no pagás nada al empezar y, si no te sirve, no debés nada. Escribinos por WhatsApp.",
+  "texto": "Escribinos por WhatsApp.",
   "voz": "es-419-csagent-10",
   "modelo": "gemini-3.8-flash-tts"
  },
@@ -55,17 +55,12 @@
   "modelo": "gemini-3.8-flash-tts"
  },
  "redes-profesional-6.mp3": {
-  "texto": "Empezando hasta el treinta de noviembre, tenés quince días de prueba totalmente gratis: no pagás nada al empezar y, si no te sirve, no debés nada. Escribinos por WhatsApp.",
+  "texto": "Escribinos por WhatsApp.",
   "voz": "es-419-csagent-10",
   "modelo": "gemini-3.8-flash-tts"
  },
  "redes-premium-1.mp3": {
   "texto": "Redes en automático, plan Premium, de eme y eme Soluciones.",
-  "voz": "es-419-csagent-10",
-  "modelo": "gemini-3.8-flash-tts"
- },
- "redes-premium-2.mp3": {
-  "texto": "Con tus mejores reels armamos tus campañas de publicidad.",
   "voz": "es-419-csagent-10",
   "modelo": "gemini-3.8-flash-tts"
  },
@@ -85,7 +80,7 @@
   "modelo": "gemini-3.8-flash-tts"
  },
  "redes-premium-6.mp3": {
-  "texto": "Empezando hasta el treinta de noviembre, tenés quince días de prueba totalmente gratis: no pagás nada al empezar y, si no te sirve, no debés nada. Escribinos por WhatsApp.",
+  "texto": "Escribinos por WhatsApp.",
   "voz": "es-419-csagent-10",
   "modelo": "gemini-3.8-flash-tts"
  },
@@ -120,7 +115,7 @@
   "modelo": "gemini-3.8-flash-tts"
  },
  "bot-de-whatsapp-7.mp3": {
-  "texto": "Empezando hasta el treinta de noviembre, tenés quince días de prueba totalmente gratis: no pagás nada al empezar y, si no te sirve, no debés nada. Escribinos por WhatsApp.",
+  "texto": "Escribinos por WhatsApp.",
   "voz": "es-419-csagent-10",
   "modelo": "gemini-3.8-flash-tts"
  },
@@ -160,7 +155,7 @@
   "modelo": "gemini-3.8-flash-tts"
  },
  "seguimiento-de-clientes-8.mp3": {
-  "texto": "Empezando hasta el treinta de noviembre, tenés quince días de prueba totalmente gratis: no pagás nada al empezar y, si no te sirve, no debés nada. Escribinos por WhatsApp.",
+  "texto": "Escribinos por WhatsApp.",
   "voz": "es-419-csagent-10",
   "modelo": "gemini-3.8-flash-tts"
  },
@@ -190,17 +185,12 @@
   "modelo": "gemini-3.8-flash-tts"
  },
  "paquete-completo-6.mp3": {
-  "texto": "La instalación sale doscientos diecinueve mil novecientos pesos. Después, sesenta y cuatro mil novecientos por mes, sin permanencia.",
+  "texto": "La instalación sale doscientos cincuenta y nueve mil novecientos pesos. Después, sesenta y nueve mil novecientos por mes, sin permanencia.",
   "voz": "es-419-csagent-10",
   "modelo": "gemini-3.8-flash-tts"
  },
  "paquete-completo-7.mp3": {
-  "texto": "Hasta el treinta de noviembre de dos mil veintiséis, la instalación queda en sesenta y cuatro mil novecientos cincuenta pesos.",
-  "voz": "es-419-csagent-10",
-  "modelo": "gemini-3.8-flash-tts"
- },
- "paquete-completo-8.mp3": {
-  "texto": "Y empezando hasta esa fecha, tenés quince días de prueba totalmente gratis: no pagás nada al empezar y, si no te sirve, no debés nada. Escribinos por WhatsApp.",
+  "texto": "Escribinos por WhatsApp.",
   "voz": "es-419-csagent-10",
   "modelo": "gemini-3.8-flash-tts"
  },
@@ -235,7 +225,7 @@
   "modelo": "gemini-3.8-flash-tts"
  },
  "orquestador-7.mp3": {
-  "texto": "Hasta el treinta de noviembre de dos mil veintiséis, la instalación sale desde ciento veinticuatro mil novecientos cincuenta pesos. Escribinos por WhatsApp.",
+  "texto": "Escribinos por WhatsApp.",
   "voz": "es-419-csagent-10",
   "modelo": "gemini-3.8-flash-tts"
  },
@@ -275,7 +265,12 @@
   "modelo": "gemini-3.8-flash-tts"
  },
  "empresa-en-automatico-8.mp3": {
-  "texto": "Hasta el treinta de noviembre de dos mil veintiséis, la instalación sale desde ciento sesenta y cuatro mil novecientos cincuenta pesos. Escribinos por WhatsApp.",
+  "texto": "Escribinos por WhatsApp.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "redes-premium-2.mp3": {
+  "texto": "Con tus mejores reels armamos tus campañas de publicidad.",
   "voz": "es-419-csagent-10",
   "modelo": "gemini-3.8-flash-tts"
  }

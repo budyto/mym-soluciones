@@ -14,9 +14,9 @@ de la animación el tiempo que necesita la voz y deja la pista en `voz/<plan>.m4
   Las palabras en inglés (WhatsApp, reels, landing, stock, YouTube Shorts) se escriben normal: ElevenLabs las dice bien así (verificado el 16/11/2026);
   para Kokoro, `hacer-voz.py` tiene la lista de cómo se pronuncian.
 - **Precios y cantidades:** los de `propuesta/index.html` al 16/11/2026. Si cambian en la web, se cambian acá, en la página animada y se rehace el video.
-- **Sin promesas:** nada de cantidades de seguidores, ventas, alcance, consultas ni ahorro. La única urgencia es la fecha real de cada promoción.
-- **Vence el 30/11/2026:** la prueba gratis de 15 días (Bot, Seguimiento, Paquete completo y los tres de Redes) y la instalación a mitad de precio
-  (Paquete completo, Orquestador y Empresa en automático). **El 1/12/2026 hay que sacar esas oraciones (y sus líneas en pantalla) y rehacer los 8 videos.**
+- **Sin promesas:** nada de cantidades de seguidores, ventas, alcance, consultas ni ahorro.
+- **Sin ofertas con fecha (Budy, 19/11/2026):** se sacaron de los ocho videos la prueba gratis de 15 días y la instalación a mitad de precio, las dos «hasta el 30/11/2026». Cada video cierra con «Escribinos por WhatsApp».
+- **Cortina de fondo (Budy, 19/11/2026):** todos llevan música suave debajo de la voz, para que no queden silencios. La pista es `voz/cortina.m4a` (la arma `hacer-cortina.py`, sin derechos de nadie) y la mezcla `hacer-voz.py`. Si se pone otra pista con ese nombre, se usa esa.
 - Formato de cada tramo: `N. **Qué se ve.** Lo que dice la voz.` (una sola línea por tramo).
 
 ## bot-de-whatsapp · Bot de WhatsApp
@@ -27,7 +27,7 @@ de la animación el tiempo que necesita la voz y deja la pista en `voz/<plan>.m4
 4. **Chat: pasa a una persona.** Y pasa la charla a una persona cuando hace falta.
 5. **Qué incluye.** Todo, con la conexión oficial de WhatsApp Business.
 6. **Precio.** La instalación sale noventa y nueve mil novecientos pesos. Después, treinta y nueve mil novecientos por mes, sin permanencia.
-7. **Prueba gratis y contacto.** Empezando hasta el treinta de noviembre, tenés quince días de prueba totalmente gratis: no pagás nada al empezar y, si no te sirve, no debés nada. Escribinos por WhatsApp.
+7. **Contacto.** Escribinos por WhatsApp.
 
 ## seguimiento-de-clientes · Seguimiento de clientes
 
@@ -38,7 +38,7 @@ de la animación el tiempo que necesita la voz y deja la pista en `voz/<plan>.m4
 5. **Aviso.** Y te avisa cuando alguien está listo para comprar.
 6. **Qué incluye.** Incluye también un resumen semanal de lo que entró.
 7. **Precio.** La instalación sale cuarenta y nueve mil novecientos pesos. Después, veinticuatro mil novecientos por mes, sin permanencia.
-8. **Prueba gratis y contacto.** Empezando hasta el treinta de noviembre, tenés quince días de prueba totalmente gratis: no pagás nada al empezar y, si no te sirve, no debés nada. Escribinos por WhatsApp.
+8. **Contacto.** Escribinos por WhatsApp.
 
 ## paquete-completo · Paquete completo
 
@@ -47,9 +47,8 @@ de la animación el tiempo que necesita la voz y deja la pista en `voz/<plan>.m4
 3. **Paso 2: bot.** Después, el bot responde al instante y agenda.
 4. **Paso 3: seguimiento.** Y el seguimiento le vuelve a escribir al que no compró.
 5. **Qué incluye.** Incluye las tres cosas, con una sola puesta en marcha.
-6. **Precio.** La instalación sale doscientos diecinueve mil novecientos pesos. Después, sesenta y cuatro mil novecientos por mes, sin permanencia.
-7. **Promoción de instalación.** Hasta el treinta de noviembre de dos mil veintiséis, la instalación queda en sesenta y cuatro mil novecientos cincuenta pesos.
-8. **Prueba gratis y contacto.** Y empezando hasta esa fecha, tenés quince días de prueba totalmente gratis: no pagás nada al empezar y, si no te sirve, no debés nada. Escribinos por WhatsApp.
+6. **Precio.** La instalación sale doscientos cincuenta y nueve mil novecientos pesos. Después, sesenta y nueve mil novecientos por mes, sin permanencia.
+7. **Contacto.** Escribinos por WhatsApp.
 
 ## orquestador · Orquestador
 
@@ -59,7 +58,7 @@ de la animación el tiempo que necesita la voz y deja la pista en `voz/<plan>.m4
 4. **Se ejecuta y queda registro.** Y recién ahí se ejecuta. Queda registro de cada acción.
 5. **Qué incluye.** Incluye el relevamiento de tus procesos y hasta tres agentes a medida. Arranca en modo espectador.
 6. **Precio.** La instalación sale desde doscientos cuarenta y nueve mil novecientos pesos. Después, sesenta y nueve mil novecientos por mes, sin permanencia.
-7. **Promoción de instalación y contacto.** Hasta el treinta de noviembre de dos mil veintiséis, la instalación sale desde ciento veinticuatro mil novecientos cincuenta pesos. Escribinos por WhatsApp.
+7. **Contacto.** Escribinos por WhatsApp.
 
 ## empresa-en-automatico · Empresa en automático
 
@@ -70,7 +69,7 @@ de la animación el tiempo que necesita la voz y deja la pista en `voz/<plan>.m4
 5. **Vos aprobás.** Y vos aprobás desde el celular.
 6. **Qué incluye.** Incluye el orquestador, la landing, el bot de WhatsApp y el seguimiento, con una sola puesta en marcha.
 7. **Precio.** La instalación sale desde trescientos veintinueve mil novecientos pesos. Después, noventa y nueve mil novecientos por mes, sin permanencia.
-8. **Promoción de instalación y contacto.** Hasta el treinta de noviembre de dos mil veintiséis, la instalación sale desde ciento sesenta y cuatro mil novecientos cincuenta pesos. Escribinos por WhatsApp.
+8. **Contacto.** Escribinos por WhatsApp.
 
 ## redes-esencial · Redes en automático · Esencial
 
@@ -79,7 +78,7 @@ de la animación el tiempo que necesita la voz y deja la pista en `voz/<plan>.m4
 3. **Los tres pasos.** Cada pieza sigue tres pasos: gancho, retención y conversión.
 4. **Qué incluye.** Incluye la estrategia del mes, la respuesta automática a los comentarios y un reporte mensual.
 5. **Precio.** Cuesta doscientos cincuenta mil pesos por mes, sin permanencia. Vos aprobás cada pieza antes de que salga.
-6. **Prueba gratis y contacto.** Empezando hasta el treinta de noviembre, tenés quince días de prueba totalmente gratis: no pagás nada al empezar y, si no te sirve, no debés nada. Escribinos por WhatsApp.
+6. **Contacto.** Escribinos por WhatsApp.
 
 ## redes-profesional · Redes en automático · Profesional
 
@@ -88,7 +87,7 @@ de la animación el tiempo que necesita la voz y deja la pista en `voz/<plan>.m4
 3. **Tablero de ganchos.** Cada semana medimos qué gancho retiene más, y repetimos lo que funciona.
 4. **Qué incluye.** Incluye todo lo del Esencial, historias de comunidad con encuestas y preguntas, y programación a la hora pico.
 5. **Precio.** Cuesta cuatrocientos mil pesos por mes, sin permanencia. Vos aprobás cada pieza antes de que salga.
-6. **Prueba gratis y contacto.** Empezando hasta el treinta de noviembre, tenés quince días de prueba totalmente gratis: no pagás nada al empezar y, si no te sirve, no debés nada. Escribinos por WhatsApp.
+6. **Contacto.** Escribinos por WhatsApp.
 
 ## redes-premium · Redes en automático · Premium
 
@@ -97,4 +96,4 @@ de la animación el tiempo que necesita la voz y deja la pista en `voz/<plan>.m4
 3. **Botón a WhatsApp.** El anuncio lleva un botón a WhatsApp: quien lo toca, te escribe.
 4. **Qué incluye.** Incluye todo lo del Profesional, con doce reels animados, y suma TikTok y YouTube Shorts.
 5. **Precio.** Cuesta seiscientos cincuenta mil pesos por mes, sin permanencia. La inversión en publicidad va aparte.
-6. **Prueba gratis y contacto.** Empezando hasta el treinta de noviembre, tenés quince días de prueba totalmente gratis: no pagás nada al empezar y, si no te sirve, no debés nada. Escribinos por WhatsApp.
+6. **Contacto.** Escribinos por WhatsApp.
