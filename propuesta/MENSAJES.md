@@ -36,7 +36,7 @@ Soy Matías, de MyM Soluciones. Te paso la propuesta que armamos para [EMPRESA]:
 
 [LINK]
 
-Ahí están los seis planes de automatización (Bot de WhatsApp, Seguimiento de clientes, Landing de ventas, Paquete completo, Orquestador y Empresa en automático) y los tres planes de Redes en automático (Esencial, Profesional y Premium), que hacen, publican y miden el contenido de tus redes todos los meses. De cada uno vas a ver qué hace, qué necesitamos de tu lado para arrancar, en cuánto tiempo queda andando y cuánto cuesta. Los precios son finales, en pesos. Casi todos los planes tienen un video corto que lo explica.
+Ahí están los seis planes de automatización (Bot de WhatsApp, Seguimiento de clientes, Landing de ventas, Paquete completo, Orquestador y Empresa en automático) y los tres planes de Redes en automático (Esencial, Profesional y Premium), que hacen, publican y miden el contenido de tus redes todos los meses. De cada uno vas a ver qué hace, qué necesitamos de tu lado para arrancar, en cuánto tiempo queda andando y cuánto cuesta. Los precios son en pesos, más IVA (21 %). Casi todos los planes tienen un video corto que lo explica.
 
 Si alguno te sirve, el paso siguiente es un diagnóstico gratis de 30 minutos por videollamada. Ahí vemos tu caso y te pasamos el alcance por escrito antes de empezar. El abono es mensual y sin permanencia.
 
