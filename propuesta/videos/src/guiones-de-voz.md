@@ -72,7 +72,7 @@ de la animación el tiempo que necesita la voz y deja la pista en `voz/<plan>.m4
 ## redes-esencial · Redes en automático · Esencial
 
 1. **Portada.** Redes en automático, plan Esencial, de eme y eme Soluciones. Para empezar a publicar con constancia y método.
-2. **Calendario del mes.** Armamos el calendario del mes: doce reels animados, cuatro carruseles y veinte historias al mes, en Instagram y Facebook.
+2. **Calendario del mes.** Armamos el calendario del mes: cuatro reels animados, cuatro carruseles y veinte historias al mes, en Instagram y Facebook.
 3. **Los tres pasos.** Cada pieza sigue tres pasos: gancho, retención y conversión.
 4. **Qué incluye.** Incluye la estrategia del mes, la respuesta automática a los comentarios y un reporte mensual.
 5. **Precio.** Cuesta doscientos cincuenta mil pesos por mes, sin permanencia. Vos aprobás cada pieza antes de que salga.
@@ -81,7 +81,7 @@ de la animación el tiempo que necesita la voz y deja la pista en `voz/<plan>.m4
 ## redes-profesional · Redes en automático · Profesional
 
 1. **Portada.** Redes en automático, plan Profesional, de eme y eme Soluciones. Es el plan recomendado.
-2. **La semana.** Un reel por día hábil e historias todos los días: veinte reels animados por mes y de ocho a doce carruseles.
+2. **La semana.** Dos reels por semana e historias todos los días: ocho reels animados por mes y de ocho a doce carruseles.
 3. **Tablero de ganchos.** Cada semana medimos qué gancho retiene más, y repetimos lo que funciona.
 4. **Qué incluye.** Incluye todo lo del Esencial, historias de comunidad con encuestas y preguntas, y programación a la hora pico.
 5. **Precio.** Cuesta cuatrocientos mil pesos por mes, sin permanencia. Vos aprobás cada pieza antes de que salga.
@@ -93,6 +93,6 @@ de la animación el tiempo que necesita la voz y deja la pista en `voz/<plan>.m4
 2. **El reel pasa a anuncio.** Con tus mejores reels armamos tus campañas de publicidad.
 3. **Botón a WhatsApp.** El anuncio lleva un botón a WhatsApp: quien lo toca, te escribe.
 4. **Avatar hecho con IA.** Suma cuatro videos con tu avatar hecho con inteligencia artificial, con tu autorización y avisando que es inteligencia artificial.
-5. **Qué incluye.** Incluye todo lo del Profesional, con treinta reels animados, y suma TikTok y YouTube Shorts.
+5. **Qué incluye.** Incluye todo lo del Profesional, con doce reels animados, y suma TikTok y YouTube Shorts.
 6. **Precio.** Cuesta seiscientos cincuenta mil pesos por mes, sin permanencia. La inversión en publicidad va aparte.
 7. **Prueba gratis y contacto.** Empezando hasta el treinta de noviembre, tenés quince días de prueba totalmente gratis: no pagás nada al empezar y, si no te sirve, no debés nada. Escribinos por WhatsApp.
