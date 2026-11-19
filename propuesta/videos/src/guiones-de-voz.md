@@ -7,8 +7,8 @@ de la animación el tiempo que necesita la voz y deja la pista en `voz/<plan>.m4
 - **Voz:** ElevenLabs, voz «Mauricio - Publicidad cálida | Argentina» de su biblioteca (`voice_id` `jIgvw3W75cbd6IP0JYwL`, modelo `eleven_v4`), a velocidad normal. No es la voz de nadie del equipo.
   Se genera un MP3 por tramo, con el texto del tramo tal cual está acá, y se guarda en `voz/elevenlabs/<plan>-<n>.mp3`. Si se cambia un tramo, hay que regenerar sólo ese MP3.
 - **Voces nuevas, sin ElevenLabs (Budy, 19/11/2026):** Gemini (`gemini-3.8-flash-tts`), con acento argentino. Varón: `es-419-csagent-10`. Mujer: `es-419-training-1`. Se alternan según el caso.
-  Los MP3 de cada tramo los deja `hacer-voz-gemini.mjs` en `voz/gemini/` y después se corre `hacer-voz.py --fuente gemini`. Redes Esencial y Redes Profesional ya salen con la voz de varón.
-  Redes Premium y los otros cinco siguen con la voz de ElevenLabs hasta que se regeneren.
+  Los MP3 de cada tramo los deja `hacer-voz-gemini.mjs` en `voz/gemini/` y después se corre `hacer-voz.py --fuente gemini`. Los tres de Redes (Esencial, Profesional y Premium) ya salen con la voz de varón.
+  Los otros cinco siguen con la voz de ElevenLabs hasta que se regeneren.
 - **Duración:** ningún video puede pasar de 51 segundos (tope subido el 16/11/2026 para esta voz; antes era 45).
 - **Cómo se escribe:** como se dice (vale para ElevenLabs y para Kokoro). Los números en letras, «MyM» como «eme y eme», «CRM» como «ce erre eme» e «IA» como «inteligencia artificial».
   Las palabras en inglés (WhatsApp, reels, landing, stock, YouTube Shorts) se escriben normal: ElevenLabs las dice bien así (verificado el 16/11/2026);

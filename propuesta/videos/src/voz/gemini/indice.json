@@ -58,5 +58,40 @@
   "texto": "Empezando hasta el treinta de noviembre, tenés quince días de prueba totalmente gratis: no pagás nada al empezar y, si no te sirve, no debés nada. Escribinos por WhatsApp.",
   "voz": "es-419-csagent-10",
   "modelo": "gemini-3.8-flash-tts"
+ },
+ "redes-premium-1.mp3": {
+  "texto": "Redes en automático, plan Premium, de eme y eme Soluciones.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "redes-premium-2.mp3": {
+  "texto": "Con tus mejores reels armamos tus campañas de publicidad.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "redes-premium-3.mp3": {
+  "texto": "El anuncio lleva un botón a WhatsApp: quien lo toca, te escribe.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "redes-premium-4.mp3": {
+  "texto": "Suma cuatro videos con tu avatar hecho con inteligencia artificial, con tu autorización y avisando que es inteligencia artificial.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "redes-premium-5.mp3": {
+  "texto": "Incluye todo lo del Profesional, con doce reels animados, y suma TikTok y YouTube Shorts.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "redes-premium-6.mp3": {
+  "texto": "Cuesta seiscientos cincuenta mil pesos por mes, sin permanencia. La inversión en publicidad va aparte.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "redes-premium-7.mp3": {
+  "texto": "Empezando hasta el treinta de noviembre, tenés quince días de prueba totalmente gratis: no pagás nada al empezar y, si no te sirve, no debés nada. Escribinos por WhatsApp.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
  }
 }
