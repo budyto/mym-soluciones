@@ -182,7 +182,7 @@
     cerrarCharla(); quitarHashCharla();
     resumen = null; charlas = []; fichaDe = null; avisosTocado = false; reiniciarEnsayo();
     $('#r-negocio').textContent = (S.clientes.find((c) => c.id === id) || {}).negocio || 'Tu negocio';
-    $('#r-numero').textContent = ''; $('#r-estado').hidden = true; $('#r-pausar').hidden = true; $('#r-prender').hidden = true;
+    $('#r-numero').textContent = ''; $('#r-estado').hidden = true; $('#r-pausar').hidden = true; $('#r-prender').hidden = true; $('#r-pausa-pago').hidden = true;
     pintarLista(); pintarEspera(0);
     refrescarResumen(); refrescarLista();
     if (seccion === 'bot') cargarFicha();
@@ -205,7 +205,10 @@
     const [txt, clase] = ESTADOS[r.estado] || ['En preparación', 'revision'];
     const e = $('#r-estado'); e.hidden = false; e.className = 'estado ' + clase; e.textContent = 'Bot: ' + txt;
     $('#r-pausar').hidden = r.estado !== 'activo';
+    // Pausado por MyM por falta de pago (19/11/2026): no se puede prender desde acá; en lugar del botón, cómo regularizar.
+    const porPago = r.estado === 'pausado' && !!r.pausa && r.pausa.motivo === 'falta_de_pago';
     $('#r-prender').hidden = !(r.estado === 'pausado' && r.puedePrender);
+    $('#r-pausa-pago').hidden = !porPago;
     if (!charlas.length) pintarEspera(r.esperando || 0);
     // Avisos: se llenan con lo guardado, salvo que el dueño ya esté cambiando algo.
     if (!avisosTocado && r.avisos) { $('#avisos-email').value = r.avisos.email || ''; $('#avisos-si').checked = r.avisos.mailPersona !== false; pintarInterruptor(); }
@@ -491,7 +494,7 @@
     for (const x of historial) {
       const d = new Date(x.cuando); const k = isNaN(d) ? '' : diaClave(d);
       if (k && k !== dia) { dia = k; orden.push(['dia|' + k, () => el('p', { class: 'dia' }, nombreDia(d))]); }
-      let clave = [x.cuando, x.de, x.tipo, x.media ? x.media.id : '', x.transcripcion ? 1 : 0, (x.texto || '').length].join('|');
+      let clave = [x.cuando, x.de, x.tipo, x.media ? x.media.id : '', x.transcripcion ? 1 : 0, x.audio || '', (x.texto || '').length].join('|');
       const n = (vistas.get(clave) || 0) + 1; vistas.set(clave, n); if (n > 1) clave += '|' + n;
       orden.push([clave, () => burbuja(x)]);
     }
@@ -513,7 +516,10 @@
     else b.append(el('span', { class: 'oculto' }, 'Cliente: '));
     if (x.media && x.media.id) b.append(cajaArchivo(x));
     if (x.texto) b.append(el('p', { class: 'txt' }, conLinks(x.texto)));
-    if (x.tipo === 'audio' || x.transcripcion) b.append(el('p', { class: 'transc' }, x.transcripcion ? '🎤 Transcripción: ' + x.transcripcion : '🎤 Este audio no tiene transcripción.'));
+    // Audios que llegaron con el bot cortado (19/11/2026): quedan sin transcribir hasta que el bot vuelve a contestar;
+    // si WhatsApp ya no los tiene (los guarda 7 días), quedan vencidos.
+    const AUDIO = { 'sin transcribir': '🎤 Audio sin transcribir: llegó con el bot sin contestar. Se transcribe solo cuando el bot vuelve a andar; mientras tanto podés escucharlo.', vencido: '🎤 Audio vencido: WhatsApp ya no lo tenía y no se pudo transcribir.' };
+    if (x.tipo === 'audio' || x.transcripcion) b.append(el('p', { class: 'transc' }, x.transcripcion ? '🎤 Transcripción: ' + x.transcripcion : AUDIO[x.audio] || '🎤 Este audio no tiene transcripción.'));
     if (!x.texto && !x.transcripcion && !(x.media && x.media.id)) b.append(el('p', { class: 'txt vacio' }, SIN_TEXTO[x.tipo] ? `${SIN_TEXTO[x.tipo]} (sin texto)` : 'Mensaje que no se puede mostrar acá. Miralo en tu WhatsApp.'));
     const d = new Date(x.cuando);
     if (!isNaN(d)) b.append(el('time', { class: 'hora', datetime: x.cuando }, hora(d)));
