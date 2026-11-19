@@ -160,6 +160,9 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
   const $ = (s) => document.querySelector(s);
   const esc = (t) => String(t ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
   const pesos = (n) => '$ ' + Number(n || 0).toLocaleString('es-AR', { maximumFractionDigits: 2 });
+  // Monto único (19/11/2026): el pedido de transferencia se hace por unos pesos menos que el precio, para reconocer el
+  // pago. Lo que tiene que transferir el cliente es `monto`; `montoOriginal` es el precio.
+  const montoPedido = (x) => pesos(x.monto) + (x.montoOriginal && Number(x.montoOriginal) !== Number(x.monto) ? ` exactos (precio ${pesos(x.montoOriginal)})` : '');
   const fecha = (iso) => iso ? new Date(iso).toLocaleString('es-AR', { dateStyle: 'short', timeStyle: 'short' }) : '';
   const NOMBRE = { pago: 'Esperando el pago', whatsapp: 'Falta conectar WhatsApp', relevamiento: 'Completando su ficha', pruebas: 'Una prueba falló', aprobar: 'Esperando que apruebe', revision: 'Para revisar', activo: 'Andando', pausado: 'Pausado', eliminado: 'Eliminado' };
   const clase = (e) => ({ activo: 'e-activo', revision: 'e-revision', pausado: 'e-pausado', pruebas: 'e-pruebas', eliminado: 'e-eliminado' })[e] || 'e-otro';
@@ -367,30 +370,37 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
         e.preventDefault(); const d = Object.fromEntries(new FormData(e.target).entries()); $('#error-pago').textContent = ''; $('#pago-repetido').innerHTML = '';
         if (!d.servicio) { $('#error-pago').textContent = 'Elegí qué servicio pagó.'; return; }
         const cuerpo = { id, monto: leerMonto(d.monto), concepto: d.concepto, servicio: d.servicio };
-        const listo = async () => { await cargar(); verCliente(id); };
+        const listo = async () => { await cargar(); verCliente(id); cargarTransferencias(); };
         // Deshabilitado mientras corre el pedido: un doble clic no manda el pago dos veces.
         const btn = e.target.querySelector('button[type=submit]'); btn.disabled = true;
-        try { await api('/api/admin/pago', cuerpo); await listo(); }
-        catch (err) {
-          btn.disabled = false;
-          const rep = err.datos && err.datos.repetido;
-          // Monto único (19/11/2026): si el cliente tiene un pedido de transferencia abierto por ese monto, el servidor
-          // pregunta si el pago es el de ese pedido. Con el pedido queda pagado y no espera más; sin el pedido va suelto.
-          const abiertos = err.datos && err.datos.confirmar === 'sinEspera' ? (err.datos.esperas || [err.datos.espera]).filter(Boolean) : [];
-          if (abiertos.length) {
-            const reintentar = async (extra, boton) => { boton.disabled = true; try { await api('/api/admin/pago', { ...cuerpo, ...extra }); await listo(); } catch (e2) { $('#error-pago').textContent = e2.message; boton.disabled = false; } };
-            $('#pago-repetido').innerHTML = `<div class="peligro" style="margin-top:8px"><p class="error" style="margin:0 0 6px">Este cliente tiene un pedido de transferencia abierto por ese monto. ¿Es este pago?</p>${abiertos.map((x) => `<div class="acciones" style="margin:0 0 6px"><button class="btn principal" type="button" data-es-pedido="${esc(x.id)}">Sí, es el pedido ${esc(x.ref)}: ${esc(x.concepto)} · ${esc(montoPedido(x))}</button></div>`).join('')}<div class="acciones" style="margin:0"><button class="btn" type="button" id="b-sin-pedido">No, es otro pago</button><button class="btn" type="button" id="b-no-pago">Cancelar</button></div></div>`;
-            document.querySelectorAll('[data-es-pedido]').forEach((bt) => (bt.onclick = () => reintentar({ espera: bt.dataset.esPedido, monto: undefined }, bt)));
-            $('#b-sin-pedido').onclick = (ev) => reintentar({ sinEspera: true }, ev.target);
+        // El servidor puede frenar el pago dos veces seguidas con un 409: porque hay un pedido de transferencia abierto
+        // por ese monto (monto único, 19/11/2026: se elige si el pago es de ese pedido o va suelto) y porque ya hay un
+        // pago por ese monto en la semana. Cada respuesta se suma al pedido y se vuelve a mandar, así ninguna de las dos
+        // preguntas deja a la persona sin salida.
+        const mandar = async (c) => {
+          $('#error-pago').textContent = ''; $('#pago-repetido').innerHTML = '';
+          try { await api('/api/admin/pago', c); await listo(); }
+          catch (err) {
+            btn.disabled = false;
+            const rep = err.datos && err.datos.repetido;
+            const abiertos = err.datos && err.datos.confirmar === 'sinEspera' ? (err.datos.esperas || [err.datos.espera]).filter(Boolean) : [];
+            const seguir = (extra) => (ev) => { ev.currentTarget.disabled = true; mandar({ ...c, ...extra }); };
+            if (abiertos.length) {
+              $('#pago-repetido').innerHTML = `<div class="peligro" style="margin-top:8px"><p class="error" style="margin:0 0 6px">Este cliente tiene un pedido de transferencia abierto por ese monto. ¿Es este pago?</p>${abiertos.map((x) => `<div class="acciones" style="margin:0 0 6px"><button class="btn principal" type="button" data-es-pedido="${esc(x.id)}">Sí, es el pedido ${esc(x.ref)}: ${esc(x.concepto)} · ${esc(montoPedido(x))}</button></div>`).join('')}<div class="acciones" style="margin:0"><button class="btn" type="button" id="b-sin-pedido">No, es otro pago</button><button class="btn" type="button" id="b-no-pago">Cancelar</button></div></div>`;
+              // Con el pedido, el monto es el del pedido: no se manda el que escribió la persona (suele ser el precio).
+              document.querySelectorAll('[data-es-pedido]').forEach((bt) => (bt.onclick = seguir({ espera: bt.dataset.esPedido, monto: undefined })));
+              $('#b-sin-pedido').onclick = seguir({ sinEspera: true });
+              $('#b-no-pago').onclick = () => { $('#pago-repetido').innerHTML = ''; };
+              return;
+            }
+            if (!rep) { $('#error-pago').textContent = err.message; return; }
+            const lista = (err.datos.repetidos || [rep]).map((x) => `<li>${esc(pesos(x.monto))} · ${esc(fecha(x.cuando))} · ${esc(x.como)}</li>`).join('');
+            $('#pago-repetido').innerHTML = `<div class="peligro" style="margin-top:8px"><p class="error" style="margin:0 0 6px">${esc(err.message)}</p><p class="gris chica" style="margin:0">Pagos de este cliente por ese monto en los últimos 7 días:</p><ul class="chica" style="margin:4px 0 8px">${lista}</ul><p class="gris chica" style="margin:0 0 8px">Antes de confirmar, fijate en la app de Ualá si entraron dos transferencias. Si es la misma plata, no hagas nada.</p><div class="acciones" style="margin:0"><button class="btn principal" type="button" id="b-otro-pago">Es otro pago, registrarlo</button><button class="btn" type="button" id="b-no-pago">No, es el mismo</button></div></div>`;
             $('#b-no-pago').onclick = () => { $('#pago-repetido').innerHTML = ''; };
-            return;
+            $('#b-otro-pago').onclick = seguir({ confirmarRepetido: true });
           }
-          if (!rep) { $('#error-pago').textContent = err.message; return; }
-          const lista = (err.datos.repetidos || [rep]).map((x) => `<li>${esc(pesos(x.monto))} · ${esc(fecha(x.cuando))} · ${esc(x.como)}</li>`).join('');
-          $('#pago-repetido').innerHTML = `<div class="peligro" style="margin-top:8px"><p class="error" style="margin:0 0 6px">${esc(err.message)}</p><p class="gris chica" style="margin:0">Pagos de este cliente por ese monto en los últimos 7 días:</p><ul class="chica" style="margin:4px 0 8px">${lista}</ul><p class="gris chica" style="margin:0 0 8px">Antes de confirmar, fijate en la app de Ualá si entraron dos transferencias. Si es la misma plata, no hagas nada.</p><div class="acciones" style="margin:0"><button class="btn principal" type="button" id="b-otro-pago">Es otro pago, registrarlo</button><button class="btn" type="button" id="b-no-pago">No, es el mismo</button></div></div>`;
-          $('#b-no-pago').onclick = () => { $('#pago-repetido').innerHTML = ''; };
-          $('#b-otro-pago').onclick = async (ev) => { ev.target.disabled = true; try { await api('/api/admin/pago', { ...cuerpo, confirmarRepetido: true }); await listo(); } catch (e2) { $('#error-pago').textContent = e2.message; ev.target.disabled = false; } };
-        }
+        };
+        await mandar(cuerpo);
       };
       if (vivo) {
       $('#b-alta').onclick = async () => { if (!confirm('Se genera un link nuevo del alta y el anterior (el del mail del cliente) deja de andar. ¿Seguimos?')) return; try { const r = await api('/api/admin/link-alta', { id }); mostrarLink('Link del alta', r.linkAlta, 'Con este link completás o corregís la ficha y conectás el WhatsApp con el cliente.'); } catch (e) { $('#error-det').textContent = e.message; } };
@@ -439,9 +449,6 @@ Con ese mail va a entrar a su panel y ahí le van a llegar los mails.`)) return;
         if (fc.querySelector('[data-preset=abono][aria-pressed=true]')) fc.monto.value = numero(cuenta.abono);
       }).catch(() => { if ($('#abono-detalle')) $('#abono-detalle').textContent = 'sin la IA (no se pudo calcular): sumala a mano.'; });
       // Los cobros de este cliente que esperan la transferencia, para no pedir dos veces lo mismo.
-      // Monto único (19/11/2026): el pedido se hace por unos pesos menos que el precio, para reconocer el pago.
-      // Lo que tiene que transferir el cliente es `monto`; `montoOriginal` es el precio.
-      const montoPedido = (x) => pesos(x.monto) + (x.montoOriginal && Number(x.montoOriginal) !== Number(x.monto) ? ` exactos (precio ${pesos(x.montoOriginal)})` : '');
       const verEsperando = () => api('/api/admin/transferencias').then(({ esperas }) => {
         const mias = (esperas || []).filter((x) => x.cliente === id);
         if ($('#cobro-esperando')) $('#cobro-esperando').innerHTML = mias.length ? `<p class="chica" style="margin:12px 0 0"><b>Esperando su transferencia:</b> ${mias.map((x) => esc(`${x.concepto} · ${montoPedido(x)} (pedido el ${fecha(x.creado)}, ${x.ref})`)).join(' — ')}. Se registra sola cuando entra.</p>` : '';
