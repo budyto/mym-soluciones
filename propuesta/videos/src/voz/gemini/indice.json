@@ -1,0 +1,62 @@
+{
+ "redes-esencial-1.mp3": {
+  "texto": "Redes en automático, plan Esencial, de eme y eme Soluciones. Para empezar a publicar con constancia y método.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "redes-esencial-2.mp3": {
+  "texto": "Armamos el calendario del mes: cuatro reels animados, cuatro carruseles y veinte historias al mes, en Instagram y Facebook.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "redes-esencial-3.mp3": {
+  "texto": "Cada pieza sigue tres pasos: gancho, retención y conversión.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "redes-esencial-4.mp3": {
+  "texto": "Incluye la estrategia del mes, la respuesta automática a los comentarios y un reporte mensual.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "redes-esencial-5.mp3": {
+  "texto": "Cuesta doscientos cincuenta mil pesos por mes, sin permanencia. Vos aprobás cada pieza antes de que salga.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "redes-esencial-6.mp3": {
+  "texto": "Empezando hasta el treinta de noviembre, tenés quince días de prueba totalmente gratis: no pagás nada al empezar y, si no te sirve, no debés nada. Escribinos por WhatsApp.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "redes-profesional-1.mp3": {
+  "texto": "Redes en automático, plan Profesional, de eme y eme Soluciones. Es el plan recomendado.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "redes-profesional-2.mp3": {
+  "texto": "Dos reels por semana e historias todos los días: ocho reels animados por mes y diez carruseles.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "redes-profesional-3.mp3": {
+  "texto": "Cada semana medimos qué gancho retiene más, y repetimos lo que funciona.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "redes-profesional-4.mp3": {
+  "texto": "Incluye todo lo del Esencial, historias de comunidad con encuestas y preguntas, y programación a la hora pico.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "redes-profesional-5.mp3": {
+  "texto": "Cuesta cuatrocientos mil pesos por mes, sin permanencia. Vos aprobás cada pieza antes de que salga.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "redes-profesional-6.mp3": {
+  "texto": "Empezando hasta el treinta de noviembre, tenés quince días de prueba totalmente gratis: no pagás nada al empezar y, si no te sirve, no debés nada. Escribinos por WhatsApp.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ }
+}
