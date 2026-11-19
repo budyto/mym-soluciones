@@ -119,7 +119,7 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
   const esc = (t) => String(t ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
   const pesos = (n) => '$ ' + Number(n || 0).toLocaleString('es-AR', { maximumFractionDigits: 2 });
   const fecha = (iso) => iso ? new Date(iso).toLocaleString('es-AR', { dateStyle: 'short', timeStyle: 'short' }) : '';
-  const NOMBRE = { servicios: 'Con servicios, sin bot', pago: 'Esperando el pago', whatsapp: 'Falta conectar WhatsApp', relevamiento: 'Completando su ficha', pruebas: 'Una prueba falló', aprobar: 'Esperando que apruebe', revision: 'Para revisar', activo: 'Andando', pausado: 'Pausado' };
+  const NOMBRE = { pago: 'Esperando el pago', whatsapp: 'Falta conectar WhatsApp', relevamiento: 'Completando su ficha', pruebas: 'Una prueba falló', aprobar: 'Esperando que apruebe', revision: 'Para revisar', activo: 'Andando', pausado: 'Pausado' };
   const clase = (e) => ({ activo: 'e-activo', revision: 'e-revision', pausado: 'e-pausado', pruebas: 'e-pruebas' })[e] || 'e-otro';
   let clientes = []; let filtro = 'revision';
 
@@ -135,7 +135,7 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
     catch (e) { $('#error').textContent = e.message; }
   }
   function dibujar() {
-    const lista = clientes.filter((c) => filtro === 'todos' || c.estado === filtro || (filtro === 'activo' && c.estado === 'servicios'));
+    const lista = clientes.filter((c) => filtro === 'todos' || c.estado === filtro);
     $('#tabla').innerHTML = lista.map((c) => `<tr class="fila" data-id="${esc(c.id)}"><td><b>${esc(c.negocio)}</b><div class="gris chica">${esc(c.contacto)} · ${esc(c.email)}</div></td><td><span class="estado ${clase(c.estado)}">${esc(NOMBRE[c.estado] || c.estado)}</span></td><td class="ocultar-cel">${esc(c.numero || '—')}</td><td class="ocultar-cel">${esc(c.pruebas || '—')}</td><td class="ocultar-cel">${c.ia ? pesos(c.ia.gastado) + ' · ' + (c.ia.mensajes || 0) + ' msj' : '—'}</td><td class="ocultar-cel gris chica">${fecha(c.creado)}</td></tr>`).join('')
       || `<tr><td colspan="6" class="gris">${filtro === 'revision' ? 'No hay bots para revisar.' : 'No hay clientes en este grupo.'}</td></tr>`;
     document.querySelectorAll('tr.fila').forEach((tr) => (tr.onclick = () => verCliente(tr.dataset.id)));
@@ -252,6 +252,7 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
     } catch (e) { $('#error-transf').textContent = e.message; $('#caja-transf').hidden = false; }
   }
 
+  NOMBRE.servicios = 'Con servicios, sin bot'; // clientes sin bot (19/11/2026): se ven en «Todos»
   const SERVICIO = { bot: 'Bot de WhatsApp', seguimiento: 'Seguimiento de clientes', landing: 'Landing de ventas', web: 'Página web institucional', redesEsencial: 'Redes en automático Esencial', redesProfesional: 'Redes en automático Profesional', redesPremium: 'Redes en automático Premium' };
   $('#form-nuevo').onsubmit = async (e) => {
     e.preventDefault(); const f = e.target; const fd = new FormData(f); $('#error-nuevo').textContent = '';
