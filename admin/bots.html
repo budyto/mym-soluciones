@@ -20,8 +20,9 @@
      19/11/2026 (Budy, «que sea más entendible»): los cobros del detalle van en una sola caja. Arriba, lo que debe según
      su precio (instalación y primer mes; abono del mes con la IA del ciclo, que trae /api/admin/medicion), que precarga
      el formulario; un solo formulario con etiquetas y dos botones (transferencia al alias o link de Ualá), con
-     confirmación; aparte, «¿Ya te pagó?» para anotar un pago; «se cobra aparte» explicado antes de confirmarlo. El
-     servicio sale de lo que contrató el cliente. Las pruebas del bot quedan en su sección, plegadas si pasaron todas. -->
+     confirmación; aparte, «¿Ya te pagó?» para anotar un pago. El servicio sale de lo que contrató el cliente y los
+     montos se escriben con punto de miles. Budy pidió sacar del detalle las pruebas del bot, «Lo que pasó» y el botón
+     «se cobra aparte» (todo se cobra en la plataforma); el servidor sigue aceptando `aparte` en /api/admin/pago. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;900&family=Martian+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -77,8 +78,6 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
 .dos{display:grid;grid-template-columns:1fr 1fr;gap:12px}.dos p{margin:6px 2px 0}
 .btn.ancho{width:100%;padding:12px 14px;font-size:15px}
 .aparte-cobro{margin-top:18px;padding-top:14px;border-top:1.5px dashed var(--borde)}.aparte-cobro h4{margin:0 0 2px;font:800 16px Archivo}
-.seccion{margin-top:26px;padding-top:6px;border-top:2px solid var(--borde)}
-.seccion>summary{cursor:pointer;list-style-position:inside}.seccion>summary h3{display:inline;margin:0}
 @media(max-width:700px){dl{grid-template-columns:minmax(0,1fr)}.ocultar-cel{display:none}.campos,.dos{grid-template-columns:1fr}.caja{padding:14px 12px}}
 </style>
 </head>
@@ -185,6 +184,21 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
   }
   document.querySelectorAll('#filtros button').forEach((b) => (b.onclick = () => { filtro = b.dataset.f; document.querySelectorAll('#filtros button').forEach((x) => x.setAttribute('aria-pressed', x === b)); dibujar(); }));
 
+  // Montos en formato argentino (Budy, 19/11/2026): punto de miles y coma para los centavos, mientras se escribe.
+  const numero = (n) => Number(n || 0).toLocaleString('es-AR', { maximumFractionDigits: 2 });
+  const leerMonto = (t) => Number(String(t || '').replace(/[^\d,]/g, '').replace(',', '.'));
+  function formatearMonto(t) {
+    const [ent, ...dec] = String(t || '').replace(/[^\d,]/g, '').split(',');
+    const e = ent.replace(/^0+(?=\d)/, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    return dec.length ? `${e},${dec.join('').slice(0, 2)}` : e;
+  }
+  function formatearAlEscribir(ev) {
+    const i = ev.target; const antes = i.value.slice(0, i.selectionStart).replace(/[^\d,]/g, '').length;
+    i.value = formatearMonto(i.value);
+    let pos = 0, vistos = 0; while (pos < i.value.length && vistos < antes) { if (/[\d,]/.test(i.value[pos])) vistos++; pos++; }
+    i.setSelectionRange(pos, pos);
+  }
+
   // ---- Cobros: lo que debe el cliente y con qué servicio se anota (19/11/2026, Budy) ----
   // El select ofrece sólo los servicios que contrató el cliente. El servidor acepta cuatro rubros (bot, web, redes, otro). Sólo «bot» deja el abono al día 30 días;
   // los demás se facturan como venta y no mueven el vencimiento. Cada servicio contratado cae en su rubro.
@@ -281,13 +295,13 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
             <div class="campos" style="margin-top:12px">
               <label class="campo">Servicio<select name="servicio">${opcionesServicio}</select></label>
               <label class="campo">Concepto (lo ve el cliente en el mail y la factura)<input name="concepto" maxlength="80" placeholder="Ej.: diseño de la página web"></label>
-              <label class="campo">Total a cobrar, con IVA ($)<input name="monto" type="number" step="0.01" min="1" inputmode="decimal" placeholder="Ej.: 150000"></label>
+              <label class="campo">Total a cobrar, con IVA ($)<input name="monto" class="monto" inputmode="decimal" autocomplete="off" placeholder="Ej.: 150.000"></label>
             </div>
             <p class="gris chica" id="nota-servicio" style="margin:6px 2px 0"></p>
             <p class="paso">2 · Cómo se lo cobrás</p>
             <div class="dos">
-              <div><button class="btn principal ancho" type="submit" data-via="transf">Pedir transferencia al alias</button><p class="gris chica">Sin comisión. Le llega un mail con el alias y el monto justo. Cuando entra la plata, se registra sola y sale la factura.</p></div>
-              <div><button class="btn ancho" type="submit" data-via="link">Mandar link de pago (Ualá)</button><p class="gris chica">Para pagar con tarjeta. Ualá cobra comisión y acepta desde $ 25. Cuando paga, se registra solo.</p></div>
+              <div><button class="btn principal ancho" type="submit" data-via="transf">Pedir transferencia al alias</button><p class="gris chica">Sin comisión. Cuando entra la plata, se registra sola.</p></div>
+              <div><button class="btn ancho" type="submit" data-via="link">Mandar link de pago (Ualá)</button><p class="gris chica">Con tarjeta. Ualá cobra comisión.</p></div>
             </div>
           </form>
           <p class="error" id="error-cobro" role="alert"></p><div id="cobro-resultado"></div><div id="cobro-esperando"></div>` : ''}
@@ -297,20 +311,15 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
             <form id="form-pago" class="campos" style="margin-top:10px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr))">
               <label class="campo">Qué pagó<select name="servicio" required><option value="" selected disabled>Elegí el servicio</option>${opcionesServicio}</select></label>
               <label class="campo">Por qué concepto<select name="concepto"><option value="instalación y primer mes"${pagos.length ? '' : ' selected'}>Instalación y primer mes</option><option value="abono mensual"${pagos.length ? ' selected' : ''}>Abono mensual</option><option value="pago único">Pago único</option><option value="otro">Otro</option></select></label>
-              <label class="campo">Monto que llegó ($)<input name="monto" type="number" step="0.01" min="0" inputmode="decimal" placeholder="Ej.: 150000"></label>
+              <label class="campo">Monto que llegó ($)<input name="monto" class="monto" inputmode="decimal" autocomplete="off" placeholder="Ej.: 150.000"></label>
               <button class="btn principal" type="submit">Registrar el pago</button>
             </form>
             <p class="error" id="error-pago" role="alert"></p><div id="pago-repetido"></div>
           </div>
-          ${vivo && cuenta.conBot ? `<details class="chica" style="margin-top:14px"><summary class="gris" style="cursor:pointer">El bot se cobra dentro de otro contrato</summary>
-            <p class="gris" style="margin:6px 0">Si el bot ya va incluido en otro servicio que le cobramos por fuera de esta plataforma, marcalo «se cobra aparte»: queda al día y <b>sin vencimiento</b>, así que no le llegan avisos de pago. No anota plata ni saca factura. Si después registrás un pago del bot, vuelve a tener vencimiento.</p>
-            <button class="btn" type="button" id="b-aparte">Marcar «se cobra aparte»</button></details>` : ''}
           ${historial ? `<p class="paso">Últimos movimientos</p><div class="chica">${historial}</div>` : ''}
         </section>
-        ${c.pruebas ? `<details class="seccion"${c.pruebas.aprobadas === c.pruebas.total ? '' : ' open'}><summary><h3 style="font:900 19px Archivo">Pruebas del bot: ${c.pruebas.aprobadas} de ${c.pruebas.total} ${c.pruebas.aprobadas === c.pruebas.total ? '<span class="ok">✓</span>' : '<span class="error">✗</span>'}</h3> <span class="gris chica">(tocá para ver las respuestas)</span></summary>${c.pruebas.resultados.map((r) => `<div class="prueba">${r.ok ? '✓' : '✗'} <b>${esc(r.pregunta)}</b><br><span class="gris">${esc(r.respuesta)}</span>${r.ok ? '' : `<br><span class="error">${esc(r.motivo)}</span>`}</div>`).join('')}</details>` : ''}
-        <h3 style="margin:18px 0 4px">Ficha del negocio</h3><pre>${esc(Object.entries(f).map(([k, v]) => k + ': ' + v).join('\n'))}</pre>
+        ${Object.keys(f).length ? `<h3 style="margin:22px 0 4px">Ficha del negocio</h3><pre>${esc(Object.entries(f).map(([k, v]) => k + ': ' + v).join('\n'))}</pre>` : `<p class="gris chica" style="margin-top:18px">Todavía no completó la ficha del negocio: se completa en su alta.</p>`}
         ${c.bot ? `<details><summary class="gris">Instrucciones que recibe la IA (versión ${esc(c.bot.version)})</summary><pre>${esc(c.bot.instrucciones)}</pre></details>` : ''}
-        <h3 style="margin:18px 0 4px">Lo que pasó</h3><pre>${esc(eventos.map((e) => fecha(e.cuando) + '  ' + e.que).join('\n') || 'Sin novedades.')}</pre>
         ${vivo ? `<div class="peligro">
           <h3 style="margin:0 0 4px;color:var(--mal)">Eliminar cliente</h3>
           <p class="gris chica" style="margin:0">Sale de todas las listas y de su panel, el link del alta deja de andar y se cancelan las transferencias que esperábamos.${c.estado === 'activo' || conectado ? ` <b style="color:var(--mal)">Tiene ${[c.estado === 'activo' ? 'el bot prendido' : '', conectado ? 'el WhatsApp ' + esc(c.whatsapp.numero || '') + ' conectado' : ''].filter(Boolean).join(' y ')}: se desconecta de la plataforma y el bot deja de contestar.</b>` : ''} Los pagos y las facturas quedan guardados (se siguen viendo en «Eliminados» y en <a href="facturacion.html">Facturación</a>).</p>
@@ -321,6 +330,7 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
           </div>
         </div>` : ''}
       </div>`;
+      document.querySelectorAll('#detalle input.monto').forEach((i) => i.addEventListener('input', formatearAlEscribir));
       const cambiar = async (estado) => { try { await api('/api/admin/estado', { id, estado }); await cargar(); verCliente(id); } catch (e) { $('#error-det').textContent = e.message; } };
       if ($('#prender')) $('#prender').onclick = (e) => { e.target.disabled = true; cambiar('activo'); };
       // Pausar pide el motivo (19/11/2026): falta de pago u otro. El servidor decide qué hace con cada uno.
@@ -351,7 +361,7 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
       $('#form-pago').onsubmit = async (e) => {
         e.preventDefault(); const d = Object.fromEntries(new FormData(e.target).entries()); $('#error-pago').textContent = ''; $('#pago-repetido').innerHTML = '';
         if (!d.servicio) { $('#error-pago').textContent = 'Elegí qué servicio pagó.'; return; }
-        const cuerpo = { id, monto: Number(d.monto), concepto: d.concepto, servicio: d.servicio };
+        const cuerpo = { id, monto: leerMonto(d.monto), concepto: d.concepto, servicio: d.servicio };
         const listo = async () => { await cargar(); verCliente(id); };
         // Deshabilitado mientras corre el pedido: un doble clic no manda el pago dos veces.
         const btn = e.target.querySelector('button[type=submit]'); btn.disabled = true;
@@ -376,8 +386,8 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
       const notaServicio = () => { $('#nota-servicio').textContent = fc.servicio.value === 'bot' ? 'Con este servicio, el pago deja el abono al día por 30 días.' : 'Se factura como venta aparte: no cambia el vencimiento del abono.'; };
       const elegir = (preset) => {
         fc.querySelectorAll('[data-preset]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.preset === preset));
-        if (preset === 'inicio') fc.servicio.value = rubroAbono, fc.concepto.value = 'instalación y primer mes', fc.monto.value = cuenta.inicio;
-        else if (preset === 'abono') fc.servicio.value = rubroAbono, fc.concepto.value = cuenta.conceptoAbono, fc.monto.value = cuenta.abono;
+        if (preset === 'inicio') fc.servicio.value = rubroAbono, fc.concepto.value = 'instalación y primer mes', fc.monto.value = numero(cuenta.inicio);
+        else if (preset === 'abono') fc.servicio.value = rubroAbono, fc.concepto.value = cuenta.conceptoAbono, fc.monto.value = numero(cuenta.abono);
         else { fc.concepto.value = ''; fc.monto.value = ''; fc.concepto.focus(); }
         notaServicio();
       };
@@ -385,7 +395,7 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
       const desmarcar = () => fc.querySelectorAll('[data-preset]').forEach((b) => b.setAttribute('aria-pressed', 'false'));
       fc.servicio.onchange = () => { desmarcar(); notaServicio(); };
       // Si toca el monto o el concepto a mano, el atajo deja de estar marcado (ya no es «lo que debe»).
-      fc.monto.oninput = fc.concepto.oninput = desmarcar;
+      fc.monto.addEventListener('input', desmarcar); fc.concepto.oninput = desmarcar;
       elegir(cuenta.inicio || cuenta.abono ? cuenta.sugerido === 'abono' && cuenta.abono ? 'abono' : cuenta.inicio ? 'inicio' : 'abono' : 'otro');
       // La IA del ciclo (lo mismo que se le suma al abono en el aviso de vencimiento). Sólo lectura.
       if (cuenta.abono && !cuenta.iaIncluida) api('/api/admin/medicion', { id }).then((m) => {
@@ -395,7 +405,7 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
         if (!$('#abono-total')) return;
         $('#abono-total').textContent = pesos(cuenta.abono);
         $('#abono-detalle').textContent = `abono ${pesos(cuenta.abonoNeto)} + IA ${pesos(ia)}${cuenta.iaAlCosto ? ' al costo' : ''}, + IVA. La IA es lo usado hasta hoy.`;
-        if (fc.querySelector('[data-preset=abono][aria-pressed=true]')) fc.monto.value = cuenta.abono;
+        if (fc.querySelector('[data-preset=abono][aria-pressed=true]')) fc.monto.value = numero(cuenta.abono);
       }).catch(() => { if ($('#abono-detalle')) $('#abono-detalle').textContent = 'sin la IA (no se pudo calcular): sumala a mano.'; });
       // Los cobros de este cliente que esperan la transferencia, para no pedir dos veces lo mismo.
       const verEsperando = () => api('/api/admin/transferencias').then(({ esperas }) => {
@@ -406,7 +416,7 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
       fc.onsubmit = async (e) => {
         e.preventDefault(); $('#error-cobro').textContent = ''; $('#cobro-resultado').innerHTML = '';
         const via = (e.submitter && e.submitter.dataset.via) || 'transf';
-        const d = Object.fromEntries(new FormData(fc).entries()); const monto = Number(d.monto); const concepto = String(d.concepto || '').trim();
+        const d = Object.fromEntries(new FormData(fc).entries()); const monto = leerMonto(d.monto); const concepto = String(d.concepto || '').trim();
         if (!concepto) { $('#error-cobro').textContent = 'Escribí el concepto: qué se le cobra.'; fc.concepto.focus(); return; }
         if (!(monto >= (via === 'link' ? 25 : 1))) { $('#error-cobro').textContent = via === 'link' ? 'Poné el total con IVA. Ualá acepta desde $ 25.' : 'Poné el total a cobrar, con IVA.'; fc.monto.focus(); return; }
         const aviso = via === 'link' ? `¿Generar un link de pago de Ualá por ${pesos(monto)} (${concepto}) para ${c.negocio}?\n\nDespués lo mandás vos por WhatsApp o lo copiás.` : `¿Pedirle a ${c.negocio} una transferencia de ${pesos(monto)} (${concepto})?\n\nLe llega un mail${c.email ? ' a ' + c.email : ''} con el alias y el monto.`;
@@ -448,7 +458,6 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
         } catch (err) { $('#error-det').textContent = err.message; btn.disabled = false; }
       };
       }
-      if ($('#b-aparte')) $('#b-aparte').onclick = async () => { if (!confirm(`¿Marcar el bot de ${c.negocio} como «se cobra aparte»?\n\nQueda al día y sin vencimiento: no le llegan avisos de pago. No anota plata ni saca factura. Usalo sólo si el bot ya se cobra dentro de otro contrato.`)) return; try { await api('/api/admin/pago', { id, aparte: true }); await cargar(); verCliente(id); } catch (err) { $('#error-det').textContent = err.message; } };
       $('#detalle').scrollIntoView({ behavior: 'smooth' });
     } catch (e) { $('#detalle').innerHTML = `<div class="tarjeta error">${esc(e.message)}</div>`; }
   }
