@@ -251,8 +251,12 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
       }));
       // Cambiar el tope de IA de este cliente (/api/admin/tope-ia), con confirmación.
       if ($('#form-tope')) $('#form-tope').onsubmit = async (e) => {
-        e.preventDefault(); const crudo = String(new FormData(e.target).get('tope') || '').trim();
-        const tope = Number(crudo.replace(/\./g, '').replace(',', '.'));
+        e.preventDefault(); const crudo = String(new FormData(e.target).get('tope') || '').trim().replace(/^\$\s*/, '');
+        // Pesos enteros, en formato argentino: «15000» o «15.000» (punto de miles). Lo demás («1500.5», «1.50»,
+        // «15000,50») es ambiguo o trae centavos: se rechaza con un mensaje en vez de adivinar.
+        const entero = /^\d+$/.test(crudo) || /^\d{1,3}(\.\d{3})+$/.test(crudo);
+        const tope = entero ? Number(crudo.replace(/\./g, '')) : NaN;
+        if (!entero) { $('#error-det').textContent = `«${crudo}» no es un monto claro. Poné el tope en pesos enteros, sin centavos: por ejemplo 15000 o 15.000.`; return; }
         if (!(tope >= 100)) { $('#error-det').textContent = 'Poné el tope en pesos, desde $ 100 (por ejemplo 15000). Para que el bot no conteste, pausalo.'; return; }
         if (!confirm(`¿Cambiar el tope de IA de ${c.negocio} de ${pesos(c.ia.tope)} a ${pesos(tope)}?\n\nLleva usados ${pesos(c.ia.gastado)}. Es el costo de la IA, sin IVA: lo que se le cobra no cambia.`)) return;
         try { await api('/api/admin/tope-ia', { id, tope }); await cargar(); verCliente(id); } catch (err) { $('#error-det').textContent = err.message; }
@@ -269,8 +273,11 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
         if (!d.servicio) { $('#error-det').textContent = 'Elegí qué servicio pagó.'; return; }
         const cuerpo = { id, monto: Number(d.monto), concepto: d.concepto, servicio: d.servicio };
         const listo = async () => { await cargar(); verCliente(id); };
+        // Deshabilitado mientras corre el pedido: un doble clic no manda el pago dos veces.
+        const btn = e.target.querySelector('button[type=submit]'); btn.disabled = true;
         try { await api('/api/admin/pago', cuerpo); await listo(); }
         catch (err) {
+          btn.disabled = false;
           const rep = err.datos && err.datos.repetido;
           if (!rep) { $('#error-det').textContent = err.message; return; }
           const lista = (err.datos.repetidos || [rep]).map((x) => `<li>${esc(pesos(x.monto))} · ${esc(fecha(x.cuando))} · ${esc(x.como)}</li>`).join('');
@@ -341,7 +348,20 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
         }
         cargarTransferencias(); cargar();
       }));
-      document.querySelectorAll('[data-descartar]').forEach((b) => (b.onclick = async () => { if (!confirm('Esta transferencia no se asigna a ningún cliente de Soluciones. ¿Seguimos?')) return; try { await api('/api/admin/asignar-transferencia', { accion: 'descartar', aviso: b.closest('[data-aviso]').dataset.aviso }); cargarTransferencias(); } catch (err) { $('#error-transf').textContent = err.message; } }));
+      document.querySelectorAll('[data-descartar]').forEach((b) => (b.onclick = async () => {
+        if (!confirm('Esta transferencia no se asigna a ningún cliente de Soluciones. ¿Seguimos?')) return;
+        const avisoId = b.closest('[data-aviso]').dataset.aviso;
+        try { await api('/api/admin/asignar-transferencia', { accion: 'descartar', aviso: avisoId }); }
+        catch (err) { $('#error-transf').textContent = err.message; return; }
+        // Freno de pago repetido (19/11/2026): el cobro de ese cliente quedó esperando. Si la plata era la misma que ya
+        // estaba registrada, se ofrece cancelarlo también (misma ruta que el botón «Cancelar» de abajo).
+        const a = sinAsignar.find((x) => x.id === avisoId) || {};
+        const espera = a.esperaPendiente && esperas.find((x) => x.id === a.esperaPendiente);
+        if (espera && confirm(`Ese aviso correspondía al cobro ${espera.ref} de ${espera.negocio} (${espera.concepto}, ${pesos(espera.monto)}), que sigue esperando la transferencia.\n\n¿Cancelamos también ese cobro? Si el cliente todavía tiene que pagarlo, dejalo esperando.`)) {
+          try { await api('/api/admin/asignar-transferencia', { accion: 'cancelar', espera: espera.id }); } catch (err) { $('#error-transf').textContent = err.message; }
+        }
+        cargarTransferencias();
+      }));
       document.querySelectorAll('[data-cancelar]').forEach((b) => (b.onclick = async () => { if (!confirm('Se cancela este pedido de transferencia. ¿Seguimos?')) return; try { await api('/api/admin/asignar-transferencia', { accion: 'cancelar', espera: b.dataset.cancelar }); cargarTransferencias(); } catch (err) { $('#error-transf').textContent = err.message; } }));
     } catch (e) { $('#error-transf').textContent = e.message; $('#caja-transf').hidden = false; }
   }
