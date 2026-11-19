@@ -16,7 +16,12 @@
      19/11/2026 (Budy, cobro de la IA, parte 1): registrar un pago obliga a elegir el servicio y, si ya hay un pago por
      ese monto en la semana, pide confirmar; pausar pide el motivo (falta de pago u otro); el detalle dice por qué no
      contesta, el consumo contra el tope (con el cambio de tope) y los audios sin transcribir; medición de la IA por
-     cliente (sin IVA); y las transferencias sin asignar dicen por qué. -->
+     cliente (sin IVA); y las transferencias sin asignar dicen por qué.
+     19/11/2026 (Budy, «que sea más entendible»): los cobros del detalle van en una sola caja. Arriba, lo que debe según
+     su precio (instalación y primer mes; abono del mes con la IA del ciclo, que trae /api/admin/medicion), que precarga
+     el formulario; un solo formulario con etiquetas y dos botones (transferencia al alias o link de Ualá), con
+     confirmación; aparte, «¿Ya te pagó?» para anotar un pago; «se cobra aparte» explicado antes de confirmarlo. El
+     servicio sale de lo que contrató el cliente. Las pruebas del bot quedan en su sección, plegadas si pasaron todas. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;900&family=Martian+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -57,7 +62,24 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
 .servicios{grid-column:1/-1;border:1.5px solid var(--borde,#e3e8f2);border-radius:10px;padding:10px 12px;margin:0}.servicios legend{font-weight:800;padding:0 4px}.servicios label{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:15px;cursor:pointer}.servicios input{width:auto;padding:0}.servicios .sub{margin:6px 0 0;font-weight:700;font-size:14px}
 .acciones{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 4px}
 .link-caja{word-break:break-all;background:#f6f8fe;border-radius:10px;padding:10px;font:12.5px "Martian Mono",monospace;margin:8px 0}
-@media(max-width:700px){dl{grid-template-columns:1fr}.ocultar-cel{display:none}}
+/* Cobros (19/11/2026, Budy: «que sea más entendible»): una sola caja con lo que debe, un formulario para cobrar con
+   dos caminos (transferencia o link) y, aparte, «ya me pagó». Las pruebas del bot van en su propia sección. */
+.caja{border:1.5px solid var(--borde);border-radius:16px;padding:16px;margin-top:20px;background:#fbfcff}
+.caja-tit{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.caja-tit h3{margin:0;font:900 19px Archivo}
+.paso{font:500 12px "Martian Mono",monospace;color:var(--gris);text-transform:uppercase;letter-spacing:.05em;margin:16px 0 8px}
+.debe{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}
+.opcion{display:block;width:100%;border:1.5px solid var(--borde);border-radius:12px;padding:10px 12px;background:#fff;cursor:pointer;text-align:left;font:400 13px/1.4 Archivo;color:var(--gris)}
+.opcion b{display:block;font:900 20px Archivo;color:var(--ink);margin:2px 0}.opcion .que{font-weight:700;color:var(--ink);font-size:14px}
+.opcion[aria-pressed=true]{border-color:var(--azul);background:var(--suave);box-shadow:0 0 0 1px var(--azul) inset}
+.sugerido{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:99px;background:#e2f6ee;color:var(--ok);font-size:11px;font-weight:700;vertical-align:1px}
+.campos{display:grid;grid-template-columns:1.2fr 1.5fr 1fr;gap:10px;align-items:end}
+.campo{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:700;color:var(--gris)}
+.dos{display:grid;grid-template-columns:1fr 1fr;gap:12px}.dos p{margin:6px 2px 0}
+.btn.ancho{width:100%;padding:12px 14px;font-size:15px}
+.aparte-cobro{margin-top:18px;padding-top:14px;border-top:1.5px dashed var(--borde)}.aparte-cobro h4{margin:0 0 2px;font:800 16px Archivo}
+.seccion{margin-top:26px;padding-top:6px;border-top:2px solid var(--borde)}
+.seccion>summary{cursor:pointer;list-style-position:inside}.seccion>summary h3{display:inline;margin:0}
+@media(max-width:700px){dl{grid-template-columns:1fr}.ocultar-cel{display:none}.campos,.dos{grid-template-columns:1fr}.caja{padding:14px 12px}}
 </style>
 </head>
 <body>
@@ -163,6 +185,55 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
   }
   document.querySelectorAll('#filtros button').forEach((b) => (b.onclick = () => { filtro = b.dataset.f; document.querySelectorAll('#filtros button').forEach((x) => x.setAttribute('aria-pressed', x === b)); dibujar(); }));
 
+  // ---- Cobros: lo que debe el cliente y con qué servicio se anota (19/11/2026, Budy) ----
+  // El servidor acepta cuatro rubros para cobrar (bot, web, redes, otro). Sólo «bot» deja el abono al día 30 días;
+  // los demás se facturan como venta y no mueven el vencimiento. Cada servicio contratado cae en su rubro.
+  const RUBRO = { paquete: 'bot', bot: 'bot', seguimiento: 'bot', landing: 'web', web: 'web', redesEsencial: 'redes', redesProfesional: 'redes', redesPremium: 'redes' };
+  function serviciosParaCobrar(c) {
+    const precio = c.precio || {};
+    const items = Array.isArray(precio.detalle) && precio.detalle.length ? precio.detalle.map((d) => ({ clave: d.clave, nombre: d.clave === 'paquete' ? 'Paquete completo' : d.nombre }))
+      : (c.servicios || ['bot']).map((k) => ({ clave: k, nombre: SERVICIO[k] || k }));
+    const grupos = {};
+    for (const it of items) { const r = RUBRO[it.clave] || 'otro'; (grupos[r] = grupos[r] || []).push(it.nombre); }
+    const ops = ['bot', 'web', 'redes', 'otro'].filter((r) => grupos[r]).map((r) => ({ valor: r, nombre: grupos[r].join(' + ') + (r === 'bot' ? ' (abono)' : '') }));
+    if (!grupos.otro) ops.push({ valor: 'otro', nombre: 'Otro servicio' });
+    return ops;
+  }
+  // Lo mismo que calcula el servidor: instalación y primer mes = (instalación + abono) + IVA; abono del mes = abono + IA
+  // del ciclo, + IVA (la IA la trae /api/admin/medicion, cargoHoy, al abrir el detalle). Con precio acordado con IVA
+  // se usan los montos tal como se cargaron.
+  function cuentaDe(c) {
+    const p = c.precio || {}; const iva = typeof p.iva === 'number' ? p.iva : 0.21; const ac = p.acordado;
+    const conIva = (n) => Math.round(n * (1 + iva) * 100) / 100;
+    const conBot = !(Array.isArray(c.servicios) && !c.servicios.includes('bot'));
+    const iaIncluida = !conBot || !!(ac && ac.iaIncluida);
+    const instalacion = Number(p.instalacion) || 0; const abono = Number(p.abono) || 0;
+    const aCotizar = (p.aCotizar || []).map((k) => SERVICIO[k] || k);
+    const nombre = p.nombre || '';
+    const inicio = ac && ac.conIva ? (Number(ac.cargado.instalacion) || 0) + (Number(ac.cargado.abono) || 0) : conIva(instalacion + abono);
+    const abonoBase = ac && ac.conIva ? Number(ac.cargado.abono) || 0 : conIva(abono);
+    const pagos = (c.cobro && c.cobro.pagos) || [];
+    return {
+      conBot, iaIncluida, aCotizar, abonoNeto: abono, iva, iaAlCosto: !!c.iaAlCosto,
+      inicio: abono > 0 ? inicio : 0,
+      inicioDetalle: `${instalacion ? '' : 'sin instalación · '}${nombre}`,
+      abono: abonoBase, abonoBase,
+      abonoDetalle: `${nombre}${iaIncluida ? (conBot ? ' · IA incluida' : '') : ' · calculando la IA…'}`,
+      sugerido: pagos.length ? 'abono' : 'inicio',
+      conceptoAbono: c.cobro && c.cobro.vence ? `abono hasta ${new Date(Date.parse(c.cobro.vence) + 30 * 864e5).toLocaleDateString('es-AR')}` : 'abono mensual'
+    };
+  }
+  function estadoCobro(c) {
+    const k = c.cobro || {}; const vence = k.vence ? Date.parse(k.vence) : 0;
+    if (k.medio && String(k.medio).startsWith('aparte')) return '<span class="estado e-otro">Se cobra aparte (sin vencimiento)</span>';
+    if (!((k.pagos || []).length) && !(c.ventas || []).length) return '<span class="estado e-revision">Todavía no pagó nada</span>';
+    if (!vence) return `<span class="estado e-otro">${esc(k.estado || 'sin vencimiento')}</span>`;
+    const dias = Math.ceil((vence - Date.now()) / 864e5); const dia = new Date(vence).toLocaleDateString('es-AR');
+    if (dias < 0) return `<span class="estado e-pausado">Vencido el ${dia}</span>`;
+    if (dias <= 5) return `<span class="estado e-revision">Vence el ${dia} (en ${dias} día${dias === 1 ? '' : 's'})</span>`;
+    return `<span class="estado e-activo">Al día · vence el ${dia}</span>`;
+  }
+
   async function verCliente(id) {
     $('#detalle').innerHTML = '<div class="tarjeta gris">Cargando…</div>';
     try {
@@ -174,6 +245,11 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
       const vivo = c.estado !== 'eliminado';
       const el = c.eliminado || {};
       const conectado = !!(c.whatsapp && c.whatsapp.conectado);
+      const cuenta = cuentaDe(c);
+      const opcionesServicio = serviciosParaCobrar(c).map((o) => `<option value="${o.valor}">${esc(o.nombre)}</option>`).join('');
+      const historial = [...pagos.map((p) => ({ ...p, que: p.medio === 'aparte' ? 'Marcado «se cobra aparte»' : p.concepto })), ...(c.ventas || []).map((v) => ({ ...v, que: (({ web: 'Página web', redes: 'Redes sociales', otro: 'Otro servicio' })[v.servicio] || v.servicio) + ' · ' + v.concepto })), ...(c.linksPago || []).filter((l) => l.estado !== 'pagado').map((l) => ({ cuando: l.creado, que: `Link ${l.ref} · ${l.concepto}`, monto: l.monto, medio: 'esperando que pague el link' }))]
+        .sort((a, b) => String(b.cuando).localeCompare(String(a.cuando))).slice(0, 6)
+        .map((p) => `<div style="padding:3px 0">${esc(fecha(p.cuando))} · <b>${esc(p.que)}</b>${p.monto ? ' · ' + pesos(p.monto) : ''}${p.medio && p.medio !== 'aparte' ? ` · <span class="gris">${esc(p.medio)}</span>` : ''}</div>`).join('');
       const boton = !vivo ? '' : c.estado === 'activo' ? '<button class="btn mal" id="pausar">Pausar el bot</button>' : (['revision', 'pausado'].includes(c.estado) ? '<button class="btn principal" id="prender">Prender el bot</button>' : '<span class="gris chica">Se puede prender cuando el cliente lo aprueba.</span>');
       $('#detalle').innerHTML = `<div class="tarjeta">
         <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap"><h2 style="font:900 22px Archivo;margin:0">${esc(c.negocio)}</h2><span class="estado ${clase(c.estado)}">${esc(NOMBRE[c.estado] || c.estado)}</span><div style="margin-left:auto">${boton}</div></div>
@@ -189,43 +265,50 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
           <dt>IA</dt><dd>${esc(f.modelo === 'economico' ? 'Económica' : 'Recomendada')} · ${c.ia ? `${pesos(c.ia.gastado)} usados de un tope de ${pesos(c.ia.tope)} (${c.ia.tope ? Math.floor((c.ia.gastado || 0) / c.ia.tope * 100) : 0} %) · ${c.ia.mensajes || 0} mensajes${c.ia.pendientes && Object.keys(c.ia.pendientes).length ? ' · hay consumo sin valorizar (faltó la cotización del dólar)' : ''}` : '—'}
             ${vivo && c.ia ? `<form id="form-tope" class="grilla" style="margin:6px 0 0;max-width:420px"><input name="tope" inputmode="decimal" placeholder="Tope nuevo en $ (costo, sin IVA)" aria-label="Tope de IA nuevo" required><button class="btn" type="submit">Cambiar el tope</button></form>` : ''}</dd>
           <dt>Audios sin transcribir</dt><dd>${c.audiosPendientes ? `${c.audiosPendientes} (llegaron con el bot cortado: se transcriben solos cuando vuelve a contestar)` : 'Ninguno'}</dd>
-          <dt>Cobro</dt><dd>${esc(c.cobro ? (c.cobro.estado + (c.cobro.medio ? ' · ' + c.cobro.medio : '') + (c.cobro.vence ? ' · vence ' + new Date(c.cobro.vence).toLocaleDateString('es-AR') : '')) : '—')}</dd>
-          <dt>Factura</dt><dd>${c.fiscal ? esc(`${c.fiscal.nombre} · ${c.fiscal.doc_tipo} ${c.fiscal.doc_nro} · ${({ RI: 'Responsable Inscripto', MT: 'Monotributo', CF: 'Consumidor final', EX: 'Exento' })[c.fiscal.condicion_iva] || c.fiscal.condicion_iva}`) : 'Sin datos: los pagos quedan en <a href="facturacion.html">Facturación</a> para cargarlos una vez'}</dd>
-          <dt>Pagos</dt><dd>${(pagos.length || (c.ventas || []).length) ? [...pagos, ...(c.ventas || []).map((v) => ({ ...v, concepto: ({ web: 'Página web', redes: 'Redes sociales', otro: 'Otro servicio' })[v.servicio] + ' · ' + v.concepto }))].sort((a, b) => String(a.cuando).localeCompare(String(b.cuando))).slice(-6).reverse().map((p) => esc(`${fecha(p.cuando)} · ${p.concepto}${p.monto ? ' · ' + pesos(p.monto) : ''} · ${p.medio || ''}`)).join('<br>') : '—'}</dd>
         </dl>
         ${vivo ? `<div class="acciones"><button class="btn" id="b-alta">Abrir su alta (link nuevo)</button><button class="btn" id="b-panel">Link para su panel</button></div>
-        <div id="links"></div>
-        <h3 style="margin:18px 0 4px">Cobrar por transferencia al alias (sin comisión)</h3>
-        <form id="form-transf" class="grilla">
-          <select name="servicio" aria-label="Qué se cobra"><option value="bot">Bot de WhatsApp</option><option value="web">Página web / landing</option><option value="redes">Redes sociales</option><option value="otro">Otro servicio</option></select>
-          <input name="concepto" maxlength="80" placeholder="Qué se cobra (ej.: instalación y primer mes)" required>
-          <input name="monto" type="number" step="0.01" min="1" placeholder="Total a cobrar, con IVA" required>
-          <button class="btn principal" type="submit">Pedir la transferencia</button>
-        </form>
-        <div id="transf-pedida"></div>
-        <p class="gris chica">Al cliente le llega un mail con el alias y el monto justo. Cuando entra la transferencia, el celular de Ualá avisa, el pago se registra solo y sale la factura.</p>
-        <h3 style="margin:18px 0 4px">Cobrar con link de pago (Ualá)</h3>
-        <form id="form-link" class="grilla">
-          <select name="servicio" aria-label="Qué se cobra"><option value="bot">Bot de WhatsApp</option><option value="web">Página web / landing</option><option value="redes">Redes sociales</option><option value="otro">Otro servicio</option></select>
-          <input name="concepto" maxlength="80" placeholder="Qué se cobra (ej.: instalación y primer mes)" required>
-          <input name="monto" type="number" step="0.01" min="25" placeholder="Total a cobrar, con IVA (desde $ 25)" required>
-          <button class="btn principal" type="submit">Generar link</button>
-        </form>
-        <div id="link-pago"></div>
-        <p class="gris chica">Cuando el cliente paga, el pago se registra solo y sale la factura (si tiene sus datos fiscales). Si el link es del bot, el abono queda al día por 30 días.</p>
-        ` : ''}
-        ${(c.linksPago || []).length ? `<dl><dt>Links</dt><dd>${c.linksPago.slice(-6).reverse().map((l) => `${esc(fecha(l.creado))} · ${esc(l.ref)} · ${esc(l.concepto)} · ${pesos(l.monto)} · <b>${l.estado === 'pagado' ? 'pagado' : 'esperando el pago'}</b>`).join('<br>')}</dd></dl>` : ''}
-        <h3 style="margin:18px 0 4px">Registrar un pago por transferencia</h3>
-        <form id="form-pago" class="grilla">
-          <select name="servicio" aria-label="Qué pagó" required><option value="" selected disabled>¿Qué pagó? Elegí el servicio</option><option value="bot">Bot de WhatsApp</option><option value="web">Página web / landing</option><option value="redes">Redes sociales</option><option value="otro">Otro servicio</option></select>
-          <input name="monto" type="number" step="0.01" min="0" placeholder="Monto que llegó ($)">
-          <select name="concepto"><option value="instalación y primer mes">Instalación y primer mes</option><option value="abono mensual">Abono mensual</option><option value="pago único">Pago único</option><option value="otro">Otro</option></select>
-          <button class="btn principal" type="submit">Registrar el pago</button>
-          ${vivo ? '<button class="btn" type="button" id="b-aparte" title="Lo cobramos junto con otros servicios: no se controla el vencimiento">Se cobra aparte</button>' : ''}
-        </form>
-        <div id="pago-repetido"></div>
-        <p class="gris chica">Con el pago del bot, el abono queda al día por 30 días. Antes de que venza te llega un mail; la plataforma no pausa a nadie sola. Cada pago (bot, web o redes) se factura solo si el cliente tiene sus datos para la factura; si no, queda en <a href="facturacion.html">Facturación</a>.</p>
-        ${c.pruebas ? `<h3 style="margin:18px 0 4px">Pruebas: ${c.pruebas.aprobadas} de ${c.pruebas.total}</h3>${c.pruebas.resultados.map((r) => `<div class="prueba">${r.ok ? '✓' : '✗'} <b>${esc(r.pregunta)}</b><br><span class="gris">${esc(r.respuesta)}</span>${r.ok ? '' : `<br><span class="error">${esc(r.motivo)}</span>`}</div>`).join('')}` : ''}
+        <div id="links"></div>` : ''}
+        <section class="caja" id="caja-cobros" aria-labelledby="tit-cobros">
+          <div class="caja-tit"><h3 id="tit-cobros">Cobros</h3>${estadoCobro(c)}</div>
+          <p class="gris chica" style="margin:6px 0 0">${c.fiscal ? `Factura: sale sola con cada pago, a nombre de ${esc(c.fiscal.nombre)} (${esc(c.fiscal.doc_tipo)} ${esc(c.fiscal.doc_nro)}, ${esc(({ RI: 'Responsable Inscripto', MT: 'Monotributo', CF: 'Consumidor final', EX: 'Exento' })[c.fiscal.condicion_iva] || c.fiscal.condicion_iva)}).` : 'Factura: todavía no tiene sus datos fiscales. Los pagos quedan en <a href="facturacion.html">Facturación</a> para cargarlos una vez.'}</p>
+          ${vivo ? `<form id="form-cobrar" novalidate>
+            <p class="paso">1 · Qué le cobrás</p>
+            ${cuenta.inicio || cuenta.abono ? '' : `<p class="gris chica" style="margin:0 0 8px">${cuenta.aCotizar.length ? `${esc(cuenta.aCotizar.join(', '))}: sin precio cargado (a cotizar). ` : ''}Escribí el monto abajo.</p>`}
+            <div class="debe">
+              ${cuenta.inicio ? `<button type="button" class="opcion" data-preset="inicio"><span class="que">Instalación y primer mes${cuenta.sugerido === 'inicio' ? '<span class="sugerido">Sugerido</span>' : ''}</span><b>${pesos(cuenta.inicio)}</b>con IVA · ${esc(cuenta.inicioDetalle)}</button>` : ''}
+              ${cuenta.abono ? `<button type="button" class="opcion" data-preset="abono"><span class="que">Abono del mes${cuenta.sugerido === 'abono' ? '<span class="sugerido">Sugerido</span>' : ''}</span><b id="abono-total">${pesos(cuenta.abono)}</b>con IVA · <span id="abono-detalle">${esc(cuenta.abonoDetalle)}</span></button>` : ''}
+              <button type="button" class="opcion" data-preset="otro"><span class="que">Otro monto</span><b>$ …</b>Lo escribís vos (una web, un extra…)</button>
+            </div>
+            <div class="campos" style="margin-top:12px">
+              <label class="campo">Servicio<select name="servicio">${opcionesServicio}</select></label>
+              <label class="campo">Concepto (lo ve el cliente en el mail y la factura)<input name="concepto" maxlength="80" placeholder="Ej.: diseño de la página web"></label>
+              <label class="campo">Total a cobrar, con IVA ($)<input name="monto" type="number" step="0.01" min="1" inputmode="decimal" placeholder="Ej.: 150000"></label>
+            </div>
+            <p class="gris chica" id="nota-servicio" style="margin:6px 2px 0"></p>
+            <p class="paso">2 · Cómo se lo cobrás</p>
+            <div class="dos">
+              <div><button class="btn principal ancho" type="submit" data-via="transf">Pedir transferencia al alias</button><p class="gris chica">Sin comisión. Le llega un mail con el alias y el monto justo. Cuando entra la plata, se registra sola y sale la factura.</p></div>
+              <div><button class="btn ancho" type="submit" data-via="link">Mandar link de pago (Ualá)</button><p class="gris chica">Para pagar con tarjeta. Ualá cobra comisión y acepta desde $ 25. Cuando paga, se registra solo.</p></div>
+            </div>
+          </form>
+          <p class="error" id="error-cobro" role="alert"></p><div id="cobro-resultado"></div><div id="cobro-esperando"></div>` : ''}
+          <div class="${vivo ? 'aparte-cobro' : ''}">
+            <h4>${vivo ? '¿Ya te pagó y no se registró solo?' : 'Registrar un pago que llegó tarde'}</h4>
+            <p class="gris chica" style="margin:0">${vivo ? 'Anotá una transferencia que entró sin pedirla con el botón de arriba. Las que pediste arriba se registran solas: no las anotes de nuevo.' : 'El cliente está eliminado, pero un pago que llegó después se anota igual y queda para facturar.'}</p>
+            <form id="form-pago" class="campos" style="margin-top:10px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr))">
+              <label class="campo">Qué pagó<select name="servicio" required><option value="" selected disabled>Elegí el servicio</option>${opcionesServicio}</select></label>
+              <label class="campo">Por qué concepto<select name="concepto"><option value="instalación y primer mes"${pagos.length ? '' : ' selected'}>Instalación y primer mes</option><option value="abono mensual"${pagos.length ? ' selected' : ''}>Abono mensual</option><option value="pago único">Pago único</option><option value="otro">Otro</option></select></label>
+              <label class="campo">Monto que llegó ($)<input name="monto" type="number" step="0.01" min="0" inputmode="decimal" placeholder="Ej.: 150000"></label>
+              <button class="btn principal" type="submit">Registrar el pago</button>
+            </form>
+            <p class="error" id="error-pago" role="alert"></p><div id="pago-repetido"></div>
+          </div>
+          ${vivo && cuenta.conBot ? `<details class="chica" style="margin-top:14px"><summary class="gris" style="cursor:pointer">El bot se cobra dentro de otro contrato</summary>
+            <p class="gris" style="margin:6px 0">Si el bot ya va incluido en otro servicio que le cobramos por fuera de esta plataforma, marcalo «se cobra aparte»: queda al día y <b>sin vencimiento</b>, así que no le llegan avisos de pago. No anota plata ni saca factura. Si después registrás un pago del bot, vuelve a tener vencimiento.</p>
+            <button class="btn" type="button" id="b-aparte">Marcar «se cobra aparte»</button></details>` : ''}
+          ${historial ? `<p class="paso">Últimos movimientos</p><div class="chica">${historial}</div>` : ''}
+        </section>
+        ${c.pruebas ? `<details class="seccion"${c.pruebas.aprobadas === c.pruebas.total ? '' : ' open'}><summary><h3 style="font:900 19px Archivo">Pruebas del bot: ${c.pruebas.aprobadas} de ${c.pruebas.total} ${c.pruebas.aprobadas === c.pruebas.total ? '<span class="ok">✓</span>' : '<span class="error">✗</span>'}</h3> <span class="gris chica">(tocá para ver las respuestas)</span></summary>${c.pruebas.resultados.map((r) => `<div class="prueba">${r.ok ? '✓' : '✗'} <b>${esc(r.pregunta)}</b><br><span class="gris">${esc(r.respuesta)}</span>${r.ok ? '' : `<br><span class="error">${esc(r.motivo)}</span>`}</div>`).join('')}</details>` : ''}
         <h3 style="margin:18px 0 4px">Ficha del negocio</h3><pre>${esc(Object.entries(f).map(([k, v]) => k + ': ' + v).join('\n'))}</pre>
         ${c.bot ? `<details><summary class="gris">Instrucciones que recibe la IA (versión ${esc(c.bot.version)})</summary><pre>${esc(c.bot.instrucciones)}</pre></details>` : ''}
         <h3 style="margin:18px 0 4px">Lo que pasó</h3><pre>${esc(eventos.map((e) => fecha(e.cuando) + '  ' + e.que).join('\n') || 'Sin novedades.')}</pre>
@@ -262,15 +345,13 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
         try { await api('/api/admin/tope-ia', { id, tope }); await cargar(); verCliente(id); } catch (err) { $('#error-det').textContent = err.message; }
       };
       const mostrarLink = (titulo, url, nota) => { $('#links').innerHTML = `<p class="ok">${esc(titulo)}</p><div class="link-caja">${esc(url)}</div><div class="acciones"><a class="btn principal" href="${esc(url)}" target="_blank" rel="noopener">Abrir</a><button class="btn" id="copiar">Copiar</button></div><p class="gris chica">${esc(nota)}</p>`; $('#copiar').onclick = () => navigator.clipboard.writeText(url).then(() => ($('#copiar').textContent = 'Copiado')).catch(() => {}); };
-      if (vivo) {
-      $('#b-alta').onclick = async () => { if (!confirm('Se genera un link nuevo del alta y el anterior (el del mail del cliente) deja de andar. ¿Seguimos?')) return; try { const r = await api('/api/admin/link-alta', { id }); mostrarLink('Link del alta', r.linkAlta, 'Con este link completás o corregís la ficha y conectás el WhatsApp con el cliente.'); } catch (e) { $('#error-det').textContent = e.message; } };
-      $('#b-panel').onclick = async () => { try { const r = await api('/api/admin/link-panel', { id }); mostrarLink('Link para entrar a su panel', r.linkPanel, 'Mandáselo por WhatsApp: sirve una sola vez y vence en 7 días. Después la sesión le dura 30 días; si no, entra con su mail en mymsoluciones.online/panel.'); } catch (e) { $('#error-det').textContent = e.message; } };
+      // Va fuera de «vivo»: en un cliente eliminado se puede anotar un pago que llegó tarde (el servidor lo permite).
       // El servicio no viene elegido (19/11/2026): un pago de una web anotado como «Bot de WhatsApp» terminó en una
       // doble factura en las pruebas. Si el servidor avisa que ya hay un pago por ese monto en la semana (409), se
       // muestra cuál y se registra solo si la persona confirma que es otro pago.
       $('#form-pago').onsubmit = async (e) => {
-        e.preventDefault(); const d = Object.fromEntries(new FormData(e.target).entries()); $('#error-det').textContent = ''; $('#pago-repetido').innerHTML = '';
-        if (!d.servicio) { $('#error-det').textContent = 'Elegí qué servicio pagó.'; return; }
+        e.preventDefault(); const d = Object.fromEntries(new FormData(e.target).entries()); $('#error-pago').textContent = ''; $('#pago-repetido').innerHTML = '';
+        if (!d.servicio) { $('#error-pago').textContent = 'Elegí qué servicio pagó.'; return; }
         const cuerpo = { id, monto: Number(d.monto), concepto: d.concepto, servicio: d.servicio };
         const listo = async () => { await cargar(); verCliente(id); };
         // Deshabilitado mientras corre el pedido: un doble clic no manda el pago dos veces.
@@ -279,32 +360,73 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
         catch (err) {
           btn.disabled = false;
           const rep = err.datos && err.datos.repetido;
-          if (!rep) { $('#error-det').textContent = err.message; return; }
+          if (!rep) { $('#error-pago').textContent = err.message; return; }
           const lista = (err.datos.repetidos || [rep]).map((x) => `<li>${esc(pesos(x.monto))} · ${esc(fecha(x.cuando))} · ${esc(x.como)}</li>`).join('');
           $('#pago-repetido').innerHTML = `<div class="peligro" style="margin-top:8px"><p class="error" style="margin:0 0 6px">${esc(err.message)}</p><p class="gris chica" style="margin:0">Pagos de este cliente por ese monto en los últimos 7 días:</p><ul class="chica" style="margin:4px 0 8px">${lista}</ul><p class="gris chica" style="margin:0 0 8px">Antes de confirmar, fijate en la app de Ualá si entraron dos transferencias. Si es la misma plata, no hagas nada.</p><div class="acciones" style="margin:0"><button class="btn principal" type="button" id="b-otro-pago">Es otro pago, registrarlo</button><button class="btn" type="button" id="b-no-pago">No, es el mismo</button></div></div>`;
           $('#b-no-pago').onclick = () => { $('#pago-repetido').innerHTML = ''; };
-          $('#b-otro-pago').onclick = async (ev) => { ev.target.disabled = true; try { await api('/api/admin/pago', { ...cuerpo, confirmarRepetido: true }); await listo(); } catch (e2) { $('#error-det').textContent = e2.message; ev.target.disabled = false; } };
+          $('#b-otro-pago').onclick = async (ev) => { ev.target.disabled = true; try { await api('/api/admin/pago', { ...cuerpo, confirmarRepetido: true }); await listo(); } catch (e2) { $('#error-pago').textContent = e2.message; ev.target.disabled = false; } };
         }
       };
-      $('#form-link').onsubmit = async (e) => {
-        e.preventDefault(); const d = Object.fromEntries(new FormData(e.target).entries()); const btn = e.target.querySelector('button'); btn.disabled = true;
-        try {
-          const r = await api('/api/admin/link-pago', { id, servicio: d.servicio, concepto: d.concepto, monto: Number(d.monto) });
-          const tel = String(c.celular || '').replace(/\D/g, '');
-          const msj = `Hola ${c.contacto || ''}! Te paso el link para pagar ${d.concepto} (${pesos(r.monto)}): ${r.link}`;
-          $('#link-pago').innerHTML = `<p class="ok">Link ${esc(r.ref)} por ${pesos(r.monto)}</p><div class="link-caja">${esc(r.link)}</div><div class="acciones"><button class="btn" id="copiar-pago">Copiar</button>${tel ? `<a class="btn principal" target="_blank" rel="noopener" href="https://wa.me/${tel.startsWith('54') ? tel : '549' + tel}?text=${encodeURIComponent(msj)}">Mandar por WhatsApp</a>` : ''}</div>`;
-          $('#copiar-pago').onclick = () => navigator.clipboard.writeText(r.link).then(() => ($('#copiar-pago').textContent = 'Copiado')).catch(() => {});
-        } catch (err) { $('#error-det').textContent = err.message; } finally { btn.disabled = false; }
+      if (vivo) {
+      $('#b-alta').onclick = async () => { if (!confirm('Se genera un link nuevo del alta y el anterior (el del mail del cliente) deja de andar. ¿Seguimos?')) return; try { const r = await api('/api/admin/link-alta', { id }); mostrarLink('Link del alta', r.linkAlta, 'Con este link completás o corregís la ficha y conectás el WhatsApp con el cliente.'); } catch (e) { $('#error-det').textContent = e.message; } };
+      $('#b-panel').onclick = async () => { try { const r = await api('/api/admin/link-panel', { id }); mostrarLink('Link para entrar a su panel', r.linkPanel, 'Mandáselo por WhatsApp: sirve una sola vez y vence en 7 días. Después la sesión le dura 30 días; si no, entra con su mail en mymsoluciones.online/panel.'); } catch (e) { $('#error-det').textContent = e.message; } };
+      // Cobrar: un solo formulario (qué se cobra) y dos botones (cómo). Los atajos de arriba precargan servicio,
+      // concepto y monto con lo que debe según su precio; «Otro monto» los deja vacíos.
+      const fc = $('#form-cobrar');
+      const rubroAbono = cuenta.conBot ? 'bot' : (serviciosParaCobrar(c)[0] || {}).valor || 'otro';
+      const notaServicio = () => { $('#nota-servicio').textContent = fc.servicio.value === 'bot' ? 'Con este servicio, el pago deja el abono al día por 30 días.' : 'Se factura como venta aparte: no cambia el vencimiento del abono.'; };
+      const elegir = (preset) => {
+        fc.querySelectorAll('[data-preset]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.preset === preset));
+        if (preset === 'inicio') fc.servicio.value = rubroAbono, fc.concepto.value = 'instalación y primer mes', fc.monto.value = cuenta.inicio;
+        else if (preset === 'abono') fc.servicio.value = rubroAbono, fc.concepto.value = cuenta.conceptoAbono, fc.monto.value = cuenta.abono;
+        else { fc.servicio.value = 'otro'; fc.concepto.value = ''; fc.monto.value = ''; fc.concepto.focus(); }
+        notaServicio();
       };
-      $('#form-transf').onsubmit = async (e) => {
-        e.preventDefault(); const d = Object.fromEntries(new FormData(e.target).entries()); const btn = e.target.querySelector('button'); btn.disabled = true;
+      fc.querySelectorAll('[data-preset]').forEach((b) => (b.onclick = () => elegir(b.dataset.preset)));
+      fc.servicio.onchange = notaServicio;
+      // Si toca el monto o el concepto a mano, el atajo deja de estar marcado (ya no es «lo que debe»).
+      fc.monto.oninput = fc.concepto.oninput = () => fc.querySelectorAll('[data-preset]').forEach((b) => b.setAttribute('aria-pressed', 'false'));
+      elegir(cuenta.inicio || cuenta.abono ? cuenta.sugerido === 'abono' && cuenta.abono ? 'abono' : cuenta.inicio ? 'inicio' : 'abono' : 'otro');
+      // La IA del ciclo (lo mismo que se le suma al abono en el aviso de vencimiento). Sólo lectura.
+      if (cuenta.abono && !cuenta.iaIncluida) api('/api/admin/medicion', { id }).then((m) => {
+        const ia = Number(m.cicloActual && m.cicloActual.cargoHoy) || 0;
+        const conIva = (n) => Math.round(n * (1 + cuenta.iva) * 100) / 100;
+        cuenta.abono = cuenta.iaAlCosto ? Math.round((cuenta.abonoBase + ia) * 100) / 100 : conIva(cuenta.abonoNeto + ia);
+        if (!$('#abono-total')) return;
+        $('#abono-total').textContent = pesos(cuenta.abono);
+        $('#abono-detalle').textContent = `abono ${pesos(cuenta.abonoNeto)} + IA ${pesos(ia)}${cuenta.iaAlCosto ? ' al costo' : ''}, + IVA. La IA es lo usado hasta hoy.`;
+        if (fc.querySelector('[data-preset=abono][aria-pressed=true]')) fc.monto.value = cuenta.abono;
+      }).catch(() => { if ($('#abono-detalle')) $('#abono-detalle').textContent = 'sin la IA (no se pudo calcular): sumala a mano.'; });
+      // Los cobros de este cliente que esperan la transferencia, para no pedir dos veces lo mismo.
+      const verEsperando = () => api('/api/admin/transferencias').then(({ esperas }) => {
+        const mias = (esperas || []).filter((x) => x.cliente === id);
+        if ($('#cobro-esperando')) $('#cobro-esperando').innerHTML = mias.length ? `<p class="chica" style="margin:12px 0 0"><b>Esperando su transferencia:</b> ${mias.map((x) => esc(`${x.concepto} · ${pesos(x.monto)} (pedido el ${fecha(x.creado)}, ${x.ref})`)).join(' — ')}. Se registra sola cuando entra.</p>` : '';
+      }).catch(() => {});
+      verEsperando();
+      fc.onsubmit = async (e) => {
+        e.preventDefault(); $('#error-cobro').textContent = ''; $('#cobro-resultado').innerHTML = '';
+        const via = (e.submitter && e.submitter.dataset.via) || 'transf';
+        const d = Object.fromEntries(new FormData(fc).entries()); const monto = Number(d.monto); const concepto = String(d.concepto || '').trim();
+        if (!concepto) { $('#error-cobro').textContent = 'Escribí el concepto: qué se le cobra.'; fc.concepto.focus(); return; }
+        if (!(monto >= (via === 'link' ? 25 : 1))) { $('#error-cobro').textContent = via === 'link' ? 'Poné el total con IVA. Ualá acepta desde $ 25.' : 'Poné el total a cobrar, con IVA.'; fc.monto.focus(); return; }
+        const aviso = via === 'link' ? `¿Generar un link de pago de Ualá por ${pesos(monto)} (${concepto}) para ${c.negocio}?\n\nDespués lo mandás vos por WhatsApp o lo copiás.` : `¿Pedirle a ${c.negocio} una transferencia de ${pesos(monto)} (${concepto})?\n\nLe llega un mail${c.email ? ' a ' + c.email : ''} con el alias y el monto.`;
+        if (!confirm(aviso)) return;
+        const btns = fc.querySelectorAll('button[type=submit]'); btns.forEach((b) => (b.disabled = true));
+        const tel = String(c.celular || '').replace(/\D/g, '');
+        const wa = (texto) => (tel ? `<a class="btn principal" target="_blank" rel="noopener" href="https://wa.me/${tel.startsWith('54') ? tel : '549' + tel}?text=${encodeURIComponent(texto)}">Mandar por WhatsApp</a>` : '');
         try {
-          const r = await api('/api/admin/pedir-transferencia', { id, servicio: d.servicio, concepto: d.concepto, monto: Number(d.monto) });
-          const tel = String(c.celular || '').replace(/\D/g, '');
-          $('#transf-pedida').innerHTML = `<p class="ok">Pedido ${esc(r.ref)}: le mandamos el mail con el alias.</p><div class="link-caja">${esc(r.mensaje)}</div><div class="acciones"><button class="btn" id="copiar-transf">Copiar el mensaje</button>${tel ? `<a class="btn principal" target="_blank" rel="noopener" href="https://wa.me/${tel.startsWith('54') ? tel : '549' + tel}?text=${encodeURIComponent(r.mensaje)}">Mandar por WhatsApp</a>` : ''}</div>`;
-          $('#copiar-transf').onclick = () => navigator.clipboard.writeText(r.mensaje).then(() => ($('#copiar-transf').textContent = 'Copiado')).catch(() => {});
-          cargarTransferencias();
-        } catch (err) { $('#error-det').textContent = err.message; } finally { btn.disabled = false; }
+          if (via === 'link') {
+            const r = await api('/api/admin/link-pago', { id, servicio: d.servicio, concepto, monto });
+            const msj = `Hola ${c.contacto || ''}! Te paso el link para pagar ${concepto} (${pesos(r.monto)}): ${r.link}`;
+            $('#cobro-resultado').innerHTML = `<p class="ok">Listo: link ${esc(r.ref)} por ${pesos(r.monto)}. Mandáselo:</p><div class="link-caja">${esc(r.link)}</div><div class="acciones">${wa(msj)}<button class="btn" type="button" id="copiar-cobro">Copiar el link</button></div>`;
+            $('#copiar-cobro').onclick = () => navigator.clipboard.writeText(r.link).then(() => ($('#copiar-cobro').textContent = 'Copiado')).catch(() => {});
+          } else {
+            const r = await api('/api/admin/pedir-transferencia', { id, servicio: d.servicio, concepto, monto });
+            $('#cobro-resultado').innerHTML = `<p class="ok">Listo: pedido ${esc(r.ref)}. Le mandamos el mail con el alias. Si querés, mandale también este mensaje:</p><div class="link-caja">${esc(r.mensaje)}</div><div class="acciones">${wa(r.mensaje)}<button class="btn" type="button" id="copiar-cobro">Copiar el mensaje</button></div>`;
+            $('#copiar-cobro').onclick = () => navigator.clipboard.writeText(r.mensaje).then(() => ($('#copiar-cobro').textContent = 'Copiado')).catch(() => {});
+            verEsperando(); cargarTransferencias();
+          }
+        } catch (err) { $('#error-cobro').textContent = err.message; $('#error-cobro').scrollIntoView({ behavior: 'smooth', block: 'center' }); } finally { btns.forEach((b) => (b.disabled = false)); }
       };
       $('#elim-nombre').oninput = (e) => { $('#b-eliminar').disabled = normal(e.target.value) !== normal(c.negocio); };
       $('#b-eliminar').onclick = async (e) => {
@@ -326,7 +448,7 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
         } catch (err) { $('#error-det').textContent = err.message; btn.disabled = false; }
       };
       }
-      if ($('#b-aparte')) $('#b-aparte').onclick = async () => { if (!confirm('El cobro de este cliente queda «aparte» (dentro de su contrato): al día y sin vencimiento. ¿Seguimos?')) return; try { await api('/api/admin/pago', { id, aparte: true }); await cargar(); verCliente(id); } catch (err) { $('#error-det').textContent = err.message; } };
+      if ($('#b-aparte')) $('#b-aparte').onclick = async () => { if (!confirm(`¿Marcar el bot de ${c.negocio} como «se cobra aparte»?\n\nQueda al día y sin vencimiento: no le llegan avisos de pago. No anota plata ni saca factura. Usalo sólo si el bot ya se cobra dentro de otro contrato.`)) return; try { await api('/api/admin/pago', { id, aparte: true }); await cargar(); verCliente(id); } catch (err) { $('#error-det').textContent = err.message; } };
       $('#detalle').scrollIntoView({ behavior: 'smooth' });
     } catch (e) { $('#detalle').innerHTML = `<div class="tarjeta error">${esc(e.message)}</div>`; }
   }
