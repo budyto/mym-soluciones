@@ -120,16 +120,16 @@ Prueba del 19/11/2026 con un negocio inventado (`electricista-ejemplo`, molde `s
 
 ## Lo que falta o no se pudo verificar
 
-- ✅ **PageSpeed en celular, medido el 19/11/2026** en pagespeed.web.dev sobre `mymsoluciones.online/muestras/` (el plan pedía 90 o más de rendimiento):
+- ✅ **PageSpeed, medido el 19/11/2026** en pagespeed.web.dev sobre `mymsoluciones.online/muestras/`, con las letras ya alojadas en el sitio (el plan pedía 90 o más de rendimiento en celular):
 
-  | Muestra | Molde | Rendimiento | Accesibilidad | Recomendaciones | Imagen principal (LCP) |
+  | Muestra | Molde | Rendimiento en celular | Antes de las letras propias | Accesibilidad | Salto de diseño en computadora |
   | --- | --- | --- | --- | --- | --- |
-  | Plomería Mansilla | servicio | 99 (antes de la precarga: 94) | 100 | 100 | 1,5 s (antes: 2,9 s) |
-  | Hierros Walter | local | 98 | 100 | 100 | 1,5 s |
-  | Estudio Alma | turnos | 99 | 100 | 100 | 1,5 s |
-  | Electricista de ejemplo | servicio | 99 | 100 | 100 | 1,5 s |
+  | Plomería Mansilla | servicio | 97, 85 y 97 (tres corridas) | 99 | 100 | 0 (antes 0,18) |
+  | Hierros Walter | local | 100 | 98 | 100 | 0,007 |
+  | Estudio Alma | turnos | 100 | 99 | 100 | 0,004 |
+  | Electricista de ejemplo | servicio | 97 | 99 | 100 | 0,019 |
 
-  El puntaje de SEO dio 63 en las cuatro porque las demos llevan `noindex` a propósito; en una landing final no va. Mansilla daba 94 porque su foto principal es la tapa de un video: se agregó la precarga de esa tapa, se subió a `main` y la segunda medición del mismo día dio 99. En computadora Mansilla marcó un salto de diseño (0,18) en la primera carga, cuando entra la letra de los títulos; en celular dio 0. 🟡 Se arregla alojando las letras en el sitio.
+  En computadora las cuatro dan 100 de rendimiento. El puntaje de SEO da 63 porque las demos llevan `noindex` a propósito. 🟡 Mansilla tuvo una corrida de 85 por un bloqueo de 590 milésimas que no se repitió en las otras dos (30 y 80); es la única muestra con videos y lo más probable es que venga de ahí, pero no está confirmado. Historia: Mansilla empezó en 94 y subió al precargar la tapa de su video.
 - 🔴 **Revisión legal:** los textos de los trámites y de la privacidad son una lectura de Claude de la Disposición 954/2025 y de la Ley 25.326, no un dictamen. Falta que los mire la abogada. Tampoco se verificaron normas de la Ciudad ni de la Provincia de Buenos Aires sobre los mismos botones.
 - 🔴 **El código del trámite se genera en el navegador** y llega al cliente dentro del mensaje. No queda guardado en ningún servidor: si el cliente necesita registro propio, hay que sumarlo.
 - 🟡 **Fotos:** el generador no achica ni convierte imágenes; se suben ya livianas.
