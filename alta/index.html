@@ -30,6 +30,8 @@
 .lista-conecta{margin:0 0 20px;padding-left:20px;color:var(--gris);font-size:16px}
 .lista-conecta li{margin:4px 0}
 .planes{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.servicios-alta{display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;margin:6px 0 4px}.servicios-alta label{display:flex;align-items:center;gap:8px;font-weight:600;cursor:pointer;margin:0}.servicios-alta input{width:auto;margin:0}.servicios-alta .sub{grid-column:1/-1;margin:8px 0 0;font-weight:800}
+@media (max-width:600px){.servicios-alta{grid-template-columns:1fr}}
 .opcion{position:relative;display:block;margin:0;cursor:pointer;border:1.5px solid var(--borde);border-radius:16px;padding:14px 16px 14px 44px;background:#f6f8fe;font-weight:400}
 .opcion input{position:absolute;left:16px;top:17px;width:18px;height:18px;accent-color:var(--azul)}
 .opcion b{display:block;margin-bottom:4px}
@@ -81,11 +83,21 @@
         <label>Tu mail <small>Te mandamos ahí el resumen y la factura.</small><input name="email" type="email" autocomplete="email" required></label>
         <label>Tu celular <small>Para avisarte; puede ser otro número.</small><input name="celular" type="tel" autocomplete="tel" required></label>
       </div>
-      <label>¿Qué querés contratar?
-        <select name="plan" required>
-          <option value="bot">Bot de WhatsApp: $ 99.900 + IVA de instalación y $ 39.900 + IVA por mes</option>
-          <option value="paquete" id="op-paquete">Paquete completo: $ 259.900 + IVA de instalación y $ 69.900 + IVA por mes</option>
-        </select></label>
+      <!-- Servicios uno por uno (Budy, 19/11/2026): el servidor arma el paquete y el precio (plataforma-bots/servidor/paquete.js).
+           Landing + Bot + Seguimiento juntos se cobran como Paquete completo. La web institucional se cotiza aparte. -->
+      <p class="leyenda" id="ley-serv" style="margin-bottom:2px">¿Qué querés contratar?</p>
+      <p class="nota" style="margin:0">Elegí lo que necesites. Si sumás Landing, Bot y Seguimiento, te cobramos el Paquete completo, que sale menos. <a href="../#paquetes" target="_blank" rel="noopener">Ver precios</a></p>
+      <div class="servicios-alta" role="group" aria-labelledby="ley-serv">
+        <label><input type="checkbox" name="servicio" value="bot"> Bot de WhatsApp</label>
+        <label><input type="checkbox" name="servicio" value="seguimiento"> Seguimiento de clientes</label>
+        <label><input type="checkbox" name="servicio" value="landing"> Landing de ventas</label>
+        <label><input type="checkbox" name="servicio" value="web"> Página web institucional <small>(se cotiza)</small></label>
+        <p class="sub">Redes en automático</p>
+        <label><input type="radio" name="redes" value="" checked> Sin redes</label>
+        <label><input type="radio" name="redes" value="redesEsencial"> Esencial</label>
+        <label><input type="radio" name="redes" value="redesProfesional"> Profesional</label>
+        <label><input type="radio" name="redes" value="redesPremium"> Premium</label>
+      </div>
       <p class="leyenda" id="ley-fac" style="margin-bottom:2px">Datos para la factura</p>
       <p class="nota" style="margin:0 0 10px">Con esto la factura te llega sola cuando pagás.</p>
       <div class="dos" role="group" aria-labelledby="ley-fac">
@@ -103,7 +115,7 @@
         <label>Nombre o razón social <small>Como figura en ARCA.</small><input name="razon_social" autocomplete="organization"></label>
         <label>Domicilio fiscal <small>Opcional.</small><input name="domicilio" autocomplete="street-address"></label>
       </div>
-      <p class="leyenda" id="ley-modo">¿Quién lo arma?</p>
+      <p class="leyenda" id="ley-modo">Si elegiste el bot, ¿quién lo arma?</p>
       <div class="planes" role="radiogroup" aria-labelledby="ley-modo" style="margin-bottom:16px">
         <label class="opcion"><input type="radio" name="modo" value="cliente" checked><b>Lo armo yo</b><span>Te lleva unos minutos: conectás tu WhatsApp, nos contás de tu negocio y probás el bot.</span></label>
         <label class="opcion"><input type="radio" name="modo" value="mym"><b>Que lo arme MyM Soluciones</b><span>Te escribimos por WhatsApp y lo armamos juntos en una llamada corta. No tenés que configurar nada.</span></label>
@@ -113,6 +125,13 @@
       <button class="btn" type="submit">Seguir</button>
       <p class="nota">Precios en pesos, más IVA (21 %). El pago es por transferencia: te pasamos los datos cuando tu bot esté listo.</p>
     </form>
+
+    <!-- Sin bot (19/11/2026): no hay WhatsApp que conectar; MyM le escribe para coordinar y cobrar. -->
+    <section class="tarjeta paso-alta" id="paso-servicios">
+      <div class="sello"><span class="ok"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><h2>¡Listo! Ya está tu pedido</h2></div>
+      <p class="paso" id="resumen-servicios"></p>
+      <p class="paso">Te escribimos por WhatsApp para arrancar y pasarte los datos para la transferencia.</p>
+    </section>
 
     <!-- «Que lo arme MyM» (17/11/2026, pedido de Matías): el cliente no configura nada; MyM lo llama y completa el alta. -->
     <section class="tarjeta paso-alta" id="paso-mym">

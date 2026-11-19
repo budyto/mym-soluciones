@@ -26,6 +26,7 @@
   function verPaso(n) {
     ['paso1', 'paso2', 'paso3', 'paso4', 'paso5'].forEach((id, i) => $('#' + id).classList.toggle('ver', i === n - 1));
     $('#paso-mym').classList.toggle('ver', n === 'mym');
+    $('#paso-servicios').classList.toggle('ver', n === 'servicios');
     document.querySelectorAll('.pasos-alta li').forEach((li, i) => li.classList.toggle('si', i < n));
     window.scrollTo({ top: 0 });
   }
@@ -65,11 +66,13 @@
   // ---------- Paso 1: datos ----------
   $('#paso1').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const f = e.target; const d = Object.fromEntries(new FormData(f).entries());
+    const f = e.target; const fd = new FormData(f); const d = Object.fromEntries(fd.entries());
     if (d.web) return; // trampa anti-spam
+    const servicios = [...fd.getAll('servicio'), fd.get('redes')].filter(Boolean);
     const falta = ['negocio', 'contacto', 'email', 'celular'].find((k) => !String(d[k] || '').trim());
     if (falta) { $('#error1').textContent = 'Completá todos los datos para seguir.'; f[falta].focus(); return; }
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email)) { $('#error1').textContent = 'Revisá el mail: parece que le falta algo.'; f.email.focus(); return; }
+    if (!servicios.length) { $('#error1').textContent = 'Elegí al menos un servicio.'; return; }
     // Datos para la factura (17/11/2026): con ellos, la factura del primer pago sale sola. Las reglas son las de ARCA.
     const nro = String(d.doc_nro || '').replace(/\D/g, '');
     if (!d.condicion_iva) { $('#error1').textContent = 'Elegí tu condición frente al IVA (es para la factura).'; f.condicion_iva.focus(); return; }
@@ -78,7 +81,13 @@
     const b = f.querySelector('button'); b.disabled = true; b.textContent = 'Guardando…'; $('#error1').textContent = '';
     try {
       const fiscal = { nombre: String(d.razon_social || '').trim() || (nro.length === 11 ? d.negocio : d.contacto), doc_nro: nro, condicion_iva: d.condicion_iva, domicilio: d.domicilio };
-      const r = await api('/api/alta', { negocio: d.negocio, contacto: d.contacto, email: d.email, celular: d.celular, plan: d.plan, modo: d.modo, fiscal });
+      const r = await api('/api/alta', { negocio: d.negocio, contacto: d.contacto, email: d.email, celular: d.celular, servicios, modo: d.modo, fiscal });
+      if (r.sinBot) {
+        // Sin bot no hay alta que seguir: se muestra lo pedido y MyM le escribe.
+        const p = r.precio || {}; const $p = (n) => '$ ' + Number(n || 0).toLocaleString('es-AR');
+        $('#resumen-servicios').textContent = `Pediste ${p.nombre}: ${p.instalacion ? 'instalación ' + $p(p.instalacion) + ' + IVA y ' : ''}${$p(p.abono)} + IVA por mes${(p.aCotizar || []).length ? `. ${p.aCotizar.join(' y ')} te la cotizamos aparte` : ''}.`;
+        return verPaso('servicios');
+      }
       sesion = { id: r.cliente, llave: r.llave }; guardarSesion(sesion);
       verPaso(r.armadoPor === 'mym' ? 'mym' : 2);
     } catch (err) { $('#error1').textContent = err.message; }
