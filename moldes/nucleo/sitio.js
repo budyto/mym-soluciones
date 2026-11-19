@@ -69,11 +69,18 @@
   // ---------- Videos: se bajan y arrancan sólo cuando se ven ----------
   var quieto = window.matchMedia('(prefers-reduced-motion: reduce)').matches || (navigator.connection && navigator.connection.saveData);
   var videos = $$('video[data-video]');
+  // Arrancan recién cuando la página terminó de cargar y el navegador quedó libre: mientras tanto se ve la tapa.
+  // Así los videos no le sacan tiempo a la carga (en PageSpeed de celular llegaron a bloquear medio segundo).
   if (videos.length && !quieto && 'IntersectionObserver' in window) {
-    var ojo = new IntersectionObserver(function (es) {
-      es.forEach(function (x) { var v = x.target; if (x.isIntersecting) { var p = v.play(); if (p && p.catch) p.catch(function () {}); } else v.pause(); });
-    }, { rootMargin: '120px' });
-    videos.forEach(function (v) { ojo.observe(v); });
+    var prenderVideos = function () {
+      var ojo = new IntersectionObserver(function (es) {
+        es.forEach(function (x) { var v = x.target; if (x.isIntersecting) { var p = v.play(); if (p && p.catch) p.catch(function () {}); } else v.pause(); });
+      }, { rootMargin: '120px' });
+      videos.forEach(function (v) { ojo.observe(v); });
+    };
+    var cuandoLibre = function () { if ('requestIdleCallback' in window) requestIdleCallback(prenderVideos, { timeout: 1500 }); else setTimeout(prenderVideos, 1000); };
+    var trasCarga = function () { setTimeout(cuandoLibre, 1000); };
+    if (document.readyState === 'complete') trasCarga(); else window.addEventListener('load', trasCarga);
   }
 
   // ---------- Abierto ahora (hora de Buenos Aires) ----------
