@@ -1,0 +1,10 @@
+{
+  "name": "moldes-landing-mym",
+  "private": true,
+  "type": "module",
+  "description": "Moldes de landing de MyM Soluciones: cada cliente es un archivo de datos (cliente.js).",
+  "scripts": {
+    "generar": "node generar.mjs",
+    "todos": "node generar.mjs --todos"
+  }
+}

@@ -1,0 +1,105 @@
+/* MOLDE 1 · Servicio a domicilio. Claro, directo y de pulgar: letra de cartel de oficio (Bricolage Grotesque),
+   una pregunta con botones grandes arriba de todo y, en el celular, una barra fija con «Llamar» y «WhatsApp».
+   Formas: una sola esquina grande redondeada (como una ficha de trabajo doblada), sin sombras. */
+.molde-servicio{--f-tit:"Bricolage Grotesque","Arial Narrow",system-ui,sans-serif;--f-txt:"Public Sans",system-ui,sans-serif;--radio:6px;--radio-btn:10px;--btn-peso:700;--btn-tam:1.02rem;--ancho:1160px;--pie-nombre:800 1.5rem/1 var(--f-tit)}
+.molde-servicio h1,.molde-servicio h2{font-weight:800;letter-spacing:-.025em;font-variation-settings:"opsz" 96}
+.molde-servicio h3{font-weight:800;letter-spacing:-.01em}
+
+.cab{position:sticky;top:0;z-index:30;background:var(--papel);border-bottom:2px solid var(--tinta)}
+.cab-fila{display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:64px}
+.cab-marca{text-decoration:none;font:800 1.3rem/1 var(--f-tit);letter-spacing:-.02em;color:var(--c1-texto);display:grid}
+.cab-marca small{font:600 .72rem/1.2 var(--f-txt);letter-spacing:0;color:var(--gris);margin-top:.2rem}
+.cab-marca img{height:44px;width:auto}
+.cab-nav{display:none;gap:1.6rem;font-weight:600;font-size:.95rem}
+.cab-nav a{text-decoration:none;padding:.6rem 0}
+.cab-nav a:hover{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:6px}
+@media(min-width:900px){.cab-nav{display:flex}}
+
+.inicio{background:var(--fondo);padding:2rem 0 0;border-bottom:2px solid var(--tinta)}
+.inicio-grilla{display:grid;gap:2rem}
+@media(min-width:900px){.inicio{padding-top:3.5rem}.inicio-grilla{grid-template-columns:1.15fr .85fr;gap:3.5rem;align-items:end}}
+.inicio-donde{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem .6rem;font-weight:600;font-size:.95rem;color:var(--c1-texto)}
+.inicio-donde svg{width:18px;height:18px}
+.inicio h1{font-size:clamp(2.5rem,9.5vw,4.6rem);line-height:.96;margin:.8rem 0 1rem;color:var(--tinta)}
+.inicio-bajada{font-size:1.12rem;max-width:34rem;color:var(--tinta)}
+.problema{margin-top:1.75rem}
+.problema fieldset{border:0;padding:0;min-width:0}
+.problema legend{font:800 1.15rem/1.2 var(--f-tit);padding:0;margin-bottom:.7rem}
+.problema-opciones{display:flex;flex-wrap:wrap;gap:.5rem}
+.problema label{cursor:pointer}
+.problema input{position:absolute;opacity:0;pointer-events:none}
+.problema label span{display:block;padding:.7rem 1rem;min-height:46px;border:2px solid var(--tinta);border-radius:99px;background:var(--papel);font-weight:600;font-size:.97rem;line-height:1.25}
+.problema label:hover span{background:var(--c2-suave)}
+.problema input:checked+span{background:var(--tinta);color:var(--papel)}
+.problema input:focus-visible+span{outline:3px solid var(--c2-texto);outline-offset:3px}
+.inicio-acciones{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:1.4rem}
+.inicio-acciones .btn-wa{font-size:1.1rem;padding:.9rem 1.5rem;box-shadow:4px 4px 0 var(--tinta)}
+.inicio-acciones .btn-wa:hover{box-shadow:2px 2px 0 var(--tinta);transform:translate(2px,2px)}
+@media(max-width:560px){.inicio-acciones .btn{width:100%}}
+.inicio-foto{aspect-ratio:4/5;max-height:560px;border:2px solid var(--tinta);border-bottom:0;border-radius:120px 6px 0 0;overflow:hidden;background:var(--c1-suave);justify-self:end;width:100%}
+@media(max-width:899px){.inicio-foto{aspect-ratio:5/4;border-radius:72px 6px 0 0}}
+.inicio-foto img,.inicio-foto video{width:100%;height:100%;object-fit:cover}
+.hechos{display:flex;flex-wrap:wrap;gap:.5rem 1.75rem;padding-block:1rem;border-top:2px solid var(--tinta);font-weight:700;font-size:.95rem}
+.hechos li{display:flex;align-items:center;gap:.45rem}
+.hechos svg{width:20px;height:20px;color:var(--c2-texto)}
+
+.bloque{padding:4rem 0}
+@media(min-width:900px){.bloque{padding:5.5rem 0}}
+.bloque-tinte{background:var(--fondo);border-block:2px solid var(--tinta)}
+.bloque h2{font-size:clamp(2rem,6vw,3.2rem);max-width:18ch}
+.bloque-bajada{font-size:1.08rem;color:var(--gris);max-width:38rem;margin-top:.8rem}
+.ancho-corto{--ancho:760px}
+
+/* Servicios: renglones con foto, no tarjetas */
+.servicios{margin-top:2.2rem;display:grid;border-top:2px solid var(--tinta)}
+@media(min-width:860px){.servicios{grid-template-columns:1fr 1fr;column-gap:3rem}}
+.servicio{display:grid;grid-template-columns:112px 1fr;gap:1rem;padding:1.25rem 0;border-bottom:1px solid var(--borde);align-items:start}
+@media(min-width:560px){.servicio{grid-template-columns:168px 1fr;gap:1.4rem}}
+.servicio figure{aspect-ratio:4/3;border-radius:28px 6px 6px 6px;overflow:hidden;background:var(--c1-suave)}
+.servicio figure img,.servicio figure video{width:100%;height:100%;object-fit:cover}
+.servicio:not(:has(figure)){grid-template-columns:1fr}
+.servicio h3{font-size:1.35rem;margin-bottom:.3rem}
+.servicio p{color:var(--gris);font-size:.98rem}
+.enlace-wa{display:inline-flex;align-items:center;min-height:44px;font-weight:700;color:var(--c1-texto);text-underline-offset:4px;text-decoration-thickness:2px}
+
+/* Trabajos: tira que se desliza con el dedo */
+.tira{display:flex;gap:.9rem;overflow-x:auto;scroll-snap-type:x mandatory;padding:2rem max(1rem,calc((100vw - 1160px)/2)) .5rem;scrollbar-width:thin}
+.tira li{flex:0 0 min(72vw,280px);scroll-snap-align:center}
+.tira figure{position:relative;aspect-ratio:3/4;border:2px solid var(--tinta);border-radius:6px 6px 6px 48px;overflow:hidden;background:var(--c1-suave)}
+.tira img,.tira video{width:100%;height:100%;object-fit:cover}
+.tira figcaption{position:absolute;left:0;bottom:0;background:var(--tinta);color:var(--papel);font-weight:700;font-size:.85rem;padding:.4rem .8rem .45rem 1.3rem;border-radius:0 12px 0 0}
+
+/* Pasos: es una secuencia de verdad, por eso va numerada */
+.pasos{counter-reset:paso;margin-top:2.2rem;display:grid;gap:0}
+@media(min-width:800px){.pasos{grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:2.5rem}}
+.pasos li{counter-increment:paso;position:relative;padding:0 0 1.75rem 3.6rem}
+.pasos li::before{content:counter(paso);position:absolute;left:0;top:0;width:2.5rem;height:2.5rem;border-radius:50%;background:var(--c2);color:var(--sobre-c2);font:800 1.2rem/2.5rem var(--f-tit);text-align:center}
+.pasos li:not(:last-child)::after{content:"";position:absolute;left:1.2rem;top:2.7rem;bottom:.2rem;border-left:2px dashed var(--borde)}
+@media(min-width:800px){.pasos li{padding:3.4rem 0 0}.pasos li:not(:last-child)::after{left:3rem;right:-2rem;top:1.2rem;bottom:auto;border-left:0;border-top:2px dashed var(--borde)}}
+.pasos h3{font-size:1.25rem;margin-bottom:.3rem}
+.pasos p{color:var(--gris)}
+
+.zona{display:grid;gap:2rem}
+@media(min-width:860px){.zona{grid-template-columns:1fr 1fr;gap:3.5rem;align-items:start}}
+.zona-puntos{display:grid;gap:.6rem;margin:1.2rem 0 1.6rem}
+.zona-puntos li{display:flex;gap:.55rem;align-items:flex-start}
+.zona-puntos svg{width:22px;height:22px;flex:none;color:var(--c2-texto);margin-top:.1rem}
+.zona-sub{font-size:1.1rem;margin-bottom:.3rem}
+.zona-accion{margin-top:1.5rem}
+.zona-mapa{border:2px solid var(--tinta);border-radius:6px 72px 6px 6px;overflow:hidden;background:var(--papel)}
+.zona-mapa iframe{width:100%;aspect-ratio:4/3;border:0}
+.zona-mapa a{display:flex;justify-content:space-between;gap:1rem;padding:.9rem 1.1rem;text-decoration:none;border-top:2px solid var(--tinta);font-size:.95rem}
+.zona-mapa a span:last-child{font-weight:700;color:var(--c1-texto);white-space:nowrap;text-decoration:underline;text-underline-offset:4px}
+
+.cierre{background:var(--c1);color:var(--sobre-c1);padding:4.5rem 0}
+.cierre h2{font-size:clamp(2.2rem,7.5vw,4rem);max-width:16ch}
+.cierre p{font-size:1.12rem;max-width:34rem;margin:1rem 0 1.6rem;opacity:.94}
+.cierre .btn-wa{font-size:1.1rem;padding:.95rem 1.6rem}
+.cierre .cierre-numero{font-size:.95rem;margin:.9rem 0 0;opacity:.85}
+
+/* En el celular manda la barra fija; el botón redondo queda para pantallas grandes */
+.barra-fija{position:fixed;left:0;right:0;bottom:0;z-index:35;display:flex;gap:.5rem;padding:.55rem .75rem calc(.55rem + env(safe-area-inset-bottom));background:var(--papel);border-top:2px solid var(--tinta)}
+.barra-fija .btn{flex:1;min-height:50px}
+.barra-fija .btn-linea{flex:0 0 38%}
+.molde-servicio .wa-flotante{display:none}
+@media(min-width:760px){.barra-fija{display:none}.molde-servicio .wa-flotante{display:grid}}

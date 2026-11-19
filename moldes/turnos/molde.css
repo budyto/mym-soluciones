@@ -1,0 +1,114 @@
+/* MOLDE 3 · Profesional con turnos. Tranquilo y centrado: letra con serifa (Fraunces), mucha pausa entre
+   bloques, la foto principal en forma de arco (como un espejo de salón) y una carta de servicios con línea
+   de puntos, como la lista de precios colgada en la pared. El color fuerte se guarda para pedir el turno. */
+.molde-turnos{--f-tit:"Fraunces",Georgia,serif;--f-txt:"Nunito Sans",system-ui,sans-serif;--radio:20px;--radio-btn:999px;--btn-peso:700;--btn-tam:1rem;--ancho:1080px;--pie-nombre:400 1.7rem/1 var(--f-tit);--pie-fondo:var(--c1-suave);--pie-texto:var(--tinta);--pie-fuerte:var(--tinta);--legal-fondo:var(--papel)}
+.molde-turnos h1,.molde-turnos h2{font-weight:400;letter-spacing:-.02em;font-variation-settings:"opsz" 144}
+.molde-turnos h3{font-weight:600;letter-spacing:-.005em}
+.molde-turnos .pie{border-top:1px solid var(--borde)}
+.molde-turnos .pie-redes a,.molde-turnos .pie-base{border-color:var(--borde)}
+.molde-turnos .btn-legal:hover{background:var(--papel)}
+.molde-turnos .wa-flotante{display:none}
+@media(min-width:900px){.molde-turnos .wa-flotante{display:grid}}
+
+.cab{position:sticky;top:0;z-index:30;background:color-mix(in srgb,var(--papel) 92%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--borde)}
+.cab-fila{display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:68px}
+.cab-marca{font:400 1.55rem/1 var(--f-tit);text-decoration:none;letter-spacing:-.02em;color:var(--tinta)}
+.cab-marca img{height:44px;width:auto}
+.cab-nav{display:none;gap:1.8rem;font-size:.95rem;font-weight:600}
+.cab-nav a{text-decoration:none;padding:.6rem 0;color:var(--gris)}
+.cab-nav a:hover{color:var(--tinta)}
+@media(min-width:860px){.cab-nav{display:flex}}
+
+.inicio{background:var(--c1-suave);text-align:center;padding:3rem 0 0}
+@media(min-width:800px){.inicio{padding-top:4.5rem}}
+.inicio-donde{font-weight:600;font-size:.95rem;color:var(--c1-texto)}
+.inicio h1{font-size:clamp(2.6rem,9vw,4.8rem);line-height:1;margin:.9rem auto 1.1rem;max-width:15ch}
+.inicio-bajada{font-size:1.12rem;max-width:33rem;margin-inline:auto;color:var(--tinta)}
+.inicio-acciones{display:flex;flex-wrap:wrap;justify-content:center;gap:.7rem;margin-top:1.7rem}
+@media(max-width:520px){.inicio-acciones .btn{width:100%}}
+.inicio-fotos{display:grid;grid-template-columns:1fr;justify-items:center;align-items:end;gap:1.5rem;margin-top:2.8rem}
+.inicio-arco{width:min(100%,400px);aspect-ratio:4/5;border-radius:999px 999px 0 0;overflow:hidden;background:var(--c2-suave)}
+.inicio-lado{display:none;width:100%;aspect-ratio:3/4;border-radius:var(--radio) var(--radio) 0 0;overflow:hidden;background:var(--c2-suave)}
+.inicio-fotos img,.inicio-fotos video{width:100%;height:100%;object-fit:cover}
+@media(min-width:800px){.inicio-fotos:has(.inicio-lado){grid-template-columns:1fr 400px 1fr}.inicio-lado{display:block;max-width:230px;justify-self:end}.inicio-lado-b{justify-self:start;aspect-ratio:1/1}}
+.hechos{display:flex;flex-wrap:wrap;justify-content:center;gap:.4rem 1.1rem;padding-block:1.1rem;border-top:1px solid var(--borde);font-weight:600;font-size:.95rem;background:var(--c1-suave)}
+.hechos li{display:flex;align-items:center;gap:2.2rem}
+.hechos li+li::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--c2);margin-left:-1.1rem}
+@media(max-width:640px){.hechos{flex-direction:column;align-items:center}.hechos li+li::before{display:none}}
+
+.bloque{padding:4.5rem 0}
+@media(min-width:900px){.bloque{padding:6.5rem 0}}
+.bloque-tinte{background:var(--c1-suave)}
+.bloque h2{font-size:clamp(2.1rem,6vw,3.3rem);line-height:1.05}
+.bloque-bajada{color:var(--gris);font-size:1.08rem;max-width:36rem;margin-top:.9rem}
+.ancho-corto{--ancho:720px}
+#equipo h2,#equipo .bloque-bajada,#galeria h2,#galeria .bloque-bajada,#antes h2,#preguntas h2{text-align:center;margin-inline:auto}
+
+/* La carta de servicios y el armado del turno */
+.carta-grilla{display:grid;gap:2.5rem}
+@media(min-width:940px){.carta-grilla{grid-template-columns:1.25fr .75fr;gap:4rem;align-items:start}}
+.carta h3{font:italic 400 1.45rem/1.2 var(--f-tit);color:var(--c1-texto);margin:2.2rem 0 .3rem}
+.carta-lista label{display:grid;grid-template-columns:auto auto 1fr auto;align-items:baseline;gap:.2rem .75rem;padding:.8rem 0;min-height:48px;border-bottom:1px solid var(--borde);cursor:pointer}
+.carta-lista input{width:22px;height:22px;accent-color:var(--c2-texto);align-self:center;margin:0}
+.carta-nombre{font-weight:700}
+.carta-nombre small{display:block;font-weight:400;font-size:.9rem;color:var(--gris);line-height:1.35}
+.carta-puntos{border-bottom:2px dotted var(--borde);transform:translateY(-.3em);min-width:1rem}
+.carta-dato{display:flex;align-items:baseline;gap:.7rem;font-size:.92rem;color:var(--gris);white-space:nowrap}
+.carta-dato b{font:600 1.1rem/1 var(--f-tit);color:var(--tinta)}
+.carta-lista label:has(input:checked){background:var(--c2-suave);box-shadow:-.75rem 0 0 var(--c2-suave),.75rem 0 0 var(--c2-suave)}
+@media(max-width:520px){.carta-lista label{grid-template-columns:auto 1fr auto}.carta-puntos{display:none}.carta-dato{flex-direction:column;align-items:flex-end;gap:.1rem}}
+.carta-nota{font-size:.88rem;color:var(--gris);margin-top:1.2rem}
+
+.turno{background:var(--papel);border:1px solid var(--borde);border-radius:var(--radio);padding:1.6rem;display:grid;gap:1.15rem;box-shadow:0 24px 60px -30px color-mix(in srgb,var(--c1) 45%,transparent)}
+@media(min-width:940px){.turno{position:sticky;top:96px}}
+.turno h2{font-size:2rem}
+.turno-elegido{background:var(--c1-suave);border-radius:14px;padding:.85rem 1rem;font-weight:600}
+.turno fieldset{border:0;padding:0;min-width:0}
+.turno legend,.turno-con{font-weight:700;font-size:.95rem;padding:0;margin-bottom:.5rem}
+.turno-opciones{display:flex;flex-wrap:wrap;gap:.4rem}
+.turno-opciones input{position:absolute;opacity:0;pointer-events:none}
+.turno-opciones span{display:block;padding:.55rem .9rem;min-height:44px;border:1.5px solid var(--borde);border-radius:99px;font-size:.92rem;font-weight:600;cursor:pointer;line-height:1.5}
+.turno-opciones input:checked+span{background:var(--c1);border-color:var(--c1);color:var(--sobre-c1)}
+.turno-opciones input:focus-visible+span{outline:3px solid var(--c2-texto);outline-offset:2px}
+.turno-con{display:grid;gap:.4rem;margin:0}
+.turno-con select{min-height:48px;border:1.5px solid var(--borde);border-radius:12px;padding:.5rem .7rem;background:var(--papel);font-weight:400}
+.turno .btn{width:100%}
+.turno-nota{font-size:.85rem;color:var(--gris)}
+
+.equipo{display:flex;flex-wrap:wrap;justify-content:center;gap:2.5rem 3rem;margin-top:2.8rem;text-align:center}
+.equipo li{width:200px}
+.equipo figure{width:160px;height:160px;border-radius:50%;overflow:hidden;margin:0 auto 1rem;background:var(--c2-suave)}
+.equipo img{width:100%;height:100%;object-fit:cover}
+.equipo-sin{display:grid;place-items:center;font:400 4rem/1 var(--f-tit);color:var(--c2-texto)}
+.equipo h3{font:400 1.45rem/1.15 var(--f-tit)}
+.equipo p{color:var(--gris);font-size:.95rem}
+.equipo .equipo-mat{font-size:.82rem;margin-top:.2rem}
+
+.galeria{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-top:2.6rem}
+@media(min-width:760px){.galeria{grid-template-columns:repeat(4,1fr);gap:1rem}.galeria li:nth-child(4n+1){grid-row:span 2}}
+.galeria figure{position:relative;height:100%;min-height:180px;aspect-ratio:1/1;border-radius:var(--radio);overflow:hidden;background:var(--c2-suave)}
+@media(min-width:760px){.galeria li:nth-child(4n+1) figure{aspect-ratio:auto}.galeria li:nth-child(4n+2){grid-column:span 2}.galeria li:nth-child(4n+2) figure{aspect-ratio:2/1}}
+.galeria img,.galeria video{width:100%;height:100%;object-fit:cover}
+.galeria figcaption{position:absolute;left:.7rem;bottom:.7rem;background:var(--papel);border-radius:99px;padding:.3rem .8rem;font-size:.82rem;font-weight:600}
+
+.antes{margin-top:2.2rem;display:grid;gap:1.6rem}
+.antes h3{font:400 1.35rem/1.2 var(--f-tit);margin-bottom:.25rem}
+.antes p{color:var(--gris)}
+.antes li{padding-left:1.4rem;border-left:2px solid var(--c2)}
+
+.donde{display:grid;gap:2.2rem}
+@media(min-width:860px){.donde{grid-template-columns:.9fr 1.1fr;gap:4rem;align-items:center}}
+.donde-dir{display:flex;gap:.6rem;margin:1.4rem 0 1.8rem;font-size:1.08rem}
+.donde-dir svg{width:24px;height:24px;flex:none;color:var(--c2-texto);margin-top:.1rem}
+.donde h3{display:flex;align-items:center;gap:.7rem;font:400 1.35rem var(--f-tit);margin-bottom:.3rem}
+.donde-tel{margin-top:1.2rem}
+.donde-mapa{border-radius:200px 200px var(--radio) var(--radio);overflow:hidden;border:1px solid var(--borde);background:var(--c1-suave);text-align:center}
+.donde-mapa iframe{width:100%;aspect-ratio:1/1;border:0}
+.donde-mapa a{display:block;padding:.9rem;font-weight:700}
+@media(max-width:859px){.donde-mapa{border-radius:var(--radio)}.donde-mapa iframe{aspect-ratio:4/3}}
+
+.molde-turnos .pregunta summary{font:400 1.25rem/1.25 var(--f-tit)}
+
+.cierre{text-align:center;padding:5rem 0;background:var(--c1);color:var(--sobre-c1)}
+.cierre h2{font-size:clamp(2.3rem,7.5vw,4rem);line-height:1.02;max-width:16ch;margin-inline:auto}
+.cierre p{max-width:30rem;margin:1rem auto 1.7rem;font-size:1.1rem;opacity:.94}
