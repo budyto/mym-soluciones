@@ -33,9 +33,11 @@ ACA = pathlib.Path(__file__).resolve().parent
 FUENTE = 'elevenlabs'
 if '--fuente' in sys.argv:
     i = sys.argv.index('--fuente'); FUENTE = sys.argv[i + 1]; del sys.argv[i:i + 2]
-if FUENTE not in ('elevenlabs', 'kokoro'): sys.exit('--fuente tiene que ser elevenlabs o kokoro')
+if FUENTE not in ('elevenlabs', 'gemini', 'kokoro'): sys.exit('--fuente tiene que ser elevenlabs, gemini o kokoro')
 VOZ, IDIOMA, VELOCIDAD = 'ef_dora', 'es-419', float(os.environ.get('VELOCIDAD', '1.1'))
 ONCE = {'voz': 'Mauricio - Publicidad cálida | Argentina', 'voice_id': 'jIgvw3W75cbd6IP0JYwL', 'modelo': 'eleven_v4'}
+# Gemini (19/11/2026): los MP3 de voz/gemini/ los deja hacer-voz-gemini.mjs con una de las dos voces elegidas por Budy.
+GEMINI = {'modelo': 'gemini-3.8-flash-tts'}
 ACELERAR_MAX = 1.04   # lo más que se puede apurar la voz de ElevenLabs para entrar en el tope (normal: 1,00×)
 ANTES, DESPUES, COLA, TOPE = 0.35, 0.40, 1.2, 51.0   # aire antes y después de cada tramo, cola del final, duración máxima
 SR = 24000 if FUENTE == 'kokoro' else 44100        # la de ElevenLabs viene a 44,1 kHz: no se baja de calidad
@@ -84,15 +86,15 @@ def leer_mp3(f, tempo=1.0):
     return np.frombuffer(crudo, dtype=np.float32).copy()
 
 def mp3_del_tramo(planes, plan, n):
-    """voz/elevenlabs/<plan>-<n>.mp3; si no está y otro tramo dice exactamente lo mismo, usa el de ese tramo."""
-    carpeta = ACA / 'voz' / 'elevenlabs'
+    """voz/<fuente>/<plan>-<n>.mp3; si no está y otro tramo dice exactamente lo mismo, usa el de ese tramo."""
+    carpeta = ACA / 'voz' / FUENTE
     f = carpeta / f'{plan}-{n}.mp3'
     if f.exists(): return f
     texto = planes[plan]['tramos'][n - 1][1]
     for otro, d in planes.items():
         for m, (_, t) in enumerate(d['tramos'], 1):
             if t == texto and (carpeta / f'{otro}-{m}.mp3').exists(): return carpeta / f'{otro}-{m}.mp3'
-    sys.exit(f'{plan}: falta la voz del tramo {n} ({f.name}). Generala en ElevenLabs con el texto del guion.')
+    sys.exit(f'{plan}: falta la voz del tramo {n} ({f.name}). Generala con el texto del guion (en ElevenLabs, o con hacer-voz-gemini.mjs).')
 
 def recortar(s, umbral=0.012):
     act = np.where(np.abs(s) > umbral)[0]
@@ -123,7 +125,7 @@ def main():
     pedidos = sys.argv[1:] or list(planes)
     cache = pathlib.Path(os.environ.get('CACHE_VOZ', '/tmp/voz-propuesta')); cache.mkdir(parents=True, exist_ok=True)
     (ACA / 'voz').mkdir(exist_ok=True)
-    resumen = json.loads((ACA / 'voz' / 'tramos.json').read_text()) if (ACA / 'voz' / 'tramos.json').exists() else {}
+    resumen = json.loads((ACA / 'voz' / 'tramos.json').read_text(encoding='utf-8')) if (ACA / 'voz' / 'tramos.json').exists() else {}
     mal = False
     for plan in pedidos:
         tempo, origen = 1.0, []
@@ -164,7 +166,11 @@ def main():
             resumen[plan] = {'dura': lim[-1], 'fuente': 'kokoro', 'voz': VOZ, 'idioma': IDIOMA, 'velocidad': VELOCIDAD, 'tramos': filas}
         else:
             for x, f in zip(filas, origen): x['mp3'] = f.name
-            resumen[plan] = {'dura': lim[-1], 'fuente': 'elevenlabs', **ONCE, 'velocidad': tempo, 'tramos': filas}
+            if FUENTE == 'gemini':
+                indice = json.loads((ACA / 'voz' / 'gemini' / 'indice.json').read_text(encoding='utf-8'))
+                resumen[plan] = {'dura': lim[-1], 'fuente': 'gemini', **GEMINI, 'voz': indice[origen[0].name]['voz'], 'velocidad': tempo, 'tramos': filas}
+            else:
+                resumen[plan] = {'dura': lim[-1], 'fuente': 'elevenlabs', **ONCE, 'velocidad': tempo, 'tramos': filas}
         print(f"\n{plan}: {lim[-1]:g} s" + (f" · voz acelerada {tempo:g}×" if tempo != 1.0 else ''))
         for x in filas: print(f"  {x['tramo']}. {x['se_ve'][:38]:38} pantalla {x['pantalla_desde']:5.1f}–{x['pantalla_hasta']:5.1f} ({x['pantalla_dura']:4.1f} s) · voz {x['voz_dura']:5.2f} s · aire {x['aire_al_final']:.2f} s")
     (ACA / 'voz' / 'tramos.json').write_text(json.dumps(resumen, ensure_ascii=False, indent=1) + '\n', encoding='utf-8')

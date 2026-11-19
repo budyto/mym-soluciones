@@ -48,6 +48,7 @@ Todo esto vive en `moldes/nucleo/` y lo llevan las tres plantillas:
 - **Responsable del sitio:** razón social, CUIT y domicilio **del cliente** en el pie, con el canal y el horario de reclamos (art. 6 de la misma disposición). El generador rechaza una ficha que traiga los datos de MyM y revisa el dígito verificador del CUIT.
 - **Política de privacidad** (Ley 25.326) con las dos leyendas obligatorias, armada con los datos del cliente y con lo que la página hace de verdad (si tiene medición o no).
 - **Medición:** Google Analytics y píxel de Meta, sólo si la ficha trae los ids y sólo después de que la persona acepta el aviso de cookies. Eventos con el mismo nombre en todas las landings (`clic_whatsapp`, `clic_llamar`, `enviar_pedido`, `pedir_turno`, `tramite`), para poder comparar un cliente con otro.
+- **Letras propias:** cada molde trae sus letras en `letras/` y viajan con la página; no se le pide nada a Google Fonts. Mientras cargan se muestra una letra del equipo ajustada al mismo ancho, para que los renglones no salten. Si se cambia la letra de un molde: `node moldes/nucleo/bajar-letras.mjs`.
 - **Carga rápida:** una hoja de estilo y un script por página (entre 26 y 30 KB sin comprimir entre los dos), la foto principal con prioridad, el resto con carga diferida, y los videos no se bajan hasta que entran en pantalla.
 - **Celular primero:** probado a 375 px, sin desborde lateral y con todos los botones de 44 px o más.
 - **Accesibilidad:** el generador calcula los tonos a partir de los dos colores del cliente para que el texto siempre se lea (contraste AA), foco visible, respeta «menos movimiento».
@@ -119,9 +120,18 @@ Prueba del 19/11/2026 con un negocio inventado (`electricista-ejemplo`, molde `s
 
 ## Lo que falta o no se pudo verificar
 
-- 🔴 **PageSpeed en celular:** no se midió; hace falta una dirección de prueba pública. El plan pedía 90 o más.
+- ✅ **PageSpeed, medido el 19/11/2026** en pagespeed.web.dev sobre `mymsoluciones.online/muestras/`, con las letras ya alojadas en el sitio (el plan pedía 90 o más de rendimiento en celular):
+
+  | Muestra | Molde | Rendimiento en celular | Antes de las letras propias | Accesibilidad | Salto de diseño en computadora |
+  | --- | --- | --- | --- | --- | --- |
+  | Plomería Mansilla | servicio | 97, 85 y 97 (tres corridas) | 99 | 100 | 0 (antes 0,18) |
+  | Hierros Walter | local | 100 | 98 | 100 | 0,007 |
+  | Estudio Alma | turnos | 100 | 99 | 100 | 0,004 |
+  | Electricista de ejemplo | servicio | 97 | 99 | 100 | 0,019 |
+
+  En computadora las cuatro dan 100 de rendimiento. El puntaje de SEO da 63 porque las demos llevan `noindex` a propósito. 🟡 Mansilla tuvo una corrida de 85 por un bloqueo de 590 milésimas que no se repitió en las otras dos (30 y 80); es la única muestra con videos y lo más probable es que venga de ahí, pero no está confirmado. Historia: Mansilla empezó en 94 y subió al precargar la tapa de su video.
 - 🔴 **Revisión legal:** los textos de los trámites y de la privacidad son una lectura de Claude de la Disposición 954/2025 y de la Ley 25.326, no un dictamen. Falta que los mire la abogada. Tampoco se verificaron normas de la Ciudad ni de la Provincia de Buenos Aires sobre los mismos botones.
 - 🔴 **El código del trámite se genera en el navegador** y llega al cliente dentro del mensaje. No queda guardado en ningún servidor: si el cliente necesita registro propio, hay que sumarlo.
-- 🟡 **Fotos:** el generador no achica ni convierte imágenes; se suben ya livianas. Las letras se cargan desde Google Fonts (podrían alojarse en el sitio para ganar velocidad).
+- 🟡 **Fotos:** el generador no achica ni convierte imágenes; se suben ya livianas.
 - 🟡 **Molde `turnos`:** se probó sólo con un negocio inventado y fotos de relleno. Falta un cliente real y, si es un consultorio, que el profesional apruebe los textos.
 - 🟡 **Modo oscuro automático**, formulario de contacto con base de datos, carrito con precios y simulador: estaban en el plan del 13/11 y no se hicieron.

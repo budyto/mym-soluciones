@@ -4,7 +4,8 @@
 import { esc, titular, linkTel, linkMapa, mapaInsertado, rangoLindo } from '../nucleo/util.mjs';
 import { documento, franjaLegal, pie, extras, botonWa, medio, preguntas, abiertoAhora, ICONOS } from '../nucleo/partes.mjs';
 
-export const fuentes = 'https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800&family=Barlow:wght@400;500;600&display=swap';
+// Las letras están en letras/ (se bajan con nucleo/bajar-letras.mjs). Se precargan las que se ven arriba de todo.
+export const precargar = ['letras/barlow-condensed-800.woff2', 'letras/barlow-400.woff2'];
 export const colorNavegador = 'oscuro';
 
 export function controlar(c) {
@@ -171,5 +172,5 @@ ${pie(c)}
 </div>
 ${extras(c)}`;
 
-  return documento({ c, p, molde: { fuentes, colorNavegador }, cuerpo, titulo: c.seo.titulo, descripcion: c.seo.descripcion, version });
+  return documento({ c, p, molde: { precargar, colorNavegador }, cuerpo, titulo: c.seo.titulo, descripcion: c.seo.descripcion, version });
 }

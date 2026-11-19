@@ -10,7 +10,9 @@
      token de Google en cada pedido y tiene su propia lista (ADMIN_EMAILS). Acá está el único clic humano del
      recorrido: prender un bot que el cliente aprobó (modo espectador), o pausarlo.
      17/11/2026 (Matías): alta armada por MyM para quien no se lleva con la tecnología, links del alta y del panel
-     del cliente, y pagos por transferencia (el cobro con Ualá quedó apagado). -->
+     del cliente, y pagos por transferencia (el cobro con Ualá quedó apagado).
+     19/11/2026 (Budy): «Eliminar cliente» al pie del detalle. Es una baja lógica en el servidor: sale de las listas,
+     se desconecta el WhatsApp y los pagos quedan para facturar. Los eliminados se ven en el filtro «Eliminados». -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;900&family=Martian+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -37,6 +39,8 @@ th{text-align:left;font:500 12px "Martian Mono",monospace;color:var(--gris);padd
 td{padding:10px 8px;border-bottom:1px solid #edf1fb;vertical-align:top}
 tr.fila{cursor:pointer}tr.fila:hover td{background:#f8faff}
 .estado{display:inline-block;padding:3px 10px;border-radius:99px;font-size:12.5px;font-weight:700;white-space:nowrap}
+.e-eliminado{background:#ececec;color:#555;text-decoration:line-through}
+.peligro{margin-top:22px;border:1.5px solid #f3c3cc;border-radius:14px;padding:14px;background:#fff8f9}
 .e-activo{background:#e2f6ee;color:var(--ok)}.e-revision{background:#fff3d9;color:var(--aviso)}.e-pausado,.e-pruebas{background:#fde9ed;color:var(--mal)}.e-otro{background:var(--suave);color:var(--gris)}
 .gris{color:var(--gris)}.chica{font-size:13px}
 pre{white-space:pre-wrap;font:12px/1.6 "Martian Mono",monospace;background:#f6f8fe;border-radius:12px;padding:12px;color:var(--gris);max-height:320px;overflow:auto}
@@ -100,7 +104,7 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
     </div>
     <div class="tarjeta">
       <div class="filtros" id="filtros">
-        <button data-f="revision" aria-pressed="true">Para revisar</button><button data-f="activo" aria-pressed="false">Andando</button><button data-f="pausado" aria-pressed="false">Pausados</button><button data-f="todos" aria-pressed="false">Todos</button>
+        <button data-f="revision" aria-pressed="true">Para revisar</button><button data-f="activo" aria-pressed="false">Andando</button><button data-f="pausado" aria-pressed="false">Pausados</button><button data-f="todos" aria-pressed="false">Todos</button><button data-f="eliminado" aria-pressed="false">Eliminados</button>
       </div>
       <p class="error" id="error"></p>
       <table><thead><tr><th>Negocio</th><th>Estado</th><th class="ocultar-cel">WhatsApp</th><th class="ocultar-cel">Pruebas</th><th class="ocultar-cel">IA usada</th><th class="ocultar-cel">Alta</th></tr></thead><tbody id="tabla"><tr><td colspan="6" class="gris">Cargando…</td></tr></tbody></table>
@@ -119,25 +123,27 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
   const esc = (t) => String(t ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
   const pesos = (n) => '$ ' + Number(n || 0).toLocaleString('es-AR', { maximumFractionDigits: 2 });
   const fecha = (iso) => iso ? new Date(iso).toLocaleString('es-AR', { dateStyle: 'short', timeStyle: 'short' }) : '';
-  const NOMBRE = { pago: 'Esperando el pago', whatsapp: 'Falta conectar WhatsApp', relevamiento: 'Completando su ficha', pruebas: 'Una prueba falló', aprobar: 'Esperando que apruebe', revision: 'Para revisar', activo: 'Andando', pausado: 'Pausado' };
-  const clase = (e) => ({ activo: 'e-activo', revision: 'e-revision', pausado: 'e-pausado', pruebas: 'e-pruebas' })[e] || 'e-otro';
+  const NOMBRE = { pago: 'Esperando el pago', whatsapp: 'Falta conectar WhatsApp', relevamiento: 'Completando su ficha', pruebas: 'Una prueba falló', aprobar: 'Esperando que apruebe', revision: 'Para revisar', activo: 'Andando', pausado: 'Pausado', eliminado: 'Eliminado' };
+  const clase = (e) => ({ activo: 'e-activo', revision: 'e-revision', pausado: 'e-pausado', pruebas: 'e-pruebas', eliminado: 'e-eliminado' })[e] || 'e-otro';
   let clientes = []; let filtro = 'revision';
+  // Mismo criterio que el servidor para comparar el nombre del negocio: sin tildes, mayúsculas ni espacios de más.
+  const normal = (t) => String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, ' ').trim().toLowerCase();
 
   async function api(ruta, cuerpo) {
     const r = await fetch(API + ruta, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + await ACCESO.token() }, body: JSON.stringify(cuerpo || {}) });
     const d = await r.json().catch(() => ({}));
     if (r.status === 401) { ACCESO.salir('Tu sesión venció o esa cuenta no tiene acceso.'); throw new Error('sin acceso'); }
-    if (!r.ok) throw new Error(d.error || 'No se pudo completar.');
+    if (!r.ok) throw Object.assign(new Error(d.error || 'No se pudo completar.'), { datos: d });
     return d;
   }
   async function cargar() {
-    try { clientes = (await api('/api/admin/clientes')).clientes; dibujar(); $('#error').textContent = ''; }
+    try { clientes = (await api('/api/admin/clientes', { eliminados: true })).clientes; dibujar(); $('#error').textContent = ''; }
     catch (e) { $('#error').textContent = e.message; }
   }
   function dibujar() {
-    const lista = clientes.filter((c) => filtro === 'todos' || c.estado === filtro);
+    const lista = clientes.filter((c) => (filtro === 'todos' && c.estado !== 'eliminado') || c.estado === filtro);
     $('#tabla').innerHTML = lista.map((c) => `<tr class="fila" data-id="${esc(c.id)}"><td><b>${esc(c.negocio)}</b><div class="gris chica">${esc(c.contacto)} · ${esc(c.email)}</div></td><td><span class="estado ${clase(c.estado)}">${esc(NOMBRE[c.estado] || c.estado)}</span></td><td class="ocultar-cel">${esc(c.numero || '—')}</td><td class="ocultar-cel">${esc(c.pruebas || '—')}</td><td class="ocultar-cel">${c.ia ? pesos(c.ia.gastado) + ' · ' + (c.ia.mensajes || 0) + ' msj' : '—'}</td><td class="ocultar-cel gris chica">${fecha(c.creado)}</td></tr>`).join('')
-      || `<tr><td colspan="6" class="gris">${filtro === 'revision' ? 'No hay bots para revisar.' : 'No hay clientes en este grupo.'}</td></tr>`;
+      || `<tr><td colspan="6" class="gris">${filtro === 'revision' ? 'No hay bots para revisar.' : filtro === 'eliminado' ? 'No hay clientes eliminados.' : 'No hay clientes en este grupo.'}</td></tr>`;
     document.querySelectorAll('tr.fila').forEach((tr) => (tr.onclick = () => verCliente(tr.dataset.id)));
   }
   document.querySelectorAll('#filtros button').forEach((b) => (b.onclick = () => { filtro = b.dataset.f; document.querySelectorAll('#filtros button').forEach((x) => x.setAttribute('aria-pressed', x === b)); dibujar(); }));
@@ -149,21 +155,25 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
       const f = c.ficha || c.borrador || {};
       const precio = c.precio || {};
       const pagos = (c.cobro && c.cobro.pagos) || [];
-      const boton = c.estado === 'activo' ? '<button class="btn mal" id="pausar">Pausar el bot</button>' : (['revision', 'pausado'].includes(c.estado) ? '<button class="btn principal" id="prender">Prender el bot</button>' : '<span class="gris chica">Se puede prender cuando el cliente lo aprueba.</span>');
+      const vivo = c.estado !== 'eliminado';
+      const el = c.eliminado || {};
+      const conectado = !!(c.whatsapp && c.whatsapp.conectado);
+      const boton = !vivo ? '' : c.estado === 'activo' ? '<button class="btn mal" id="pausar">Pausar el bot</button>' : (['revision', 'pausado'].includes(c.estado) ? '<button class="btn principal" id="prender">Prender el bot</button>' : '<span class="gris chica">Se puede prender cuando el cliente lo aprueba.</span>');
       $('#detalle').innerHTML = `<div class="tarjeta">
         <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap"><h2 style="font:900 22px Archivo;margin:0">${esc(c.negocio)}</h2><span class="estado ${clase(c.estado)}">${esc(NOMBRE[c.estado] || c.estado)}</span><div style="margin-left:auto">${boton}</div></div>
         <p class="error" id="error-det"></p>
+        ${vivo ? '' : `<p class="peligro" style="margin-top:8px">Eliminado el ${esc(fecha(el.cuando))} por ${esc(el.por || '—')}${el.motivo ? ' · motivo: ' + esc(el.motivo) : ''}. Estaba «${esc(NOMBRE[el.estadoAnterior] || el.estadoAnterior || '—')}». WhatsApp: ${esc(el.meta || '—')}. Los pagos quedan registrados para la facturación.</p>`}
         <dl>
           <dt>Contacto</dt><dd>${esc(c.contacto)} · ${esc(c.email)} · ${esc(c.celular)}</dd>
           <dt>Plan</dt><dd>${esc(precio.nombre || c.plan)}${precio.instalacion ? ` · instalación ${pesos(precio.instalacion)} + IVA${precio.promo ? ' (promo)' : ''} · abono ${pesos(precio.abono)} + IVA` : ''}</dd>${precio.acordado ? `<dt>Precio acordado</dt><dd>${esc(`Instalación ${pesos(precio.acordado.cargado.instalacion)} y abono ${pesos(precio.acordado.cargado.abono)} por mes${precio.acordado.conIva ? ', con IVA incluido' : ' + IVA'}${precio.acordado.iaIncluida ? ' · IA incluida' : ''}${precio.acordado.deLista ? ` · de lista: ${pesos(precio.acordado.deLista.instalacion)} + ${pesos(precio.acordado.deLista.abono)} por mes + IVA` : ''}`)}</dd>` : ''}<dt>Servicios</dt><dd>${Array.isArray(precio.detalle) && precio.detalle.length ? precio.detalle.map((x) => esc(x.aCotizar ? `${x.nombre}: a cotizar` : `${x.nombre}: ${x.instalacion ? 'instalación ' + pesos(x.instalacion) + ' + IVA · ' : ''}abono ${pesos(x.abono)} + IVA`)).join('<br>') : esc((c.servicios || []).map((k) => SERVICIO[k] || k).join(' · ') || '—')}</dd>
           <dt>Quién lo arma</dt><dd>${c.armadoPor === 'mym' ? 'MyM Soluciones' : 'El cliente'}</dd>
-          <dt>WhatsApp</dt><dd>${esc(c.whatsapp ? (c.whatsapp.numero || 'conectado') + (c.whatsapp.registrado === false ? ' (falta registrar el número)' : '') : 'sin conectar')}</dd>
+          <dt>WhatsApp</dt><dd>${esc(c.whatsapp ? (c.whatsapp.numero || 'conectado') + (c.whatsapp.conectado === false ? ' (desconectado)' : c.whatsapp.registrado === false ? ' (falta registrar el número)' : '') : 'sin conectar')}</dd>
           <dt>IA</dt><dd>${esc(f.modelo === 'economico' ? 'Económica' : 'Recomendada')} · ${c.ia ? pesos(c.ia.gastado) + ' usados de ' + pesos(c.ia.tope) + ' · ' + (c.ia.mensajes || 0) + ' mensajes' : '—'}</dd>
           <dt>Cobro</dt><dd>${esc(c.cobro ? (c.cobro.estado + (c.cobro.medio ? ' · ' + c.cobro.medio : '') + (c.cobro.vence ? ' · vence ' + new Date(c.cobro.vence).toLocaleDateString('es-AR') : '')) : '—')}</dd>
           <dt>Factura</dt><dd>${c.fiscal ? esc(`${c.fiscal.nombre} · ${c.fiscal.doc_tipo} ${c.fiscal.doc_nro} · ${({ RI: 'Responsable Inscripto', MT: 'Monotributo', CF: 'Consumidor final', EX: 'Exento' })[c.fiscal.condicion_iva] || c.fiscal.condicion_iva}`) : 'Sin datos: los pagos quedan en <a href="facturacion.html">Facturación</a> para cargarlos una vez'}</dd>
           <dt>Pagos</dt><dd>${(pagos.length || (c.ventas || []).length) ? [...pagos, ...(c.ventas || []).map((v) => ({ ...v, concepto: ({ web: 'Página web', redes: 'Redes sociales', otro: 'Otro servicio' })[v.servicio] + ' · ' + v.concepto }))].sort((a, b) => String(a.cuando).localeCompare(String(b.cuando))).slice(-6).reverse().map((p) => esc(`${fecha(p.cuando)} · ${p.concepto}${p.monto ? ' · ' + pesos(p.monto) : ''} · ${p.medio || ''}`)).join('<br>') : '—'}</dd>
         </dl>
-        <div class="acciones"><button class="btn" id="b-alta">Abrir su alta (link nuevo)</button><button class="btn" id="b-panel">Link para su panel</button></div>
+        ${vivo ? `<div class="acciones"><button class="btn" id="b-alta">Abrir su alta (link nuevo)</button><button class="btn" id="b-panel">Link para su panel</button></div>
         <div id="links"></div>
         <h3 style="margin:18px 0 4px">Cobrar por transferencia al alias (sin comisión)</h3>
         <form id="form-transf" class="grilla">
@@ -183,6 +193,7 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
         </form>
         <div id="link-pago"></div>
         <p class="gris chica">Cuando el cliente paga, el pago se registra solo y sale la factura (si tiene sus datos fiscales). Si el link es del bot, el abono queda al día por 30 días.</p>
+        ` : ''}
         ${(c.linksPago || []).length ? `<dl><dt>Links</dt><dd>${c.linksPago.slice(-6).reverse().map((l) => `${esc(fecha(l.creado))} · ${esc(l.ref)} · ${esc(l.concepto)} · ${pesos(l.monto)} · <b>${l.estado === 'pagado' ? 'pagado' : 'esperando el pago'}</b>`).join('<br>')}</dd></dl>` : ''}
         <h3 style="margin:18px 0 4px">Registrar un pago por transferencia</h3>
         <form id="form-pago" class="grilla">
@@ -190,18 +201,28 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
           <input name="monto" type="number" step="0.01" min="0" placeholder="Monto que llegó ($)">
           <select name="concepto"><option value="instalación y primer mes">Instalación y primer mes</option><option value="abono mensual">Abono mensual</option><option value="pago único">Pago único</option><option value="otro">Otro</option></select>
           <button class="btn principal" type="submit">Registrar el pago</button>
-          <button class="btn" type="button" id="b-aparte" title="Lo cobramos junto con otros servicios: no se controla el vencimiento">Se cobra aparte</button>
+          ${vivo ? '<button class="btn" type="button" id="b-aparte" title="Lo cobramos junto con otros servicios: no se controla el vencimiento">Se cobra aparte</button>' : ''}
         </form>
         <p class="gris chica">Con el pago del bot, el abono queda al día por 30 días. Antes de que venza te llega un mail; la plataforma no pausa a nadie sola. Cada pago (bot, web o redes) se factura solo si el cliente tiene sus datos para la factura; si no, queda en <a href="facturacion.html">Facturación</a>.</p>
         ${c.pruebas ? `<h3 style="margin:18px 0 4px">Pruebas: ${c.pruebas.aprobadas} de ${c.pruebas.total}</h3>${c.pruebas.resultados.map((r) => `<div class="prueba">${r.ok ? '✓' : '✗'} <b>${esc(r.pregunta)}</b><br><span class="gris">${esc(r.respuesta)}</span>${r.ok ? '' : `<br><span class="error">${esc(r.motivo)}</span>`}</div>`).join('')}` : ''}
         <h3 style="margin:18px 0 4px">Ficha del negocio</h3><pre>${esc(Object.entries(f).map(([k, v]) => k + ': ' + v).join('\n'))}</pre>
         ${c.bot ? `<details><summary class="gris">Instrucciones que recibe la IA (versión ${esc(c.bot.version)})</summary><pre>${esc(c.bot.instrucciones)}</pre></details>` : ''}
         <h3 style="margin:18px 0 4px">Lo que pasó</h3><pre>${esc(eventos.map((e) => fecha(e.cuando) + '  ' + e.que).join('\n') || 'Sin novedades.')}</pre>
+        ${vivo ? `<div class="peligro">
+          <h3 style="margin:0 0 4px;color:var(--mal)">Eliminar cliente</h3>
+          <p class="gris chica" style="margin:0">Sale de todas las listas y de su panel, el link del alta deja de andar y se cancelan las transferencias que esperábamos.${c.estado === 'activo' || conectado ? ` <b style="color:var(--mal)">Tiene ${[c.estado === 'activo' ? 'el bot prendido' : '', conectado ? 'el WhatsApp ' + esc(c.whatsapp.numero || '') + ' conectado' : ''].filter(Boolean).join(' y ')}: se desconecta de la plataforma y el bot deja de contestar.</b>` : ''} Los pagos y las facturas quedan guardados (se siguen viendo en «Eliminados» y en <a href="facturacion.html">Facturación</a>).</p>
+          <div class="grilla">
+            <input id="elim-nombre" autocomplete="off" placeholder="Escribí «${esc(c.negocio)}» para confirmar" aria-label="Nombre del negocio para confirmar">
+            <input id="elim-motivo" maxlength="200" placeholder="Motivo (opcional)" aria-label="Motivo">
+            <button class="btn mal" id="b-eliminar" disabled>Eliminar cliente</button>
+          </div>
+        </div>` : ''}
       </div>`;
       const cambiar = async (estado) => { try { await api('/api/admin/estado', { id, estado }); await cargar(); verCliente(id); } catch (e) { $('#error-det').textContent = e.message; } };
       if ($('#prender')) $('#prender').onclick = (e) => { e.target.disabled = true; cambiar('activo'); };
       if ($('#pausar')) $('#pausar').onclick = (e) => { e.target.disabled = true; cambiar('pausado'); };
       const mostrarLink = (titulo, url, nota) => { $('#links').innerHTML = `<p class="ok">${esc(titulo)}</p><div class="link-caja">${esc(url)}</div><div class="acciones"><a class="btn principal" href="${esc(url)}" target="_blank" rel="noopener">Abrir</a><button class="btn" id="copiar">Copiar</button></div><p class="gris chica">${esc(nota)}</p>`; $('#copiar').onclick = () => navigator.clipboard.writeText(url).then(() => ($('#copiar').textContent = 'Copiado')).catch(() => {}); };
+      if (vivo) {
       $('#b-alta').onclick = async () => { if (!confirm('Se genera un link nuevo del alta y el anterior (el del mail del cliente) deja de andar. ¿Seguimos?')) return; try { const r = await api('/api/admin/link-alta', { id }); mostrarLink('Link del alta', r.linkAlta, 'Con este link completás o corregís la ficha y conectás el WhatsApp con el cliente.'); } catch (e) { $('#error-det').textContent = e.message; } };
       $('#b-panel').onclick = async () => { try { const r = await api('/api/admin/link-panel', { id }); mostrarLink('Link para entrar a su panel', r.linkPanel, 'Mandáselo por WhatsApp: sirve una sola vez y vence en 7 días. Después la sesión le dura 30 días; si no, entra con su mail en mymsoluciones.online/panel.'); } catch (e) { $('#error-det').textContent = e.message; } };
       $('#form-pago').onsubmit = async (e) => { e.preventDefault(); const d = Object.fromEntries(new FormData(e.target).entries()); try { await api('/api/admin/pago', { id, monto: Number(d.monto), concepto: d.concepto, servicio: d.servicio }); await cargar(); verCliente(id); } catch (err) { $('#error-det').textContent = err.message; } };
@@ -225,7 +246,27 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
           cargarTransferencias();
         } catch (err) { $('#error-det').textContent = err.message; } finally { btn.disabled = false; }
       };
-      $('#b-aparte').onclick = async () => { if (!confirm('El cobro de este cliente queda «aparte» (dentro de su contrato): al día y sin vencimiento. ¿Seguimos?')) return; try { await api('/api/admin/pago', { id, aparte: true }); await cargar(); verCliente(id); } catch (err) { $('#error-det').textContent = err.message; } };
+      $('#elim-nombre').oninput = (e) => { $('#b-eliminar').disabled = normal(e.target.value) !== normal(c.negocio); };
+      $('#b-eliminar').onclick = async (e) => {
+        const btn = e.target;
+        const avisoWa = c.estado === 'activo' || conectado ? `\n\nTiene ${c.estado === 'activo' ? 'el bot prendido' : ''}${c.estado === 'activo' && conectado ? ' y ' : ''}${conectado ? 'el WhatsApp ' + (c.whatsapp.numero || '') + ' conectado' : ''}: se desconecta de la plataforma y el bot deja de contestar.` : '';
+        if (!confirm(`¿Eliminar a ${c.negocio}?${avisoWa}\n\nSale de las listas y de su panel. Los pagos y las facturas quedan guardados. No se puede deshacer desde el panel.`)) return;
+        btn.disabled = true; $('#error-det').textContent = '';
+        const cuerpo = { id, confirmar: $('#elim-nombre').value, motivo: $('#elim-motivo').value, desconectar: c.estado === 'activo' || conectado };
+        try {
+          let r;
+          try { r = await api('/api/admin/eliminar', cuerpo); }
+          catch (err) {
+            // Si mientras tanto se conectó el WhatsApp o se prendió el bot, el servidor lo avisa y se vuelve a confirmar.
+            if (!(err.datos && err.datos.requiereDesconectar) || !confirm(err.message + '\n\n¿Lo desconectamos y eliminamos igual?')) throw err;
+            r = await api('/api/admin/eliminar', { ...cuerpo, desconectar: true });
+          }
+          await cargar(); await verCliente(id); cargarTransferencias();
+          $('#error-det').innerHTML = `<span class="ok">Cliente eliminado. WhatsApp: ${esc(r.meta)}.${r.esperasCanceladas ? ` Transferencias canceladas: ${r.esperasCanceladas}.` : ''} Pagos que quedan para la facturación: ${r.pagosConservados}.</span>`;
+        } catch (err) { $('#error-det').textContent = err.message; btn.disabled = false; }
+      };
+      }
+      if ($('#b-aparte')) $('#b-aparte').onclick = async () => { if (!confirm('El cobro de este cliente queda «aparte» (dentro de su contrato): al día y sin vencimiento. ¿Seguimos?')) return; try { await api('/api/admin/pago', { id, aparte: true }); await cargar(); verCliente(id); } catch (err) { $('#error-det').textContent = err.message; } };
       $('#detalle').scrollIntoView({ behavior: 'smooth' });
     } catch (e) { $('#detalle').innerHTML = `<div class="tarjeta error">${esc(e.message)}</div>`; }
   }
