@@ -46,6 +46,7 @@ dl{display:grid;grid-template-columns:180px 1fr;gap:6px 14px;margin:0;font-size:
 .ok{color:var(--ok);font-size:14px}
 input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--borde);border-radius:10px;background:#f6f8fe;width:100%}
 .grilla{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:10px 0}
+.servicios{grid-column:1/-1;border:1.5px solid var(--borde,#e3e8f2);border-radius:10px;padding:10px 12px;margin:0}.servicios legend{font-weight:800;padding:0 4px}.servicios label{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:15px;cursor:pointer}.servicios input{width:auto;padding:0}.servicios .sub{margin:6px 0 0;font-weight:700;font-size:14px}
 .acciones{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 4px}
 .link-caja{word-break:break-all;background:#f6f8fe;border-radius:10px;padding:10px;font:12.5px "Martian Mono",monospace;margin:8px 0}
 @media(max-width:700px){dl{grid-template-columns:1fr}.ocultar-cel{display:none}}
@@ -67,7 +68,19 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
       <form id="form-nuevo" class="grilla">
         <input name="negocio" placeholder="Negocio" required><input name="contacto" placeholder="Nombre del contacto" required>
         <input name="email" type="email" placeholder="Mail del cliente" required><input name="celular" placeholder="Celular" required>
-        <select name="plan"><option value="bot">Bot de WhatsApp</option><option value="paquete">Paquete completo</option></select>
+        <!-- Servicios uno por uno, sin precios (Budy, 19/11/2026): el servidor arma el paquete y calcula instalación y
+             abono (plataforma-bots/servidor/paquete.js). Las claves tienen que ser las de allá. -->
+        <fieldset class="servicios" id="servicios-nuevo"><legend>Servicios que contrata</legend>
+          <label><input type="checkbox" value="bot" checked disabled> Bot de WhatsApp <span class="gris chica">(siempre, es el alta del bot)</span></label>
+          <label><input type="checkbox" name="servicio" value="seguimiento"> Seguimiento de clientes</label>
+          <label><input type="checkbox" name="servicio" value="landing"> Landing de ventas</label>
+          <p class="sub">Redes en automático</p>
+          <label><input type="radio" name="redes" value="" checked> Sin redes</label>
+          <label><input type="radio" name="redes" value="redesEsencial"> Esencial</label>
+          <label><input type="radio" name="redes" value="redesProfesional"> Profesional</label>
+          <label><input type="radio" name="redes" value="redesPremium"> Premium</label>
+          <p class="gris chica" style="margin:6px 0 0">El paquete y el precio se arman solos. La IA del bot se suma sola al abono. Web institucional, Orquestador y software a medida se cotizan aparte.</p>
+        </fieldset>
         <button class="btn principal" type="submit">Crear y abrir su alta</button>
       </form>
       <p class="error" id="error-nuevo"></p><div id="link-nuevo"></div>
@@ -134,7 +147,7 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
         <p class="error" id="error-det"></p>
         <dl>
           <dt>Contacto</dt><dd>${esc(c.contacto)} · ${esc(c.email)} · ${esc(c.celular)}</dd>
-          <dt>Plan</dt><dd>${esc(precio.nombre || c.plan)}${precio.instalacion ? ` · instalación ${pesos(precio.instalacion)} + IVA${precio.promo ? ' (promo)' : ''} · abono ${pesos(precio.abono)} + IVA` : ''}</dd>
+          <dt>Plan</dt><dd>${esc(precio.nombre || c.plan)}${precio.instalacion ? ` · instalación ${pesos(precio.instalacion)} + IVA${precio.promo ? ' (promo)' : ''} · abono ${pesos(precio.abono)} + IVA` : ''}</dd><dt>Servicios</dt><dd>${Array.isArray(precio.detalle) && precio.detalle.length ? precio.detalle.map((x) => esc(`${x.nombre}: ${x.instalacion ? 'instalación ' + pesos(x.instalacion) + ' + IVA · ' : ''}abono ${pesos(x.abono)} + IVA`)).join('<br>') : esc((c.servicios || []).map((k) => SERVICIO[k] || k).join(' · ') || '—')}</dd>
           <dt>Quién lo arma</dt><dd>${c.armadoPor === 'mym' ? 'MyM Soluciones' : 'El cliente'}</dd>
           <dt>WhatsApp</dt><dd>${esc(c.whatsapp ? (c.whatsapp.numero || 'conectado') + (c.whatsapp.registrado === false ? ' (falta registrar el número)' : '') : 'sin conectar')}</dd>
           <dt>IA</dt><dd>${esc(f.modelo === 'economico' ? 'Económica' : 'Recomendada')} · ${c.ia ? pesos(c.ia.gastado) + ' usados de ' + pesos(c.ia.tope) + ' · ' + (c.ia.mensajes || 0) + ' mensajes' : '—'}</dd>
@@ -231,8 +244,10 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
     } catch (e) { $('#error-transf').textContent = e.message; $('#caja-transf').hidden = false; }
   }
 
+  const SERVICIO = { bot: 'Bot de WhatsApp', seguimiento: 'Seguimiento de clientes', landing: 'Landing de ventas', redesEsencial: 'Redes en automático Esencial', redesProfesional: 'Redes en automático Profesional', redesPremium: 'Redes en automático Premium' };
   $('#form-nuevo').onsubmit = async (e) => {
-    e.preventDefault(); const f = e.target; const d = Object.fromEntries(new FormData(f).entries()); $('#error-nuevo').textContent = '';
+    e.preventDefault(); const f = e.target; const fd = new FormData(f); $('#error-nuevo').textContent = '';
+    const d = { negocio: fd.get('negocio'), contacto: fd.get('contacto'), email: fd.get('email'), celular: fd.get('celular'), servicios: ['bot', ...fd.getAll('servicio'), fd.get('redes')].filter(Boolean) };
     try { const r = await api('/api/admin/nuevo', d); f.reset(); $('#link-nuevo').innerHTML = `<p class="ok">Cliente creado.</p><div class="link-caja">${esc(r.linkAlta)}</div><a class="btn principal" href="${esc(r.linkAlta)}" target="_blank" rel="noopener">Abrir su alta</a>`; filtro = 'todos'; document.querySelectorAll('#filtros button').forEach((x) => x.setAttribute('aria-pressed', x.dataset.f === 'todos')); await cargar(); }
     catch (err) { $('#error-nuevo').textContent = err.message; }
   };
