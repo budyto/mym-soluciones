@@ -395,7 +395,8 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
 Con ese mail va a entrar a su panel y ahí le van a llegar los mails.`)) return;
         const btn = fm.querySelector('button[type=submit]'); btn.disabled = true;
         try { await api('/api/admin/mail', { id, email: nuevo }); await cargar(); verCliente(id); }
-        catch (err) { $('#error-mail').textContent = err.message; btn.disabled = false; }
+        // Si el servidor todavía no tiene la ruta (se publica aparte), se dice así en vez de «No existe.».
+        catch (err) { $('#error-mail').textContent = err.message === 'No existe.' ? 'Cambiar el mail se activa cuando se publique el servidor nuevo de la plataforma. Por ahora el mail no cambió.' : err.message; btn.disabled = false; }
       };
       $('#b-panel').onclick = async () => { try { const r = await api('/api/admin/link-panel', { id }); mostrarLink('Link para entrar a su panel', r.linkPanel, 'Mandáselo por WhatsApp: sirve una sola vez y vence en 7 días. Después la sesión le dura 30 días; si no, entra con su mail en mymsoluciones.online/panel.'); } catch (e) { $('#error-det').textContent = e.message; } };
       // Cobrar: un solo formulario (qué se cobra) y dos botones (cómo). Los atajos de arriba precargan servicio,
