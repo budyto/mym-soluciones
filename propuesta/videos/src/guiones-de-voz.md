@@ -81,7 +81,7 @@ de la animación el tiempo que necesita la voz y deja la pista en `voz/<plan>.m4
 ## redes-profesional · Redes en automático · Profesional
 
 1. **Portada.** Redes en automático, plan Profesional, de eme y eme Soluciones. Es el plan recomendado.
-2. **La semana.** Dos reels por semana e historias todos los días: ocho reels animados por mes y de ocho a doce carruseles.
+2. **La semana.** Dos reels por semana e historias todos los días: ocho reels animados por mes y diez carruseles.
 3. **Tablero de ganchos.** Cada semana medimos qué gancho retiene más, y repetimos lo que funciona.
 4. **Qué incluye.** Incluye todo lo del Esencial, historias de comunidad con encuestas y preguntas, y programación a la hora pico.
 5. **Precio.** Cuesta cuatrocientos mil pesos por mes, sin permanencia. Vos aprobás cada pieza antes de que salga.
