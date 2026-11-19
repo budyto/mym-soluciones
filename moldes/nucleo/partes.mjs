@@ -75,6 +75,7 @@ ${canonica && !demo ? `<link rel="canonical" href="${esc(canonica)}">` : ''}
 <meta property="og:description" content="${esc(descripcion)}">
 ${imagen && dominio ? `<meta property="og:image" content="${esc(dominio + '/' + imagen)}">` : ''}
 <link rel="icon" href="${c.marca.icono ? esc(ruta + c.marca.icono) : favicon(c, p)}">
+${!ruta && c.inicio?.video && c.inicio?.foto ? `<link rel="preload" as="image" href="${esc(c.inicio.foto)}" fetchpriority="high">` : ''}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="${molde.fuentes}" rel="stylesheet">

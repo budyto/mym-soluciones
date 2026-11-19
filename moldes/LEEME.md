@@ -119,7 +119,16 @@ Prueba del 19/11/2026 con un negocio inventado (`electricista-ejemplo`, molde `s
 
 ## Lo que falta o no se pudo verificar
 
-- 🔴 **PageSpeed en celular:** no se midió; hace falta una dirección de prueba pública. El plan pedía 90 o más.
+- ✅ **PageSpeed en celular, medido el 19/11/2026** en pagespeed.web.dev sobre `mymsoluciones.online/muestras/` (el plan pedía 90 o más de rendimiento):
+
+  | Muestra | Molde | Rendimiento | Accesibilidad | Recomendaciones | Imagen principal (LCP) |
+  | --- | --- | --- | --- | --- | --- |
+  | Plomería Mansilla | servicio | 94 | 100 | 100 | 2,9 s |
+  | Hierros Walter | local | 98 | 100 | 100 | 1,5 s |
+  | Estudio Alma | turnos | 99 | 100 | 100 | 1,5 s |
+  | Electricista de ejemplo | servicio | 99 | 100 | 100 | 1,5 s |
+
+  El puntaje de SEO dio 63 en las cuatro porque las demos llevan `noindex` a propósito; en una landing final no va. Mansilla da menos porque su foto principal es la tapa de un video: después de medir se agregó la precarga de esa tapa (🟡 no se volvió a medir). En computadora Mansilla marcó un salto de diseño (0,18) en la primera carga, cuando entra la letra de los títulos; en celular dio 0. 🟡 Se arregla alojando las letras en el sitio.
 - 🔴 **Revisión legal:** los textos de los trámites y de la privacidad son una lectura de Claude de la Disposición 954/2025 y de la Ley 25.326, no un dictamen. Falta que los mire la abogada. Tampoco se verificaron normas de la Ciudad ni de la Provincia de Buenos Aires sobre los mismos botones.
 - 🔴 **El código del trámite se genera en el navegador** y llega al cliente dentro del mensaje. No queda guardado en ningún servidor: si el cliente necesita registro propio, hay que sumarlo.
 - 🟡 **Fotos:** el generador no achica ni convierte imágenes; se suben ya livianas. Las letras se cargan desde Google Fonts (podrían alojarse en el sitio para ganar velocidad).
