@@ -75,22 +75,207 @@
   "modelo": "gemini-3.8-flash-tts"
  },
  "redes-premium-4.mp3": {
-  "texto": "Suma cuatro videos con tu avatar hecho con inteligencia artificial, con tu autorización y avisando que es inteligencia artificial.",
-  "voz": "es-419-csagent-10",
-  "modelo": "gemini-3.8-flash-tts"
- },
- "redes-premium-5.mp3": {
   "texto": "Incluye todo lo del Profesional, con doce reels animados, y suma TikTok y YouTube Shorts.",
   "voz": "es-419-csagent-10",
   "modelo": "gemini-3.8-flash-tts"
  },
- "redes-premium-6.mp3": {
+ "redes-premium-5.mp3": {
   "texto": "Cuesta seiscientos cincuenta mil pesos por mes, sin permanencia. La inversión en publicidad va aparte.",
   "voz": "es-419-csagent-10",
   "modelo": "gemini-3.8-flash-tts"
  },
- "redes-premium-7.mp3": {
+ "redes-premium-6.mp3": {
   "texto": "Empezando hasta el treinta de noviembre, tenés quince días de prueba totalmente gratis: no pagás nada al empezar y, si no te sirve, no debés nada. Escribinos por WhatsApp.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "bot-de-whatsapp-1.mp3": {
+  "texto": "Bot de WhatsApp, de eme y eme Soluciones. Responde al instante y agenda.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "bot-de-whatsapp-2.mp3": {
+  "texto": "Responde con tus precios y horarios, a cualquier hora.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "bot-de-whatsapp-3.mp3": {
+  "texto": "Califica al cliente y agenda turnos o visitas.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "bot-de-whatsapp-4.mp3": {
+  "texto": "Y pasa la charla a una persona cuando hace falta.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "bot-de-whatsapp-5.mp3": {
+  "texto": "Todo, con la conexión oficial de WhatsApp Business.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "bot-de-whatsapp-6.mp3": {
+  "texto": "La instalación sale noventa y nueve mil novecientos pesos. Después, treinta y nueve mil novecientos por mes, sin permanencia.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "bot-de-whatsapp-7.mp3": {
+  "texto": "Empezando hasta el treinta de noviembre, tenés quince días de prueba totalmente gratis: no pagás nada al empezar y, si no te sirve, no debés nada. Escribinos por WhatsApp.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "seguimiento-de-clientes-1.mp3": {
+  "texto": "Seguimiento de clientes, de eme y eme Soluciones.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "seguimiento-de-clientes-2.mp3": {
+  "texto": "Le vuelve a escribir al que preguntó y no compró.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "seguimiento-de-clientes-3.mp3": {
+  "texto": "Solo, al día uno, al día tres y al día siete.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "seguimiento-de-clientes-4.mp3": {
+  "texto": "Cada contacto queda en una planilla o en un ce erre eme, con su estado.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "seguimiento-de-clientes-5.mp3": {
+  "texto": "Y te avisa cuando alguien está listo para comprar.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "seguimiento-de-clientes-6.mp3": {
+  "texto": "Incluye también un resumen semanal de lo que entró.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "seguimiento-de-clientes-7.mp3": {
+  "texto": "La instalación sale cuarenta y nueve mil novecientos pesos. Después, veinticuatro mil novecientos por mes, sin permanencia.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "seguimiento-de-clientes-8.mp3": {
+  "texto": "Empezando hasta el treinta de noviembre, tenés quince días de prueba totalmente gratis: no pagás nada al empezar y, si no te sirve, no debés nada. Escribinos por WhatsApp.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "paquete-completo-1.mp3": {
+  "texto": "Paquete completo, de eme y eme Soluciones.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "paquete-completo-2.mp3": {
+  "texto": "Primero, una landing de ventas con botón a WhatsApp.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "paquete-completo-3.mp3": {
+  "texto": "Después, el bot responde al instante y agenda.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "paquete-completo-4.mp3": {
+  "texto": "Y el seguimiento le vuelve a escribir al que no compró.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "paquete-completo-5.mp3": {
+  "texto": "Incluye las tres cosas, con una sola puesta en marcha.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "paquete-completo-6.mp3": {
+  "texto": "La instalación sale doscientos diecinueve mil novecientos pesos. Después, sesenta y cuatro mil novecientos por mes, sin permanencia.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "paquete-completo-7.mp3": {
+  "texto": "Hasta el treinta de noviembre de dos mil veintiséis, la instalación queda en sesenta y cuatro mil novecientos cincuenta pesos.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "paquete-completo-8.mp3": {
+  "texto": "Y empezando hasta esa fecha, tenés quince días de prueba totalmente gratis: no pagás nada al empezar y, si no te sirve, no debés nada. Escribinos por WhatsApp.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "orquestador-1.mp3": {
+  "texto": "El Orquestador, de eme y eme Soluciones. Agentes que proponen; vos aprobás.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "orquestador-2.mp3": {
+  "texto": "Hasta tres agentes miran tu operación y te proponen qué hacer.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "orquestador-3.mp3": {
+  "texto": "Vos aprobás desde el celular, con un sí o con un no.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "orquestador-4.mp3": {
+  "texto": "Y recién ahí se ejecuta. Queda registro de cada acción.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "orquestador-5.mp3": {
+  "texto": "Incluye el relevamiento de tus procesos y hasta tres agentes a medida. Arranca en modo espectador.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "orquestador-6.mp3": {
+  "texto": "La instalación sale desde doscientos cuarenta y nueve mil novecientos pesos. Después, sesenta y nueve mil novecientos por mes, sin permanencia.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "orquestador-7.mp3": {
+  "texto": "Hasta el treinta de noviembre de dos mil veintiséis, la instalación sale desde ciento veinticuatro mil novecientos cincuenta pesos. Escribinos por WhatsApp.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "empresa-en-automatico-1.mp3": {
+  "texto": "Empresa en automático, de eme y eme Soluciones: todo conectado.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "empresa-en-automatico-2.mp3": {
+  "texto": "El bot atiende a cada cliente que escribe.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "empresa-en-automatico-3.mp3": {
+  "texto": "El seguimiento insiste con los que no compraron.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "empresa-en-automatico-4.mp3": {
+  "texto": "El orquestador coordina y te propone qué hacer.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "empresa-en-automatico-5.mp3": {
+  "texto": "Y vos aprobás desde el celular.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "empresa-en-automatico-6.mp3": {
+  "texto": "Incluye el orquestador, la landing, el bot de WhatsApp y el seguimiento, con una sola puesta en marcha.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "empresa-en-automatico-7.mp3": {
+  "texto": "La instalación sale desde trescientos veintinueve mil novecientos pesos. Después, noventa y nueve mil novecientos por mes, sin permanencia.",
+  "voz": "es-419-csagent-10",
+  "modelo": "gemini-3.8-flash-tts"
+ },
+ "empresa-en-automatico-8.mp3": {
+  "texto": "Hasta el treinta de noviembre de dos mil veintiséis, la instalación sale desde ciento sesenta y cuatro mil novecientos cincuenta pesos. Escribinos por WhatsApp.",
   "voz": "es-419-csagent-10",
   "modelo": "gemini-3.8-flash-tts"
  }
