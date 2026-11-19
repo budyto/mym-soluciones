@@ -53,7 +53,7 @@ tr.fila{cursor:pointer}tr.fila:hover td{background:#f8faff}
 .e-activo{background:#e2f6ee;color:var(--ok)}.e-revision{background:#fff3d9;color:var(--aviso)}.e-pausado,.e-pruebas{background:#fde9ed;color:var(--mal)}.e-otro{background:var(--suave);color:var(--gris)}
 .gris{color:var(--gris)}.chica{font-size:13px}
 pre{white-space:pre-wrap;font:12px/1.6 "Martian Mono",monospace;background:#f6f8fe;border-radius:12px;padding:12px;color:var(--gris);max-height:320px;overflow:auto}
-dl{display:grid;grid-template-columns:180px 1fr;gap:6px 14px;margin:0;font-size:14.5px}dt{color:var(--gris)}dd{margin:0}
+dl{display:grid;grid-template-columns:180px minmax(0,1fr);gap:6px 14px;margin:0;font-size:14.5px}dt{color:var(--gris)}dd{margin:0;min-width:0;overflow-wrap:anywhere}
 .prueba{padding:8px 0;border-top:1px solid #edf1fb;font-size:14px}
 .error{color:var(--mal);font-size:14px}
 .ok{color:var(--ok);font-size:14px}
@@ -79,7 +79,7 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
 .aparte-cobro{margin-top:18px;padding-top:14px;border-top:1.5px dashed var(--borde)}.aparte-cobro h4{margin:0 0 2px;font:800 16px Archivo}
 .seccion{margin-top:26px;padding-top:6px;border-top:2px solid var(--borde)}
 .seccion>summary{cursor:pointer;list-style-position:inside}.seccion>summary h3{display:inline;margin:0}
-@media(max-width:700px){dl{grid-template-columns:1fr}.ocultar-cel{display:none}.campos,.dos{grid-template-columns:1fr}.caja{padding:14px 12px}}
+@media(max-width:700px){dl{grid-template-columns:minmax(0,1fr)}.ocultar-cel{display:none}.campos,.dos{grid-template-columns:1fr}.caja{padding:14px 12px}}
 </style>
 </head>
 <body>
@@ -186,7 +186,7 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
   document.querySelectorAll('#filtros button').forEach((b) => (b.onclick = () => { filtro = b.dataset.f; document.querySelectorAll('#filtros button').forEach((x) => x.setAttribute('aria-pressed', x === b)); dibujar(); }));
 
   // ---- Cobros: lo que debe el cliente y con qué servicio se anota (19/11/2026, Budy) ----
-  // El servidor acepta cuatro rubros para cobrar (bot, web, redes, otro). Sólo «bot» deja el abono al día 30 días;
+  // El select ofrece sólo los servicios que contrató el cliente. El servidor acepta cuatro rubros (bot, web, redes, otro). Sólo «bot» deja el abono al día 30 días;
   // los demás se facturan como venta y no mueven el vencimiento. Cada servicio contratado cae en su rubro.
   const RUBRO = { paquete: 'bot', bot: 'bot', seguimiento: 'bot', landing: 'web', web: 'web', redesEsencial: 'redes', redesProfesional: 'redes', redesPremium: 'redes' };
   function serviciosParaCobrar(c) {
@@ -196,8 +196,7 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
     const grupos = {};
     for (const it of items) { const r = RUBRO[it.clave] || 'otro'; (grupos[r] = grupos[r] || []).push(it.nombre); }
     const ops = ['bot', 'web', 'redes', 'otro'].filter((r) => grupos[r]).map((r) => ({ valor: r, nombre: grupos[r].join(' + ') + (r === 'bot' ? ' (abono)' : '') }));
-    if (!grupos.otro) ops.push({ valor: 'otro', nombre: 'Otro servicio' });
-    return ops;
+    return ops; // Sólo lo que contrató (Budy, 19/11/2026): no se ofrece «Otro servicio» suelto.
   }
   // Lo mismo que calcula el servidor: instalación y primer mes = (instalación + abono) + IVA; abono del mes = abono + IA
   // del ciclo, + IVA (la IA la trae /api/admin/medicion, cargoHoy, al abrir el detalle). Con precio acordado con IVA
@@ -277,7 +276,7 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
             <div class="debe">
               ${cuenta.inicio ? `<button type="button" class="opcion" data-preset="inicio"><span class="que">Instalación y primer mes${cuenta.sugerido === 'inicio' ? '<span class="sugerido">Sugerido</span>' : ''}</span><b>${pesos(cuenta.inicio)}</b>con IVA · ${esc(cuenta.inicioDetalle)}</button>` : ''}
               ${cuenta.abono ? `<button type="button" class="opcion" data-preset="abono"><span class="que">Abono del mes${cuenta.sugerido === 'abono' ? '<span class="sugerido">Sugerido</span>' : ''}</span><b id="abono-total">${pesos(cuenta.abono)}</b>con IVA · <span id="abono-detalle">${esc(cuenta.abonoDetalle)}</span></button>` : ''}
-              <button type="button" class="opcion" data-preset="otro"><span class="que">Otro monto</span><b>$ …</b>Lo escribís vos (una web, un extra…)</button>
+              <button type="button" class="opcion" data-preset="otro"><span class="que">Otro monto</span><b>$ …</b>De uno de sus servicios: lo escribís vos</button>
             </div>
             <div class="campos" style="margin-top:12px">
               <label class="campo">Servicio<select name="servicio">${opcionesServicio}</select></label>
@@ -379,13 +378,14 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
         fc.querySelectorAll('[data-preset]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.preset === preset));
         if (preset === 'inicio') fc.servicio.value = rubroAbono, fc.concepto.value = 'instalación y primer mes', fc.monto.value = cuenta.inicio;
         else if (preset === 'abono') fc.servicio.value = rubroAbono, fc.concepto.value = cuenta.conceptoAbono, fc.monto.value = cuenta.abono;
-        else { fc.servicio.value = 'otro'; fc.concepto.value = ''; fc.monto.value = ''; fc.concepto.focus(); }
+        else { fc.concepto.value = ''; fc.monto.value = ''; fc.concepto.focus(); }
         notaServicio();
       };
       fc.querySelectorAll('[data-preset]').forEach((b) => (b.onclick = () => elegir(b.dataset.preset)));
-      fc.servicio.onchange = notaServicio;
+      const desmarcar = () => fc.querySelectorAll('[data-preset]').forEach((b) => b.setAttribute('aria-pressed', 'false'));
+      fc.servicio.onchange = () => { desmarcar(); notaServicio(); };
       // Si toca el monto o el concepto a mano, el atajo deja de estar marcado (ya no es «lo que debe»).
-      fc.monto.oninput = fc.concepto.oninput = () => fc.querySelectorAll('[data-preset]').forEach((b) => b.setAttribute('aria-pressed', 'false'));
+      fc.monto.oninput = fc.concepto.oninput = desmarcar;
       elegir(cuenta.inicio || cuenta.abono ? cuenta.sugerido === 'abono' && cuenta.abono ? 'abono' : cuenta.inicio ? 'inicio' : 'abono' : 'otro');
       // La IA del ciclo (lo mismo que se le suma al abono en el aviso de vencimiento). Sólo lectura.
       if (cuenta.abono && !cuenta.iaIncluida) api('/api/admin/medicion', { id }).then((m) => {
