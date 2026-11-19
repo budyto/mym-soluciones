@@ -46,7 +46,7 @@ header a{color:var(--gris);text-decoration:none;font-weight:600}
 .filtros button[aria-pressed=true]{border-color:var(--azul);color:var(--azul);background:var(--suave)}
 table{width:100%;border-collapse:collapse;font-size:14.5px}
 th{text-align:left;font:500 12px "Martian Mono",monospace;color:var(--gris);padding:8px;border-bottom:1px solid var(--borde)}
-td{padding:10px 8px;border-bottom:1px solid #edf1fb;vertical-align:top}
+td{padding:10px 8px;border-bottom:1px solid #edf1fb;vertical-align:top;overflow-wrap:anywhere}
 tr.fila{cursor:pointer}tr.fila:hover td{background:#f8faff}
 .estado{display:inline-block;padding:3px 10px;border-radius:99px;font-size:12.5px;font-weight:700;white-space:nowrap}
 .e-eliminado{background:#ececec;color:#555;text-decoration:line-through}
@@ -271,7 +271,9 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
         ${vivo && resumen.noContesta ? `<p class="peligro" style="margin-top:8px"><b style="color:var(--mal)">No está contestando:</b> ${esc(resumen.noContesta.texto)}.</p>` : ''}
         ${vivo ? '' : `<p class="peligro" style="margin-top:8px">Eliminado el ${esc(fecha(el.cuando))} por ${esc(el.por || '—')}${el.motivo ? ' · motivo: ' + esc(el.motivo) : ''}. Estaba «${esc(NOMBRE[el.estadoAnterior] || el.estadoAnterior || '—')}». WhatsApp: ${esc(el.meta || '—')}. Los pagos quedan registrados para la facturación.</p>`}
         <dl>
-          <dt>Contacto</dt><dd>${esc(c.contacto)} · ${esc(c.email)} · ${esc(c.celular)}</dd>
+          <dt>Contacto</dt><dd>${esc(c.contacto)} · <span id="mail-actual">${esc(c.email)}</span> · ${esc(c.celular)}${vivo ? ' <button class="btn" type="button" id="b-mail" style="padding:3px 10px;font-size:13px">Cambiar el mail</button>' : ''}
+            <form id="form-mail" hidden style="margin:8px 0 0;display:none;gap:8px;flex-wrap:wrap;max-width:520px"><input name="email" type="email" required autocomplete="off" value="${esc(c.email)}" aria-label="Mail nuevo del cliente" style="flex:1 1 220px"><button class="btn principal" type="submit">Guardar</button><button class="btn" type="button" id="mail-cancelar">Cancelar</button></form>
+            <p class="error chica" id="error-mail" style="margin:4px 0 0"></p></dd>
           <dt>Plan</dt><dd>${esc(precio.nombre || c.plan)}${precio.instalacion ? ` · instalación ${pesos(precio.instalacion)} + IVA${precio.promo ? ' (promo)' : ''} · abono ${pesos(precio.abono)} + IVA` : ''}</dd>${precio.acordado ? `<dt>Precio acordado</dt><dd>${esc(`Instalación ${pesos(precio.acordado.cargado.instalacion)} y abono ${pesos(precio.acordado.cargado.abono)} por mes${precio.acordado.conIva ? ', con IVA incluido' : ' + IVA'}${precio.acordado.iaIncluida ? ' · IA incluida' : ''}${precio.acordado.deLista ? ` · de lista: ${pesos(precio.acordado.deLista.instalacion)} + ${pesos(precio.acordado.deLista.abono)} por mes + IVA` : ''}`)}</dd>` : ''}<dt>Servicios</dt><dd>${Array.isArray(precio.detalle) && precio.detalle.length ? precio.detalle.map((x) => esc(x.aCotizar ? `${x.nombre}: a cotizar` : `${x.nombre}: ${x.instalacion ? 'instalación ' + pesos(x.instalacion) + ' + IVA · ' : ''}abono ${pesos(x.abono)} + IVA`)).join('<br>') : esc((c.servicios || []).map((k) => SERVICIO[k] || k).join(' · ') || '—')}</dd>
           <dt>Quién lo arma</dt><dd>${c.armadoPor === 'mym' ? 'MyM Soluciones' : 'El cliente'}</dd>
           <dt>WhatsApp</dt><dd>${esc(c.whatsapp ? (c.whatsapp.numero || 'conectado') + (c.whatsapp.conectado === false ? ' (desconectado)' : c.whatsapp.registrado === false ? ' (falta registrar el número)' : '') : 'sin conectar')}</dd>
@@ -378,6 +380,20 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
       };
       if (vivo) {
       $('#b-alta').onclick = async () => { if (!confirm('Se genera un link nuevo del alta y el anterior (el del mail del cliente) deja de andar. ¿Seguimos?')) return; try { const r = await api('/api/admin/link-alta', { id }); mostrarLink('Link del alta', r.linkAlta, 'Con este link completás o corregís la ficha y conectás el WhatsApp con el cliente.'); } catch (e) { $('#error-det').textContent = e.message; } };
+      // Cambiar el mail (19/11/2026, Budy): es con el que entra a su panel y al que le llegan los mails.
+      const fm = $('#form-mail');
+      $('#b-mail').onclick = () => { fm.hidden = false; fm.style.display = 'flex'; $('#b-mail').hidden = true; fm.email.focus(); fm.email.select(); };
+      $('#mail-cancelar').onclick = () => { fm.hidden = true; fm.style.display = 'none'; $('#b-mail').hidden = false; $('#error-mail').textContent = ''; };
+      fm.onsubmit = async (e) => {
+        e.preventDefault(); const nuevo = fm.email.value.trim(); $('#error-mail').textContent = '';
+        if (nuevo.toLowerCase() === String(c.email || '').toLowerCase()) { $('#mail-cancelar').click(); return; }
+        if (!confirm(`¿Cambiar el mail de ${c.negocio} a ${nuevo}?
+
+Con ese mail va a entrar a su panel y ahí le van a llegar los mails.`)) return;
+        const btn = fm.querySelector('button[type=submit]'); btn.disabled = true;
+        try { await api('/api/admin/mail', { id, email: nuevo }); await cargar(); verCliente(id); }
+        catch (err) { $('#error-mail').textContent = err.message; btn.disabled = false; }
+      };
       $('#b-panel').onclick = async () => { try { const r = await api('/api/admin/link-panel', { id }); mostrarLink('Link para entrar a su panel', r.linkPanel, 'Mandáselo por WhatsApp: sirve una sola vez y vence en 7 días. Después la sesión le dura 30 días; si no, entra con su mail en mymsoluciones.online/panel.'); } catch (e) { $('#error-det').textContent = e.message; } };
       // Cobrar: un solo formulario (qué se cobra) y dos botones (cómo). Los atajos de arriba precargan servicio,
       // concepto y monto con lo que debe según su precio; «Otro monto» los deja vacíos.
