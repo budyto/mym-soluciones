@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cuestionarios del Boti · MyM Soluciones</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<!-- Cuestionarios del Boti (21/11/2026, decisión de Matías: «el cuestionario vive en nuestra plataforma, un formulario
+     por cliente, con las respuestas guardadas y ordenadas por cliente, y que pasen directo a la ficha. Cero copiar y
+     pegar»). Entran las mismas cuentas que al resto del admin (admin/acceso.js); el servidor de la plataforma vuelve a
+     verificar la cuenta en cada pedido.
+     Acá MyM: 1) arma el link de cada cliente («Mandar cuestionario») y lo copia o lo abre en WhatsApp; 2) ve cuánto
+     completó, qué falta y las respuestas ordenadas por sección; 3) compara lo que contestó con lo que ya está cargado
+     y, con «Pasar a la ficha del Boti», vuelca la ficha, los datos del alta, los de la factura y las redes.
+     Se puede entrar directo a un cliente con cuestionarios.html#idDelCliente (así llega el link del mail de aviso).
+     Rutas: /api/admin/cuestionarios, /api/admin/cuestionario, …/link y …/pasar (plataforma-bots/servidor/cuestionario.js). -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;900&family=Martian+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--azul:#2f6bff;--azul-t:#1f57e6;--agua:#00c2a8;--deg:linear-gradient(120deg,#2458e6,#007a6a);--ink:#0e1a33;--gris:#4a5878;--borde:#dbe4f7;--suave:#eef3ff;--ok:#0a8a60;--aviso:#9a5c00;--aviso-f:#fff3d9;--mal:#c2364e}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;min-height:100vh;background:linear-gradient(180deg,#f4f7ff,#e6eeff) fixed;color:var(--ink);font:16px/1.5 Archivo,system-ui,sans-serif}
+.wrap{max-width:1100px;margin:0 auto;padding:0 18px 60px}
+header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:18px 0}
+header h1{font:900 24px Archivo;margin:0;letter-spacing:-.02em}
+header a{color:var(--gris);text-decoration:none;font-weight:600}
+.der{margin-left:auto;display:flex;gap:10px;align-items:center;color:var(--gris);font-size:14px}
+.btn{border:0;border-radius:11px;padding:10px 14px;min-height:42px;font:700 14px Archivo;cursor:pointer;background:var(--suave);color:var(--azul-t);text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+.btn.principal{background:var(--deg);color:#fff}
+.btn.grande{padding:13px 18px;font-size:16px}
+.btn[disabled]{opacity:.6;cursor:progress}
+.tarjeta{background:#fff;border-radius:20px;box-shadow:0 1px 2px rgba(23,48,120,.06),0 10px 26px -10px rgba(23,48,120,.18);padding:20px;margin-bottom:16px}
+.puerta{max-width:420px;margin:12vh auto;text-align:center}
+.gris{color:var(--gris)}.chica{font-size:13.5px}
+.error{color:var(--mal);font-size:14px}.ok{color:var(--ok);font-size:14px;font-weight:700}
+:focus-visible{outline:3px solid var(--azul);outline-offset:2px}
+
+/* Lista de clientes: una fila por cliente, con su barra */
+.filtros{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.filtros button{border:1.5px solid var(--borde);background:#fff;border-radius:99px;padding:7px 13px;font:600 13.5px Archivo;cursor:pointer;color:var(--gris)}
+.filtros button[aria-pressed=true]{border-color:var(--azul);color:var(--azul-t);background:var(--suave)}
+.lista{list-style:none;margin:0;padding:0}
+.cli{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1.3fr) auto;gap:6px 16px;align-items:center;padding:13px 4px;border-top:1px solid #edf1fb}
+.cli:first-child{border-top:0}
+.cli b{font-weight:800}
+.avance{display:flex;align-items:center;gap:10px;min-width:0}
+.barra{flex:1;height:8px;border-radius:99px;background:var(--borde);overflow:hidden;min-width:50px}
+.barra i{display:block;height:100%;background:var(--deg)}
+.pct{font:500 13px "Martian Mono",monospace;white-space:nowrap}
+.estado{display:inline-block;padding:3px 10px;border-radius:99px;font-size:12.5px;font-weight:700;white-space:nowrap}
+.e-listo{background:#e2f6ee;color:var(--ok)}.e-aviso{background:var(--aviso-f);color:var(--aviso)}.e-otro{background:var(--suave);color:var(--gris)}
+@media(max-width:700px){.cli{grid-template-columns:1fr}.cli .btn{justify-self:start}}
+
+/* Detalle */
+.cab{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.cab h2{font:900 24px/1.15 Archivo;margin:0;letter-spacing:-.02em}
+.acciones{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 4px;align-items:center}
+.link-caja{word-break:break-all;background:#f6f8fe;border-radius:10px;padding:10px;font:12.5px "Martian Mono",monospace;margin:8px 0;user-select:all}
+select{font:400 15px Archivo;padding:9px 11px;min-height:42px;border:1.5px solid var(--borde);border-radius:10px;background:#f6f8fe;max-width:100%}
+h3{font:900 19px Archivo;margin:0 0 4px}
+.caja{border:1.5px solid var(--borde);border-radius:16px;padding:16px;margin-top:18px;background:#fbfcff}
+.faltan{margin:6px 0 0;padding-left:1.2em;font-size:14.5px;columns:2;column-gap:28px}
+.faltan li{break-inside:avoid}
+.nota{background:var(--aviso-f);color:var(--aviso);border-radius:10px;padding:9px 12px;font-size:14px;font-weight:600;margin-top:10px}
+.grupo{font:500 12px "Martian Mono",monospace;color:var(--gris);margin:18px 0 4px}
+.dif{display:grid;grid-template-columns:26px minmax(0,1fr);gap:4px 8px;padding:12px 0;border-top:1px solid #edf1fb;align-items:start}
+.dif input{width:20px;height:20px;margin:3px 0 0;accent-color:var(--azul)}
+.dif .et{font-weight:800}
+.lados{grid-column:2;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lado{border-radius:10px;padding:8px 10px;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere;min-width:0;max-height:220px;overflow:auto}
+.lado small{display:block;font:500 11px "Martian Mono",monospace;color:var(--gris);margin-bottom:2px}
+.lado.hoy{background:#f3f4f8;color:var(--gris)}
+.lado.nuevo{background:#e9f7f1}
+.dif.igual{opacity:.62}
+.dif.igual .lados{grid-template-columns:1fr}
+.sec{margin-top:18px}
+.sec h4{font:900 16px Archivo;margin:0 0 2px;padding-bottom:6px;border-bottom:2px solid var(--borde)}
+.resp{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:4px 16px;padding:8px 0;border-bottom:1px solid #edf1fb;font-size:14.5px}
+.resp dt{color:var(--gris)}
+.resp dd{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+.resp .falta{color:var(--mal);font-weight:700}
+.resp .vacio{color:#9aa5bf}
+@media(max-width:700px){.lados,.resp{grid-template-columns:1fr}.faltan{columns:1}.tarjeta{padding:16px 14px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="puerta" class="tarjeta puerta" hidden>
+    <h1 style="font:900 22px Archivo;margin:0 0 6px">Cuestionarios del Boti</h1>
+    <p class="gris">Entrá con tu cuenta de Google autorizada.</p>
+    <p class="error" id="msj-puerta"></p>
+    <button class="btn principal" id="entrar">Entrar con Google</button>
+  </div>
+
+  <div id="panel" hidden>
+    <header><a href="./">← Inicio del panel</a><h1>Cuestionarios del Boti</h1><div class="der"><span id="quien"></span><button class="btn" id="salir">Salir</button></div></header>
+
+    <div class="tarjeta" id="v-lista">
+      <p class="gris chica" style="margin:0 0 12px">Cada cliente completa su cuestionario desde su link, sin contraseña, y se guarda solo. Cuando toca «Listo» llega un mail. Desde acá ves las respuestas y las pasás a la ficha.</p>
+      <div class="filtros" id="filtros">
+        <button data-f="todos" aria-pressed="true">Todos</button><button data-f="pasar" aria-pressed="false">Para pasar a la ficha</button><button data-f="curso" aria-pressed="false">Completando</button><button data-f="sin" aria-pressed="false">Sin mandar</button>
+      </div>
+      <p class="error" id="error"></p>
+      <ul class="lista" id="lista"><li class="gris">Cargando…</li></ul>
+    </div>
+
+    <div id="detalle"></div>
+  </div>
+</div>
+<script src="../config.js?v=20261117b"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" integrity="sha384-AQ3POAMqIhwS81FrUH95ekxqBZHeP5tG2JfEL3+7GuTtfRLWnrRh32UxwzM+//A9" crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js" integrity="sha384-TnlRYaR4JYz/lpaGuaiU61PjNberSA4vjLjtF+oRC/IkohkJqnWxw5EmDSOt1vA1" crossorigin="anonymous"></script>
+<script src="acceso.js?v=20261121b"></script>
+<script>
+(function () {
+  const API = String((window.SITE || {}).plataformaApi || '').replace(/\/+$/, '');
+  const $ = (s) => document.querySelector(s);
+  const esc = (t) => String(t ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+  const fecha = (iso) => (iso ? new Date(iso).toLocaleString('es-AR', { dateStyle: 'short', timeStyle: 'short' }) : '');
+  let clientes = []; let filtro = 'todos'; let abierto = '';
+
+  async function api(ruta, cuerpo) {
+    const r = await fetch(API + ruta, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + await ACCESO.token() }, body: JSON.stringify(cuerpo || {}) });
+    const d = await r.json().catch(() => ({}));
+    if (r.status === 401) { ACCESO.salir('Tu sesión venció o esa cuenta no tiene acceso.'); throw new Error('sin acceso'); }
+    if (!r.ok) throw Object.assign(new Error(d.error || 'No se pudo completar.'), { datos: d });
+    return d;
+  }
+  async function copiar(textoACopiar, boton) {
+    const antes = boton.textContent;
+    try { await navigator.clipboard.writeText(textoACopiar); boton.textContent = '✓ Copiado'; }
+    catch (e) { boton.textContent = 'Copialo a mano del recuadro'; }
+    setTimeout(() => { boton.textContent = antes; }, 2500);
+  }
+
+  /* ---------- Lista ---------- */
+  // En qué anda el cuestionario de cada cliente, en palabras.
+  function situacion(q) {
+    if (!q) return { grupo: 'sin', texto: 'Sin mandar', clase: 'e-otro' };
+    if (q.listo && q.cambioDespues) return { grupo: 'pasar', texto: 'Cambió después de pasarlo', clase: 'e-aviso' };
+    if (q.listo && !q.pasado) return { grupo: 'pasar', texto: 'Listo: para pasar a la ficha', clase: 'e-aviso' };
+    if (q.pasado && !q.cambioDespues) return { grupo: 'hecho', texto: 'Pasado a la ficha', clase: 'e-listo' };
+    if (q.pasado) return { grupo: 'pasar', texto: 'Cambió después de pasarlo', clase: 'e-aviso' };
+    if (q.empezado) return { grupo: 'curso', texto: 'Completando', clase: 'e-otro' };
+    return { grupo: 'curso', texto: q.abierto ? 'Lo abrió, sin completar' : 'Mandado, sin abrir', clase: 'e-otro' };
+  }
+  async function cargar() {
+    try { clientes = (await api('/api/admin/cuestionarios')).clientes; $('#error').textContent = ''; dibujar(); }
+    catch (e) { $('#error').textContent = e.message === 'Failed to fetch' ? 'No se pudo conectar con la plataforma.' : e.message; $('#lista').innerHTML = ''; }
+  }
+  function dibujar() {
+    const lista = clientes.filter((c) => filtro === 'todos' || situacion(c.cuestionario).grupo === filtro);
+    $('#lista').innerHTML = lista.map((c) => { const q = c.cuestionario; const s = situacion(q);
+      return `<li class="cli"><div><b>${esc(c.negocio)}</b><div class="gris chica">${esc(c.contacto || '')}${q && q.actualizado ? ` · último cambio ${fecha(q.actualizado)}` : ''}</div></div>
+        <div>${q ? `<div class="avance"><div class="barra" aria-hidden="true"><i style="width:${q.porcentaje}%"></i></div><span class="pct">${q.porcentaje} %</span></div>` : ''}<span class="estado ${s.clase}">${s.texto}</span></div>
+        <button class="btn${q ? '' : ' principal'}" data-ver="${esc(c.id)}">${q ? 'Ver respuestas' : 'Mandar cuestionario'}</button></li>`; }).join('')
+      || `<li class="gris">${filtro === 'pasar' ? 'No hay cuestionarios esperando que los pases a la ficha.' : filtro === 'sin' ? 'Todos los clientes ya tienen su cuestionario.' : 'No hay clientes en este grupo.'}</li>`;
+  }
+  document.querySelectorAll('#filtros button').forEach((b) => (b.onclick = () => { filtro = b.dataset.f; document.querySelectorAll('#filtros button').forEach((x) => x.setAttribute('aria-pressed', x === b)); dibujar(); }));
+  $('#lista').addEventListener('click', (e) => { const b = e.target.closest('[data-ver]'); if (b) abrir(b.dataset.ver); });
+
+  /* ---------- Detalle de un cliente ---------- */
+  function abrir(id) { abierto = id; history.replaceState(null, '', '#' + encodeURIComponent(id)); ver(true); }
+  function cajaLink(link, cliente) {
+    const cel = String(cliente.celular || '').replace(/\D/g, '');
+    // WhatsApp necesita el número con 54 9: si el celular está cargado sin eso (11…), se le agrega.
+    const wa = cel ? 'https://wa.me/' + (cel.startsWith('54') ? cel : '549' + cel.replace(/^0/, '').replace(/^(\d{2,4})15/, '$1')) + '?text=' + encodeURIComponent(`Hola${cliente.contacto ? ' ' + String(cliente.contacto).split(' ')[0] : ''}! Te paso el cuestionario para armar tu Boti. Se completa desde el celu, se guarda solo y podés hacerlo de a poco:\n${link}`) : '';
+    return `<div class="link-caja" id="link-texto">${esc(link)}</div>
+      <div class="acciones"><button class="btn principal" id="link-copiar">Copiar link</button>${wa ? `<a class="btn" href="${esc(wa)}" target="_blank" rel="noopener">Abrir WhatsApp con el link</a>` : ''}<a class="btn" href="${esc(link)}" target="_blank" rel="noopener">Abrirlo como el cliente</a><button class="btn" id="link-nuevo">Cambiar el link</button></div>`;
+  }
+  async function ver(subir) {
+    const caja = $('#detalle');
+    if (!abierto) { caja.innerHTML = ''; return; }
+    let d;
+    try { d = await api('/api/admin/cuestionario', { id: abierto }); }
+    catch (e) { caja.innerHTML = `<div class="tarjeta"><p class="error">${esc(e.message)}</p></div>`; return; }
+    const c = d.cliente;
+    if (d.sinCuestionario) {
+      caja.innerHTML = `<div class="tarjeta" id="det"><div class="cab"><h2>${esc(c.negocio)}</h2></div>
+        <p class="gris">Todavía no tiene cuestionario. Armalo y pasale el link: entra sin contraseña y lo que ya cargamos en el alta (negocio, contacto, mail, celular) le aparece escrito.</p>
+        <div class="acciones"><label class="chica gris" for="tipo">¿Qué hace el negocio?</label>
+          <select id="tipo"><option value="">Que lo elija el cliente</option><option value="productos">Vende productos</option><option value="servicios">Hace trabajos o servicios</option><option value="ambos">Las dos cosas</option></select>
+          <button class="btn principal" id="armar">Mandar cuestionario</button></div>
+        <p class="error" id="det-error"></p></div>`;
+      $('#armar').onclick = async () => { const b = $('#armar'); b.disabled = true;
+        try { await api('/api/admin/cuestionario/link', { id: abierto, tipo: $('#tipo').value || undefined }); await cargar(); await ver(); }
+        catch (e) { $('#det-error').textContent = e.message; b.disabled = false; } };
+      if (subir) caja.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+    const q = c.cuestionario; const s = situacion(q);
+    const cambian = d.diferencias.filter((x) => !x.igual);
+    const grupos = [['ficha', 'Ficha del Boti'], ['alta', 'Datos del cliente'], ['fiscal', 'Para la factura'], ['redes', 'Redes']];
+    const difHtml = grupos.map(([g, nombre]) => { const l = d.diferencias.filter((x) => x.grupo === g); if (!l.length) return '';
+      return `<p class="grupo">${nombre}</p>` + l.map((x) => x.igual
+        ? `<div class="dif igual"><span aria-hidden="true">✓</span><div class="et">${esc(x.etiqueta)} <span class="gris chica" style="font-weight:400">· ya está igual</span></div><div class="lados"><div class="lado hoy">${esc(x.nuevo)}</div></div></div>`
+        : `<label class="dif"><input type="checkbox" data-clave="${esc(x.clave)}"${x.sugerido ? ' checked' : ''}${x.error ? ' disabled' : ''}><div class="et">${esc(x.etiqueta)}${x.recortado ? ' <span class="estado e-aviso">se corta por largo</span>' : ''}${x.error ? ` <span class="error">· No se puede pasar: ${esc(x.error)}</span>` : ''}</div>
+            <div class="lados"><div class="lado hoy"><small>Hoy</small>${x.actual ? esc(x.actual) : '<span class="gris">(vacío)</span>'}</div><div class="lado nuevo"><small>Del cuestionario</small>${esc(x.nuevo)}</div></div></label>`).join(''); }).join('');
+    const puedeArmar = !d.tieneBot && !d.faltanFicha.length;
+    caja.innerHTML = `<div class="tarjeta" id="det">
+      <div class="cab"><div style="flex:1;min-width:220px"><h2>${esc(c.negocio)}</h2><p class="gris chica" style="margin:4px 0 0">${esc(c.contacto || '')} · armado el ${fecha(q.creado)}${q.listoCuando ? ` · avisó que terminó el ${fecha(q.listoCuando)}` : ''}${q.pasado ? ` · pasado a la ficha el ${fecha(q.pasado)}` : ''}</p></div>
+        <span class="estado ${s.clase}">${s.texto}</span></div>
+      <div class="avance" style="margin-top:14px"><div class="barra" style="height:12px" aria-hidden="true"><i style="width:${d.porcentaje}%"></i></div><span class="pct">${d.porcentaje} % de lo obligatorio</span></div>
+      <div class="caja"><h3>Link del cliente</h3>
+        ${d.link ? cajaLink(d.link, c) : '<p class="gris chica">El link no se puede volver a mostrar. Armá uno nuevo (el anterior deja de andar; las respuestas quedan).</p><div class="acciones"><button class="btn principal" id="link-nuevo">Armar link nuevo</button></div>'}
+        <p class="error" id="link-error"></p></div>
+
+      ${d.faltan.length ? `<div class="caja"><h3>Falta contestar (${d.faltan.length})</h3><ul class="faltan">${d.faltan.map((f) => `<li>${esc(f.t)} <span class="gris chica">· ${esc(f.seccion)}</span></li>`).join('')}</ul></div>` : ''}
+
+      <div class="caja" id="caja-pasar"><h3>Pasar a la ficha del Boti</h3>
+        ${cambian.length ? `<p class="gris chica">Lo tildado se copia tal cual. A la izquierda, lo que el cliente tiene cargado hoy; a la derecha, lo que sale del cuestionario.${d.tieneBot ? ' El bot ya está armado: al pasar la ficha se rearma y se prueba solo, y sólo cambia si pasa todas las pruebas.' : ' Como el bot todavía no está armado, la ficha queda precargada en su alta.'}</p>` : '<p class="ok">Todo lo del cuestionario ya está pasado: no hay nada distinto.</p>'}
+        ${d.avisos.map((x) => `<p class="nota">${esc(x)}</p>`).join('')}
+        ${difHtml || '<p class="gris">Todavía no hay respuestas para pasar.</p>'}
+        ${cambian.length ? `<div class="acciones" style="margin-top:16px">${puedeArmar ? '<label class="chica" style="display:flex;gap:8px;align-items:center;width:100%"><input type="checkbox" id="armar-bot" style="width:20px;height:20px"> Armar el bot ahora con esta ficha (corre las 6 pruebas; tarda cerca de un minuto)</label>' : ''}
+          <button class="btn principal grande" id="pasar">Pasar a la ficha del Boti</button><button class="btn" id="tildar">Tildar todo</button></div>` : ''}
+        <p class="error" id="pasar-error"></p><div id="pasar-ok"></div></div>
+
+      <div class="caja"><h3>Respuestas</h3><p class="gris chica">Todo lo que contestó, por sección. Lo que no va a la ficha (WhatsApp, página web, comentarios) se lee acá.</p>
+        ${d.secciones.map((sec) => `<div class="sec"><h4>${esc(sec.t)}</h4><dl style="margin:0">${sec.preguntas.map((p) => `<div class="resp"><dt>${esc(p.t)}${p.temporada ? ' <span class="estado e-aviso">de temporada</span>' : ''}</dt><dd>${p.valor ? esc(p.valor) : (p.obligatoria ? '<span class="falta">Falta</span>' : '<span class="vacio">Sin contestar</span>')}</dd></div>`).join('')}</dl></div>`).join('')}
+      </div>
+    </div>`;
+    if ($('#link-copiar')) $('#link-copiar').onclick = () => copiar(d.link, $('#link-copiar'));
+    $('#link-nuevo').onclick = async () => {
+      if (d.link && !confirm('Se arma un link nuevo y el que tiene el cliente deja de andar. Las respuestas no se pierden. ¿Seguimos?')) return;
+      try { await api('/api/admin/cuestionario/link', { id: abierto, nuevo: true }); await ver(); } catch (e) { $('#link-error').textContent = e.message; } };
+    if ($('#tildar')) $('#tildar').onclick = () => caja.querySelectorAll('[data-clave]:not([disabled])').forEach((x) => { x.checked = true; });
+    if ($('#pasar')) $('#pasar').onclick = async () => {
+      const campos = [...caja.querySelectorAll('[data-clave]:checked')].map((x) => x.dataset.clave);
+      if (!campos.length) { $('#pasar-error').textContent = 'Tildá al menos un dato para pasar.'; return; }
+      const b = $('#pasar'); b.disabled = true; b.textContent = 'Pasando…'; $('#pasar-error').textContent = '';
+      try {
+        const r = await api('/api/admin/cuestionario/pasar', { id: abierto, campos, armar: !!($('#armar-bot') && $('#armar-bot').checked) });
+        await cargar(); await ver();
+        const f = r.ficha;
+        $('#pasar-ok').innerHTML = `<p class="ok">✓ Pasamos ${r.pasados.length} dato${r.pasados.length === 1 ? '' : 's'}.${f ? (f.modo === 'aplicada' ? ` El bot quedó armado con la ficha nueva (versión ${esc(f.version)}, ${esc(f.pruebas || '')} pruebas).` : ' La ficha quedó guardada como borrador en el alta del cliente.') : ''}</p>${f && f.motivo ? `<p class="nota">El bot no se cambió: ${esc(f.motivo)}${f.faltan ? ' (' + esc(f.faltan.join(', ')) + ')' : ''}</p>` : ''}${r.fallas.map((x) => `<p class="nota">${esc(x.etiqueta)} no se pasó: ${esc(x.motivo)}</p>`).join('')}`;
+        $('#caja-pasar').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } catch (e) { $('#pasar-error').textContent = e.message; b.disabled = false; b.textContent = 'Pasar a la ficha del Boti'; }
+    };
+    if (subir) caja.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  $('#entrar').onclick = () => ACCESO.entrar();
+  $('#salir').onclick = () => ACCESO.salir('');
+  ACCESO.iniciar({
+    alEntrar(u) { $('#puerta').hidden = true; $('#panel').hidden = false; $('#quien').textContent = u.email; abierto = decodeURIComponent(location.hash.replace(/^#/, '')); cargar().then(() => ver(!!abierto)); },
+    alSalir(m) { $('#panel').hidden = true; $('#puerta').hidden = false; $('#msj-puerta').textContent = m || ''; }
+  });
+})();
+</script>
+</body>
+</html>

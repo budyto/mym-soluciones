@@ -22,6 +22,7 @@
     ] },
     { g: 'Clientes', items: [
       { href: 'bots.html', ic: '🤖', t: 'Clientes', d: 'Bots, servicios y cobros' },
+      { href: 'cuestionarios.html', ic: '📝', t: 'Cuestionarios del Boti', d: 'Respuestas de cada cliente' },
       { href: 'facturacion.html', ic: '🧾', t: 'Facturación', d: 'Comprobantes ARCA' },
       { href: '../panel/', ext: true, ic: '📱', t: 'Portal de clientes', d: 'La vista de cada cliente' },
     ] },
