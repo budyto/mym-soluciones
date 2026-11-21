@@ -6,7 +6,10 @@
 (function () {
   if (window.MENU) return;
   const SECCIONES = [
-    { items: [{ href: './', archivo: 'index.html', ic: '🏠', t: 'Inicio', d: 'Resumen del día' }] },
+    { items: [
+      { href: './', archivo: 'index.html', ic: '🏠', t: 'Inicio', d: 'Resumen del día' },
+      { href: 'ventas.html', ic: '📊', t: 'Métricas de ventas', d: 'Mails, campaña, WhatsApp, clientes y cobros' },
+    ] },
     { g: 'Atender', items: [
       { href: 'whatsapp.html', ic: '💬', t: 'WhatsApp comercial', d: 'Conversaciones del 11 3366-2080' },
       { href: 'diagnosticos.html', ic: '📊', t: 'Diagnósticos de redes', d: 'Solicitudes e informes' },
@@ -106,7 +109,7 @@
 
   // El botón ☰ va en el lugar del «← Inicio» que ya tiene cada página, así no cambia la altura de nada
   // (whatsapp.html entra justo en la pantalla). Si la página no tiene ese link, queda flotando arriba a la izquierda.
-  const VIEJOS = ['.wa-inicio', 'header > a[href="./"]', 'header .fila > a[href="./"]', '.top .logo'];
+  const VIEJOS = ['.wa-inicio', 'header > a[href="./"]', 'header > a[href="index.html"]', 'header .fila > a[href="./"]', '.top .logo'];
   function ponerBoton() {
     const b = document.createElement('button');
     b.type = 'button'; b.className = 'mm-boton'; b.setAttribute('aria-label', 'Abrir el menú'); b.setAttribute('aria-controls', 'mmMenu');

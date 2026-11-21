@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Métricas de ventas · Grupo MyM</title>
+<meta name="robots" content="noindex, nofollow">
+<!-- Métricas de ventas (21/11/2026, Mati Jefe: «una solapa en grupo que me diga todas las métricas de cómo está
+     resultando todo tipo de ventas, más que nada los mails»). Sólo LEE: no cambia nada en ningún sistema.
+     Fuentes, las mismas que usan las otras páginas del panel (ninguna copia de datos):
+       - Campaña a clientes de Créditos: AppMyM /api/ventas-sol/campana/planilla (como campana.html).
+       - Mails de prospección: base del Grupo MyM, empresas/equipo/prospeccionMail (como mails.html), más las
+         visitas y clics de las simulaciones: AppMyM /api/ventas-sol/simulaciones/resumen.
+       - WhatsApp de ventas 11 3366-2080: AppMyM /api/ventas-sol/resumen (como index.html).
+       - Clientes y cobros: plataforma de bots /api/admin/clientes y /api/admin/cliente (como bots.html).
+     Los nombres y contactos no se muestran acá: sólo cantidades. El detalle de cada persona queda en su página. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--azul:#2f6bff;--azul-t:#1f57e6;--deg:linear-gradient(120deg,#2458e6,#007a6a);--ink:#0e1a33;--gris:#4a5878;--borde:#dbe4f7;--suave:#eef3ff;--ok:#0a8a60;--aviso:#9a5c00;--mal:#c2364e}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:linear-gradient(180deg,#f4f7ff,#e6eeff) fixed;color:var(--ink);font:16px/1.5 Archivo,system-ui,sans-serif}
+.wrap{max-width:1100px;margin:0 auto;padding:0 16px 40px}
+header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:18px 0}
+header h1{font:900 24px Archivo;margin:0;letter-spacing:-.02em}
+header a{color:var(--gris);text-decoration:none;font-weight:600}
+.der{margin-left:auto;display:flex;gap:10px;align-items:center;color:var(--gris);font-size:14px}
+.btn{border:0;border-radius:11px;padding:9px 14px;font:700 14px Archivo;cursor:pointer;background:var(--suave);color:var(--azul-t);text-decoration:none;display:inline-block}
+.btn.principal{background:var(--deg);color:#fff}
+.tarjeta{background:#fff;border-radius:20px;box-shadow:0 1px 2px rgba(23,48,120,.06),0 10px 26px -10px rgba(23,48,120,.18);padding:20px;margin-bottom:16px}
+.tarjeta h2{font:900 19px Archivo;margin:0 0 4px;letter-spacing:-.01em}
+.tarjeta .cab{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.tarjeta .cab a{margin-left:auto;font-weight:700;font-size:14px;color:var(--azul-t);text-decoration:none}
+.puerta{max-width:420px;margin:12vh auto;text-align:center}
+.cifras{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px}
+.cifra{background:var(--suave);border-radius:14px;padding:12px 14px}
+.cifra b{display:block;font:900 26px Archivo;letter-spacing:-.02em}
+.cifra span{font-size:13px;color:var(--gris)}
+.cifra.ok b{color:var(--ok)}.cifra.mal b{color:var(--mal)}.cifra.az b{color:var(--azul-t)}
+.embudo{margin-top:14px}
+.paso{display:grid;grid-template-columns:210px 1fr 70px;gap:10px;align-items:center;margin:6px 0;font-size:14px}
+.barra{height:14px;border-radius:99px;background:var(--suave);overflow:hidden}
+.barra i{display:block;height:100%;background:var(--deg);border-radius:99px}
+.paso b{text-align:right}
+.gris{color:var(--gris)}.chica{font-size:13px}
+.error{color:var(--mal);font-weight:600}
+.nota{font-size:13px;color:var(--gris);margin:10px 0 0}
+.meta{height:22px;border-radius:99px;background:var(--suave);overflow:hidden;margin:10px 0 4px}
+.meta i{display:block;height:100%;background:var(--deg)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--borde)}
+th{color:var(--gris);font-weight:600;font-size:13px}
+td.n,th.n{text-align:right}
+input{font:15px Archivo;padding:9px 12px;border:1px solid var(--borde);border-radius:10px;width:100%;margin:4px 0}
+@media (max-width:600px){.paso{grid-template-columns:130px 1fr 50px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="puerta" class="tarjeta puerta">
+    <h1 style="font:900 22px Archivo">Métricas de ventas</h1>
+    <p class="gris">Entrá con tu cuenta de Google autorizada.</p>
+    <p id="msgPuerta" class="error"></p>
+    <button class="btn principal" id="entrar" type="button">Entrar con Google</button>
+  </div>
+
+  <div id="app" hidden>
+    <header>
+      <a href="index.html">← Inicio del panel</a>
+      <h1>Métricas de ventas</h1>
+      <div class="der"><span id="quien"></span><span id="hora" class="chica"></span><button class="btn" id="recargar" type="button">↻ Actualizar</button><button class="btn" id="salir" type="button">Salir</button></div>
+    </header>
+
+    <section class="tarjeta">
+      <div class="cab"><h2>Meta del mes: $ 15.000.000 más por mes</h2></div>
+      <div id="meta"><p class="gris">Cargando…</p></div>
+    </section>
+
+    <section class="tarjeta">
+      <div class="cab"><h2>🔥 Propuestas hechas y paso a paso para facturar</h2></div>
+      <p class="gris" style="margin:0 0 10px">Están en un documento privado (tiene nombres de clientes y montos, por eso no va en esta página).</p>
+      <a class="btn principal" id="docVentas" href="https://claude.ai/artifact/Hp9KfkgyfH9bKPkxdi46ro" target="_blank" rel="noopener">Abrir el documento ↗</a>
+    </section>
+
+    <section class="tarjeta">
+      <div class="cab"><h2>✉️ Mails de prospección a comercios</h2><a href="mails.html">Abrir →</a></div>
+      <div id="mails"><p class="gris">Cargando…</p></div>
+    </section>
+
+    <section class="tarjeta">
+      <div class="cab"><h2>📣 Campaña a clientes de Créditos</h2><a href="campana.html">Abrir →</a></div>
+      <div id="campana"><p class="gris">Cargando…</p></div>
+    </section>
+
+    <section class="tarjeta">
+      <div class="cab"><h2>💬 WhatsApp de ventas (11 3366-2080)</h2><a href="whatsapp.html">Abrir →</a></div>
+      <div id="wa"><p class="gris">Cargando…</p></div>
+    </section>
+
+    <section class="tarjeta">
+      <div class="cab"><h2>🤝 Clientes y cobros de Soluciones</h2><a href="bots.html">Abrir →</a></div>
+      <div id="clientes"><p class="gris">Cargando…</p></div>
+    </section>
+
+    <section class="tarjeta">
+      <div class="cab"><h2>Lo que todavía no se mide acá</h2></div>
+      <ul class="chica gris" style="margin:0;padding-left:18px">
+        <li><b>Mis Créditos:</b> no hay un registro de interesados ni de demos; los clientes se van a ver cuando entre el primero.</li>
+        <li><b>Llamadas del equipo:</b> están en la planilla de Google de llamadas (columna Resultado).</li>
+        <li><b>Redes y anuncios de Meta:</b> alcance, mensajes y costo por consulta se ven en <a href="https://business.facebook.com/latest/insights" target="_blank" rel="noopener">Meta Business Suite → Estadísticas</a>.</li>
+      </ul>
+    </section>
+  </div>
+</div>
+
+<script src="../config.js?v=20261121"></script>
+<script>window.FIREBASE_GRUPO={apiKey:"AIzaSyDTLcVzYxFdz5AOzq40zaMDHhvaKC0SW-I",authDomain:"grupo-mym-73b8d.firebaseapp.com",projectId:"grupo-mym-73b8d",appId:"1:966952304229:web:99501761762dfd290cd08c"}; /* Base del Grupo MyM: config pública (la misma de mails.html). */</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" integrity="sha384-AQ3POAMqIhwS81FrUH95ekxqBZHeP5tG2JfEL3+7GuTtfRLWnrRh32UxwzM+//A9" crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js" integrity="sha384-TnlRYaR4JYz/lpaGuaiU61PjNberSA4vjLjtF+oRC/IkohkJqnWxw5EmDSOt1vA1" crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js" integrity="sha384-qn4Jh88HhJA8dplNQyGjOh9OGI4izVhrfj/qIFgaKcdgOE06pXqIKGlsCILZcLAC" crossorigin="anonymous"></script>
+<script src="acceso.js?v=20261120b"></script>
+<script>
+(function () {
+  'use strict';
+  const SITE = window.SITE || {};
+  const APIV = String(SITE.ventasApi || '').replace(/\/+$/, '');
+  const APIP = String(SITE.plataformaApi || '').replace(/\/+$/, '');
+  const META = 15000000;
+  const $ = (s) => document.querySelector(s);
+  const esc = (t) => String(t ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+  const num = (n) => Number(n || 0).toLocaleString('es-AR');
+  const pesos = (n) => '$ ' + Number(n || 0).toLocaleString('es-AR', { maximumFractionDigits: 0 });
+  const pct = (a, b) => (b ? Math.round(100 * a / b) : 0) + ' %';
+  const cifra = (n, t, c) => `<div class="cifra ${c || ''}"><b>${n}</b><span>${t}</span></div>`;
+  const aFecha = (x) => !x ? null : (x.toDate ? x.toDate() : new Date(x));
+  const diaArg = (x) => { const d = aFecha(x); return d ? new Date(d.getTime() - 3 * 3600e3).toISOString().slice(0, 10) : ''; };
+  const hoy = () => diaArg(new Date());
+  const haceDias = (x, n) => { const d = aFecha(x); return !!d && (Date.now() - d.getTime()) <= n * 864e5; };
+  const mesArg = () => hoy().slice(0, 7);
+  function embudo(filas) {
+    const max = Math.max(1, filas[0][1]);
+    return '<div class="embudo">' + filas.map(([t, n]) => `<div class="paso"><span>${esc(t)}</span><div class="barra"><i style="width:${Math.round(100 * n / max)}%"></i></div><b>${num(n)}</b></div>`).join('') + '</div>';
+  }
+  async function getV(ruta) {
+    const r = await fetch(APIV + ruta, { headers: { Authorization: 'Bearer ' + await ACCESO.token() } });
+    if (r.status === 401) { ACCESO.salir('Tu sesión venció o esa cuenta no tiene acceso.'); throw new Error('sin sesión'); }
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(d.error || 'HTTP ' + r.status);
+    return d;
+  }
+  async function postP(ruta, cuerpo) {
+    const r = await fetch(APIP + ruta, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + await ACCESO.token() }, body: JSON.stringify(cuerpo || {}) });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(d.error || 'HTTP ' + r.status);
+    return d;
+  }
+  const fallo = (id, que, e) => { $(id).innerHTML = `<p class="error">No se pudo leer ${que}: ${esc(e.message)}.</p>`; };
+
+  // ---------- Campaña a clientes de Créditos ----------
+  async function campana() {
+    try {
+      const d = await getV('/api/ventas-sol/campana/planilla');
+      const s = d.resumen || {}; const filas = d.filas || [];
+      const env = filas.filter((f) => f.enviado_en);
+      const hoyN = env.filter((f) => diaArg(f.enviado_en) === hoy()).length;
+      const sem = env.filter((f) => haceDias(f.enviado_en, 7)).length;
+      const porCanal = (c) => { const e = env.filter((f) => f.canal === c); return { env: e.length, abr: e.filter((f) => f.abrio).length }; };
+      const w = porCanal('whatsapp'), m = porCanal('mail');
+      $('#campana').innerHTML = '<div class="cifras">'
+        + cifra(num(s.enviados), `enviados de ${num(s.total)}`, 'az') + cifra(num(hoyN), 'enviados hoy') + cifra(num(sem), 'enviados en 7 días')
+        + cifra(num(s.abrieron), 'contestaron (' + pct(s.abrieron || 0, s.enviados || 0) + ')', 'ok') + cifra(num(s.pidieron_pdf), 'pidieron el PDF', 'ok')
+        + cifra(num(s.bajas), 'bajas o «no»', 'mal') + cifra(num(s.faltan), 'falta enviar') + '</div>'
+        + embudo([['Contactos', s.total || 0], ['Enviados', s.enviados || 0], ['Contestaron', s.abrieron || 0], ['Pidieron el PDF', s.pidieron_pdf || 0]])
+        + `<p class="nota">Por canal: WhatsApp ${num(w.env)} enviados y ${num(w.abr)} contestaron (${pct(w.abr, w.env)}) · mail ${num(m.env)} enviados y ${num(m.abr)} contestaron (${pct(m.abr, m.env)}). «Contestó» es que respondió algo: ni el WhatsApp ni el mail dejan saber quién sólo lo leyó.</p>`;
+      return s;
+    } catch (e) { fallo('#campana', 'la campaña', e); return null; }
+  }
+
+  // ---------- Mails de prospección ----------
+  let fs = null, authG = null;
+  function iniciarGrupo() {
+    if (fs) return;
+    const app = firebase.apps.find((a) => a.name === 'grupo') || firebase.initializeApp(window.FIREBASE_GRUPO, 'grupo');
+    authG = app.auth(); fs = app.firestore();
+  }
+  function pedirGrupo(msg) {
+    $('#mails').innerHTML = `<p class="gris">Para ver los mails hay que conectar la base del Grupo MyM con tu usuario del CRM (se pide una sola vez en este navegador; es el mismo de «Mails de prospección»).</p>`
+      + (msg ? `<p class="error">${esc(msg)}</p>` : '')
+      + '<div style="max-width:360px"><input id="gMail" type="email" placeholder="Correo del CRM del grupo" autocomplete="username"><input id="gPass" type="password" placeholder="Contraseña" autocomplete="current-password"><button class="btn principal" id="gEntrar" type="button">Conectar</button></div>';
+    $('#gEntrar').onclick = () => authG.signInWithEmailAndPassword($('#gMail').value.trim(), $('#gPass').value).then(mails).catch((e) => pedirGrupo('No se pudo conectar: ' + e.message));
+  }
+  async function mails() {
+    try {
+      iniciarGrupo();
+      await new Promise((ok) => { const u = authG.onAuthStateChanged(() => { u(); ok(); }); });
+      if (!authG.currentUser) { pedirGrupo(''); return; }
+      const snap = await fs.collection('empresas').doc('equipo').collection('prospeccionMail').get();
+      const items = snap.docs.map((d) => d.data());
+      let seg = {};
+      try { seg = (await getV('/api/ventas-sol/simulaciones/resumen')).porCodigo || {}; } catch (e) { seg = null; }
+      const n = (est) => items.filter((i) => i.estado === est).length;
+      const env = items.filter((i) => i.enviadoEn && ['enviado', 'respondio', 'cliente'].includes(i.estado));
+      const g = (i) => (seg && seg[i.codigo]) || {};
+      const abr = env.filter((i) => (g(i).visitas || 0) > 0).length;
+      const wa = env.filter((i) => (g(i).whatsapp || 0) > 0).length;
+      const resp = env.filter((i) => g(i).escribio || i.estado === 'respondio' || i.estado === 'cliente').length;
+      const cli = n('cliente');
+      const hoyN = items.filter((i) => i.enviadoEn && diaArg(i.enviadoEn) === hoy()).length;
+      const sem = items.filter((i) => i.enviadoEn && haceDias(i.enviadoEn, 7)).length;
+      const llamadas = items.filter((i) => i.llamadaResultado).length;
+      $('#mails').innerHTML = '<div class="cifras">'
+        + cifra(num(env.length), `mandados de ${num(items.length)}`, 'az') + cifra(num(hoyN), 'mandados hoy') + cifra(num(sem), 'mandados en 7 días')
+        + cifra(num(resp), 'respondieron o escribieron (' + pct(resp, env.length) + ')', 'ok') + cifra(num(cli), 'clientes', 'ok')
+        + cifra(num(n('baja')), 'pidieron la baja', 'mal') + cifra(num(n('pendiente')), 'para mandar') + cifra(num(llamadas), 'llamadas anotadas') + '</div>'
+        + (env.length ? embudo([['Mandados', env.length], ['Abrieron la simulación', abr], ['Tocaron WhatsApp', wa], ['Respondieron o escribieron', resp], ['Clientes', cli]])
+          : '<p class="error" style="margin-top:12px">Todavía no salió ningún mail. Para mandarlos hace falta la casilla de Hostinger (la prueba vence el 28/11).</p>')
+        + (seg === null ? '<p class="nota">No se pudieron leer las visitas de las simulaciones: el embudo muestra sólo lo anotado a mano.</p>' : '')
+        + '<p class="nota">«Abrieron» = entraron a su simulación; el mail no deja saber quién sólo lo leyó.</p>';
+      return { env: env.length, resp, cli };
+    } catch (e) {
+      if (/permission|insufficient/i.test(e.message)) { pedirGrupo('Ese usuario no tiene permiso para ver los mails de prospección.'); return null; }
+      fallo('#mails', 'los mails', e); return null;
+    }
+  }
+
+  // ---------- WhatsApp de ventas ----------
+  async function whatsapp() {
+    try {
+      const j = await getV('/api/ventas-sol/resumen');
+      const m = j.resumen || {};
+      $('#wa').innerHTML = '<div class="cifras">' + cifra(num(m.charlas_hoy), 'charlas hoy', 'az') + cifra(num(m.charlas_semana), 'charlas en 7 días')
+        + cifra(num(m.nuevas_semana), 'contactos nuevos en 7 días', 'ok') + cifra(num(m.esperando), 'esperan una persona', (m.esperando || 0) > 0 ? 'mal' : '') + '</div>';
+      return m;
+    } catch (e) { fallo('#wa', 'el WhatsApp de ventas', e); return null; }
+  }
+
+  // ---------- Clientes y cobros (plataforma de bots) ----------
+  const NOMBRE = { pago: 'Esperando el pago', whatsapp: 'Falta conectar WhatsApp', relevamiento: 'Completando su ficha', pruebas: 'Una prueba falló', aprobar: 'Esperando que apruebe', revision: 'Para revisar', activo: 'Andando', pausado: 'Pausado' };
+  const deEsteMes = (p) => diaArg(p.cuando) .slice(0, 7) === mesArg();
+  async function clientes() {
+    try {
+      const lista = ((await postP('/api/admin/clientes', { eliminados: false })).clientes || [])
+        .filter((c) => c.estado !== 'eliminado' && !/prueba/i.test(c.negocio || ''));
+      const det = await Promise.all(lista.map((c) => postP('/api/admin/cliente', { id: c.id }).then((r) => r.cliente).catch(() => null)));
+      let mes = 0, total = 0;
+      const filas = lista.map((c, k) => {
+        const x = det[k] || {};
+        const movs = [...((x.cobro && x.cobro.pagos) || []).filter((p) => p.medio !== 'aparte'), ...(x.ventas || [])];
+        const tot = movs.reduce((a, p) => a + Number(p.monto || 0), 0);
+        const m = movs.filter(deEsteMes).reduce((a, p) => a + Number(p.monto || 0), 0);
+        mes += m; total += tot;
+        return `<tr><td><b>${esc(c.negocio)}</b></td><td>${esc(NOMBRE[c.estado] || c.estado)}</td><td class="n">${pesos(m)}</td><td class="n">${pesos(tot)}</td></tr>`;
+      });
+      $('#clientes').innerHTML = '<div class="cifras">' + cifra(num(lista.length), 'clientes cargados', 'az')
+        + cifra(num(lista.filter((c) => c.estado === 'activo').length), 'andando', 'ok') + cifra(pesos(mes), 'cobrado este mes', 'ok') + cifra(pesos(total), 'cobrado en total') + '</div>'
+        + (filas.length ? `<table style="margin-top:12px"><thead><tr><th>Cliente</th><th>Estado</th><th class="n">Este mes</th><th class="n">Total</th></tr></thead><tbody>${filas.join('')}</tbody></table>` : '<p class="gris">Todavía no hay clientes cargados.</p>')
+        + '<p class="nota">Montos como se registraron en el panel de bots (los pagos de transferencia y de link, y las ventas de otros servicios). Sin clientes de prueba ni eliminados.</p>';
+      return { mes, n: lista.length };
+    } catch (e) { fallo('#clientes', 'los clientes', e); return null; }
+  }
+
+  function pintarMeta(cli, camp, ml, wa) {
+    const mes = cli ? cli.mes : 0;
+    const conversaciones = (camp ? camp.abrieron || 0 : 0) + (ml ? ml.resp : 0) + (wa ? wa.nuevas_semana || 0 : 0);
+    $('#meta').innerHTML = `<div class="meta"><i style="width:${Math.min(100, Math.round(100 * mes / META))}%"></i></div>`
+      + `<p style="margin:4px 0 12px"><b>${pesos(mes)}</b> cobrados este mes en Soluciones · faltan <b>${pesos(Math.max(0, META - mes))}</b> para la meta (${pct(mes, META)}).</p>`
+      + '<div class="cifras">' + cifra(num(conversaciones), 'personas que contestaron (campaña + mails + contactos nuevos de WhatsApp en 7 días)', conversaciones ? 'ok' : 'mal')
+      + cifra(num(cli ? cli.n : 0), 'clientes de Soluciones') + cifra('0', 'clientes de Mis Créditos (sin registro todavía)') + '</div>'
+      + '<p class="nota">La meta es la del plan de 30 días (19/11 al 19/12/2026). Los montos se suman como están registrados (con o sin IVA, según se cargaron). La regla: cada día, primero las conversaciones de venta.</p>';
+  }
+
+  async function todo() {
+    $('#hora').textContent = 'al ' + new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' });
+    const [camp, ml, wa, cli] = await Promise.all([campana(), mails(), whatsapp(), clientes()]);
+    pintarMeta(cli, camp, ml, wa);
+  }
+
+  ACCESO.iniciar({
+    alEntrar(u) { $('#puerta').hidden = true; $('#app').hidden = false; $('#quien').textContent = u.email; todo(); },
+    alSalir(msg) { $('#app').hidden = true; $('#puerta').hidden = false; $('#msgPuerta').textContent = msg || ''; }
+  });
+  $('#entrar').onclick = () => ACCESO.entrar();
+  $('#salir').onclick = () => ACCESO.salir('');
+  $('#recargar').onclick = () => todo();
+})();
+</script>
+</body>
+</html>
