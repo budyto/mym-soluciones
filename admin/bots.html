@@ -244,6 +244,9 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
   function estadoCobro(c) {
     const k = c.cobro || {}; const vence = k.vence ? Date.parse(k.vence) : 0;
     if (k.medio && String(k.medio).startsWith('aparte')) return '<span class="estado e-otro">Se cobra aparte (sin vencimiento)</span>';
+    // En prueba gratis (21/11/2026): todavía no tiene que pagar; el fin de la prueba es el primer vencimiento.
+    const pr = pruebaDe(c);
+    if (pr && k.vence === c.prueba.fin && !pr.terminada) return `<span class="estado e-activo">${pr.porEmpezar ? 'Prueba gratis desde el ' + diaLindo(pr.inicio) : 'Prueba gratis · quedan ' + pr.quedan + ' día' + (pr.quedan === 1 ? '' : 's')} · primer vencimiento el ${new Date(vence).toLocaleDateString('es-AR')}</span>`;
     if (!((k.pagos || []).length) && !(c.ventas || []).length) return '<span class="estado e-revision">Todavía no pagó nada</span>';
     if (!vence) return `<span class="estado e-otro">${esc(k.estado || 'sin vencimiento')}</span>`;
     const dias = Math.ceil((vence - Date.now()) / 864e5); const dia = new Date(vence).toLocaleDateString('es-AR');
@@ -271,6 +274,36 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
         <label class="campo">Estado<select name="estado">${opc(x.estado)}</select></label>
         <button class="btn" type="submit">Guardar</button></form>`; }).join('')}
       <p class="error chica" id="error-panel"></p></section>`;
+  }
+  // Prueba gratis y página web (Matías, 21/11/2026; ver docs/PRUEBA-GRATIS.md de la plataforma). La prueba arranca a las
+  // 0 h de la fecha de inicio (Argentina) y dura los días enteros; su fin es el primer vencimiento.
+  const diaLindo = (f) => { const [a, m, d] = String(f || '').split('-'); return d ? `${Number(d)}/${Number(m)}/${a}` : ''; };
+  const hoyAca = () => new Date(Date.now() - 3 * 3600e3).toISOString().slice(0, 10);
+  function pruebaDe(c) {
+    const p = c.prueba; if (!p || !p.inicio || !p.fin) return null;
+    const desde = Date.parse(p.inicio + 'T00:00:00-03:00'); const fin = Date.parse(p.fin); const ahora = Date.now();
+    return { ...p, ultimoDia: new Date(fin - 1 - 3 * 3600e3).toISOString().slice(0, 10), porEmpezar: ahora < desde, terminada: ahora >= fin, quedan: ahora >= desde && ahora < fin ? Math.ceil((fin - ahora) / 864e5) : 0 };
+  }
+  function cajaPrueba(c) {
+    const pr = pruebaDe(c);
+    const estado = !pr ? 'Sin prueba gratis. Marcala para que el cliente vea en su panel los días que le quedan y el primer vencimiento.'
+      : pr.terminada ? `La prueba terminó: el último día gratis fue el ${diaLindo(pr.ultimoDia)}.`
+      : pr.porEmpezar ? `La prueba empieza el ${diaLindo(pr.inicio)} y dura ${pr.dias} días: último día gratis el ${diaLindo(pr.ultimoDia)}.`
+      : `En prueba gratis: quedan ${pr.quedan} día${pr.quedan === 1 ? '' : 's'}. Último día gratis el ${diaLindo(pr.ultimoDia)}.`;
+    const venceProp = pr && c.cobro && c.cobro.vence && c.cobro.vence !== c.prueba.fin;
+    return `<section class="caja" aria-labelledby="tit-prueba"><div class="caja-tit"><h3 id="tit-prueba">Prueba gratis y página web</h3></div>
+      <p class="chica" id="estado-prueba" style="margin:6px 0 4px"><b>${esc(estado)}</b>${pr && !venceProp ? ` Primer vencimiento: ${esc(new Date(Date.parse(pr.fin)).toLocaleDateString('es-AR'))}.` : ''}${venceProp ? ' Ya tiene su propio vencimiento por un pago: la prueba no lo cambia.' : ''}</p>
+      <p class="gris chica" style="margin:0 0 10px">El fin de la prueba es el primer vencimiento: 3 días antes le llega el mail con el abono y cómo pagarlo. Antes no se le pide ni se le pausa nada.</p>
+      <form id="form-prueba" class="campos" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
+        <label class="campo">Empieza el<input name="inicio" type="date" required value="${esc(pr ? pr.inicio : hoyAca())}"></label>
+        <label class="campo">Días de prueba<input name="dias" type="number" min="1" max="90" step="1" required inputmode="numeric" value="${esc(pr ? pr.dias : 14)}"></label>
+        <button class="btn principal" type="submit">${pr ? 'Guardar la prueba' : 'Marcar la prueba'}</button>
+        ${pr ? '<button class="btn" type="button" id="b-sin-prueba">Sacar la prueba</button>' : ''}</form>
+      <p class="gris chica" id="aviso-prueba" style="margin:6px 0 0"></p><p class="error chica" id="error-prueba"></p>
+      <form id="form-web" class="campos" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr));margin-top:10px">
+        <label class="campo">Su página web (la ve en su panel)<input name="url" inputmode="url" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="300" placeholder="https://plomeriamansilla.com.ar" value="${esc(c.paginaWeb || '')}"></label>
+        <button class="btn" type="submit">Guardar</button></form>
+      <p class="gris chica" id="aviso-web" style="margin:6px 0 0"></p><p class="error chica" id="error-web"></p></section>`;
   }
   // Calendario de redes en el panel del cliente (21/11/2026): qué espacio del CRM (crm.creditosmym.com) es el suyo.
   // La plataforma trae de ahí las próximas publicaciones; el cliente no elige ni ve el nombre del espacio.
@@ -318,7 +351,7 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
           <dt>Audios sin transcribir</dt><dd>${c.audiosPendientes ? `${c.audiosPendientes} (llegaron con el bot cortado: se transcriben solos cuando vuelve a contestar)` : 'Ninguno'}</dd>
         </dl>
         ${vivo ? `<div class="acciones"><button class="btn" id="b-alta">Abrir su alta (link nuevo)</button><button class="btn" id="b-panel">Link para su panel</button></div>
-        <div id="links"></div>${cajaPanel(c)}${cajaCrm(c)}` : ''}
+        <div id="links"></div>${cajaPrueba(c)}${cajaPanel(c)}${cajaCrm(c)}` : ''}
         <section class="caja" id="caja-cobros" aria-labelledby="tit-cobros">
           <div class="caja-tit"><h3 id="tit-cobros">Cobros</h3>${estadoCobro(c)}</div>
           <p class="gris chica" style="margin:6px 0 0">${c.fiscal ? `Factura: sale sola con cada pago, a nombre de ${esc(c.fiscal.nombre)} (${esc(c.fiscal.doc_tipo)} ${esc(c.fiscal.doc_nro)}, ${esc(({ RI: 'Responsable Inscripto', MT: 'Monotributo', CF: 'Consumidor final', EX: 'Exento' })[c.fiscal.condicion_iva] || c.fiscal.condicion_iva)}).` : 'Factura: todavía no tiene sus datos fiscales. Los pagos quedan en <a href="facturacion.html">Facturación</a> para cargarlos una vez.'}</p>
@@ -431,6 +464,36 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
           }
         };
         await mandar(cuerpo);
+      };
+      // Prueba gratis: marcar, cambiar o sacar (/api/admin/prueba). Página web (/api/admin/pagina-web).
+      const sinServidor = (err) => (err.message === 'No existe.' ? 'Esto se activa cuando se publique el servidor nuevo de la plataforma.' : err.message);
+      const fpr = $('#form-prueba');
+      if (fpr) fpr.onsubmit = async (e) => {
+        e.preventDefault(); $('#error-prueba').textContent = ''; $('#aviso-prueba').textContent = '';
+        const dias = Number(fpr.dias.value);
+        if (!Number.isInteger(dias) || dias < 1 || dias > 90) { $('#error-prueba').textContent = 'Los días de prueba van de 1 a 90.'; return; }
+        const btn = fpr.querySelector('button[type=submit]'); btn.disabled = true;
+        try {
+          const r = await api('/api/admin/prueba', { id, inicio: fpr.inicio.value, dias });
+          await cargar(); await verCliente(id);
+          if (r.aviso && $('#aviso-prueba')) $('#aviso-prueba').textContent = r.aviso;
+        } catch (err) { $('#error-prueba').textContent = sinServidor(err); btn.disabled = false; }
+      };
+      if ($('#b-sin-prueba')) $('#b-sin-prueba').onclick = async (e) => {
+        if (!confirm(`¿Sacarle la prueba gratis a ${c.negocio}?\n\nSi todavía no pagó, también se borra el primer vencimiento.`)) return;
+        const b = e.currentTarget; b.disabled = true;
+        try { await api('/api/admin/prueba', { id, quitar: true }); await cargar(); verCliente(id); } catch (err) { $('#error-prueba').textContent = sinServidor(err); b.disabled = false; }
+      };
+      const fw = $('#form-web');
+      if (fw) fw.onsubmit = async (e) => {
+        e.preventDefault(); $('#error-web').textContent = ''; $('#aviso-web').textContent = '';
+        const btn = fw.querySelector('button'); btn.disabled = true;
+        try {
+          const r = await api('/api/admin/pagina-web', { id, url: fw.url.value.trim() });
+          fw.url.value = r.paginaWeb || '';
+          $('#aviso-web').textContent = r.paginaWeb ? 'Guardado: el cliente ya ve el link en su panel.' : 'Guardado: el cliente no ve ningún link.';
+        } catch (err) { $('#error-web').textContent = sinServidor(err); }
+        btn.disabled = false;
       };
       const fc = $('#form-crm');
       if (fc) fc.onsubmit = async (e) => {
