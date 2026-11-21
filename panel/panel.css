@@ -290,7 +290,15 @@ dialog .btns .btn{flex:1 1 180px}
 .fila-btns .btn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center;padding:10px 20px}
 .aviso .btn{margin-top:10px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;padding:10px 20px;min-height:46px}
 .piezas{list-style:none;margin:6px 0 0;padding:0}
-.piezas li{display:grid;grid-template-columns:46px 56px minmax(0,1fr);gap:12px;align-items:center;padding:12px 0;border-top:1px solid #edf1fb}
+.piezas li{border-top:1px solid #edf1fb}
+/* Cada publicación es un botón que la abre entera (pieza.js). */
+.pieza-fila{display:grid;grid-template-columns:46px 56px minmax(0,1fr) 22px;gap:12px;align-items:center;width:100%;padding:12px 6px;margin:0;border:0;border-radius:16px;background:none;text-align:left;font:inherit;color:inherit}
+button.pieza-fila{cursor:pointer}
+button.pieza-fila:hover{background:#f4f7ff}
+button.pieza-fila:hover .ver-pieza{color:var(--azul);transform:translateX(2px)}
+.ver-pieza{color:#a9b6d3;display:grid;place-items:center;transition:transform .15s,color .15s}
+.ver-pieza svg{width:20px;height:20px}
+.estado.vencida{background:var(--rojo-suave);color:#a3203a}
 .piezas li:first-child{border-top:0}
 .piezas .dia-caja{display:grid;justify-items:center;line-height:1.05}
 .piezas .dia-caja small{font:500 12px "Martian Mono",monospace;color:var(--gris)}
@@ -312,6 +320,6 @@ dialog .btns .btn{flex:1 1 180px}
   .tres{grid-template-columns:repeat(2,minmax(0,1fr))}
   .archivos{grid-template-columns:repeat(4,minmax(0,1fr))}
   .tres div:first-child{grid-column:1/-1}
-  .piezas li{grid-template-columns:38px 52px minmax(0,1fr);gap:10px}
+  .pieza-fila{grid-template-columns:38px 52px minmax(0,1fr) 18px;gap:10px;padding:12px 2px}
   .mini-pieza{width:52px;height:52px}
 }
