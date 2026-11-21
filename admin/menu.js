@@ -24,6 +24,7 @@
     { g: 'Clientes', items: [
       { href: 'bots.html', ic: '🤖', t: 'Clientes', d: 'Bots, servicios y cobros' },
       { href: 'cuestionarios.html', ic: '📝', t: 'Cuestionarios del Boti', d: 'Respuestas de cada cliente' },
+      { href: 'aprendido.html', ic: '🧠', t: 'Lo que aprendió el Boti', d: 'Aprobar, corregir y deshacer', cuenta: '/api/admin/aprendido/pendientes' },
       { href: 'facturacion.html', ic: '🧾', t: 'Facturación', d: 'Comprobantes ARCA' },
       { href: '../panel/', ext: true, ic: '📱', t: 'Portal de clientes', d: 'La vista de cada cliente' },
     ] },
@@ -67,6 +68,8 @@
   .mm-it .mm-ic{flex:0 0 28px;height:28px;border-radius:9px;background:#eef3ff;display:grid;place-items:center;font-size:15px}
   .mm-it b{display:block;font-weight:600;font-size:13.5px}.mm-it small{display:block;color:#4a5878;font-size:11.5px}
   .mm-it .mm-ext{margin-left:auto;color:#8a96b3;font-size:12px}
+  .mm-it .mm-n{margin-left:auto;flex:0 0 auto;min-width:22px;height:22px;padding:0 6px;border-radius:99px;background:#c2364e;color:#fff;display:grid;place-items:center;font:800 12.5px Archivo,system-ui,sans-serif}
+  .mm-it .mm-n[hidden]{display:none}
   .mm-it[aria-current=page]{background:#e6eeff;box-shadow:inset 3px 0 0 #2f6bff}.mm-it[aria-current=page] b{color:#1f57e6}
   .mm-pie{padding:10px 16px 14px;border-top:1px solid #eef2fb;font-size:12px;color:#4a5878}
   .mm-velo{position:fixed;inset:0;background:rgba(14,26,51,.45);z-index:44;display:none}
@@ -90,7 +93,7 @@
     const lat = document.createElement('aside');
     lat.className = 'mm-lat'; lat.id = 'mmMenu'; lat.setAttribute('aria-label', 'Menú del panel');
     const fila = (it) => `<a class="mm-it" href="${esc(it.href)}"${it.ext ? ' target="_blank" rel="noopener"' : ''}${esAqui(it) ? ' aria-current="page"' : ''}>
-      <span class="mm-ic" aria-hidden="true">${it.ic}</span><span><b>${esc(it.t)}</b><small>${esc(it.d)}</small></span>${it.ext ? '<span class="mm-ext" aria-label="se abre en otra pestaña">↗</span>' : ''}</a>`;
+      <span class="mm-ic" aria-hidden="true">${it.ic}</span><span><b>${esc(it.t)}</b><small>${esc(it.d)}</small></span>${it.ext ? '<span class="mm-ext" aria-label="se abre en otra pestaña">↗</span>' : ''}${it.cuenta ? `<span class="mm-n" data-cuenta="${esc(it.href)}" hidden></span>` : ''}</a>`;
     lat.innerHTML = `<div class="mm-cab"><a class="mm-logo" href="./">MyM <span>Soluciones</span></a>
       <button class="mm-cerrar" type="button" aria-label="Ocultar el menú" title="Ocultar el menú">«</button></div>
       <nav>${SECCIONES.map((s) => {
@@ -135,16 +138,33 @@
   }
   function cerrarCajon() { H.classList.remove('mm-abierto'); }
   function cerrar() { if (enCompu()) { H.classList.add('mm-plegado'); recordar(true); } else cerrarCajon(); }
+  // Contadores (21/11/2026): un ítem con «cuenta» muestra cuántas cosas esperan ahí (hoy, los datos que el Boti
+  // aprendió y hay que aprobar). El número sale de la plataforma de bots: { total }. Si no responde, no se muestra nada.
+  function contar(href, n) {
+    const g = document.querySelector('#mmMenu .mm-n[data-cuenta="' + href + '"]'); if (!g) return;
+    g.hidden = !(n > 0); g.textContent = n > 99 ? '99+' : String(n || '');
+    g.setAttribute('aria-label', n === 1 ? '1 para aprobar' : n + ' para aprobar');
+  }
+  async function cargarCuentas() {
+    const api = String((LOCAL && new URLSearchParams(location.search).get('api')) || (window.SITE || {}).plataformaApi || '').replace(/\/+$/, '');
+    if (!api || !window.ACCESO) return;
+    for (const it of SECCIONES.flatMap((s) => s.items).filter((x) => x.cuenta)) {
+      try {
+        const r = await fetch(api + it.cuenta, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + await window.ACCESO.token() }, body: '{}' });
+        if (r.ok) contar(it.href, Number((await r.json()).total) || 0);
+      } catch (e) { /* sin conexión o servidor viejo: el menú queda sin número */ }
+    }
+  }
   let listo = false;
   function mostrar(u) {
-    if (!listo) { armar(); listo = true; }
+    if (!listo) { armar(); listo = true; cargarCuentas(); }
     document.documentElement.classList.add('mm-on');
     if (u && u.email) { const q = document.getElementById('mmQuien'); if (q) q.textContent = u.email; }
   }
   function ocultar() { if (LOCAL) return; document.documentElement.classList.remove('mm-on', 'mm-abierto'); }
   const LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
 
-  window.MENU = { mostrar, ocultar, abrir, cerrar, SECCIONES };
+  window.MENU = { mostrar, ocultar, abrir, cerrar, contar, SECCIONES };
   if (window.__menuPendiente) mostrar(window.__menuPendiente);
 })();
 // En la compu (localhost) no hay puerta de Google (el proyecto no tiene habilitado localhost): el menú se muestra
