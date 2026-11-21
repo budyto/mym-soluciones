@@ -65,6 +65,7 @@
             cambiadoPor: quien, cambiado: firebase.firestore.FieldValue.serverTimestamp(), creado: firebase.firestore.FieldValue.serverTimestamp() };
           var ref = await col.add(d); await copiarCrm(ref.id, d); nuevos++; continue;
         }
+        if (ya.x.campanaManual && dest.etapa !== 7) continue; // alguien lo revisó a mano: la campaña no lo vuelve a mover (solo las bajas)
         var e = Number(ya.x.etapa) || 1;
         var subir = dest.etapa === 7 ? e !== 7 : (dest.etapa > e && e !== 7);
         if (!subir) { if (!ya.x.campanaId) await col.doc(ya.id).set({ campanaId: num }, { merge: true }); continue; }
