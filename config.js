@@ -8,9 +8,16 @@ window.SITE = {
   // El panel admin/whatsapp.html lee y contesta esas charlas desde acá.
   ventasApi: "https://mym-creditos-81440681742.southamerica-east1.run.app",
 
-  // Panel admin (12/11/2026, Matías): se entra con Google y sólo estas cuentas. La lista de verdad la
-  // controla el server de MyM (variable VENTAS_SOL_PANEL_EMAILS): esta copia sólo sirve para avisar
-  // antes. firebaseWeb es la configuración pública del proyecto de MyM (la misma del CRM): no es secreta.
+  // Panel admin: se entra con Google y sólo estas cuentas. Matías, 21/11/2026: «los 3 tenemos que tener
+  // acceso a todo». Esta es LA lista de la web (la usan todas las páginas de admin/ por acceso.js), pero cada
+  // servidor vuelve a verificar la cuenta con su propia lista, que tiene que ser IGUAL a esta:
+  //   - server de MyM (AppMyM): variable VENTAS_SOL_PANEL_EMAILS → inicio, WhatsApp, campaña, mails y métricas;
+  //   - plataforma de bots: variable ADMIN_EMAILS (y su valor por defecto en servidor/index.js) → clientes,
+  //     facturación y métricas;
+  //   - base del Grupo MyM: diagnósticos = admins del grupo o miembros de la empresa «agencia-ia» (se suma
+  //     desde el CRM); mails = admins del grupo o prospeccionSol() de crm/firestore.rules.
+  // Si se suma o se saca una cuenta, se cambia acá y en esos lugares. firebaseWeb es la configuración pública
+  // del proyecto de MyM (la misma del CRM): no es secreta.
   adminEmails: ["matiasvale32@gmail.com", "dagiodes1@gmail.com", "matiasnappe7@gmail.com"],
   firebaseWeb: {
     apiKey: "AIzaSyD8BTD9IhswuPxuCWDL1f-OiCkeIbvYDzY",
