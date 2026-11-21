@@ -14,6 +14,9 @@
      en el servidor de la plataforma (SITE.plataformaApi) y puede volver otro día con el mismo link.
      Las preguntas y sus reglas NO están acá: se leen del servidor (/cuestionario/preguntas.js), que usa las mismas
      para calcular el porcentaje y armar la ficha. Para cambiar una pregunta se toca ese archivo, en plataforma-bots.
+     Fotos y archivos (21/11/2026, pedido de Matías): el logo, las fotos y las listas se suben desde acá, en partes, al
+     mismo servidor (/api/cuestionario/archivo/…), que los guarda en el Drive de MyM en una carpeta compartida con el
+     cliente. El navegador nunca habla con Google ni recibe claves.
      Nunca se piden contraseñas: si el cliente quiere que MyM maneje una cuenta, los accesos van por WhatsApp a Matías. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -109,6 +112,42 @@ input:disabled,textarea:disabled{opacity:.45}
 .fin.recibido{border-color:var(--ok)}
 .faltan{margin:0;padding-left:1.15em;display:grid;gap:2px;font-size:.95rem}
 .faltan a{color:var(--azul);font-weight:600;display:inline-block;padding-block:4px}
+/* Fotos y archivos: cada zona es una tira de cuadrados (lo ya subido, lo que está subiendo) y abajo los botones
+   para sumar. En el celular hay dos: elegir de la galería o sacar la foto en el momento. */
+.zona{padding-block:16px;border-top:1px solid var(--borde);scroll-margin-top:80px}
+#zonas .zona:first-child{border-top:0}
+.zona-cab{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.zona-cab b{font-weight:700}
+.zona-cab span{font-size:.85rem;color:var(--gris);font-variant-numeric:tabular-nums;white-space:nowrap}
+.zona.suelta{outline:3px dashed var(--azul);outline-offset:6px;border-radius:6px}
+.tira{list-style:none;margin:10px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px}
+.tira:empty{display:none}
+.pieza{position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;background:var(--suave);border:1.5px solid var(--borde)}
+.pieza img{width:100%;height:100%;object-fit:cover;display:block}
+.zona[data-zona=logo] .pieza img{object-fit:contain;padding:10px;background:#fff}
+.pieza .tipo{position:absolute;inset:0;display:grid;place-items:center;align-content:center;gap:2px;font:800 1.25rem/1 var(--f-tit);color:var(--azul);padding-bottom:18px}
+.pieza:has(.sube) .tipo{visibility:hidden}
+.pieza .tipo small{font:600 .7rem/1.2 var(--f-txt);color:var(--gris)}
+.pieza .chapa{position:absolute;top:8px;left:8px;padding:3px 7px;border-radius:6px;background:var(--papel);color:var(--azul);font:800 .72rem/1 var(--f-tit)}
+.pieza .nombre{position:absolute;left:0;right:0;bottom:0;padding:16px 8px 6px;font-size:.72rem;line-height:1.2;color:#fff;background:linear-gradient(transparent,rgba(8,16,40,.82));white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pieza .quitar{position:absolute;top:4px;right:4px;width:40px;height:40px;border-radius:50%;border:0;background:rgba(8,16,40,.72);color:#fff;font-size:1.3rem;line-height:1;cursor:pointer}
+.pieza .quitar[disabled]{opacity:.5}
+.pieza .sube{position:absolute;inset:0;display:grid;place-items:center;background:rgba(8,16,40,.6);color:#fff;font-weight:700;font-variant-numeric:tabular-nums}
+.pieza .sube i{position:absolute;left:0;bottom:0;height:7px;width:0;background:var(--agua);transition:width .2s}
+/* Lo que no se pudo subir ocupa un renglón entero, con el motivo y qué hacer */
+.pieza.mal{grid-column:1/-1;aspect-ratio:auto;border-color:var(--mal);background:var(--papel);display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 12px;font-size:.9rem;line-height:1.35;color:var(--mal)}
+.pieza.mal span{flex:1 1 200px;overflow-wrap:anywhere}
+.pieza.mal button{border:1.5px solid var(--borde);background:var(--fondo);color:var(--tinta);border-radius:8px;min-height:44px;padding:8px 14px;font-weight:700;font-size:.9rem;cursor:pointer}
+.sumar{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.sumar label{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:10px 16px;border:1.5px solid var(--borde);border-radius:10px;background:var(--fondo);font-weight:700;cursor:pointer}
+.sumar label:has(input:focus-visible){outline:3px solid var(--azul);outline-offset:2px}
+.sumar label[aria-disabled=true]{opacity:.5;cursor:not-allowed}
+.sumar input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.sumar .camara{display:none}
+@media (hover:none) and (pointer:coarse){.sumar .camara{display:inline-flex}}
+.reglas{font-size:.85rem;color:var(--gris);margin-top:8px}
+.carpeta{padding-block:14px 16px;border-top:1px solid var(--borde);font-size:.95rem;color:var(--gris)}
+.carpeta a{color:var(--azul);font-weight:700}
 .fila{display:flex;flex-wrap:wrap;gap:10px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:12px 20px;border-radius:12px;font:700 1rem/1.15 var(--f-txt);border:2px solid transparent;cursor:pointer;text-decoration:none;text-align:center}
 .btn-azul{background:var(--azul);color:var(--sobre-azul)}
@@ -151,13 +190,22 @@ input:disabled,textarea:disabled{opacity:.45}
 
   <form id="form" novalidate autocomplete="off"></form>
 
+  <!-- Fotos y archivos (21/11/2026, pedido de Matías): se suben desde acá y quedan en el Drive de MyM, en una carpeta
+       compartida con el cliente. Las zonas y los topes los manda el servidor; si la subida no está activada, no se muestra. -->
+  <section class="sec" id="sec-archivos" hidden style="margin-bottom:18px">
+    <h2>Fotos y archivos</h2>
+    <p class="d">Subí tu logo, fotos y listas de precios desde acá. Quedan guardados en una carpeta de Google Drive que compartimos con vos. No cuentan para el porcentaje: mandá lo que tengas.</p>
+    <div id="zonas"></div>
+    <p class="carpeta" id="carpeta" hidden></p>
+  </section>
+
   <section class="fin" id="fin">
     <h2 id="finTitulo">¿Terminaste?</h2>
     <p id="finTexto"></p>
     <ul class="faltan" id="faltan" hidden></ul>
     <div class="fila"><button class="btn btn-azul" id="listo" type="button">Listo, ya completé</button></div>
     <p id="finError" class="aviso" hidden></p>
-    <p>¿Tenés fotos, el logo o una lista de precios en foto o PDF? Mandalos al WhatsApp de MyM Soluciones: <span class="numero">11 3366-2080</span>.</p>
+    <p id="finArchivos">¿Tenés fotos, el logo o una lista de precios en foto o PDF? Mandalos al WhatsApp de MyM Soluciones: <span class="numero">11 3366-2080</span>.</p>
   </section>
 </main>
 
@@ -241,7 +289,7 @@ input:disabled,textarea:disabled{opacity:.45}
       if (q.aviso) { const m = q.aviso(a), el = $(q.id + '-aviso'); el.hidden = !m; el.textContent = m; }
       if (q.otro) $(q.id + '-otro-caja').hidden = a[q.id] !== 'Otro';
       if (q.na) { const off = !!a[q.id + '__na']; caja.querySelectorAll('input[type=text],textarea,button').forEach((el) => { el.disabled = off; }); } });
-    $('fin').hidden = sinTipo;
+    $('fin').hidden = sinTipo; $('sec-archivos').hidden = sinTipo || !ARCH;
     const p = Q.progreso(a), faltan = p.faltan;
     $('barra').style.width = p.porcentaje + '%'; $('pct').textContent = p.porcentaje + ' %';
     $('fin').classList.toggle('recibido', listo);
@@ -323,6 +371,166 @@ input:disabled,textarea:disabled{opacity:.45}
     };
   }
 
+  /* ===================== Fotos y archivos =====================
+     Cada archivo se manda en partes de 4 MB al servidor de la plataforma, con la llave del cuestionario; el servidor
+     revisa todo y lo pasa al Drive de MyM. Acá sólo se avisa antes lo que seguro va a rebotar (tipo, peso, cantidad)
+     y se muestra el avance. Se sube de a uno, en orden. */
+  let ARCH = null;              // reglas y zonas que manda el servidor
+  const piezas = {};            // por zona: lo subido, lo que está subiendo y lo que falló
+  const cola = []; let subiendo = false, claves = 0;
+  const TIPO_POR_EXT = { jpg: 'jpg', jpeg: 'jpg', png: 'png', webp: 'webp', heic: 'heic', heif: 'heic', pdf: 'pdf' };
+  const TIPO_POR_MIME = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/heic': 'heic', 'image/heif': 'heic', 'application/pdf': 'pdf' };
+  const ACEPTA = { jpg: 'image/jpeg', png: 'image/png', webp: 'image/webp', heic: 'image/heic,image/heif,.heic,.heif', pdf: 'application/pdf' };
+  const NOMBRES = { jpg: 'JPG', png: 'PNG', webp: 'WEBP', heic: 'HEIC', pdf: 'PDF' };
+  const tipoDe = (nombre, mime) => TIPO_POR_EXT[(String(nombre).toLowerCase().match(/\.([a-z0-9]+)$/) || [])[1]] || TIPO_POR_MIME[String(mime || '').toLowerCase()] || null;
+  const peso = (b) => (b >= 1048576 ? (b / 1048576).toFixed(1).replace('.', ',') + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB');
+  const seVe = (tipo) => ['jpg', 'png', 'webp'].includes(tipo);   // lo que el navegador puede mostrar sin ayuda
+  const zonaDe = (id) => ARCH.zonas.find((z) => z.id === id);
+  const enZona = (id) => piezas[id].filter((p) => p.estado !== 'mal').length;
+
+  function iniciarArchivos(datos) {
+    ARCH = datos && datos.activo ? datos : null;
+    if (!ARCH) return;   // sin la subida activada queda el texto de siempre: mandarlos por WhatsApp
+    $('finArchivos').innerHTML = '¿Tenés fotos, el logo o una lista de precios? <a href="#sec-archivos" data-ir="sec-archivos" style="color:var(--azul);font-weight:700">Subilos en «Fotos y archivos»</a>.';
+    ARCH.zonas.forEach((z) => { piezas[z.id] = ARCH.lista.filter((f) => f.zona === z.id).map((f) => ({ clave: 'p' + (++claves), id: f.id, nombre: f.nombre, tipo: tipoDe(f.nombre, f.tipo), tamano: f.tamano, estado: 'listo' })); });
+    $('zonas').innerHTML = ARCH.zonas.map((z) => {
+      const acepta = z.tipos.map((t) => ACEPTA[t]).join(',');
+      return `<div class="zona" id="zona-${z.id}" data-zona="${z.id}">
+        <div class="zona-cab"><b id="zt-${z.id}">${esc(z.t)}</b><span id="zc-${z.id}"></span></div>
+        <span class="h">${esc(z.d)}</span>
+        <ul class="tira" id="tira-${z.id}" aria-labelledby="zt-${z.id}"></ul>
+        <div class="sumar">
+          <label><input type="file" data-elegir="${z.id}" accept="${acepta}" multiple>${z.tipos.includes('pdf') ? 'Elegir archivos' : 'Elegir fotos'}</label>
+          <label class="camara"><input type="file" data-elegir="${z.id}" accept="image/*" capture="environment">Sacar foto</label>
+        </div>
+        <p class="reglas">Archivos ${z.tipos.map((t) => NOMBRES[t]).join(', ').replace(/, ([^,]+)$/, ' o $1')}, de hasta ${Math.round(ARCH.maxBytes / 1048576)} MB cada uno. Entran ${z.max}.</p>
+        <div class="aviso" id="za-${z.id}" role="status" hidden></div>
+      </div>`; }).join('');
+    ARCH.zonas.forEach((z) => dibujarZona(z.id));
+    carpeta(ARCH.carpeta);
+    const zonas = $('zonas');
+    zonas.addEventListener('change', (e) => { const z = e.target.dataset.elegir; if (!z) return; sumar(z, Array.from(e.target.files || [])); e.target.value = ''; });
+    zonas.addEventListener('click', (e) => { const d = e.target.dataset;
+      if (d.quitar) quitar(d.zona, d.quitar);
+      if (d.sacar) { piezas[d.zona] = piezas[d.zona].filter((p) => p.clave !== d.sacar); dibujarZona(d.zona); }
+      if (d.otra) { const p = piezas[d.zona].find((x) => x.clave === d.otra); if (p && p.archivo) { p.estado = 'cola'; p.error = ''; p.pct = 0; cola.push(p); dibujarZona(d.zona); seguirCola(); } } });
+    // En la compu también se pueden arrastrar los archivos hasta la zona.
+    zonas.addEventListener('dragover', (e) => { const z = e.target.closest('.zona'); if (!z) return; e.preventDefault(); z.classList.add('suelta'); });
+    zonas.addEventListener('dragleave', (e) => { const z = e.target.closest('.zona'); if (z && !z.contains(e.relatedTarget)) z.classList.remove('suelta'); });
+    zonas.addEventListener('drop', (e) => { const z = e.target.closest('.zona'); if (!z) return; e.preventDefault(); z.classList.remove('suelta'); sumar(z.dataset.zona, Array.from(e.dataTransfer.files || [])); });
+    $('finArchivos').addEventListener('click', (e) => { if (e.target.dataset.ir) { e.preventDefault(); $('sec-archivos').scrollIntoView({ block: 'start' }); } });
+    cargarMiniaturas();
+  }
+  function carpeta(link) {
+    const el = $('carpeta'); el.hidden = !link;
+    if (link) el.innerHTML = `Todo lo que subís queda en tu carpeta de Google Drive, compartida con el mail que nos diste. <a href="${esc(link)}" target="_blank" rel="noopener">Abrir mi carpeta</a>`;
+  }
+  function avisoZona(z, mensajes) { const el = $('za-' + z); el.hidden = !mensajes.length; el.innerHTML = mensajes.map(esc).join('<br>'); }
+  function dibujarZona(z) {
+    const regla = zonaDe(z), n = enZona(z);
+    $('zc-' + z).textContent = n ? `${n} de ${regla.max}` : '';
+    $('tira-' + z).innerHTML = piezas[z].map((p) => {
+      if (p.estado === 'mal') return `<li class="pieza mal" data-clave="${p.clave}"><span>${esc(p.nombre)}: ${esc(p.error)}</span>${p.reintentable ? `<button type="button" data-otra="${p.clave}" data-zona="${z}">Reintentar</button>` : ''}<button type="button" data-sacar="${p.clave}" data-zona="${z}">Quitar</button></li>`;
+      const fondo = p.url ? `<img src="${p.url}" alt="">${p.tipo === 'pdf' ? '<span class="chapa">PDF</span>' : ''}` : `<span class="tipo">${NOMBRES[p.tipo] || 'Archivo'}<small>${peso(p.tamano)}</small></span>`;
+      const encima = p.estado === 'listo'
+        ? `<button type="button" class="quitar" data-quitar="${p.clave}" data-zona="${z}" aria-label="Borrar ${esc(p.nombre)}"${p.borrando ? ' disabled' : ''}>×</button>`
+        : `<span class="sube" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${p.pct || 0}" aria-label="Subiendo ${esc(p.nombre)}"><b>${p.estado === 'cola' ? 'En espera' : (p.pct || 0) + ' %'}</b><i style="width:${p.pct || 0}%"></i></span>`;
+      return `<li class="pieza" data-clave="${p.clave}">${fondo}<span class="nombre">${esc(p.nombre)}</span>${encima}</li>`; }).join('');
+    document.querySelectorAll(`[data-elegir="${z}"]`).forEach((el) => { el.disabled = n >= regla.max; el.parentNode.setAttribute('aria-disabled', n >= regla.max); });
+  }
+  // Mueve la barra de una pieza sin redibujar la tira (así las fotos no parpadean).
+  function avance(p, pct) {
+    p.pct = pct; const el = document.querySelector(`[data-clave="${p.clave}"] .sube`); if (!el) return;
+    el.setAttribute('aria-valuenow', pct); el.querySelector('b').textContent = pct + ' %'; el.querySelector('i').style.width = pct + '%';
+  }
+  // Los archivos elegidos: lo que seguro no entra se avisa ahí mismo; el resto va a la cola.
+  function sumar(z, archivos) {
+    if (!archivos.length || cortado) return;
+    const regla = zonaDe(z), avisos = []; let lugar = regla.max - enZona(z);
+    archivos.forEach((f) => {
+      const tipo = tipoDe(f.name, f.type);
+      if (!tipo || !regla.tipos.includes(tipo)) return avisos.push(`«${f.name}» no se puede subir acá: van ${regla.tipos.map((t) => NOMBRES[t]).join(', ')}.`);
+      if (!f.size) return avisos.push(`«${f.name}» está vacío.`);
+      if (f.size > ARCH.maxBytes) return avisos.push(`«${f.name}» pesa ${peso(f.size)}: el máximo es ${Math.round(ARCH.maxBytes / 1048576)} MB. Achicalo o mandalo por WhatsApp al 11 3366-2080.`);
+      if (lugar <= 0) return avisos.push(`«${f.name}» no entró: acá van hasta ${regla.max}. Borrá alguno para subir otro.`);
+      lugar--;
+      const p = { clave: 'p' + (++claves), zona: z, nombre: f.name, tipo, tamano: f.size, estado: 'cola', pct: 0, archivo: f, url: seVe(tipo) ? URL.createObjectURL(f) : '' };
+      piezas[z].push(p); cola.push(p);
+    });
+    avisoZona(z, avisos); dibujarZona(z); seguirCola();
+  }
+  function mandarParte(subida, desde, parte, alAvanzar) {
+    return new Promise((ok) => {
+      const x = new XMLHttpRequest();
+      x.open('POST', `${API}/api/cuestionario/archivo/trozo?s=${encodeURIComponent(subida)}&d=${desde}`);
+      x.setRequestHeader('Authorization', 'Llave ' + LLAVE); x.setRequestHeader('Content-Type', 'application/octet-stream');
+      x.upload.onprogress = (e) => { if (e.lengthComputable) alAvanzar(e.loaded); };
+      x.onload = () => { let d = {}; try { d = JSON.parse(x.responseText || '{}'); } catch (e) { /* respuesta rara: se trata como falla */ } ok({ codigo: x.status, datos: d }); };
+      x.onerror = x.ontimeout = () => ok({ codigo: 0, datos: {} });
+      x.timeout = 120000; x.send(parte);
+    });
+  }
+  const esperar = (ms) => new Promise((ok) => setTimeout(ok, ms));
+  async function subirArchivo(p) {
+    const f = p.archivo;
+    const e = await pedir('/api/cuestionario/archivo/empezar', { t: LLAVE, zona: p.zona, nombre: f.name, tamano: f.size, tipo: f.type });
+    let desde = 0, fallas = 0;
+    for (let vueltas = 0; vueltas < 60; vueltas++) {
+      const r = await mandarParte(e.subida, desde, f.slice(desde, desde + e.trozo), (n) => avance(p, Math.min(99, Math.round((desde + n) * 100 / f.size))));
+      if (r.codigo === 201) return r.datos;
+      if (r.codigo === 200 && r.datos.recibido > desde) { desde = r.datos.recibido; fallas = 0; continue; }
+      if (r.codigo === 409 && typeof r.datos.recibido === 'number') { desde = r.datos.recibido; continue; }   // el servidor dice por dónde seguir
+      // Sin conexión o Drive lento: se reintenta la misma parte unas veces antes de darse por vencido.
+      if ((r.codigo === 0 || (r.codigo === 502 && r.datos.reintentar)) && ++fallas <= 4) { await esperar(1500 * fallas); continue; }
+      throw Object.assign(new Error(r.datos.error || 'Se cortó la conexión mientras subía.'), { codigo: r.codigo, reintentable: r.codigo === 0 || r.codigo === 502 || r.codigo === 503 || r.codigo === 429 });
+    }
+    throw Object.assign(new Error('No se pudo terminar de subir.'), { reintentable: true });
+  }
+  async function seguirCola() {
+    if (subiendo) return; subiendo = true;
+    while (cola.length && !cortado) {
+      const p = cola.shift();
+      if (!piezas[p.zona].includes(p)) continue;
+      p.estado = 'subiendo'; dibujarZona(p.zona);
+      try {
+        const r = await subirArchivo(p);
+        Object.assign(p, { estado: 'listo', id: r.archivo.id, nombre: r.archivo.nombre, archivo: null });
+        if (!$('carpeta').innerHTML) pedir('/api/cuestionario/abrir', { t: LLAVE }).then((d) => carpeta(d.archivos && d.archivos.carpeta)).catch(() => {});
+      } catch (err) {
+        if (err.codigo === 403) { cortado = true; cartel(LINK_MALO[0], LINK_MALO[1]); break; }
+        if (p.url) { URL.revokeObjectURL(p.url); p.url = ''; }
+        Object.assign(p, { estado: 'mal', error: err.message === 'Failed to fetch' ? 'No hay conexión.' : err.message, reintentable: !!err.reintentable || !err.codigo || [429, 502, 503].includes(err.codigo) });
+      }
+      dibujarZona(p.zona);
+    }
+    subiendo = false;
+  }
+  async function quitar(z, clave) {
+    const p = piezas[z].find((x) => x.clave === clave);
+    if (!p || p.borrando || !confirm(`¿Borrar «${p.nombre}»?`)) return;
+    p.borrando = true; dibujarZona(z);
+    try { await pedir('/api/cuestionario/archivo/borrar', { t: LLAVE, id: p.id }); }
+    catch (err) {
+      if (err.codigo === 403) { cortado = true; return cartel(LINK_MALO[0], LINK_MALO[1]); }
+      if (err.codigo !== 404) { p.borrando = false; dibujarZona(z); return avisoZona(z, ['No pudimos borrar «' + p.nombre + '». Revisá tu conexión y probá de nuevo.']); }
+    }
+    if (p.url) URL.revokeObjectURL(p.url);
+    piezas[z] = piezas[z].filter((x) => x !== p); avisoZona(z, []); dibujarZona(z);
+  }
+  // Las miniaturas de lo que ya estaba subido se piden de a una (con la llave); si no hay, queda el cartel del tipo.
+  async function cargarMiniaturas() {
+    for (const z of ARCH.zonas) for (const p of piezas[z.id].slice()) {
+      if (p.url || p.estado !== 'listo' || cortado) continue;
+      try {
+        const r = await fetch(API + '/api/cuestionario/archivo/miniatura', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ t: LLAVE, id: p.id }) });
+        if (!r.ok) continue;
+        p.url = URL.createObjectURL(await r.blob()); dibujarZona(z.id);
+      } catch (e) { /* sin miniatura: queda el cartel del tipo */ }
+    }
+  }
+  // Si cierra la página con archivos a medio subir, el navegador pregunta antes.
+  window.addEventListener('beforeunload', (e) => { if (subiendo || cola.length) { e.preventDefault(); e.returnValue = ''; } });
+
   /* ===================== Arranque ===================== */
   (async function () {
     if (!API) return cartel('El cuestionario no está disponible', 'Probá de nuevo en un rato o escribinos por WhatsApp al 11 3366-2080.');
@@ -342,7 +550,7 @@ input:disabled,textarea:disabled{opacity:.45}
     $('para').textContent = d.negocio ? 'Cuestionario de ' + d.negocio : '';
     $('para').hidden = !d.negocio;
     $('v-cartel').hidden = true; $('v-form').hidden = false; $('arriba').hidden = false;
-    escuchar(); volcar();
+    escuchar(); iniciarArchivos(d.archivos); volcar();
     if (pendiente) agendar(0); else estado(d.actualizado ? '✓ Guardado' : 'Se guarda solo', d.actualizado ? 'ok' : '');
   })();
 })();
