@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;900&family=Instrument+Serif:ital@1&family=Michroma&family=Martian+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../tramites/tramite.css?v=202611192000">
-<link rel="stylesheet" href="panel.css?v=202611201200">
+<link rel="stylesheet" href="panel.css?v=202611211800">
 </head>
 <body>
 
@@ -92,6 +92,20 @@
       <p class="paso">El estado de cada servicio contratado. Si notás alguna diferencia con lo acordado, contactanos y lo revisamos.</p>
       <p class="error" id="cuenta-error" role="alert"></p>
       <div class="servicios" id="servicios"><p class="chica">Cargando…</p></div>
+    </div>
+    <!-- Consumo del Boti, calendario de redes y material (21/11/2026, pedido de Matías). Cada caja aparece sólo si
+         hay algo para mostrar: sin bot no hay consumo, sin espacio del CRM no hay calendario, sin carpeta no hay material. -->
+    <div class="tarjeta" id="caja-consumo" hidden style="margin-bottom:16px">
+      <h2 class="titulo">Lo que consume tu Boti</h2>
+      <div id="consumo"></div>
+    </div>
+    <div class="tarjeta" id="caja-calendario" hidden style="margin-bottom:16px">
+      <h2 class="titulo">Lo que viene en tus redes</h2>
+      <div id="calendario"></div>
+    </div>
+    <div class="tarjeta" id="caja-material" hidden style="margin-bottom:16px">
+      <h2 class="titulo">Tu material</h2>
+      <div id="material"></div>
     </div>
     <div class="tarjeta" id="caja-cobro-inicio">
       <h3 class="subtitulo">Próximo vencimiento</h3>
@@ -261,6 +275,6 @@
 <div class="tostada" id="tostada" role="status" aria-live="polite"></div>
 
 <script src="../config.js?v=202611142100"></script>
-<script src="panel.js?v=202611201200"></script>
+<script src="panel.js?v=202611211800"></script>
 </body>
 </html>

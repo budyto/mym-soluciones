@@ -172,7 +172,7 @@
     sel.value = cliente(); $('#caja-negocios').hidden = S.clientes.length < 2;
     $('#r-negocio').textContent = (S.clientes.find((c) => c.id === cliente()) || {}).negocio || 'Tu negocio';
     verSeccion(charlaInicial ? 'charlas' : 'inicio');
-    refrescarResumen(); refrescarLista(); refrescarCuenta();
+    refrescarResumen(); refrescarLista(); refrescarCuenta(); refrescarExtras();
     if (charlaInicial) abrirDesdeLink(charlaInicial);
   }
   $('#negocios').addEventListener('change', (e) => cambiarNegocio(e.target.value));
@@ -184,7 +184,7 @@
     $('#r-negocio').textContent = (S.clientes.find((c) => c.id === id) || {}).negocio || 'Tu negocio';
     $('#r-numero').textContent = ''; $('#r-estado').hidden = true; $('#r-pausar').hidden = true; $('#r-prender').hidden = true; $('#r-pausa-pago').hidden = true;
     pintarLista(); pintarEspera(0);
-    refrescarResumen(); refrescarLista(); refrescarCuenta();
+    refrescarResumen(); refrescarLista(); refrescarCuenta(); refrescarExtras(true);
     if (seccion === 'bot') cargarFicha();
   }
 
@@ -243,6 +243,7 @@
     if (cual === 'charlas') refrescarLista();
     if (cual === 'seguimiento') cargarSeguimiento();
     if (cual === 'inicio' || cual === 'pagos') refrescarCuenta();
+    if (cual === 'inicio' && S) refrescarExtras();
   }
 
   // =====================================================================================
@@ -339,6 +340,168 @@
       a.download = f.etiqueta.replace(/[^\w-]+/g, '_') + '.pdf'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
     } catch (e) { tostada(e.message, true); }
     b.disabled = false; b.textContent = antes;
+  }
+
+
+  // =====================================================================================
+  // Inicio: lo que consume el Boti, el calendario de redes y el material (21/11/2026, pedido de Matías).
+  // Tres pedidos sueltos: si uno falla o el servidor todavía no lo tiene, esa caja no aparece y el resto sigue.
+  // Todo es sólo lectura; para aprobar una publicación se va al CRM.
+  // =====================================================================================
+  const WA = '11 3366-2080';
+  const pes = (n) => plata(n).replace(' ', String.fromCharCode(160)); // el monto no se parte en dos renglones
+  const numero = (n) => Number(n || 0).toLocaleString('es-AR');
+  const diaMes = (iso) => { const d = new Date(String(iso).length === 10 ? iso + 'T12:00:00-03:00' : iso); return isNaN(d) ? '' : d.toLocaleDateString('es-AR', { timeZone: TZ, day: 'numeric', month: 'long' }); };
+  const nombreMes = (p) => { const t = new Date(p + '-15T12:00:00-03:00').toLocaleDateString('es-AR', { timeZone: TZ, month: 'long', year: 'numeric' }); return t.charAt(0).toUpperCase() + t.slice(1); };
+  let vueltaExtras = 0; let ultimaExtras = 0;
+  function refrescarExtras(forzar) {
+    const cli = cliente(); if (!cli) return;
+    if (!forzar && Date.now() - ultimaExtras < 30000) return; // volver a Inicio no vuelve a pedir todo cada vez
+    ultimaExtras = Date.now();
+    const vuelta = ++vueltaExtras;
+    const pedir = async (ruta, caja, pintar) => {
+      try {
+        const d = await api(ruta, { cliente: cli });
+        if (vuelta !== vueltaExtras || cli !== cliente()) return; // cambió de negocio mientras tanto
+        $(caja).hidden = !pintar(d);
+      } catch (e) { if (S && vuelta === vueltaExtras) $(caja).hidden = true; }
+    };
+    if (forzar) for (const c of ['#caja-consumo', '#caja-calendario', '#caja-material']) $(c).hidden = true;
+    pedir('/api/panel/consumo', '#caja-consumo', pintarConsumo);
+    pedir('/api/panel/calendario', '#caja-calendario', pintarCalendario);
+    pedir('/api/panel/material', '#caja-material', pintarMaterial);
+  }
+
+  // ---------- Consumo ----------
+  const NOMBRE_TIPO_IA = { texto: ['respuesta', 'respuestas'], audio: ['audio', 'audios'], imagen: ['imagen', 'imágenes'], documento: ['documento', 'documentos'] };
+  function pintarConsumo(d) {
+    if (!d || !d.tieneBot) return false;
+    const caja = $('#consumo'); vaciar(caja);
+    const p = d.periodo || {};
+    const iva = ' + IVA';
+    caja.append(el('p', { class: 'paso' }, (p.desde ? `Desde el ${diaMes(p.desde)}` : 'En este período') + (p.vence ? `. El período cierra con tu próximo abono, el ${diaMes(p.vence)}.` : '.')));
+    if (d.limite && d.limite.frenado) caja.append(el('p', { class: 'aviso mal' }, `Tu Boti llegó al límite de seguridad y dejó de contestar. Escribinos por WhatsApp al ${WA} y lo subimos.`));
+
+    if (d.regla === 'incluida') {
+      caja.append(el('div', { class: 'cifra' }, el('b', null, numero(p.respuestas)), el('span', null, p.respuestas === 1 ? 'respuesta del Boti' : 'respuestas del Boti')));
+      caja.append(el('p', { class: 'lectura' }, 'La IA está incluida en tu precio acordado: no pagás nada aparte por lo que consume.'));
+    } else {
+      const conMinimo = d.regla === 'consumo' && p.incluido > 0;
+      caja.append(el('div', { class: 'cifra' }, el('b', null, pes(p.consumo)), el('span', null, conMinimo ? `de ${pes(p.incluido)} incluidos en tu abono` : 'de IA, al costo')));
+      if (conMinimo) {
+        const pasado = p.extra > 0;
+        // Dentro de lo incluido la barra entera es lo incluido; pasado, la barra es todo lo consumido y se parte en dos.
+        const dentro = pasado ? Math.max(8, Math.round((p.incluido / p.consumo) * 100)) : Math.max(p.consumo > 0 ? 2 : 0, Math.min(100, p.avance || 0));
+        const barra = el('div', { class: 'medidor', role: 'img', 'aria-label': pasado ? `Usaste todo lo incluido y ${pes(p.extra)} más` : `Usaste el ${p.avance || 0} % de lo incluido` },
+          el('i', { class: 'dentro' + (pasado ? ' tope' : ''), style: `width:${dentro}%` }), pasado ? el('i', { class: 'extra', style: `width:${100 - dentro}%` }) : null);
+        caja.append(barra, el('div', { class: 'medidor-pie' }, el('span', null, pasado ? `Incluido ${pes(p.incluido)}` : `${p.avance || 0} % usado`), el('span', { class: 'marca-incl' }, pasado ? `Extra ${pes(p.extra)}` : `Incluido ${pes(p.incluido)}`)));
+      }
+      caja.append(el('dl', { class: 'tres' },
+        el('div', null, el('dt', null, 'Respuestas del Boti'), el('dd', null, numero(p.respuestas))),
+        conMinimo ? el('div', null, el('dt', null, 'Incluido en tu abono'), el('dd', null, pes(p.incluido))) : null,
+        conMinimo ? el('div', { class: p.extra > 0 ? 'pasado' : null }, el('dt', null, 'Extra hasta hoy'), el('dd', null, pes(p.extra))) : el('div', null, el('dt', null, 'IA hasta hoy'), el('dd', null, pes(p.aPagar)))));
+      const lectura = !conMinimo ? `Pagás la IA al costo, sin mínimo: hasta hoy son ${pes(p.aPagar)}${iva}.`
+        : p.extra > 0 ? `Te pasaste de lo incluido por ${pes(p.extra)}. Si el período cerrara hoy, la IA de tu próximo abono sería ${pes(p.aPagar)}${iva}, en lugar de ${pes(p.incluido)}${iva}.`
+          : `Vas dentro de lo incluido: la IA de tu próximo abono es ${pes(p.incluido)}${iva}. Si el consumo pasa ese monto, se cobra lo consumido.`;
+      caja.append(el('p', { class: 'lectura' }, lectura));
+    }
+    if (d.limite && !d.limite.frenado) caja.append(el('p', { class: 'chica' }, `Límite de seguridad: vas por el ${d.limite.porcentaje} %. Si llega al 100 %, el Boti deja de contestar hasta que lo subamos o se registre tu abono; al 80 % te avisamos por mail.`));
+    if (p.porValorizar) caja.append(el('p', { class: 'chica', style: 'margin-top:6px' }, 'Hay consumo de los últimos días que todavía no pasamos a pesos. Se suma solo en cuanto tengamos la cotización.'));
+    caja.append(el('p', { class: 'chica', style: 'margin-top:6px' }, `IA en uso: ${d.modelo === 'economico' ? 'económica' : 'recomendada'}. `, el('a', { href: '#', onclick: (e) => { e.preventDefault(); verSeccion('bot'); window.scrollTo(0, 0); } }, 'Cambiarla')));
+
+    const meses = (d.meses || []).filter((m) => m.respuestas > 0);
+    if (meses.length) {
+      const tope = Math.max(...meses.map((m) => m.respuestas));
+      const conPesos = meses.some((m) => m.consumo != null);
+      const tb = el('tbody');
+      for (const m of meses) {
+        const partes = Object.entries(m.tipos || {}).filter(([k, n]) => n > 0 && NOMBRE_TIPO_IA[k]).map(([k, n]) => `${numero(n)} ${NOMBRE_TIPO_IA[k][n === 1 ? 0 : 1]}`);
+        tb.append(el('tr', null,
+          el('td', null, nombreMes(m.periodo), partes.length > 1 ? el('small', null, partes.join(' · ')) : null, el('i', { class: 'mini', style: `width:${Math.max(2, Math.round((m.respuestas / tope) * 100))}%`, 'aria-hidden': 'true' })),
+          el('td', { class: 'cant' }, numero(m.respuestas)),
+          conPesos ? el('td', { class: 'cant' }, m.consumo == null ? '' : pes(m.consumo)) : null));
+      }
+      caja.append(el('details', { class: 'meses' }, el('summary', null, 'Ver mes por mes'),
+        el('table', null, el('thead', null, el('tr', null, el('th', null, 'Mes'), el('th', { class: 'cant' }, 'Respuestas'), conPesos ? el('th', { class: 'cant' }, 'Consumo') : null)), tb),
+        el('p', { class: 'chica', style: 'margin-top:8px' }, `Por mes calendario${d.medidoDesde ? `, medido desde el ${diaMes(d.medidoDesde)}` : ''}. Tu abono se cobra por período de 30 días, así que no coincide justo con el mes.`)));
+    }
+    return true;
+  }
+
+  // ---------- Calendario de redes (viene del CRM de MyM) ----------
+  const RED = { instagram: 'Instagram', facebook: 'Facebook', tiktok: 'TikTok', youtube: 'YouTube' };
+  const FORMATO = { posteo: 'Posteo', carrusel: 'Carrusel', reel: 'Reel', historia: 'Historia', video: 'Video', short: 'Short' };
+  const ESTADO_PIEZA = { esperando_ok: ['Espera tu OK', 'pausa'], programado: ['Programada', 'revision'], publicado: ['Publicada', ''] };
+  function miniPieza(x) {
+    const hueco = () => { const s = el('span', { class: 'mini-pieza', 'aria-hidden': 'true' }); s.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 16l5-4 4 3 3-2 6 4"/></svg>'; return s; };
+    let m = null;
+    if (x.miniatura) m = el('img', { class: 'mini-pieza', src: x.miniatura, alt: '', loading: 'lazy', referrerpolicy: 'no-referrer' });
+    else if (x.video) m = el('video', { class: 'mini-pieza', src: x.video + '#t=0.1', muted: true, playsinline: true, preload: 'metadata', 'aria-hidden': 'true', tabindex: '-1' });
+    if (!m) return hueco();
+    m.addEventListener('error', () => m.replaceWith(hueco()));
+    return m;
+  }
+  function pintarCalendario(d) {
+    if (!d || !d.conectado) return false;
+    const caja = $('#calendario'); vaciar(caja);
+    const abrir = (txt, clase) => el('a', { class: clase, href: d.link, target: '_blank', rel: 'noopener' }, txt);
+    if (!d.disponible) {
+      caja.append(el('p', { class: 'paso' }, 'Tu calendario de publicaciones está en el tablero de redes de MyM. Entrás con tu cuenta de Google.'),
+        el('div', { class: 'fila-btns' }, abrir('Abrir mi calendario', 'btn sec')));
+      return true;
+    }
+    caja.append(el('p', { class: 'paso' }, 'Lo que te vamos a publicar en los próximos 14 días.'));
+    if (d.esperanOk > 0) caja.append(el('div', { class: 'aviso' }, d.esperanOk === 1 ? 'Hay 1 publicación que espera tu OK para salir.' : `Hay ${d.esperanOk} publicaciones que esperan tu OK para salir.`, el('br'), abrir('Revisar y aprobar', 'btn')));
+    const piezas = d.piezas || [];
+    if (!piezas.length) caja.append(el('p', { class: 'chica' }, 'Todavía no hay publicaciones cargadas para estos días. Cuando las armemos, aparecen acá.'));
+    else {
+      const ul = el('ul', { class: 'piezas' }); let previa = null;
+      for (const x of piezas) {
+        const f = new Date(x.fecha + 'T12:00:00-03:00');
+        const est = ESTADO_PIEZA[x.estado] || ['', ''];
+        const datos = [x.hora, RED[x.red], FORMATO[x.formato]].filter(Boolean).join(' · ');
+        ul.append(el('li', { class: x.fecha === previa ? 'mismo-dia' : null },
+          el('div', { class: 'dia-caja' }, el('small', null, f.toLocaleDateString('es-AR', { timeZone: TZ, weekday: 'short' }).replace('.', '')), el('b', null, String(f.toLocaleDateString('es-AR', { timeZone: TZ, day: 'numeric' })))),
+          miniPieza(x),
+          el('div', { class: 'tx' }, el('b', null, x.titulo || 'Publicación'), datos ? el('small', null, datos) : null, el('span', { class: 'estado ' + est[1] }, est[0]),
+            x.enlace ? el('a', { href: x.enlace, target: '_blank', rel: 'noopener' }, 'Ver publicada') : null)));
+        previa = x.fecha;
+      }
+      caja.append(ul);
+    }
+    caja.append(el('div', { class: 'fila-btns' }, abrir('Abrir mi calendario completo', 'btn-chico'), el('span', { class: 'chica' }, 'Entrás con tu cuenta de Google. Ahí aprobás o pedís cambios.')));
+    return true;
+  }
+
+  // ---------- Material: la carpeta de Drive compartida y el cuestionario ----------
+  function pintarMaterial(d) {
+    if (!d) return false;
+    const q = d.cuestionario; const falta = q && !q.listo && q.link;
+    const archivos = d.archivos || [];
+    if (!d.carpeta && !archivos.length && !falta) return false;
+    const caja = $('#material'); vaciar(caja);
+    caja.append(el('p', { class: 'paso' }, 'El logo, las fotos y las listas de precios que nos mandaste para armar tu Boti, tu web y tus redes.'));
+    if (falta) {
+      const cuanto = q.porcentaje > 0 ? `Tu cuestionario va por el ${q.porcentaje} %` : 'Todavía no empezaste tu cuestionario';
+      const faltan = q.faltan > 0 ? `: ${q.faltan === 1 ? 'falta 1 respuesta' : `faltan ${q.faltan} respuestas`}.` : '. Cuando termines, tocá «Listo» al final.';
+      caja.append(el('div', { class: 'aviso' }, cuanto + faltan + ' Con eso armamos lo que dice tu Boti.', el('br'), el('a', { class: 'btn', href: q.link, target: '_blank', rel: 'noopener' }, q.porcentaje > 0 ? 'Seguir el cuestionario' : 'Empezar el cuestionario')));
+    }
+    if (archivos.length) {
+      const ul = el('ul', { class: 'archivos' });
+      for (const a of archivos) {
+        const foto = el('span', { class: 'foto' }, /pdf/i.test(a.tipo || '') ? 'PDF' : '');
+        ul.append(el('li', null, foto, el('small', { title: a.nombre }, a.nombre)));
+        const cli = cliente();
+        api('/api/panel/material/miniatura', { cliente: cli, archivo: a.id }, { binario: true }).then((blob) => {
+          if (!foto.isConnected || !(blob instanceof Blob) || !/^image\//.test(blob.type)) return;
+          vaciar(foto); foto.append(el('img', { src: URL.createObjectURL(blob), alt: a.nombre }));
+        }).catch(() => { /* sin miniatura queda el recuadro con el nombre */ });
+      }
+      caja.append(ul);
+      if (d.total > archivos.length) caja.append(el('p', { class: 'chica' }, `Y ${d.total - archivos.length} más en tu carpeta.`));
+    } else if (d.carpeta) caja.append(el('p', { class: 'chica' }, 'Tu carpeta está armada y todavía no tiene archivos.'));
+    if (d.carpeta) caja.append(el('div', { class: 'fila-btns' }, el('a', { class: 'btn sec', href: d.carpeta, target: '_blank', rel: 'noopener' }, 'Abrir mi carpeta de Drive'), el('span', { class: 'chica' }, 'Para sumar archivos, usá el cuestionario o mandalos por WhatsApp.')));
+    return true;
   }
 
 
