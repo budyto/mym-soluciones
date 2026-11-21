@@ -258,3 +258,60 @@ dialog .btns .btn{flex:1 1 180px}
   .pestanas button span[data-corto]{font-size:0}
   .pestanas button span[data-corto]::after{content:attr(data-corto);font-size:12.5px}
 }
+
+/* ---------- Consumo del Boti, calendario de redes y material (21/11/2026) ---------- */
+.cifra{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;margin:14px 0 10px}
+.cifra b{font:900 clamp(34px,9vw,46px)/1 Archivo,sans-serif;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.cifra span{color:var(--gris);font-size:16px}
+/* El medidor: lo incluido en el abono es el tramo con el degradé de la marca; lo que se pasa, el tramo rayado. */
+.medidor{display:flex;height:22px;border-radius:99px;background:var(--suave);overflow:hidden;box-shadow:inset 0 0 0 1.5px var(--borde)}
+.medidor i{display:block;height:100%;min-width:0}
+.medidor .dentro{background:var(--deg);border-radius:99px}
+.medidor .dentro.tope{border-radius:99px 0 0 99px}
+.medidor .extra{background:repeating-linear-gradient(-45deg,#e8a020 0 7px,#f4bd55 7px 14px);border-left:3px solid #fff}
+.medidor-pie{display:flex;justify-content:space-between;gap:10px;font:500 12.5px "Martian Mono",monospace;color:var(--gris);margin:7px 2px 0}
+.medidor-pie .marca-incl{text-align:right}
+.tres{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:18px 0 14px;padding:0}
+.tres div{background:#f6f8fe;border-radius:14px;padding:11px 12px;min-width:0}
+.tres dt{font-size:13.5px;color:var(--gris);line-height:1.25}
+.tres dd{margin:3px 0 0;font:800 19px/1.2 Archivo,sans-serif;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.tres .pasado dd{color:#9a5b00}
+.lectura{font-size:16.5px;margin:0 0 10px}
+.meses{margin-top:14px;border-top:1px solid var(--borde);padding-top:6px}
+.meses summary{cursor:pointer;font:700 16.5px Archivo,sans-serif;padding:10px 2px;min-height:44px;color:var(--azul-t)}
+.meses table{width:100%;border-collapse:collapse;font-size:15.5px}
+.meses th:first-child,.meses td:first-child{width:52%}
+.meses th{text-align:left;font-weight:600;color:var(--gris);font-size:13.5px;padding:6px 4px;border-bottom:1px solid var(--borde)}
+.meses td{padding:10px 4px;border-bottom:1px solid #edf1fb;vertical-align:top}
+.meses td small{display:block;color:var(--gris);font-size:13.5px}
+.meses .cant{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.meses .mini{display:block;height:6px;border-radius:99px;background:var(--deg);margin-top:6px;min-width:3px}
+.fila-btns{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+.fila-btns .btn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center;padding:10px 20px}
+.aviso .btn{margin-top:10px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;padding:10px 20px;min-height:46px}
+.piezas{list-style:none;margin:6px 0 0;padding:0}
+.piezas li{display:grid;grid-template-columns:46px 56px minmax(0,1fr);gap:12px;align-items:center;padding:12px 0;border-top:1px solid #edf1fb}
+.piezas li:first-child{border-top:0}
+.piezas .dia-caja{display:grid;justify-items:center;line-height:1.05}
+.piezas .dia-caja small{font:500 12px "Martian Mono",monospace;color:var(--gris)}
+.piezas .dia-caja b{font:900 24px Archivo,sans-serif;letter-spacing:-.02em}
+.piezas .mismo-dia .dia-caja{visibility:hidden}
+.mini-pieza{width:56px;height:56px;border-radius:12px;background:var(--suave);object-fit:cover;display:grid;place-items:center;color:var(--azul);overflow:hidden}
+.mini-pieza svg{width:24px;height:24px}
+.piezas .tx{min-width:0;display:grid;gap:3px;justify-items:start}
+.piezas .tx b{font-weight:700;line-height:1.25;overflow-wrap:anywhere}
+.piezas .tx small{color:var(--gris);font-size:14px}
+.piezas .estado{font-size:13.5px;padding:3px 11px 3px 9px}
+.piezas a{color:var(--azul-t);font-size:14px;font-weight:600}
+.archivos{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px;margin:12px 0 4px;padding:0;list-style:none}
+.archivos li{min-width:0}
+.archivos .foto{display:grid;place-items:center;aspect-ratio:1;border-radius:14px;background:var(--suave);overflow:hidden;color:var(--gris);font:700 13px Archivo,sans-serif}
+.archivos .foto img{width:100%;height:100%;object-fit:cover;display:block}
+.archivos small{display:block;font-size:12.5px;color:var(--gris);margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:420px){
+  .tres{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .archivos{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .tres div:first-child{grid-column:1/-1}
+  .piezas li{grid-template-columns:38px 52px minmax(0,1fr);gap:10px}
+  .mini-pieza{width:52px;height:52px}
+}

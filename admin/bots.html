@@ -272,6 +272,16 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
         <button class="btn" type="submit">Guardar</button></form>`; }).join('')}
       <p class="error chica" id="error-panel"></p></section>`;
   }
+  // Calendario de redes en el panel del cliente (21/11/2026): qué espacio del CRM (crm.creditosmym.com) es el suyo.
+  // La plataforma trae de ahí las próximas publicaciones; el cliente no elige ni ve el nombre del espacio.
+  function cajaCrm(c) {
+    return `<section class="caja" aria-labelledby="tit-crm"><div class="caja-tit"><h3 id="tit-crm">Calendario de redes en su panel</h3></div>
+      <p class="gris chica" style="margin:6px 0 10px">Si le manejamos las redes, poné acá su espacio del CRM tal como figura allá (por ejemplo <b>plomeria-mansilla</b>). En su panel va a ver lo que se le publica en los próximos 14 días; para aprobar, entra al CRM. Vacío: no ve el calendario.</p>
+      <form id="form-crm" class="campos" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr))">
+        <label class="campo">Espacio del CRM<input name="espacio" maxlength="60" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="nombre-del-espacio" value="${esc(c.espacioCrm || '')}"></label>
+        <button class="btn" type="submit">Guardar</button></form>
+      <p class="gris chica" id="aviso-crm" style="margin:6px 0 0"></p><p class="error chica" id="error-crm"></p></section>`;
+  }
   async function verCliente(id) {
     $('#detalle').innerHTML = '<div class="tarjeta gris">Cargando…</div>';
     try {
@@ -308,7 +318,7 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
           <dt>Audios sin transcribir</dt><dd>${c.audiosPendientes ? `${c.audiosPendientes} (llegaron con el bot cortado: se transcriben solos cuando vuelve a contestar)` : 'Ninguno'}</dd>
         </dl>
         ${vivo ? `<div class="acciones"><button class="btn" id="b-alta">Abrir su alta (link nuevo)</button><button class="btn" id="b-panel">Link para su panel</button></div>
-        <div id="links"></div>${cajaPanel(c)}` : ''}
+        <div id="links"></div>${cajaPanel(c)}${cajaCrm(c)}` : ''}
         <section class="caja" id="caja-cobros" aria-labelledby="tit-cobros">
           <div class="caja-tit"><h3 id="tit-cobros">Cobros</h3>${estadoCobro(c)}</div>
           <p class="gris chica" style="margin:6px 0 0">${c.fiscal ? `Factura: sale sola con cada pago, a nombre de ${esc(c.fiscal.nombre)} (${esc(c.fiscal.doc_tipo)} ${esc(c.fiscal.doc_nro)}, ${esc(({ RI: 'Responsable Inscripto', MT: 'Monotributo', CF: 'Consumidor final', EX: 'Exento' })[c.fiscal.condicion_iva] || c.fiscal.condicion_iva)}).` : 'Factura: todavía no tiene sus datos fiscales. Los pagos quedan en <a href="facturacion.html">Facturación</a> para cargarlos una vez.'}</p>
@@ -421,6 +431,17 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
           }
         };
         await mandar(cuerpo);
+      };
+      const fc = $('#form-crm');
+      if (fc) fc.onsubmit = async (e) => {
+        e.preventDefault(); $('#error-crm').textContent = ''; $('#aviso-crm').textContent = '';
+        const btn = fc.querySelector('button'); btn.disabled = true;
+        try {
+          const r = await api('/api/admin/espacio-crm', { id, espacio: fc.espacio.value.trim() });
+          fc.espacio.value = r.espacioCrm || '';
+          $('#aviso-crm').textContent = r.aviso || (r.espacioCrm ? 'Guardado: el cliente ya ve su calendario en el panel.' : 'Guardado: el cliente no ve el calendario.');
+        } catch (err) { $('#error-crm').textContent = err.message === 'No existe.' ? 'Esto se activa cuando se publique el servidor nuevo de la plataforma.' : err.message; }
+        btn.disabled = false;
       };
       document.querySelectorAll('#detalle .form-panel').forEach((fp) => (fp.onsubmit = async (e) => {
         e.preventDefault(); $('#error-panel').textContent = '';
