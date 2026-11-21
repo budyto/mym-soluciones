@@ -27,6 +27,10 @@ window.SITE = {
   // /alta/ muestra que el alta automática se está preparando y no deja avanzar.
   plataformaApi: "https://plataforma-bots-332174980527.southamerica-east1.run.app",
 
+  // Servidor del asistente de voz que atiende las llamadas de WhatsApp (VM bot-llamadas, appmym-5fdd1, 21/11/2026).
+  // Lo usa admin/llamadas.html; la API exige el ingreso con Google de las tres cuentas del admin.
+  llamadasApi: "https://34-151-227-10.sslip.io",
+
   // Supabase (opcional). Si queda vacío, el formulario manda el lead por WhatsApp.
   // Usá la "anon public key": es pública y la protege la política RLS de supabase-leads.sql.
   supabaseUrl: "",
@@ -36,3 +40,5 @@ window.SITE = {
 // Vista previa en la compu (20/11/2026): en localhost la web habla con la plataforma de bots que corre en la compu
 // (MEMORIA=1, puerto 8080, datos de prueba). En la web publicada no hace nada.
 if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.SITE.plataformaApi = 'http://localhost:8080';
+// Llamadas en la compu: el bot de llamadas corriendo con WEB_HTTP=1 PUERTO_WEB=8099 y datos de prueba.
+if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.SITE.llamadasApi = 'http://localhost:8099';

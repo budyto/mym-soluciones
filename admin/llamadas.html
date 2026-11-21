@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Llamadas · MyM Soluciones</title>
+<meta name="robots" content="noindex, nofollow">
+<!-- Llamadas (21/11/2026, Matías: «yo quiero ver todas las llamadas en el panel de admin, en una sección de llamadas»).
+     Las llamadas de WhatsApp al 11 3366-2080 las atiende el asistente de voz (repo bot-llamadas-whatsapp, VM
+     bot-llamadas en appmym-5fdd1). Esta página sólo LEE de su API (SITE.llamadasApi): la API verifica el token de
+     Google en cada pedido y deja entrar sólo a las tres cuentas («LOS 3 TENEMOS QUE TENER ACCESO A TODO»).
+     La grabación llega con una URL firmada que vence a los 15 minutos. Todo se borra solo a los 30 días. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--azul:#2f6bff;--azul-t:#1f57e6;--deg:linear-gradient(120deg,#2458e6,#007a6a);--ink:#0e1a33;--gris:#4a5878;--borde:#dbe4f7;--suave:#eef3ff;--ok:#0a8a60;--aviso:#9a5c00;--mal:#c2364e;--verde-s:#e3f6ef;--ambar-s:#fff3dd;--rojo-s:#fde8ec}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:linear-gradient(180deg,#f4f7ff,#e6eeff) fixed;color:var(--ink);font:16px/1.5 Archivo,system-ui,sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px 40px}
+header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:18px 0}
+header h1{font:900 24px Archivo;margin:0;letter-spacing:-.02em}
+header a{color:var(--gris);text-decoration:none;font-weight:600}
+.der{margin-left:auto;display:flex;gap:10px;align-items:center;color:var(--gris);font-size:14px}
+.btn{border:0;border-radius:11px;padding:9px 14px;font:700 14px Archivo;cursor:pointer;background:var(--suave);color:var(--azul-t);text-decoration:none;display:inline-block}
+.btn.principal{background:var(--deg);color:#fff}
+.btn:focus-visible,.fila:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #9db8ff;outline-offset:2px}
+.tarjeta{background:#fff;border-radius:20px;box-shadow:0 1px 2px rgba(23,48,120,.06),0 10px 26px -10px rgba(23,48,120,.18);padding:20px;margin-bottom:16px}
+.puerta{max-width:420px;margin:12vh auto;text-align:center}
+.gris{color:var(--gris)}.chica{font-size:13px}.error{color:var(--mal);font-weight:600}
+
+/* Métricas */
+.metricas{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:12px;align-items:stretch}
+.cifra{background:var(--suave);border-radius:14px;padding:12px 14px}
+.cifra b{display:block;font:900 26px Archivo;letter-spacing:-.02em}
+.cifra span{font-size:13px;color:var(--gris)}
+.dias{display:flex;align-items:flex-end;gap:3px;height:58px;margin-top:6px}
+.dias i{flex:1;background:var(--deg);border-radius:4px 4px 2px 2px;min-height:3px;position:relative}
+.dias i.cero{background:#d7e1fb}
+.dias-pie{display:flex;justify-content:space-between;font-size:11px;color:var(--gris);margin-top:3px}
+
+/* Filtros */
+.filtros{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:4px 0 12px}
+.filtros input{flex:1 1 220px;font:15px Archivo;padding:10px 12px;border:1px solid var(--borde);border-radius:11px;background:#fff}
+.filtros select{font:600 14px Archivo;padding:9px 10px;border:1px solid var(--borde);border-radius:11px;background:#fff;color:var(--ink)}
+.chip{border:1px solid var(--borde);background:#fff;border-radius:99px;padding:7px 12px;font:600 13px Archivo;color:var(--gris);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+
+/* Lista + detalle */
+.cuerpo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:16px;align-items:start}
+.lista{padding:6px}
+.fila{display:grid;grid-template-columns:auto 1fr auto;gap:4px 12px;width:100%;text-align:left;border:0;background:none;padding:12px;border-radius:14px;cursor:pointer;font:inherit;color:inherit}
+.fila+.fila{border-top:1px solid var(--borde);border-radius:0}
+.fila:hover{background:#f6f9ff}
+.fila[aria-current="true"]{background:var(--suave);border-radius:14px}
+.fila[aria-current="true"]+.fila{border-top-color:transparent}
+.hora{font:700 14px Archivo;color:var(--gris);min-width:58px}
+.hora small{display:block;font-weight:600;font-size:12px}
+.quien{font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dur{font:700 14px Archivo;font-variant-numeric:tabular-nums;color:var(--gris)}
+.extracto{grid-column:2/4;font-size:14px;color:var(--gris);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.estado{display:inline-block;font:700 12px Archivo;border-radius:99px;padding:2px 9px;margin-right:6px;vertical-align:1px}
+.e-persona{background:var(--rojo-s);color:var(--mal)}
+.e-wa{background:var(--verde-s);color:var(--ok)}
+.e-corta{background:var(--ambar-s);color:var(--aviso)}
+.e-ok{background:var(--suave);color:var(--azul-t)}
+.vacio{padding:28px 16px;text-align:center;color:var(--gris)}
+
+.detalle{position:sticky;top:16px;max-height:calc(100vh - 32px);overflow:auto}
+.det-cab{display:flex;gap:10px;align-items:flex-start}
+.det-cab h2{font:900 22px Archivo;letter-spacing:-.02em;margin:0;line-height:1.2}
+.det-cab .cerrar{margin-left:auto;display:none}
+.det-dato{color:var(--gris);margin:4px 0 0;font-size:14px}
+.tel{color:var(--azul-t);font-weight:700;text-decoration:none}
+.reproductor{background:var(--ink);color:#fff;border-radius:16px;padding:14px;margin:16px 0}
+.reproductor audio{width:100%;display:block}
+.reproductor p{margin:8px 2px 0;font-size:12.5px;color:#b9c6e4}
+.reproductor.sin{background:var(--suave);color:var(--gris);font-size:14px}
+.ficha{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:15px;margin:0 0 14px}
+.ficha dt{color:var(--gris);font-weight:600}
+.ficha dd{margin:0}
+.resumen{background:var(--suave);border-radius:14px;padding:12px 14px;font-size:15px;margin:0 0 18px}
+.charla h3{font:900 16px Archivo;margin:0 0 10px}
+.dice{max-width:88%;padding:9px 13px;border-radius:16px;margin:0 0 8px;font-size:15px;line-height:1.45}
+.dice b{display:block;font-size:12px;margin-bottom:1px}
+.dice.persona{background:#f1f3f8;border-bottom-left-radius:5px}
+.dice.persona b{color:var(--gris)}
+.dice.asistente{background:#e7efff;margin-left:auto;border-bottom-right-radius:5px}
+.dice.asistente b{color:var(--azul-t)}
+details{margin-top:18px;font-size:13px;color:var(--gris)}
+details pre{white-space:pre-wrap;font-size:12px;background:#f6f8fd;border-radius:10px;padding:10px}
+.nota-pie{font-size:13px;color:var(--gris);margin:12px 4px 0}
+
+@media (max-width:900px){
+  .metricas{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .metricas .por-dia{grid-column:1/4}
+  .cifra{padding:10px 11px}
+  .cifra b{font-size:21px}
+  .cifra span{font-size:12px;line-height:1.3;display:block}
+  .cuerpo{grid-template-columns:1fr}
+  .detalle{position:fixed;inset:0;max-height:none;border-radius:0;margin:0;z-index:50;padding:16px 16px 40px;transform:translateY(100%);transition:transform .22s ease;visibility:hidden}
+  .detalle.abierto{transform:none;visibility:visible}
+  .det-cab .cerrar{display:inline-block}
+  body.con-detalle{overflow:hidden}
+}
+@media (prefers-reduced-motion:reduce){.detalle{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="puerta" class="tarjeta puerta">
+    <h1 style="font:900 22px Archivo">Llamadas</h1>
+    <p class="gris">Entrá con tu cuenta de Google autorizada.</p>
+    <p id="msgPuerta" class="error"></p>
+    <button class="btn principal" id="entrar" type="button">Entrar con Google</button>
+  </div>
+
+  <div id="app" hidden>
+    <header>
+      <a href="index.html">← Inicio del panel</a>
+      <h1>Llamadas</h1>
+      <span class="gris chica">WhatsApp 11 3366-2080 · las atiende el asistente de voz</span>
+      <div class="der"><span id="quien"></span><button class="btn" id="recargar" type="button">↻ Actualizar</button><button class="btn" id="salir" type="button">Salir</button></div>
+    </header>
+
+    <section class="tarjeta" aria-label="Métricas">
+      <div class="metricas">
+        <div class="cifra por-dia"><span>Llamadas por día · últimos 14 días</span><div class="dias" id="dias"></div><div class="dias-pie" id="diasPie"></div></div>
+        <div class="cifra"><b id="mTotal">—</b><span id="mTotalTxt">llamadas</span></div>
+        <div class="cifra"><b id="mDur">—</b><span>duración promedio</span></div>
+        <div class="cifra"><b id="mCosto">—</b><span id="mCostoTxt">costo estimado</span></div>
+      </div>
+    </section>
+
+    <div class="filtros" role="search">
+      <input id="buscar" type="search" placeholder="Buscar por nombre, número, rubro o lo que se habló" aria-label="Buscar llamadas">
+      <select id="rango" aria-label="Período"><option value="1">Hoy</option><option value="7">Últimos 7 días</option><option value="30" selected>Últimos 30 días</option></select>
+      <button class="chip" type="button" data-estado="" aria-pressed="true">Todas</button>
+      <button class="chip" type="button" data-estado="persona" aria-pressed="false">Pidieron que los llamen</button>
+      <button class="chip" type="button" data-estado="wa" aria-pressed="false">Siguen por WhatsApp</button>
+      <button class="chip" type="button" data-estado="corta" aria-pressed="false">Cortaron rápido</button>
+    </div>
+
+    <div class="cuerpo">
+      <section class="tarjeta lista" id="lista" aria-label="Lista de llamadas"><p class="vacio">Cargando…</p></section>
+      <section class="tarjeta detalle" id="detalle" aria-label="Detalle de la llamada" tabindex="-1"><p class="vacio">Elegí una llamada para escucharla y leer la charla.</p></section>
+    </div>
+    <p class="nota-pie">Las grabaciones, las charlas y los resúmenes se borran solos a los 30 días. El costo estimado es el de Gemini (la IA de voz); el servidor cuesta aparte unos US$ 25 por mes fijos y las llamadas en Meta son gratis.</p>
+  </div>
+</div>
+
+<script src="../config.js?v=20261121b"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" integrity="sha384-AQ3POAMqIhwS81FrUH95ekxqBZHeP5tG2JfEL3+7GuTtfRLWnrRh32UxwzM+//A9" crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js" integrity="sha384-TnlRYaR4JYz/lpaGuaiU61PjNberSA4vjLjtF+oRC/IkohkJqnWxw5EmDSOt1vA1" crossorigin="anonymous"></script>
+<script src="acceso.js?v=20261120b"></script>
+<script>
+(function () {
+  const API = (window.SITE && SITE.llamadasApi || '').replace(/\/+$/, '');
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  let todas = [], estado = '', abierta = '';
+
+  // ---------- Formatos ----------
+  const ar = (iso) => new Date(new Date(iso).getTime() - 3 * 3600000); // hora de Buenos Aires (UTC-3)
+  const diaClave = (iso) => ar(iso).toISOString().slice(0, 10);
+  const hoyClave = () => new Date(Date.now() - 3 * 3600000).toISOString().slice(0, 10);
+  const hhmm = (iso) => ar(iso).toISOString().slice(11, 16);
+  const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+  function dia(iso) {
+    const k = diaClave(iso); if (k === hoyClave()) return 'Hoy';
+    const ayer = new Date(Date.now() - 27 * 3600000).toISOString().slice(0, 10); if (k === ayer) return 'Ayer';
+    return `${Number(k.slice(8))} ${MESES[Number(k.slice(5, 7)) - 1]}`;
+  }
+  const dur = (s) => `${Math.floor((s || 0) / 60)}:${String(Math.round(s || 0) % 60).padStart(2, '0')}`;
+  const telLindo = (t) => { const d = String(t || ''); const m = /^549(11|\d{2,4})(\d{4})(\d{4})$/.exec(d); return m ? `${m[1]} ${m[2]}-${m[3]}` : (d ? '+' + d : ''); };
+  const usd = (n) => 'US$ ' + (n < 1 ? n.toFixed(2) : n.toFixed(1)).replace('.', ',');
+  const quien = (l) => l.nombre || l.perfil || telLindo(l.tel) || 'Número oculto';
+  function estadoDe(l) {
+    if (l.pidioPersona) return ['persona', 'Pidió que lo llamen'];
+    if (l.pidioWhatsapp && !/^no salió|sin número/.test(l.pidioWhatsapp)) return ['wa', 'Sigue por WhatsApp'];
+    if ((l.segundos || 0) < 30) return ['corta', 'Cortó rápido'];
+    return ['ok', 'Atendida'];
+  }
+
+  // ---------- API ----------
+  async function pedir(ruta) {
+    const r = await fetch(API + ruta, { headers: { Authorization: 'Bearer ' + await ACCESO.token() } });
+    const d = await r.json().catch(() => ({}));
+    if (r.status === 401 || r.status === 403) { ACCESO.salir(d.error || 'No tenés acceso a las llamadas.'); throw new Error(d.error || 'sin acceso'); }
+    if (!r.ok) throw new Error(d.error || ('Error ' + r.status));
+    return d;
+  }
+
+  async function cargar() {
+    $('lista').innerHTML = '<p class="vacio">Cargando…</p>';
+    if (!API) { $('lista').innerHTML = '<p class="vacio error">Falta la dirección del servidor de llamadas (SITE.llamadasApi en config.js).</p>'; return; }
+    try { todas = (await pedir('/api/llamadas')).llamadas || []; }
+    catch (e) { $('lista').innerHTML = `<p class="vacio error">No se pudieron traer las llamadas: ${esc(e.message)}</p>`; return; }
+    pintar();
+    const desdeLink = decodeURIComponent(location.hash.slice(1));
+    if (desdeLink && todas.some((l) => l.id === desdeLink)) abrir(desdeLink, false);
+  }
+
+  // ---------- Lista y métricas ----------
+  function filtradas() {
+    const dias = Number($('rango').value); const desde = Date.now() - dias * 86400000;
+    const desdeHoy = hoyClave();
+    const q = $('buscar').value.trim().toLowerCase();
+    return todas.filter((l) => {
+      if (dias === 1 ? diaClave(l.fecha) !== desdeHoy : new Date(l.fecha).getTime() < desde) return false;
+      if (estado && estadoDe(l)[0] !== estado) return false;
+      if (q && ![l.nombre, l.perfil, l.tel, telLindo(l.tel), l.rubro, l.necesidad, l.resumen, l.pidioPersona].join(' ').toLowerCase().includes(q)) return false;
+      return true;
+    });
+  }
+
+  function pintarMetricas(lista) {
+    const n = lista.length;
+    $('mTotal').textContent = n; $('mTotalTxt').textContent = n === 1 ? 'llamada en el período' : 'llamadas en el período';
+    $('mDur').textContent = n ? dur(lista.reduce((a, l) => a + (l.segundos || 0), 0) / n) : '—';
+    const costo = lista.reduce((a, l) => a + (l.costoUsd || 0), 0);
+    const min = lista.reduce((a, l) => a + (l.segundos || 0), 0) / 60;
+    $('mCosto').textContent = n ? usd(costo) : '—';
+    $('mCostoTxt').textContent = min ? `costo estimado · ${usd(costo / min)} por minuto` : 'costo estimado';
+    // Barras de los últimos 14 días (siempre, para ver el ritmo aunque se filtre por hoy).
+    const cuenta = {}; for (const l of todas) { const k = diaClave(l.fecha); cuenta[k] = (cuenta[k] || 0) + 1; }
+    const dias = []; for (let i = 13; i >= 0; i--) dias.push(new Date(Date.now() - 3 * 3600000 - i * 86400000).toISOString().slice(0, 10));
+    const max = Math.max(1, ...dias.map((k) => cuenta[k] || 0));
+    $('dias').innerHTML = dias.map((k) => { const c = cuenta[k] || 0; return `<i class="${c ? '' : 'cero'}" style="height:${c ? Math.max(10, c / max * 100) : 5}%" title="${Number(k.slice(8))}/${Number(k.slice(5, 7))}: ${c} ${c === 1 ? 'llamada' : 'llamadas'}"></i>`; }).join('');
+    $('diasPie').innerHTML = `<span>${Number(dias[0].slice(8))}/${Number(dias[0].slice(5, 7))}</span><span>hoy: ${cuenta[dias[13]] || 0}</span>`;
+  }
+
+  function pintar() {
+    const lista = filtradas();
+    pintarMetricas(lista);
+    if (!todas.length) { $('lista').innerHTML = '<p class="vacio">Todavía no hay llamadas. Cuando alguien llame al 11 3366-2080 por WhatsApp, aparece acá.</p>'; return; }
+    if (!lista.length) { $('lista').innerHTML = '<p class="vacio">Ninguna llamada coincide con esos filtros.</p>'; return; }
+    $('lista').innerHTML = lista.map((l) => {
+      const [cls, txt] = estadoDe(l);
+      const extracto = l.pidioPersona ? l.pidioPersona : (l.resumen || l.necesidad || '');
+      return `<button type="button" class="fila" data-id="${esc(l.id)}"${l.id === abierta ? ' aria-current="true"' : ''}>
+        <span class="hora">${esc(hhmm(l.fecha))}<small>${esc(dia(l.fecha))}</small></span>
+        <span class="quien">${esc(quien(l))}${l.rubro ? ` <span class="gris" style="font-weight:600">· ${esc(l.rubro)}</span>` : ''}</span>
+        <span class="dur">${dur(l.segundos)}</span>
+        <span class="extracto"><span class="estado e-${cls}">${txt}</span>${esc(extracto)}</span>
+      </button>`;
+    }).join('');
+  }
+
+  // ---------- Detalle ----------
+  async function abrir(id, actualizarHash = true) {
+    abierta = id;
+    for (const f of document.querySelectorAll('.fila')) f.setAttribute('aria-current', f.dataset.id === id ? 'true' : 'false');
+    if (actualizarHash) history.replaceState(null, '', '#' + id);
+    const det = $('detalle');
+    det.classList.add('abierto'); document.body.classList.add('con-detalle');
+    det.innerHTML = '<p class="vacio">Cargando la llamada…</p>';
+    let l;
+    try { l = await pedir('/api/llamadas/' + encodeURIComponent(id)); }
+    catch (e) { det.innerHTML = `<div class="det-cab"><button class="btn cerrar" type="button" data-cerrar>Volver</button></div><p class="vacio error">${esc(e.message)}</p>`; return; }
+    if (abierta !== id) return;
+    const [cls, txt] = estadoDe(l);
+    const tel = telLindo(l.tel);
+    const charla = (l.charla || []).map((c) => `<p class="dice ${c.quien === 'persona' ? 'persona' : 'asistente'}"><b>${c.quien === 'persona' ? esc(l.nombre || 'Quien llamó') : 'Asistente'}</b>${esc(c.texto)}</p>`).join('');
+    const tecnico = { latencias_ms: (l.latencias || []).map((x) => x.ms), latencia_mediana_ms: l.latenciaMs, interrupciones: l.interrupciones, eco: l.eco, paquetes: l.audioPaquetes, tokens: l.tokens, costo_usd: l.costoUsd, fin: l.motivoFin };
+    det.innerHTML = `
+      <div class="det-cab"><div><h2>${esc(quien(l))}</h2>
+        <p class="det-dato">${esc(dia(l.fecha))} a las ${esc(hhmm(l.fecha))} · ${dur(l.segundos)} min${tel ? ` · <a class="tel" href="https://wa.me/${esc(l.tel)}" target="_blank" rel="noopener">${esc(tel)}</a>` : ''}</p></div>
+        <button class="btn cerrar" type="button" data-cerrar>Volver</button></div>
+      ${l.audio ? `<div class="reproductor"><audio controls preload="metadata" src="${esc(l.audio)}"></audio><p>A la izquierda se oye quien llamó; a la derecha, el asistente. El link de la grabación vence en 15 minutos: si se corta, tocá Actualizar.</p></div>`
+                : `<div class="reproductor sin">${esc(l.nota || 'Esta llamada no tiene grabación.')}</div>`}
+      <dl class="ficha">
+        <dt>Estado</dt><dd><span class="estado e-${cls}">${txt}</span></dd>
+        ${l.perfil && l.nombre ? `<dt>Perfil</dt><dd>${esc(l.perfil)}</dd>` : ''}
+        ${l.rubro ? `<dt>Rubro</dt><dd>${esc(l.rubro)}</dd>` : ''}
+        ${l.necesidad ? `<dt>Necesita</dt><dd>${esc(l.necesidad)}</dd>` : ''}
+        ${l.pidioPersona ? `<dt>Llamarlo por</dt><dd>${esc(l.pidioPersona)}</dd>` : ''}
+        ${l.pidioWhatsapp ? `<dt>WhatsApp</dt><dd>${esc(l.pidioWhatsapp)}</dd>` : ''}
+      </dl>
+      ${l.resumen ? `<p class="resumen">${esc(l.resumen)}</p>` : ''}
+      <div class="charla"><h3>La charla</h3>${charla || '<p class="gris">No se escuchó nada.</p>'}</div>
+      <details><summary>Datos técnicos</summary><pre>${esc(JSON.stringify(tecnico, null, 1))}</pre></details>`;
+    det.scrollTop = 0;
+  }
+
+  function cerrar() {
+    abierta = ''; history.replaceState(null, '', location.pathname);
+    const det = $('detalle'); det.classList.remove('abierto'); document.body.classList.remove('con-detalle');
+    const a = det.querySelector('audio'); if (a) a.pause();
+    for (const f of document.querySelectorAll('.fila')) f.setAttribute('aria-current', 'false');
+    det.innerHTML = '<p class="vacio">Elegí una llamada para escucharla y leer la charla.</p>';
+  }
+
+  // ---------- Eventos ----------
+  $('lista').addEventListener('click', (e) => { const f = e.target.closest('.fila'); if (f) abrir(f.dataset.id); });
+  $('detalle').addEventListener('click', (e) => { if (e.target.closest('[data-cerrar]')) cerrar(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && abierta) cerrar(); });
+  $('buscar').addEventListener('input', pintar);
+  $('rango').addEventListener('change', pintar);
+  for (const c of document.querySelectorAll('.chip')) c.addEventListener('click', () => {
+    estado = c.dataset.estado; for (const o of document.querySelectorAll('.chip')) o.setAttribute('aria-pressed', o === c ? 'true' : 'false'); pintar();
+  });
+  $('recargar').addEventListener('click', () => { const a = abierta; cargar().then(() => { if (a) abrir(a, false); }); });
+  $('entrar').addEventListener('click', () => ACCESO.entrar());
+  $('salir').addEventListener('click', () => ACCESO.salir());
+
+  ACCESO.iniciar({
+    alEntrar(u) { $('puerta').hidden = true; $('app').hidden = false; $('quien').textContent = u.email; cargar(); },
+    alSalir(msg) { $('app').hidden = true; $('puerta').hidden = false; $('msgPuerta').textContent = msg || ''; }
+  });
+})();
+</script>
+</body>
+</html>
