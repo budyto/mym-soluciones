@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cuestionario de tu Boti · MyM Soluciones</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#f4f7ff">
+<link rel="icon" href="../img/favicon-2.png" type="image/png">
+<!-- Cuestionario del Boti (21/11/2026, decisión de Matías: «un formulario por cliente adentro de la plataforma, con las
+     respuestas guardadas y que pasen directo a la ficha. Nada de mandar por WhatsApp»).
+     Cada cliente entra con SU link (…/cuestionario/#t=llave), sin usuario ni contraseña. Lo que escribe se guarda solo
+     en el servidor de la plataforma (SITE.plataformaApi) y puede volver otro día con el mismo link.
+     Las preguntas y sus reglas NO están acá: se leen del servidor (/cuestionario/preguntas.js), que usa las mismas
+     para calcular el porcentaje y armar la ficha. Para cambiar una pregunta se toca ese archivo, en plataforma-bots.
+     Nunca se piden contraseñas: si el cliente quiere que MyM maneje una cuenta, los accesos van por WhatsApp a Matías. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Una sola columna para completar con el pulgar. Arriba se elige el tipo de negocio y eso arma el recorrido;
+   la barra fija dice cuánto falta de lo obligatorio. Colores de MyM Soluciones (azul de la web, agua de acento). */
+:root{
+  --fondo:#f4f7ff; --papel:#ffffff; --tinta:#0e1a33; --gris:#4a5878; --borde:#d3ddf3; --suave:#e8efff;
+  --azul:#2458e6; --sobre-azul:#ffffff; --agua:#007a6a; --aviso:#8a5200; --aviso-fondo:#fff4d9; --mal:#b3263e; --ok:#0a7a55;
+  --f-tit:"Bricolage Grotesque","Arial Narrow",system-ui,sans-serif; --f-txt:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root{--fondo:#0b1326;--papel:#131d36;--tinta:#eef2ff;--gris:#a9b6d6;--borde:#2a3859;--suave:#1b2a4f;--azul:#7ea2ff;--sobre-azul:#07102a;--agua:#3fd6bf;--aviso:#ffcf7a;--aviso-fondo:#3a2c0c;--mal:#ff8097;--ok:#5ad6a8;color-scheme:dark}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--fondo);color:var(--tinta);font:400 1.0625rem/1.55 var(--f-txt);-webkit-font-smoothing:antialiased}
+.ancho{max-width:720px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--f-tit);font-weight:800;letter-spacing:-.02em;line-height:1.08;margin:0;text-wrap:balance}
+p{margin:0}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--azul);outline-offset:2px}
+
+.arriba{position:sticky;top:0;z-index:20;background:var(--fondo);border-bottom:1px solid var(--borde);padding-top:env(safe-area-inset-top,0px)}
+.arriba .ancho{display:flex;align-items:center;gap:12px;padding-block:10px}
+.barra{flex:1;height:10px;border-radius:99px;background:var(--borde);overflow:hidden;min-width:60px}
+.barra i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--azul),var(--agua));transition:width .3s}
+.pct{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.guardado{font-size:.8rem;color:var(--gris);text-align:right;max-width:10.5em;line-height:1.2}
+.guardado.ok{color:var(--ok)}.guardado.mal{color:var(--mal)}
+
+.inicio{padding-block:32px 8px;display:grid;gap:14px}
+.marca{font:800 1rem/1 var(--f-tit);letter-spacing:-.01em;color:var(--gris);text-decoration:none}
+.marca b{background:linear-gradient(120deg,var(--azul),var(--agua));-webkit-background-clip:text;background-clip:text;color:transparent}
+.inicio h1{font-size:clamp(2.1rem,8vw,3.2rem)}
+.inicio p{color:var(--gris);max-width:58ch}
+.para{font-weight:700;color:var(--tinta)!important}
+.consejos{margin:0;padding:0 0 0 1.15em;color:var(--gris);font-size:.96rem;display:grid;gap:4px}
+
+form{display:grid;gap:18px;padding-block:18px}
+.sec{background:var(--papel);border:1px solid var(--borde);border-radius:14px;padding:22px 18px 8px}
+.sec h2{font-size:1.55rem}
+.sec>.d{color:var(--gris);font-size:.95rem;margin-top:6px}
+.q{padding-block:16px;border-top:1px solid var(--borde);min-width:0;border-inline:0;border-bottom:0;margin:0;padding-inline:0;scroll-margin-top:80px}
+.sec h2+.q,.sec .d+.q{border-top:0}
+.q .t{display:block;font-weight:700;margin-bottom:4px;padding:0}
+fieldset.q>legend{float:left;width:100%}
+fieldset.q>legend+*{clear:both}
+.q .t small{font-weight:600;color:var(--mal);font-size:.8rem;margin-left:4px;white-space:nowrap}
+.q .t small.temp{color:var(--aviso);background:var(--aviso-fondo);padding:2px 8px;border-radius:99px}
+.q.listo .t small.ob{color:var(--ok)}
+.q .h{display:block;color:var(--gris);font-size:.9rem;margin-bottom:8px}
+input[type=text],textarea{width:100%;background:var(--fondo);border:1.5px solid var(--borde);border-radius:10px;padding:12px 13px;min-height:48px}
+textarea{min-height:92px;resize:vertical}
+input[type=text]:focus,textarea:focus{border-color:var(--azul);outline:none;box-shadow:0 0 0 3px var(--suave)}
+input:disabled,textarea:disabled{opacity:.45}
+.ops{display:flex;flex-wrap:wrap;gap:8px}
+.ops label{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;min-height:44px;border:1.5px solid var(--borde);border-radius:999px;cursor:pointer;font-size:.96rem;background:var(--fondo)}
+.ops input{accent-color:var(--azul);margin:0;width:16px;height:16px}
+.ops label:has(input:checked){border-color:var(--azul);background:var(--suave);font-weight:700}
+.ops label.ns{border-style:dashed;color:var(--gris)}
+.na{display:inline-flex;align-items:center;gap:8px;margin-top:8px;font-size:.9rem;color:var(--gris);cursor:pointer;min-height:32px}
+.na input{accent-color:var(--azul);width:16px;height:16px;margin:0}
+.aviso{margin-top:10px;padding:12px 14px;border-radius:10px;background:var(--aviso-fondo);color:var(--aviso);font-size:.95rem;font-weight:500}
+.info{padding:14px 16px;border-radius:10px;background:var(--suave);font-size:.96rem;display:grid;gap:8px}
+.info ul{margin:0;padding-left:1.15em;display:grid;gap:4px}
+.q.solo-info{border-top:0;padding-block:8px 16px}
+
+.tipos{display:grid;gap:10px}
+@media(min-width:620px){.tipos{grid-template-columns:repeat(3,1fr)}}
+.tipos label{display:grid;gap:4px;align-content:start;padding:14px;border:2px solid var(--borde);border-radius:12px;background:var(--fondo);cursor:pointer}
+.tipos label b{font:800 1.12rem/1.15 var(--f-tit)}
+.tipos label span{font-size:.88rem;color:var(--gris)}
+.tipos input{position:absolute;opacity:0;pointer-events:none}
+.tipos label:has(input:checked){border-color:var(--azul);background:var(--suave)}
+.tipos label:has(input:focus-visible){outline:3px solid var(--azul);outline-offset:2px}
+
+.renglones{display:grid;gap:8px}
+.renglon{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr) minmax(0,1fr) 44px;gap:6px;align-items:center}
+.renglon input{padding-inline:10px}
+.renglon button,.mas{border:1.5px solid var(--borde);background:var(--fondo);border-radius:10px;min-height:44px;cursor:pointer;font-weight:700}
+.renglon-cab{font-size:.78rem;color:var(--gris);font-weight:600}
+.mas{padding:8px 14px;justify-self:start}
+@media(max-width:480px){.renglon{grid-template-columns:1fr 1fr 44px}.renglon input:first-child{grid-column:1/-1}.renglon-cab{display:none}.renglon{padding-bottom:8px;border-bottom:1px dashed var(--borde)}}
+.faq{display:grid;gap:12px}
+.faq-fila{display:grid;grid-template-columns:26px 1fr;gap:8px;align-items:start}
+.faq-fila>span{font:800 1.1rem/2.6 var(--f-tit);color:var(--azul);text-align:right}
+.faq-fila div{display:grid;gap:6px;min-width:0}
+.faq-fila textarea{min-height:56px}
+
+.fin{background:var(--papel);border:2px solid var(--azul);border-radius:14px;padding:22px 18px;margin-bottom:60px;display:grid;gap:14px}
+.fin h2{font-size:1.6rem}
+.fin p{color:var(--gris)}
+.fin.recibido{border-color:var(--ok)}
+.faltan{margin:0;padding-left:1.15em;display:grid;gap:2px;font-size:.95rem}
+.faltan a{color:var(--azul);font-weight:600;display:inline-block;padding-block:4px}
+.fila{display:flex;flex-wrap:wrap;gap:10px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:12px 20px;border-radius:12px;font:700 1rem/1.15 var(--f-txt);border:2px solid transparent;cursor:pointer;text-decoration:none;text-align:center}
+.btn-azul{background:var(--azul);color:var(--sobre-azul)}
+.btn[disabled]{opacity:.6;cursor:progress}
+.btn.hecho{background:transparent;color:var(--ok);border-color:var(--ok);cursor:default}
+.numero{font-weight:700;color:var(--tinta);white-space:nowrap}
+
+.cartel{margin-block:14vh 40px;background:var(--papel);border:1px solid var(--borde);border-radius:14px;padding:28px 20px;display:grid;gap:12px}
+.cartel h1{font-size:clamp(1.7rem,6vw,2.3rem)}
+.cartel p{color:var(--gris)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="arriba" id="arriba" hidden><div class="ancho"><div class="barra" aria-hidden="true"><i id="barra"></i></div><span class="pct" id="pct" aria-live="polite">0 %</span><span class="guardado" id="guardado" aria-live="polite"></span></div></div>
+
+<!-- Mientras carga, y si el link no sirve -->
+<main class="ancho" id="v-cartel">
+  <div class="cartel">
+    <a class="marca" href="../"><b>MyM</b> Soluciones</a>
+    <h1 id="cartelTitulo">Abriendo tu cuestionario…</h1>
+    <p id="cartelTexto">Un momento.</p>
+  </div>
+</main>
+
+<main class="ancho" id="v-form" hidden>
+  <header class="inicio">
+    <a class="marca" href="../"><b>MyM</b> Soluciones</a>
+    <h1>Enseñale a tu Boti cómo atendés</h1>
+    <p class="para" id="para"></p>
+    <p>Con estas respuestas configuramos tu bot de WhatsApp (y tu página, si la contrataste). Lleva unos 15 minutos y no hace falta terminarlo de una vez: se guarda solo y podés volver cuando quieras con este mismo link.</p>
+    <ul class="consejos">
+      <li>Escribí como le hablás a un cliente. No tiene que quedar perfecto.</li>
+      <li>Lo que el Boti no tenga escrito acá, no lo dice: prefiere pasarte la charla antes que inventar.</li>
+      <li>Si algo no lo sabés o no va con tu negocio, marcá «No sé / no aplica» y seguí.</li>
+      <li>Este link es sólo tuyo: no lo compartas. Y no escribas contraseñas en ningún lado.</li>
+    </ul>
+  </header>
+
+  <form id="form" novalidate autocomplete="off"></form>
+
+  <section class="fin" id="fin">
+    <h2 id="finTitulo">¿Terminaste?</h2>
+    <p id="finTexto"></p>
+    <ul class="faltan" id="faltan" hidden></ul>
+    <div class="fila"><button class="btn btn-azul" id="listo" type="button">Listo, ya completé</button></div>
+    <p id="finError" class="aviso" hidden></p>
+    <p>¿Tenés fotos, el logo o una lista de precios en foto o PDF? Mandalos al WhatsApp de MyM Soluciones: <span class="numero">11 3366-2080</span>.</p>
+  </section>
+</main>
+
+<script src="../config.js?v=20261117b"></script>
+<script>
+(function () {
+  'use strict';
+  const API = String((window.SITE || {}).plataformaApi || '').replace(/\/+$/, '');
+  const LLAVE = new URLSearchParams(location.hash.replace(/^#/, '')).get('t') || '';
+  // La copia de este celular se guarda con el id del cliente (la primera parte de la llave), nunca con la llave.
+  const LS = 'cuestionario-boti:' + LLAVE.split('.')[0];
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  let Q = null;                 // preguntas y reglas (las mismas que usa el servidor)
+  let a = {};                   // respuestas
+  let listo = false, tipoFijo = false, sucio = false, escribiendo = false, reloj = null, fallas = 0, cortado = false;
+
+  function cartel(titulo, textoCartel) {
+    $('v-form').hidden = true; $('arriba').hidden = true; $('v-cartel').hidden = false;
+    $('cartelTitulo').textContent = titulo; $('cartelTexto').textContent = textoCartel;
+  }
+  const LINK_MALO = ['Este link no está en uso', 'Puede que esté incompleto o que te hayamos pasado uno nuevo. Pedinos el link de tu cuestionario por WhatsApp al 11 3366-2080.'];
+
+  async function pedir(ruta, cuerpo, extra) {
+    const r = await fetch(API + ruta, Object.assign({ method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(cuerpo) }, extra || {}));
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) throw Object.assign(new Error(d.error || 'No se pudo completar.'), { codigo: r.status });
+    return d;
+  }
+  // Las preguntas se leen como texto y se ponen en la página (así no hace falta permitir scripts de otro dominio).
+  async function cargarPreguntas() {
+    const r = await fetch(API + '/cuestionario/preguntas.js');
+    if (!r.ok) throw new Error('preguntas');
+    const s = document.createElement('script'); s.textContent = await r.text(); document.head.appendChild(s);
+    if (!window.CUESTIONARIO) throw new Error('preguntas');
+    Q = window.CUESTIONARIO;
+  }
+
+  /* ===================== Dibujo ===================== */
+  function ops(q, lista, tipo) {
+    return `<div class="ops">${lista.map((o, j) => `<label${o === Q.NS ? ' class="ns"' : ''}><input type="checkbox" id="${q.id}-${j}" data-k="${q.id}" data-modo="${tipo}" value="${esc(o)}">${esc(o)}</label>`).join('')}</div>`;
+  }
+  function renglones(q) {
+    const v = Array.isArray(a[q.id]) && a[q.id].length ? a[q.id] : [{}, {}, {}];
+    return `<div class="renglon renglon-cab" aria-hidden="true">${q.cols.map((c) => `<span>${c}</span>`).join('')}<span></span></div>` + v.map((r, i) =>
+      `<div class="renglon">${['p', 'u', 'v'].map((f, n) => `<input type="text" id="${q.id}-${i}-${f}" data-fila="${q.id}" data-i="${i}" data-f="${f}" maxlength="${Q.LARGO.celda}" value="${esc(r && r[f])}" placeholder="${esc(i === 0 ? q.ej[n] : q.cols[n])}" aria-label="${q.cols[n]}, renglón ${i + 1}">`).join('')}<button type="button" data-quitar="${q.id}" data-i="${i}" aria-label="Quitar el renglón ${i + 1}">×</button></div>`).join('') +
+      (v.length < Q.LARGO.renglones ? `<button type="button" class="mas" data-mas="${q.id}">+ Agregar renglón</button>` : '');
+  }
+  function pregunta(q) {
+    if (q.type === 'info') return `<div class="q solo-info"><div class="info">${q.html}</div></div>`;
+    const marca = q.temp ? '<small class="temp">De temporada</small>' : (q.req ? '<small class="ob">obligatoria</small>' : '');
+    const h = q.h ? `<span class="h">${q.h}</span>` : '';
+    const na = q.na ? `<label class="na"><input type="checkbox" id="${q.id}-na" data-na="${q.id}">${q.na}</label>` : '';
+    const aviso = q.aviso ? `<div class="aviso" id="${q.id}-aviso" hidden></div>` : '';
+    let c = '';
+    if (q.type === 'text') return `<div class="q" id="q-${q.id}"><label class="t" for="${q.id}">${q.t} ${marca}</label>${h}<input type="text" id="${q.id}" data-k="${q.id}" maxlength="${Q.LARGO.text}" autocomplete="off">${na}${aviso}</div>`;
+    if (q.type === 'textarea') return `<div class="q" id="q-${q.id}"><label class="t" for="${q.id}">${q.t} ${marca}</label>${h}<textarea id="${q.id}" data-k="${q.id}" maxlength="${Q.LARGO.textarea}"></textarea>${na}${aviso}</div>`;
+    if (q.type === 'tipos') c = `<div class="tipos">${q.o.map((o, j) => `<label><input type="checkbox" id="${q.id}-${j}" data-k="${q.id}" data-modo="una" value="${o[0]}"><b>${o[1]}</b><span>${o[2]}</span></label>`).join('')}</div>`;
+    if (q.type === 'una') c = ops(q, q.ns === false ? q.o : q.o.concat(Q.NS), 'una') + (q.otro ? `<div id="${q.id}-otro-caja" hidden style="margin-top:10px"><label class="h" for="${q.id}_otro">${q.otroT || '¿Cuánto?'}</label><input type="text" id="${q.id}_otro" data-k="${q.id}_otro" maxlength="${Q.LARGO.otro}" autocomplete="off"></div>` : '');
+    if (q.type === 'varias') c = ops(q, q.o.concat(q.ex || Q.NS), 'varias');
+    if (q.type === 'precios') c = `<div class="renglones" id="${q.id}-renglones">${renglones(q)}</div>`;
+    if (q.type === 'faq') c = `<div class="faq">${Array.from({ length: Q.LARGO.faqs }, (_, n) => `<div class="faq-fila"><span>${n + 1}</span><div><input type="text" id="${q.id}-q${n}" data-faq="${q.id}" data-i="${n}" data-f="q" maxlength="${Q.LARGO.faqPregunta}" placeholder="Pregunta" aria-label="Pregunta ${n + 1}"><textarea id="${q.id}-a${n}" data-faq="${q.id}" data-i="${n}" data-f="a" maxlength="${Q.LARGO.faqRespuesta}" placeholder="Tu respuesta" aria-label="Respuesta ${n + 1}"></textarea></div></div>`).join('')}</div>`;
+    return `<fieldset class="q" id="q-${q.id}"><legend class="t">${q.t} ${marca}</legend>${h}${c}${na}${aviso}</fieldset>`;
+  }
+
+  /* Vuelca las respuestas en los controles (al abrir). */
+  function volcar() {
+    document.querySelectorAll('[data-k]').forEach((el) => { const v = a[el.dataset.k];
+      if (el.type === 'checkbox') el.checked = Array.isArray(v) ? v.includes(el.value) : v === el.value;
+      else el.value = v || ''; });
+    document.querySelectorAll('[data-na]').forEach((el) => { el.checked = !!a[el.dataset.na + '__na']; });
+    Q.PREGUNTAS.filter((q) => q.type === 'precios').forEach((q) => { $(q.id + '-renglones').innerHTML = renglones(q); });
+    document.querySelectorAll('[data-faq]').forEach((el) => { el.value = ((a[el.dataset.faq] || [])[el.dataset.i] || {})[el.dataset.f] || ''; });
+    refrescar();
+  }
+  /* Muestra u oculta según el tipo de negocio y las respuestas; actualiza la barra, lo que falta y el botón. */
+  function refrescar() {
+    const sinTipo = !a.tipoNegocio;
+    Q.SECCIONES.forEach((s) => { $('sec-' + s.id).hidden = (s.id === 'empezar' && tipoFijo) || (s.id !== 'empezar' && sinTipo) || !Q.seccionVisible(s, a); });
+    Q.PREGUNTAS.forEach((q) => { const caja = $('q-' + q.id); caja.hidden = q.w ? !q.w(a) : false; caja.classList.toggle('listo', Q.respondida(q, a));
+      if (q.aviso) { const m = q.aviso(a), el = $(q.id + '-aviso'); el.hidden = !m; el.textContent = m; }
+      if (q.otro) $(q.id + '-otro-caja').hidden = a[q.id] !== 'Otro';
+      if (q.na) { const off = !!a[q.id + '__na']; caja.querySelectorAll('input[type=text],textarea,button').forEach((el) => { el.disabled = off; }); } });
+    $('fin').hidden = sinTipo;
+    const p = Q.progreso(a), faltan = p.faltan;
+    $('barra').style.width = p.porcentaje + '%'; $('pct').textContent = p.porcentaje + ' %';
+    $('fin').classList.toggle('recibido', listo);
+    if (listo) {
+      $('finTitulo').textContent = 'Recibimos tus respuestas';
+      $('finTexto').textContent = faltan.length ? 'Ya le avisamos a MyM. Si podés, completá lo que quedó pendiente: se guarda solo y no hace falta avisar de nuevo.' : 'Ya le avisamos a MyM. Si después cambiás algo, se guarda solo: no hace falta avisar de nuevo.';
+    } else {
+      $('finTitulo').textContent = faltan.length ? (faltan.length === 1 ? 'Te falta 1 pregunta obligatoria' : `Te faltan ${faltan.length} preguntas obligatorias`) : 'Está todo lo obligatorio';
+      $('finTexto').textContent = faltan.length ? 'Podés avisarnos igual y completar después, pero con estas el Boti queda bien armado:' : 'Tocá el botón y le avisamos a MyM que ya puede armar tu Boti. Después podés seguir cambiando lo que quieras.';
+    }
+    $('faltan').hidden = !faltan.length;
+    $('faltan').innerHTML = faltan.slice(0, 12).map((f) => `<li><a href="#" data-ir="q-${f.id}">${esc(f.t)}</a></li>`).join('') + (faltan.length > 12 ? `<li>y ${faltan.length - 12} más</li>` : '');
+    $('listo').textContent = listo ? '✓ Ya nos llegó' : 'Listo, ya completé'; $('listo').classList.toggle('hecho', listo); $('listo').disabled = listo;
+  }
+
+  /* ===================== Guardado: se guarda solo en el servidor, con copia en este dispositivo ===================== */
+  function estado(t, c) { $('guardado').textContent = t; $('guardado').className = 'guardado' + (c ? ' ' + c : ''); }
+  function local(pendiente) { try { localStorage.setItem(LS, JSON.stringify({ a, pendiente })); } catch (e) { /* sin lugar o en modo privado: igual se guarda en el servidor */ } }
+  function agendar(ms) { if (cortado) return; sucio = true; estado('Guardando…'); clearTimeout(reloj); reloj = setTimeout(subir, ms == null ? 1800 : ms); }
+  async function subir() {
+    if (escribiendo || !sucio || cortado) return;
+    escribiendo = true; sucio = false;
+    try {
+      await pedir('/api/cuestionario/guardar', { t: LLAVE, respuestas: a });
+      fallas = 0;
+      if (!sucio) { local(false); estado('✓ Guardado', 'ok'); }
+    } catch (e) {
+      if (e.codigo === 403) { cortado = true; return cartel(LINK_MALO[0], LINK_MALO[1]); }
+      sucio = true; fallas++;
+      estado(e.codigo === 413 ? 'Es mucho texto: acortá alguna respuesta' : 'Sin conexión. Reintentando…', 'mal');
+    } finally {
+      escribiendo = false;
+      if (sucio && !cortado) { clearTimeout(reloj); reloj = setTimeout(subir, fallas ? Math.min(30000, 3000 * fallas) : 800); }
+    }
+  }
+  // Al salir de la página o apagar la pantalla, lo último que quedó sin guardar sale igual.
+  function alSalir() {
+    if (!sucio || cortado || !Q) return;
+    const cuerpo = JSON.stringify({ t: LLAVE, respuestas: a });
+    if (cuerpo.length < 60000) { try { fetch(API + '/api/cuestionario/guardar', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: cuerpo, keepalive: true }); } catch (e) { /* queda la copia local */ } }
+  }
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') alSalir(); });
+  window.addEventListener('pagehide', alSalir);
+  // Si se pega otro link en la misma pestaña, se abre ese cuestionario.
+  window.addEventListener('hashchange', () => location.reload());
+  window.addEventListener('online', () => { if (sucio) { clearTimeout(reloj); subir(); } });
+
+  function cambio() { refrescar(); local(true); agendar(); }
+  function escuchar() {
+    const form = $('form');
+    form.addEventListener('submit', (e) => e.preventDefault());
+    form.addEventListener('change', (e) => { const el = e.target;
+      if (el.dataset.na) { if (el.checked) a[el.dataset.na + '__na'] = true; else delete a[el.dataset.na + '__na']; return cambio(); }
+      if (el.type !== 'checkbox' || !el.dataset.k) return;
+      const k = el.dataset.k, grupo = Array.from(document.querySelectorAll(`[data-k="${k}"]`));
+      if (el.dataset.modo === 'una') { grupo.forEach((o) => { if (o !== el) o.checked = false; }); if (el.checked) a[k] = el.value; else delete a[k]; }   // tocar la marcada la desmarca
+      else { const EX = (Q.POR_ID[k] || {}).ex || Q.NS; if (el.checked) grupo.forEach((o) => { if ((el.value === EX) !== (o.value === EX)) o.checked = false; }); a[k] = grupo.filter((o) => o.checked).map((o) => o.value); }
+      cambio(); });
+    form.addEventListener('input', (e) => { const el = e.target, d = el.dataset;
+      if (d.fila) { const v = Array.isArray(a[d.fila]) && a[d.fila].length ? a[d.fila].map((r) => Object.assign({}, r)) : [{}, {}, {}]; v[d.i] = Object.assign({}, v[d.i], { [d.f]: el.value }); a[d.fila] = v; return cambio(); }
+      if (d.faq) { const v = Array.from({ length: Q.LARGO.faqs }, (_, i) => Object.assign({}, (a[d.faq] || [])[i])); v[d.i][d.f] = el.value; a[d.faq] = v; return cambio(); }
+      if (d.k && el.type !== 'checkbox') { a[d.k] = el.value; cambio(); } });
+    form.addEventListener('click', (e) => { const d = e.target.dataset; if (!d.mas && !d.quitar) return; const id = d.mas || d.quitar;
+      const v = Array.isArray(a[id]) && a[id].length ? a[id].map((r) => Object.assign({}, r)) : [{}, {}, {}];
+      if (d.mas) v.push({}); else { v.splice(+d.i, 1); if (!v.length) v.push({}); }
+      a[id] = v; $(id + '-renglones').innerHTML = renglones(Q.POR_ID[id]);
+      if (d.mas) $(`${id}-${v.length - 1}-p`).focus(); cambio(); });
+    $('faltan').addEventListener('click', (e) => { const id = e.target.dataset && e.target.dataset.ir; if (!id) return; e.preventDefault(); const el = $(id); el.scrollIntoView({ block: 'center' }); const c = el.querySelector('input,textarea'); if (c) c.focus({ preventScroll: true }); });
+    $('listo').onclick = async () => {
+      if (listo) return;
+      const b = $('listo'); b.disabled = true; b.textContent = 'Avisando…'; $('finError').hidden = true;
+      clearTimeout(reloj); sucio = false;
+      try { await pedir('/api/cuestionario/listo', { t: LLAVE, respuestas: a }); listo = true; local(false); estado('✓ Guardado', 'ok'); refrescar(); $('fin').scrollIntoView({ block: 'center' }); }
+      catch (err) {
+        if (err.codigo === 403) { cortado = true; return cartel(LINK_MALO[0], LINK_MALO[1]); }
+        sucio = true; b.disabled = false; b.textContent = 'Listo, ya completé';
+        $('finError').hidden = false; $('finError').textContent = 'No pudimos avisar: revisá tu conexión y tocá el botón de nuevo. Lo que escribiste no se pierde.';
+      }
+    };
+  }
+
+  /* ===================== Arranque ===================== */
+  (async function () {
+    if (!API) return cartel('El cuestionario no está disponible', 'Probá de nuevo en un rato o escribinos por WhatsApp al 11 3366-2080.');
+    if (!/^[\w-]{6,40}\.[\w-]{30,80}$/.test(LLAVE)) return cartel(LINK_MALO[0], LINK_MALO[1]);
+    let d;
+    try { [d] = await Promise.all([pedir('/api/cuestionario/abrir', { t: LLAVE }), cargarPreguntas()]); }
+    catch (e) {
+      if (e.codigo === 403) return cartel(LINK_MALO[0], LINK_MALO[1]);
+      if (e.codigo === 429) return cartel('Esperá unos minutos', 'Se abrió muchas veces seguidas. Probá de nuevo en un rato.');
+      return cartel('No pudimos abrir tu cuestionario', 'Revisá tu conexión y recargá la página. Lo que ya habías escrito está guardado.');
+    }
+    a = d.respuestas || {}; listo = !!d.listo; tipoFijo = !!d.tipoFijo;
+    // Si en este dispositivo quedó algo escrito que no llegó a guardarse (se cortó la conexión), vale eso.
+    let pendiente = false;
+    try { const s = JSON.parse(localStorage.getItem(LS) || 'null'); if (s && s.pendiente && s.a && typeof s.a === 'object') { a = s.a; pendiente = true; } } catch (e) { /* copia local rota: vale lo del servidor */ }
+    $('form').innerHTML = Q.SECCIONES.map((s) => `<section class="sec" id="sec-${s.id}"><h2>${s.t}</h2>${s.d ? `<p class="d">${s.d}</p>` : ''}${s.q.map(pregunta).join('')}</section>`).join('');
+    $('para').textContent = d.negocio ? 'Cuestionario de ' + d.negocio : '';
+    $('para').hidden = !d.negocio;
+    $('v-cartel').hidden = true; $('v-form').hidden = false; $('arriba').hidden = false;
+    escuchar(); volcar();
+    if (pendiente) agendar(0); else estado(d.actualizado ? '✓ Guardado' : 'Se guarda solo', d.actualizado ? 'ok' : '');
+  })();
+})();
+</script>
+</body>
+</html>
