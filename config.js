@@ -32,3 +32,7 @@ window.SITE = {
   supabaseUrl: "",
   supabaseAnonKey: "",
 };
+
+// Vista previa en la compu (20/11/2026): en localhost la web habla con la plataforma de bots que corre en la compu
+// (MEMORIA=1, puerto 8080, datos de prueba). En la web publicada no hace nada.
+if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname)) window.SITE.plataformaApi = 'http://localhost:8080';

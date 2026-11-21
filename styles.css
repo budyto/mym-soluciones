@@ -472,14 +472,23 @@ footer { padding: 80px 0 40px; background: #fff; margin-top: 40px; }
 /* ============ Responsive ============ */
 @media (max-width: 1000px) {
   .nav-links { display: none; }
-  .hero .wrap { grid-template-columns: 1fr; gap: 48px; }
-  .demo-note { margin-inline: auto; }
   .sec-head.split { grid-template-columns: 1fr; gap: 20px; align-items: start; }
   .pains, .paqs { grid-template-columns: repeat(2, 1fr); }
   .steps { grid-template-columns: repeat(2, 1fr); }
   .ask-box, .contact, .roi { grid-template-columns: 1fr; }
   .answer-empty { display: none; }
   .foot { grid-template-columns: 1fr 1fr; }
+}
+/* Hero (20/11/2026, Matías: «acá entra, el teléfono al lado»): las dos columnas siguen hasta 760 px; recién ahí el
+   teléfono baja abajo del texto. Entre 761 y 1000 px el teléfono se achica un poco. */
+@media (max-width: 1000px) and (min-width: 761px) {
+  .hero .wrap { grid-template-columns: minmax(0, 1fr) 270px; gap: 32px; }
+  .hero h1 { font-size: clamp(44px, 5.8vw, 60px); }
+  .tel { width: 270px; }
+}
+@media (max-width: 760px) {
+  .hero .wrap { grid-template-columns: 1fr; gap: 48px; }
+  .demo-note { margin-inline: auto; }
 }
 @media (max-width: 640px) {
   body { font-size: 16px; }
@@ -799,3 +808,43 @@ h2 .em, h3 .em { font-family: inherit; font-style: normal; font-weight: inherit;
 #planes .pp-vistazo td { font-variant-numeric: tabular-nums; white-space: nowrap; }
 #planes .pp-vistazo tbody tr:last-child > * { border-bottom: 0; }
 @media (max-width: 640px) { #planes .pp-vistazo { padding: 4px 14px 10px; } #planes .pp-vistazo table { font-size: 14px; } #planes .pp-vistazo td { white-space: normal; } }
+
+/* ---------- Empresas que trabajan con nosotros (20/11/2026) ---------- */
+/* Matías (20/11): que se mueva siempre, también con el mouse encima. Con «menos movimiento» del sistema va más lento. */
+.marcas { padding: 34px 0 30px; border-bottom: 1px solid var(--line); overflow: hidden; }
+.marcas-tit { margin: 0 0 20px; text-align: center; font-family: var(--mono); font-size: 12px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: var(--ink-2); }
+/* Va para la derecha: al revés que la cinta de servicios de arriba, así no se mueven igual. */
+.marcas-pista { display: flex; width: max-content; animation: marcas-desfile 40s linear infinite reverse;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+.marcas-lista { display: flex; align-items: center; gap: 64px; margin: 0; padding: 0 32px; list-style: none; }
+.marcas-lista li { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: none; opacity: .78; filter: grayscale(1); transition: opacity .2s ease; }
+.marcas-lista li:hover { opacity: .95; }
+.marcas-lista img { height: 76px; width: auto; display: block; }
+.marcas-lista li.texto img { height: 40px; margin: 18px 0; }
+/* Mis Créditos es apaisado: a la misma altura que los escudos se veía el doble de grande (Matías, 20/11). */
+.marcas-lista img[src$="mis-creditos.png"] { height: 44px; margin: 16px 0; }
+.marcas-lista li span { font-family: var(--mono); font-size: 10.5px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: #4a5470; white-space: nowrap; }
+/* Las empresas del Grupo MyM van juntas, con una llave horizontal abajo y el nombre del grupo (Matías, 20/11). */
+.marcas-lista li.marcas-grupo { opacity: 1; filter: none; gap: 8px; }
+.marcas-grupo-logos { display: flex; align-items: center; gap: 40px; padding: 0 10px; }
+.marcas-grupo-logos > div { display: flex; flex-direction: column; align-items: center; gap: 6px; opacity: .78; filter: grayscale(1); transition: opacity .2s ease; }
+.marcas-grupo-logos > div:hover { opacity: .95; }
+.marcas-grupo-logos span { font-family: var(--mono); font-size: 10.5px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: #4a5470; white-space: nowrap; }
+.marcas-llave { align-self: stretch; height: 12px; border: 1.5px solid #9aa3ba; border-top: 0; border-radius: 0 0 10px 10px; position: relative; }
+.marcas-llave::after { content: ""; position: absolute; left: 50%; bottom: -8px; width: 1.5px; height: 8px; background: #9aa3ba; }
+.marcas-grupo-nombre { margin-top: 6px; font-family: var(--mono); font-size: 11px !important; font-weight: 500; letter-spacing: .2em; text-transform: uppercase; color: #3a4258 !important; }
+.marcas.marcas-js .marcas-pista { animation: none; will-change: transform; }
+.marcas.marcas-js { cursor: grab; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.marcas.marcas-js.agarrado { cursor: grabbing; }
+@keyframes marcas-desfile { to { transform: translateX(-50%); } }
+@media (max-width: 600px) {
+  .marcas { padding: 26px 0 22px; }
+  .marcas-lista { gap: 40px; padding: 0 20px; }
+  .marcas-lista img { height: 56px; }
+  .marcas-lista li.texto img { height: 30px; margin: 13px 0; }
+  .marcas-lista img[src$="mis-creditos.png"] { height: 32px; margin: 12px 0; }
+  .marcas-grupo-logos { gap: 28px; }
+  .marcas-grupo-logos span { font-size: 9.5px; }
+  .marcas-lista li span { font-size: 9.5px; }
+}
+@media (prefers-reduced-motion: reduce) { .marcas-pista { animation-duration: 70s; } }

@@ -231,3 +231,30 @@ dialog .btns .btn{flex:1 1 180px}
 .planilla select { max-width: 160px; margin-right: 6px; }
 .seg-listo { color: #00a58f; font-weight: 700; }
 .seg-no-molestar, .seg-perdido, .seg-sin-respuesta { color: #67759a; }
+
+/* ---------- Inicio y Pagos (20/11/2026) ---------- */
+.servicios{display:grid;gap:10px;margin-top:6px}
+.serv{display:flex;gap:14px;align-items:flex-start;border:1.5px solid var(--borde);border-radius:16px;padding:14px 16px;background:#fff}
+.serv .ic{flex:0 0 44px;height:44px;border-radius:13px;background:var(--suave);display:grid;place-items:center;color:var(--azul)}
+.serv .ic svg{width:24px;height:24px}
+.serv .tx{flex:1;min-width:0}
+.serv b{display:block;font:800 18px/1.2 Archivo,sans-serif}
+.serv .chica{margin-top:3px}
+.serv .acc{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.serv .estado{margin-top:6px}
+.movs{list-style:none;margin:0;padding:0}
+.movs li{display:flex;gap:12px;align-items:center;padding:12px 2px;border-top:1px solid #edf1fb}
+.movs li:first-child{border-top:0}
+.movs .tx{flex:1;min-width:0}
+.movs .tx b{display:block;font-weight:700}
+.movs .tx small{display:block;color:var(--gris);font-size:14px;overflow:hidden;text-overflow:ellipsis}
+.movs .monto{font:800 17px Archivo,sans-serif;white-space:nowrap}
+.movs .vacio{color:var(--gris);border:0}
+.cobro{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center}
+.cobro .grande{font:900 24px Archivo,sans-serif;letter-spacing:-.01em}
+.sin-bot .resumen-boton,.sin-bot #r-espera,.sin-bot #r-estado,.sin-bot [data-bot]{display:none!important}
+@media (max-width:899px){
+  .pestanas button{font-size:12.5px;padding:7px 1px}
+  .pestanas button span[data-corto]{font-size:0}
+  .pestanas button span[data-corto]::after{content:attr(data-corto);font-size:12.5px}
+}
