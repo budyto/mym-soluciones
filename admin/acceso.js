@@ -9,11 +9,24 @@
   const SITE = window.SITE || {};
   const LISTA = (SITE.adminEmails || []).map((e) => String(e).trim().toLowerCase());
   let auth = null, cb = { alEntrar() {}, alSalir() {} };
+  const VISTA_PREVIA = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
 
   const permitido = (u) => !!u && u.emailVerified && LISTA.includes(String(u.email || '').toLowerCase());
 
+  // Menú general (20/11/2026): acceso.js lo carga en todas las páginas de admin/ y lo muestra al entrar.
+  const base = (document.currentScript && document.currentScript.src || '').replace(/[^/]*$/, '');
+  if (base && !window.MENU) { const s = document.createElement('script'); s.src = base + 'menu.js?v=20261121a'; document.head.appendChild(s); }
+  const menu = (u) => { if (window.MENU) window.MENU.mostrar(u); else window.__menuPendiente = u; };
+  const sinMenu = () => { window.__menuPendiente = null; if (window.MENU) window.MENU.ocultar(); };
+
   function iniciar(opciones) {
     cb = Object.assign(cb, opciones || {});
+    const entrar0 = cb.alEntrar, salir0 = cb.alSalir;
+    cb.alEntrar = function (u) { const r = entrar0.apply(this, arguments); menu(u); return r; };
+    cb.alSalir = function () { sinMenu(); return salir0.apply(this, arguments); };
+    // Vista previa en la compu (20/11/2026): Google no deja entrar desde localhost, así que se entra directo.
+    // Los datos de la plataforma de bots salen de la copia local (MEMORIA=1); lo demás no carga y lo dice cada página.
+    if (VISTA_PREVIA) { setTimeout(() => cb.alEntrar({ email: 'vista previa en la compu', nombre: 'Vista previa', foto: '' }), 0); return; }
     if (!window.firebase || !SITE.firebaseWeb) { cb.alSalir('No se pudo cargar el acceso con Google. Recargá la página.'); return; }
     if (!firebase.apps.length) firebase.initializeApp(SITE.firebaseWeb);
     auth = firebase.auth();
@@ -29,6 +42,7 @@
   }
 
   function entrar() {
+    if (VISTA_PREVIA) return Promise.resolve();
     const p = new firebase.auth.GoogleAuthProvider();
     p.setCustomParameters({ prompt: 'select_account' });
     return auth.signInWithPopup(p).catch((e) => {
@@ -40,12 +54,14 @@
 
   // Firebase renueva el token solo (dura una hora); se pide en cada pedido al server.
   async function token() {
+    if (VISTA_PREVIA) return 'prueba:' + (LISTA[0] || '');  // sólo lo acepta la plataforma local con MEMORIA=1
     const u = auth && auth.currentUser;
     if (!permitido(u)) throw new Error('sin sesión');
     return u.getIdToken();
   }
 
-  function salir(mensaje) { if (auth) auth.signOut(); try { sessionStorage.removeItem('cal_token'); } catch (e) {} cb.alSalir(mensaje || ''); }
+  function salir(mensaje) {
+    if (VISTA_PREVIA) { console.warn('Vista previa: «salir» no hace nada en la compu.', mensaje || ''); return; } if (auth) auth.signOut(); try { sessionStorage.removeItem('cal_token'); } catch (e) {} cb.alSalir(mensaje || ''); }
 
   // Google Calendar (17/11/2026, Matías: «agenda de diagnósticos del día»). Permiso de SÓLO LECTURA, pedido aparte
   // con un botón (no al entrar). Google da un token que dura 1 hora: se guarda en esta pestaña (sessionStorage) y

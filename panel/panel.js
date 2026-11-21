@@ -162,7 +162,7 @@
   // =====================================================================================
   // Panel: resumen, negocios y secciones
   // =====================================================================================
-  let resumen = null; let charlas = []; let filtro = 'todas'; let seccion = 'charlas';
+  let resumen = null; let charlas = []; let filtro = 'todas'; let seccion = 'inicio'; let cuenta = null;
 
   function mostrarPanel(charlaInicial) {
     $('#v-entrada').hidden = true; $('#v-panel').hidden = false;
@@ -171,8 +171,8 @@
     for (const c of S.clientes) sel.append(el('option', { value: c.id }, c.negocio || 'Mi negocio'));
     sel.value = cliente(); $('#caja-negocios').hidden = S.clientes.length < 2;
     $('#r-negocio').textContent = (S.clientes.find((c) => c.id === cliente()) || {}).negocio || 'Tu negocio';
-    verSeccion('charlas');
-    refrescarResumen(); refrescarLista();
+    verSeccion(charlaInicial ? 'charlas' : 'inicio');
+    refrescarResumen(); refrescarLista(); refrescarCuenta();
     if (charlaInicial) abrirDesdeLink(charlaInicial);
   }
   $('#negocios').addEventListener('change', (e) => cambiarNegocio(e.target.value));
@@ -180,11 +180,11 @@
     if (!S || !S.clientes.some((c) => c.id === id)) return;
     S.actual = id; guardar(CLAVE, S); $('#negocios').value = id;
     cerrarCharla(); quitarHashCharla();
-    resumen = null; charlas = []; fichaDe = null; avisosTocado = false; reiniciarEnsayo();
+    resumen = null; charlas = []; cuenta = null; fichaDe = null; avisosTocado = false; reiniciarEnsayo();
     $('#r-negocio').textContent = (S.clientes.find((c) => c.id === id) || {}).negocio || 'Tu negocio';
     $('#r-numero').textContent = ''; $('#r-estado').hidden = true; $('#r-pausar').hidden = true; $('#r-prender').hidden = true; $('#r-pausa-pago').hidden = true;
     pintarLista(); pintarEspera(0);
-    refrescarResumen(); refrescarLista();
+    refrescarResumen(); refrescarLista(); refrescarCuenta();
     if (seccion === 'bot') cargarFicha();
   }
 
@@ -237,12 +237,110 @@
 
   function verSeccion(cual) {
     seccion = cual;
-    for (const s of ['charlas', 'bot', 'seguimiento', 'avisos']) $('#s-' + s).hidden = s !== cual;
+    for (const s of ['inicio', 'charlas', 'bot', 'seguimiento', 'pagos', 'avisos']) $('#s-' + s).hidden = s !== cual;
     document.querySelectorAll('.pestanas button').forEach((b) => { if (b.dataset.seccion === cual) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
     if (cual === 'bot' && fichaDe !== cliente()) cargarFicha();
     if (cual === 'charlas') refrescarLista();
     if (cual === 'seguimiento') cargarSeguimiento();
+    if (cual === 'inicio' || cual === 'pagos') refrescarCuenta();
   }
+
+  // =====================================================================================
+  // Inicio y Pagos (20/11/2026, pedido de Matías): lo contratado, el próximo pago, los pagos y las facturas.
+  // Sólo lectura: lo carga MyM en su panel. Un cliente sin bot (sólo web o redes) no ve las pestañas del bot.
+  // =====================================================================================
+  const plata = (n) => '$ ' + Number(n || 0).toLocaleString('es-AR', { maximumFractionDigits: 2 });
+  const fecha = (iso) => { const d = new Date(String(iso).length === 10 ? iso + 'T12:00:00-03:00' : iso); return isNaN(d) ? '' : d.toLocaleDateString('es-AR', { timeZone: TZ, day: 'numeric', month: 'long', year: 'numeric' }); };
+  const ICONOS = {
+    bot: '<path d="M12 4v4"/><rect x="4" y="8" width="16" height="11" rx="3"/><path d="M9 13h.01M15 13h.01"/>',
+    web: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
+    redes: '<rect x="4" y="4" width="16" height="16" rx="5"/><circle cx="12" cy="12" r="3.5"/><path d="M17 7h.01"/>'
+  };
+  const ESTADO_BOT = { activo: ['Activo', ''], pausado: ['Pausado', 'pausa'], revision: ['En revisión', 'revision'] };
+  const ESTADO_SERV = { 'en marcha': ['Activo', ''], 'en armado': ['En implementación', 'revision'], pausado: ['Pausado', 'pausa'] };
+  const NOMBRE_SERV = { bot: 'Bot', web: 'Web', redes: 'Redes', otro: 'Otro servicio' };
+  function icono(clave) {
+    const sp = el('span', { class: 'ic', 'aria-hidden': 'true' });
+    sp.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + (ICONOS[clave] || ICONOS.web) + '</svg>';
+    return sp;
+  }
+  let pidiendoCuenta = false;
+  async function refrescarCuenta() {
+    const cli = cliente(); if (!cli || pidiendoCuenta) return;
+    pidiendoCuenta = true;
+    try {
+      const r = await api('/api/panel/cuenta', { cliente: cli });
+      if (cli !== cliente()) return;
+      cuenta = r; $('#cuenta-error').textContent = ''; pintarCuenta();
+    } catch (e) {
+      if (S && !cuenta) $('#cuenta-error').textContent = e.status === 404 ? 'Esta sección todavía no está disponible. Para consultar tus pagos, contactanos.' : e.message;
+    } finally { pidiendoCuenta = false; }
+  }
+  function pintarCobro(caja, conDetalle) {
+    vaciar(caja);
+    const co = (cuenta && cuenta.cobro) || {};
+    if (co.pendiente && co.pendiente.monto) {
+      caja.append(el('div', { class: 'cobro' }, el('span', { class: 'grande' }, plata(co.pendiente.monto)), el('span', { class: 'chica' }, co.pendiente.detalle || 'Pago pendiente')));
+      if (co.pendiente.link) caja.append(el('p', { style: 'margin:12px 0 0' }, el('a', { class: 'btn', href: co.pendiente.link, target: '_blank', rel: 'noopener' }, 'Pagar ahora')));
+    } else if (co.vence) {
+      const vencido = co.estado === 'vencido';
+      caja.append(el('div', { class: 'cobro' }, el('span', { class: 'estado' + (vencido ? ' pausa' : '') }, vencido ? 'Vencido' : 'Al día'), el('span', { class: 'chica' }, (vencido ? 'Venció el ' : 'Próximo vencimiento: ') + fecha(co.vence))));
+    } else {
+      caja.append(el('p', { class: 'chica' }, co.estado === 'al día' ? 'Tu cuenta está al día.' : 'No hay vencimientos programados.'));
+    }
+    if (conDetalle && co.medio) caja.append(el('p', { class: 'chica', style: 'margin-top:8px' }, 'Medio de pago: ' + co.medio));
+  }
+  function pintarCuenta() {
+    if (!cuenta) return;
+    const servicios = cuenta.servicios || [];
+    const conBot = servicios.some((x) => x.clave === 'bot');
+    document.body.classList.toggle('sin-bot', !conBot);
+    if (!conBot && ['charlas', 'bot', 'seguimiento', 'avisos'].includes(seccion)) verSeccion('inicio');
+    const caja = $('#servicios'); vaciar(caja);
+    if (!servicios.length) caja.append(el('p', { class: 'chica' }, 'Todavía no hay servicios asociados a tu cuenta. Si ya contrataste, contactanos.'));
+    for (const x of servicios) {
+      // Sin estado cargado por MyM no se muestra ninguno: el panel no inventa en qué anda un servicio.
+      const est = x.clave === 'bot' ? (ESTADO_BOT[x.estado] || ['En implementación', 'revision']) : ESTADO_SERV[x.estado];
+      const det = x.clave === 'bot' ? (x.numero ? 'WhatsApp ' + x.numero : 'WhatsApp pendiente de conexión.') : (x.nota || '');
+      const tx = el('div', { class: 'tx' }, el('b', null, x.nombre), det ? el('p', { class: 'chica' }, det) : null, est ? el('span', { class: 'estado ' + est[1] }, est[0]) : null);
+      const acc = el('div', { class: 'acc' });
+      if (x.clave === 'bot') acc.append(el('button', { class: 'btn-chico', type: 'button', onclick: () => verSeccion('charlas') }, 'Ver conversaciones'), el('button', { class: 'btn-chico', type: 'button', onclick: () => verSeccion('bot') }, 'Configurar'));
+      if (x.link) acc.append(el('a', { class: 'btn-chico', href: x.link, target: '_blank', rel: 'noopener' }, x.grupo === 'web' ? 'Ver sitio' : 'Abrir'));
+      if (acc.childNodes.length) tx.append(acc);
+      caja.append(el('div', { class: 'serv' }, icono(x.grupo || x.clave), tx));
+    }
+    pintarCobro($('#cobro-inicio'), false); pintarCobro($('#cobro-pagos'), true);
+    const co = cuenta.cobro || {};
+    $('#globo-pago').hidden = !(co.estado === 'vencido' || (co.pendiente && co.pendiente.monto));
+    const fl = $('#facturas'); vaciar(fl);
+    const fs = cuenta.facturas || [];
+    if (!fs.length) fl.append(el('li', { class: 'vacio' }, 'Todavía no hay comprobantes emitidos.'));
+    for (const f of fs) {
+      fl.append(el('li', null,
+        el('div', { class: 'tx' }, el('b', null, f.etiqueta + (f.estado === 'anulada' ? ' (anulada)' : '')), el('small', null, fecha(f.fecha) + (f.descripcion ? ' · ' + f.descripcion : ''))),
+        el('span', { class: 'monto' }, plata(f.total)),
+        el('button', { class: 'btn-chico', type: 'button', onclick: (e) => bajarFactura(f, e.currentTarget) }, 'PDF')));
+    }
+    const pl = $('#pagos'); vaciar(pl);
+    const ps = cuenta.pagos || [];
+    if (!ps.length) pl.append(el('li', { class: 'vacio' }, 'Todavía no hay pagos registrados.'));
+    for (const x of ps) {
+      const medio = x.medio === 'aparte' ? ' · incluido en el contrato' : (x.medio ? ' · ' + x.medio : '');
+      pl.append(el('li', null,
+        el('div', { class: 'tx' }, el('b', null, x.concepto || NOMBRE_SERV[x.servicio] || 'Pago'), el('small', null, fecha(x.cuando) + medio)),
+        el('span', { class: 'monto' }, x.monto == null ? '' : plata(x.monto))));
+    }
+  }
+  async function bajarFactura(f, b) {
+    b.disabled = true; const antes = b.textContent; b.textContent = '…';
+    try {
+      const blob = await api('/api/panel/factura', con({ factura: f.id }), { binario: true });
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+      a.download = f.etiqueta.replace(/[^\w-]+/g, '_') + '.pdf'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    } catch (e) { tostada(e.message, true); }
+    b.disabled = false; b.textContent = antes;
+  }
+
 
   // =====================================================================================
   // Seguimiento: la planilla de contactos con su estado (17/11/2026)

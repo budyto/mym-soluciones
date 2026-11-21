@@ -153,7 +153,7 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
 <script src="../config.js?v=202611142100"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" integrity="sha384-AQ3POAMqIhwS81FrUH95ekxqBZHeP5tG2JfEL3+7GuTtfRLWnrRh32UxwzM+//A9" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js" integrity="sha384-TnlRYaR4JYz/lpaGuaiU61PjNberSA4vjLjtF+oRC/IkohkJqnWxw5EmDSOt1vA1" crossorigin="anonymous"></script>
-<script src="acceso.js?v=20261117b"></script>
+<script src="acceso.js?v=20261120b"></script>
 <script>
 (function () {
   const API = String((window.SITE || {}).plataformaApi || '').replace(/\/+$/, '');
@@ -252,6 +252,26 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
     return `<span class="estado e-activo">Al día · vence el ${dia}</span>`;
   }
 
+  // Lo que ve el cliente en su panel de cada servicio que no es el bot (20/11/2026, Matías): el link (su web, su
+  // calendario de redes), una nota corta y el estado. Si no se carga el estado, el panel no muestra ninguno.
+  function serviciosPanel(c) {
+    const claves = Array.isArray(c.servicios) ? c.servicios : (c.plan === 'paquete' ? ['bot', 'seguimiento', 'landing'] : ['bot']);
+    const extra = (c.ventas || []).map((v) => v.servicio).filter((k) => ['web', 'redes'].includes(k));
+    return [...new Set([...claves, ...extra])].filter((k) => k !== 'bot');
+  }
+  function cajaPanel(c) {
+    const ks = serviciosPanel(c); if (!ks.length) return '';
+    const pn = c.panel || {};
+    const opc = (v) => ['', 'en armado', 'en marcha', 'pausado'].map((e) => `<option value="${e}"${(v || '') === e ? ' selected' : ''}>${({ '': 'Sin estado (no se muestra)', 'en armado': 'En implementación', 'en marcha': 'Activo', pausado: 'Pausado' })[e]}</option>`).join('');
+    return `<section class="caja" aria-labelledby="tit-panel"><div class="caja-tit"><h3 id="tit-panel">Portal del cliente</h3></div>
+      <p class="gris chica" style="margin:6px 0 10px">Lo que el cliente ve de cada servicio: el link (su sitio, su calendario de redes), una nota breve y el estado. No cargues fechas ni resultados que no estén confirmados: el cliente los lee como un compromiso.</p>
+      ${ks.map((k) => { const x = pn[k] || {}; return `<form class="form-panel campos" data-clave="${esc(k)}" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr));margin-bottom:10px">
+        <label class="campo">${esc(SERVICIO[k] || ({ redes: 'Redes sociales' })[k] || k)} · link<input name="link" inputmode="url" placeholder="https://…" value="${esc(x.link || '')}"></label>
+        <label class="campo">Nota que lee el cliente<input name="nota" maxlength="300" placeholder="Ej.: publicamos lunes, miércoles y viernes" value="${esc(x.nota || '')}"></label>
+        <label class="campo">Estado<select name="estado">${opc(x.estado)}</select></label>
+        <button class="btn" type="submit">Guardar</button></form>`; }).join('')}
+      <p class="error chica" id="error-panel"></p></section>`;
+  }
   async function verCliente(id) {
     $('#detalle').innerHTML = '<div class="tarjeta gris">Cargando…</div>';
     try {
@@ -288,7 +308,7 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
           <dt>Audios sin transcribir</dt><dd>${c.audiosPendientes ? `${c.audiosPendientes} (llegaron con el bot cortado: se transcriben solos cuando vuelve a contestar)` : 'Ninguno'}</dd>
         </dl>
         ${vivo ? `<div class="acciones"><button class="btn" id="b-alta">Abrir su alta (link nuevo)</button><button class="btn" id="b-panel">Link para su panel</button></div>
-        <div id="links"></div>` : ''}
+        <div id="links"></div>${cajaPanel(c)}` : ''}
         <section class="caja" id="caja-cobros" aria-labelledby="tit-cobros">
           <div class="caja-tit"><h3 id="tit-cobros">Cobros</h3>${estadoCobro(c)}</div>
           <p class="gris chica" style="margin:6px 0 0">${c.fiscal ? `Factura: sale sola con cada pago, a nombre de ${esc(c.fiscal.nombre)} (${esc(c.fiscal.doc_tipo)} ${esc(c.fiscal.doc_nro)}, ${esc(({ RI: 'Responsable Inscripto', MT: 'Monotributo', CF: 'Consumidor final', EX: 'Exento' })[c.fiscal.condicion_iva] || c.fiscal.condicion_iva)}).` : 'Factura: todavía no tiene sus datos fiscales. Los pagos quedan en <a href="facturacion.html">Facturación</a> para cargarlos una vez.'}</p>
@@ -402,6 +422,13 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
         };
         await mandar(cuerpo);
       };
+      document.querySelectorAll('#detalle .form-panel').forEach((fp) => (fp.onsubmit = async (e) => {
+        e.preventDefault(); $('#error-panel').textContent = '';
+        const d = Object.fromEntries(new FormData(fp).entries()); const btn = fp.querySelector('button'); btn.disabled = true;
+        try { await api('/api/admin/panel-servicio', { id, clave: fp.dataset.clave, ...d }); btn.textContent = 'Guardado'; setTimeout(() => { btn.textContent = 'Guardar'; }, 2000); }
+        catch (err) { $('#error-panel').textContent = err.message === 'No existe.' ? 'Esto se activa cuando se publique el servidor nuevo de la plataforma.' : err.message; }
+        btn.disabled = false;
+      }));
       if (vivo) {
       $('#b-alta').onclick = async () => { if (!confirm('Se genera un link nuevo del alta y el anterior (el del mail del cliente) deja de andar. ¿Seguimos?')) return; try { const r = await api('/api/admin/link-alta', { id }); mostrarLink('Link del alta', r.linkAlta, 'Con este link completás o corregís la ficha y conectás el WhatsApp con el cliente.'); } catch (e) { $('#error-det').textContent = e.message; } };
       // Cambiar el mail (19/11/2026, Budy): es con el que entra a su panel y al que le llegan los mails.
