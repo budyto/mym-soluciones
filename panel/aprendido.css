@@ -1,0 +1,58 @@
+/* «Lo que aprendió tu bot» en el panel del cliente (21/11/2026). Lo carga panel/aprendido.js.
+   Usa los colores y las tarjetas de panel.css; acá sólo va lo propio de esta pantalla. */
+.apr-entrada{margin-top:16px;display:grid;gap:10px;justify-items:start}
+.apr-entrada p{margin:0;font-size:17px;color:var(--gris)}
+.apr-entrada p b{color:var(--ink)}
+.apr-link{margin-top:10px}
+.pestanas .globo.apr-globo{background:var(--ambar-suave);color:var(--ambar);box-shadow:inset 0 0 0 1.5px #ecd29a}
+
+.apr-volver{margin:4px 0 12px}
+.apr-sub{font:800 20px/1.2 Archivo,sans-serif;margin:26px 0 4px}
+.apr-sub span{font:500 13px "Martian Mono",monospace;color:var(--gris);margin-left:6px}
+.apr-nota{color:var(--gris);font-size:16px;margin:0 0 12px}
+.apr-vacio{color:var(--gris);text-align:center;padding:26px 10px;margin:0}
+
+/* Un dato que espera: la pregunta y la respuesta como en la charla, y por qué espera */
+.apr-dato{border:1.5px solid var(--borde);border-radius:18px;overflow:hidden;margin-bottom:12px;background:#fff}
+.apr-motivo{margin:0;padding:10px 14px;background:var(--ambar-suave);color:var(--ambar);font-size:15.5px}
+.apr-par{background:var(--fondo-chat);padding:12px;display:grid;gap:7px}
+.apr-glo{max-width:90%;padding:8px 12px;border-radius:15px;box-shadow:0 1px 1px rgba(0,0,0,.09);font-size:16.5px;line-height:1.42;white-space:pre-wrap;overflow-wrap:anywhere}
+.apr-glo small{display:block;font:700 12.5px Archivo,sans-serif;margin-bottom:1px}
+.apr-glo.cli{background:#fff;justify-self:start;border-top-left-radius:5px}.apr-glo.cli small{color:var(--gris)}
+.apr-glo.bot{background:var(--verde);justify-self:end;border-top-right-radius:5px}.apr-glo.bot small{color:#0b6b4d}
+.apr-pie{padding:10px 14px 12px;display:grid;gap:8px;justify-items:start}
+.apr-pie p{margin:0;font-size:15px;color:var(--gris)}
+.apr-pie .apr-precio{background:var(--rojo-suave);color:#8f1c33;border-radius:12px;padding:9px 12px}
+
+/* Lo que ya usa: por tema */
+.apr-tema{margin-top:18px}
+.apr-tema h4{font:800 17px Archivo,sans-serif;margin:0;padding-bottom:6px;border-bottom:2px solid var(--borde)}
+.apr-fila{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px 14px;padding:13px 0;border-bottom:1px solid #edf1fb;align-items:start}
+.apr-fila .p{font-weight:700;font-size:17px}
+.apr-fila .r{white-space:pre-wrap;overflow-wrap:anywhere;font-size:17px}
+.apr-fila .m{grid-column:1;color:var(--gris);font-size:14.5px;display:flex;gap:2px 14px;flex-wrap:wrap}
+.apr-fila .btn-chico{grid-column:2;grid-row:1 / span 3}
+.apr-fila .error{grid-column:1 / -1;margin:0}
+.apr-anteriores{margin-top:22px}
+.apr-anteriores summary{cursor:pointer;font-weight:700;color:var(--gris);padding:8px 0;font-size:16px}
+.apr-estado{font:700 13px Archivo,sans-serif;border-radius:99px;padding:2px 9px;background:var(--suave);color:#33456e}
+
+/* En la charla: «Esta respuesta está mal» en cada mensaje del bot */
+.apr-mal{justify-self:start;border:1.5px solid rgba(14,26,51,.16);background:rgba(255,255,255,.72);border-radius:10px;padding:7px 11px;min-height:40px;font:700 14.5px Archivo,sans-serif;color:var(--ink);cursor:pointer}
+.apr-mal:hover{border-color:var(--rojo);color:var(--rojo)}
+.apr-corregir{display:grid;gap:8px;background:#fff;border-radius:12px;padding:11px;margin-top:2px}
+.apr-corregir label{font:700 15.5px Archivo,sans-serif}
+.apr-corregir textarea{width:100%;min-height:92px;font:400 16.5px/1.45 Archivo,sans-serif;padding:10px 12px;border:1.5px solid var(--borde);border-radius:11px;background:#f8faff;color:var(--ink);resize:vertical}
+.apr-corregir textarea:focus{border-color:var(--azul);outline:0;background:#fff}
+.apr-corregir .apr-btns{display:flex;gap:8px;flex-wrap:wrap}
+.apr-corregir .btn{min-height:46px;padding:9px 16px;font-size:16px}
+.apr-corregir .error{margin:0}
+.apr-hecho{margin:2px 0 0;background:#fff;border-radius:10px;padding:8px 11px;font-size:15px;font-weight:600;color:#075c40}
+.apr-hecho.espera{color:var(--ambar)}
+
+@media (max-width:899px){
+  .apr-fila{grid-template-columns:minmax(0,1fr)}
+  .apr-fila .btn-chico{grid-column:1;grid-row:auto;justify-self:start;margin-top:6px}
+  .apr-entrada .btn{width:100%}
+  .apr-corregir .btn{flex:1 1 auto}
+}
