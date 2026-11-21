@@ -12,6 +12,7 @@
     ] },
     { g: 'Atender', items: [
       { href: 'whatsapp.html', ic: '💬', t: 'WhatsApp comercial', d: 'Conversaciones del 11 3366-2080' },
+      { href: 'llamadas.html', ic: '📞', t: 'Llamadas', d: 'Las atiende el asistente de voz' },
       { href: 'diagnosticos.html', ic: '📊', t: 'Diagnósticos de redes', d: 'Solicitudes e informes' },
       { href: 'https://crm.creditosmym.com/', ext: true, ic: '📥', t: 'CRM de Instagram', d: 'Mensajes y respuestas automáticas' },
     ] },
