@@ -89,7 +89,9 @@ td.charla{background:#f6f8fe;padding:12px}
 <script src="../config.js?v=20261117b"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" integrity="sha384-AQ3POAMqIhwS81FrUH95ekxqBZHeP5tG2JfEL3+7GuTtfRLWnrRh32UxwzM+//A9" crossorigin="anonymous"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js" integrity="sha384-TnlRYaR4JYz/lpaGuaiU61PjNberSA4vjLjtF+oRC/IkohkJqnWxw5EmDSOt1vA1" crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js" integrity="sha384-qn4Jh88HhJA8dplNQyGjOh9OGI4izVhrfj/qIFgaKcdgOE06pXqIKGlsCILZcLAC" crossorigin="anonymous"></script>
 <script src="acceso.js?v=20261120b"></script>
+<script src="ventas-sync.js?v=20261121a"></script>
 <script>
 (function () {
   const API = String((window.SITE || {}).ventasApi || '').replace(/\/+$/, '');
@@ -110,7 +112,7 @@ td.charla{background:#f6f8fe;padding:12px}
       if (r.status === 401) { ACCESO.salir('Tu sesión venció o esa cuenta no tiene acceso.'); return; }
       const d = await r.json().catch(() => ({}));
       if (!r.ok) throw new Error(d.error || 'No se pudo cargar la planilla.');
-      datos = d; $('#error').textContent = ''; dibujar();
+      datos = d; $('#error').textContent = ''; dibujar(); window.dispatchEvent(new CustomEvent('campana-datos', { detail: d })); /* 21/11: pasa los cambios a Ventas del grupo (ventas-sync.js) */
     } catch (e) { $('#error').textContent = e.message; }
   }
   function dibujar() {
