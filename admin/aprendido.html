@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lo que aprendió el Boti · MyM Soluciones</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<!-- «Lo que aprendió el Boti» (21/11/2026, pedido de Matías). Cliente por cliente, MyM:
+       1) aprueba, corrige y aprueba, o descarta lo que quedó pendiente (precios, promesas, datos de cobro y
+          contradicciones). Un precio que no está en la lista de precios de la ficha no se puede aprobar: la pantalla
+          lo avisa y deja cargarlo ahí mismo;
+       2) ve lo que el Boti ya usa, por tema, con la fecha y de dónde salió, y lo deshace con un toque;
+       3) abre una charla y marca una respuesta del bot como mala («La correcta es…»);
+       4) ve cómo llegó el historial de la app (charlas, mensajes, contactos), lo vuelve a pedir si está dentro de las
+          24 horas y le pide a la IA que aprenda ahora.
+     Entran las mismas cuentas que al resto del admin (admin/acceso.js); el servidor vuelve a verificar la cuenta en
+     cada pedido. Se puede entrar directo con aprendido.html#idDelCliente/vista (vista: aprobar, usa, charlas, historial).
+     Rutas (plataforma-bots/servidor/aprendizaje.js e historial.js): /api/admin/aprendido, …/pendientes, …/resolver,
+     …/deshacer, /api/admin/corregir, /api/admin/charlas, /api/admin/charla, /api/admin/historial, …/pedir, …/aprender
+     y /api/admin/ficha (para cargar un precio).
+     Regla de seguridad: todo lo que viene del servidor se pone como texto (nodos de texto), nunca como HTML. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;900&family=Martian+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--azul:#2f6bff;--azul-t:#1f57e6;--deg:linear-gradient(120deg,#2458e6,#007a6a);--ink:#0e1a33;--gris:#4a5878;--borde:#dbe4f7;--suave:#eef3ff;--ok:#0a8a60;--ok-f:#e2f6ee;--aviso:#7a4b00;--aviso-f:#fff3d9;--mal:#c2364e;--mal-f:#fde9ed;--chat:#efeae2;--verde:#d9fdd3}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;min-height:100vh;background:linear-gradient(180deg,#f4f7ff,#e6eeff) fixed;color:var(--ink);font:16px/1.5 Archivo,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:980px;margin:0 auto;padding:0 18px 70px}
+header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:18px 0 10px}
+header h1{font:900 26px/1.1 Archivo;margin:0;letter-spacing:-.02em}
+header a{color:var(--gris);text-decoration:none;font-weight:600}
+.der{margin-left:auto;display:flex;gap:10px;align-items:center;color:var(--gris);font-size:14px}
+.btn{border:0;border-radius:11px;padding:10px 15px;min-height:44px;font:700 15px Archivo;cursor:pointer;background:var(--suave);color:var(--azul-t);text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn.principal{background:var(--deg);color:#fff}
+.btn.peligro{background:#fff;color:var(--mal);box-shadow:inset 0 0 0 1.5px #f1c4cd}
+.btn.chico{min-height:38px;padding:7px 12px;font-size:14px}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.tarjeta{background:#fff;border-radius:20px;box-shadow:0 1px 2px rgba(23,48,120,.06),0 10px 26px -10px rgba(23,48,120,.18);padding:20px;margin-bottom:16px}
+.puerta{max-width:420px;margin:12vh auto;text-align:center}
+.gris{color:var(--gris)}.chica{font-size:14px}
+.error{color:var(--mal);font-size:14.5px;margin:6px 0 0}.error:empty{display:none}
+.bien{color:var(--ok);font-size:14.5px;font-weight:700;margin:6px 0 0}.bien:empty{display:none}
+:focus-visible{outline:3px solid var(--azul);outline-offset:2px}
+textarea,input[type=search]{font:400 16px/1.45 Archivo;width:100%;padding:10px 12px;border:1.5px solid var(--borde);border-radius:11px;background:#f8faff;color:var(--ink)}
+textarea{resize:vertical;min-height:84px}
+textarea:focus,input:focus{border-color:var(--azul);outline:0;background:#fff}
+.num{font:500 12.5px "Martian Mono",monospace}
+
+/* Clientes: una fila de botones, cada uno con lo que tiene para aprobar */
+.clientes{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 14px}
+.clientes button{display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--borde);background:#fff;border-radius:12px;padding:8px 13px;min-height:44px;font:700 15px Archivo;color:var(--ink);cursor:pointer}
+.clientes button[aria-pressed=true]{border-color:var(--ink);background:var(--ink);color:#fff}
+.cuantos{display:inline-grid;place-items:center;min-width:24px;height:24px;padding:0 7px;border-radius:99px;background:var(--mal);color:#fff;font:800 13px Archivo}
+.cuantos.cero{background:var(--suave);color:var(--gris)}
+
+/* Vistas del cliente elegido */
+.vistas{display:flex;gap:4px;border-bottom:2px solid var(--borde);margin-bottom:18px;overflow-x:auto;scrollbar-width:none}
+.vistas::-webkit-scrollbar{display:none}
+.vistas button{flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;border:0;background:none;padding:11px 14px;min-height:46px;font:700 15.5px Archivo;color:var(--gris);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap}
+.vistas button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--azul)}
+h2{font:900 21px/1.2 Archivo;letter-spacing:-.01em;margin:0 0 4px}
+.bajada{color:var(--gris);margin:0 0 16px;max-width:68ch}
+.vacio{text-align:center;color:var(--gris);padding:34px 12px;margin:0}
+
+/* Un dato: la pregunta del cliente y la respuesta, como en la charla */
+.dato{border:1.5px solid var(--borde);border-radius:18px;background:#fff;margin-bottom:14px;overflow:hidden}
+.dato .motivo{display:flex;gap:6px 12px;flex-wrap:wrap;align-items:center;padding:10px 16px;background:var(--aviso-f);color:var(--aviso);font-size:14.5px}
+.dato .motivo b{font-weight:800}
+.dato .motivo .veces{margin-left:auto;font:500 12.5px "Martian Mono",monospace;white-space:nowrap}
+.charlita{background:var(--chat);padding:14px 16px;display:grid;gap:7px}
+.glo{max-width:min(88%,620px);padding:8px 12px;border-radius:15px;box-shadow:0 1px 1px rgba(0,0,0,.09);white-space:pre-wrap;overflow-wrap:anywhere;font-size:16px;line-height:1.42}
+.glo small{display:block;font:700 12px Archivo;margin-bottom:1px}
+.glo.cli{background:#fff;border-top-left-radius:5px;justify-self:start}.glo.cli small{color:var(--gris)}
+.glo.bot{background:var(--verde);border-top-right-radius:5px;justify-self:end}.glo.bot small{color:#0b6b4d}
+.glo.mala{background:#fff;justify-self:end;color:var(--gris);text-decoration:line-through;text-decoration-color:rgba(194,54,78,.55)}
+.glo.mala small{color:var(--mal);text-decoration:none;display:block}
+.cuerpo{padding:12px 16px 16px;display:grid;gap:12px}
+.meta{display:flex;gap:4px 16px;flex-wrap:wrap;color:var(--gris);font-size:13.5px}
+.meta a,.meta button{color:var(--azul-t);font:700 13.5px Archivo;background:none;border:0;padding:0;cursor:pointer;text-decoration:underline}
+.caja{border-radius:12px;padding:10px 13px;font-size:14.5px}
+.caja p{margin:0}.caja p+p,.caja ul{margin:5px 0 0}
+.caja ul{padding-left:1.15em}
+.caja.otras{background:#f6f8fe}
+.caja.choca{background:var(--suave)}
+.caja.precio{background:var(--mal-f);color:#8f1c33}
+.caja.cobro{background:var(--aviso-f);color:var(--aviso)}
+.caja.precio .btn{margin-top:9px;background:#fff}
+.editor{display:grid;gap:8px}
+.editor label{font-weight:700;font-size:14.5px}
+.acciones{display:flex;gap:8px;flex-wrap:wrap}
+
+/* Lo que ya usa: por tema */
+.tema{margin:22px 0 0}
+.tema:first-of-type{margin-top:8px}
+.tema h3{font:900 16.5px Archivo;margin:0;padding-bottom:7px;border-bottom:2px solid var(--borde);display:flex;align-items:baseline;gap:8px}
+.tema h3 span{font:500 12.5px "Martian Mono",monospace;color:var(--gris)}
+.fila{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 16px;padding:13px 0;border-bottom:1px solid #edf1fb;align-items:start}
+.fila .p{font-weight:700}
+.fila .r{white-space:pre-wrap;overflow-wrap:anywhere}
+.fila .meta{grid-column:1;margin-top:3px}
+.fila .btn{grid-row:1 / span 3;grid-column:2}
+.fila .antes{grid-column:1;font-size:13.5px;color:var(--gris)}
+.estado{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12.5px;font-weight:700;background:var(--suave);color:var(--gris)}
+details.anteriores{margin-top:26px}
+details.anteriores summary{cursor:pointer;font-weight:700;color:var(--gris);padding:8px 0}
+
+/* Charlas */
+.dos{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:16px;align-items:start}
+.lista-ch{list-style:none;margin:0;padding:0;max-height:70vh;overflow:auto}
+.lista-ch button{display:grid;gap:1px;width:100%;text-align:left;border:0;border-bottom:1px solid #edf1fb;background:none;padding:11px 8px;cursor:pointer;font:400 15px Archivo;color:var(--ink);border-radius:8px}
+.lista-ch button[aria-current=true]{background:var(--suave)}
+.lista-ch b{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lista-ch span{color:var(--gris);font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.charla{border:1.5px solid var(--borde);border-radius:18px;overflow:hidden;background:var(--chat);min-height:240px}
+.charla-cab{display:flex;align-items:center;gap:10px;background:#fff;padding:11px 14px;border-bottom:1px solid var(--borde)}
+.charla-cab b{font-weight:800}
+.volver{display:none}
+.mensajes{padding:14px;display:grid;gap:7px;max-height:66vh;overflow:auto}
+.mensajes .dia{justify-self:center;background:#fff;color:var(--gris);font:500 12px "Martian Mono",monospace;border-radius:99px;padding:3px 11px;margin:6px 0 2px}
+.glo time{display:block;text-align:right;font:400 11px "Martian Mono",monospace;color:#5b6884;margin-top:2px}
+.glo.dueno{background:#e7f0ff;justify-self:end;border-top-right-radius:5px}.glo.dueno small{color:var(--azul-t)}
+.mal-btn{margin-top:6px;border:1.5px solid rgba(14,26,51,.18);background:rgba(255,255,255,.7);border-radius:9px;padding:6px 10px;min-height:36px;font:700 13.5px Archivo;color:var(--ink);cursor:pointer}
+.mal-btn:hover{border-color:var(--mal);color:var(--mal)}
+.corregir{justify-self:end;width:min(100%,620px);background:#fff;border-radius:14px;padding:13px;display:grid;gap:8px;box-shadow:0 1px 1px rgba(0,0,0,.09)}
+.corregir p{margin:0;font-size:14.5px}
+.nota-ok{justify-self:end;max-width:min(88%,620px);background:var(--ok-f);color:#075c40;border-radius:12px;padding:8px 12px;font-size:14.5px;font-weight:600}
+.nota-ok.espera{background:var(--aviso-f);color:var(--aviso)}
+
+/* Historial de la app */
+.cifras{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0 0 18px}
+.cifra{border:1.5px solid var(--borde);border-radius:14px;padding:12px 14px}
+.cifra b{display:block;font:900 30px/1.1 Archivo;letter-spacing:-.02em}
+.cifra span{color:var(--gris);font-size:14.5px}
+.llegada{display:grid;grid-template-columns:110px minmax(0,1fr);gap:4px 14px;padding:12px 0;border-top:1px solid #edf1fb;align-items:center}
+.llegada .que{font-weight:800}
+.barra{height:9px;border-radius:99px;background:var(--borde);overflow:hidden;margin-top:6px;max-width:420px}
+.barra i{display:block;height:100%;background:var(--deg)}
+.pill{display:inline-block;padding:3px 10px;border-radius:99px;font-size:13px;font-weight:700}
+.pill.ok{background:var(--ok-f);color:var(--ok)}.pill.aviso{background:var(--aviso-f);color:var(--aviso)}.pill.mal{background:var(--mal-f);color:var(--mal)}.pill.otro{background:var(--suave);color:var(--gris)}
+.paso-h{border-top:1px solid #edf1fb;padding:16px 0 0;margin-top:14px;display:grid;gap:8px;justify-items:start}
+.paso-h p{margin:0;max-width:66ch}
+
+@media(max-width:760px){
+  header h1{font-size:22px}
+  .tarjeta{padding:16px 14px;border-radius:18px}
+  .wrap{padding:0 12px 60px}
+  .dos{grid-template-columns:1fr}
+  .dos.abierta .lista-caja{display:none}
+  .dos:not(.abierta) .charla{display:none}
+  .volver{display:inline-flex}
+  .lista-ch{max-height:none}
+  .mensajes{max-height:none}
+  .fila{grid-template-columns:1fr}
+  .fila .btn{grid-row:auto;grid-column:1;justify-self:start;margin-top:6px}
+  .acciones .btn{flex:1 1 auto}
+  .dato .motivo .veces{margin-left:0}
+  .cifras{gap:8px}.cifra{padding:10px}.cifra b{font-size:24px}
+  .llegada{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="puerta" class="tarjeta puerta" hidden>
+    <h1 style="font:900 22px Archivo;margin:0 0 6px">Lo que aprendió el Boti</h1>
+    <p class="gris">Entrá con tu cuenta de Google autorizada.</p>
+    <p class="error" id="msj-puerta"></p>
+    <button class="btn principal" id="entrar">Entrar con Google</button>
+  </div>
+
+  <div id="panel" hidden>
+    <header><a href="./">← Inicio del panel</a><h1>Lo que aprendió el Boti</h1><div class="der"><span id="quien"></span><button class="btn chico" id="salir">Salir</button></div></header>
+    <p class="error" id="error-gral" role="alert"></p>
+    <div class="clientes" id="clientes" role="group" aria-label="Elegir cliente"><span class="gris">Cargando los clientes…</span></div>
+
+    <div class="tarjeta" id="caja" hidden>
+      <div class="vistas" role="tablist" aria-label="Qué ver de este cliente">
+        <button role="tab" data-vista="aprobar" aria-selected="true">Para aprobar <span class="cuantos cero" id="n-aprobar">0</span></button>
+        <button role="tab" data-vista="usa" aria-selected="false">Lo que ya usa <span class="cuantos cero" id="n-usa">0</span></button>
+        <button role="tab" data-vista="charlas" aria-selected="false">Corregir una respuesta</button>
+        <button role="tab" data-vista="historial" aria-selected="false">Historial de la app</button>
+      </div>
+      <div id="vista" aria-live="polite"></div>
+    </div>
+  </div>
+</div>
+<script src="../config.js?v=20261117b"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" integrity="sha384-AQ3POAMqIhwS81FrUH95ekxqBZHeP5tG2JfEL3+7GuTtfRLWnrRh32UxwzM+//A9" crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js" integrity="sha384-TnlRYaR4JYz/lpaGuaiU61PjNberSA4vjLjtF+oRC/IkohkJqnWxw5EmDSOt1vA1" crossorigin="anonymous"></script>
+<script src="acceso.js?v=20261121c"></script>
+<script>
+(function () {
+  'use strict';
+  const LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+  // En la compu se puede apuntar a otra copia de la plataforma con ?api=… (sólo en localhost).
+  const API = String((LOCAL && new URLSearchParams(location.search).get('api')) || (window.SITE || {}).plataformaApi || '').replace(/\/+$/, '');
+  const $ = (s) => document.querySelector(s);
+  // Arma un elemento sin pasar por HTML: los textos entran como nodos de texto.
+  function el(etiqueta, attrs, ...hijos) {
+    const e = document.createElement(etiqueta);
+    for (const [k, v] of Object.entries(attrs || {})) {
+      if (v == null || v === false) continue;
+      if (k === 'class') e.className = v; else if (k.startsWith('on')) e.addEventListener(k.slice(2), v); else e.setAttribute(k, v === true ? '' : v);
+    }
+    for (const h of hijos.flat()) if (h != null && h !== false) e.append(h);
+    return e;
+  }
+  const vaciar = (n) => { while (n.firstChild) n.removeChild(n.firstChild); };
+  const TZ = 'America/Argentina/Buenos_Aires';
+  const dia = (iso) => { const d = new Date(iso); return isNaN(d) ? '' : d.toLocaleDateString('es-AR', { timeZone: TZ, day: 'numeric', month: 'short', year: d.getFullYear() === new Date().getFullYear() ? undefined : 'numeric' }); };
+  const hora = (iso) => new Date(iso).toLocaleTimeString('es-AR', { timeZone: TZ, hour: '2-digit', minute: '2-digit', hour12: false });
+  const mayus = (t) => (t ? t.charAt(0).toUpperCase() + t.slice(1) : '');
+
+  async function api(ruta, cuerpo) {
+    let r;
+    try { r = await fetch(API + ruta, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + await ACCESO.token() }, body: JSON.stringify(cuerpo || {}) }); }
+    catch (e) { throw new Error('No se pudo conectar con la plataforma. Revisá la conexión y probá de nuevo.'); }
+    const d = await r.json().catch(() => ({}));
+    if (r.status === 401) { ACCESO.salir('Tu sesión venció o esa cuenta no tiene acceso.'); throw new Error('sin acceso'); }
+    if (!r.ok) throw Object.assign(new Error(d.error === 'No existe.' ? 'Esto se activa cuando se publique el servidor nuevo de la plataforma.' : d.error || 'No se pudo completar.'), { datos: d, codigo: r.status });
+    return d;
+  }
+  // Un botón que hace un pedido: se apaga mientras tanto y muestra el error al lado.
+  async function conBoton(boton, cajaError, fn) {
+    boton.disabled = true; if (cajaError) cajaError.textContent = '';
+    try { return await fn(); } catch (e) { if (cajaError) cajaError.textContent = e.message; else alert(e.message); return undefined; } finally { boton.disabled = false; }
+  }
+
+  // ---------- Estado y dirección (#cliente/vista/charla) ----------
+  let clientes = []; let actual = ''; let vista = 'aprobar'; let datos = null; let charlaAbierta = '';
+  const VISTAS = ['aprobar', 'usa', 'charlas', 'historial'];
+  function leerHash() {
+    const [c, v, k] = decodeURIComponent(location.hash.slice(1)).split('/');
+    return { c: c || '', v: VISTAS.includes(v) ? v : 'aprobar', k: k || '' };
+  }
+  function ponerHash() { history.replaceState(null, '', '#' + [actual, vista, vista === 'charlas' ? charlaAbierta : ''].filter(Boolean).map(encodeURIComponent).join('/')); }
+
+  // ---------- Clientes ----------
+  async function cargarClientes() {
+    try {
+      clientes = (await api('/api/admin/aprendido/pendientes')).clientes; $('#error-gral').textContent = '';
+    } catch (e) { if (e.message !== 'sin acceso') $('#error-gral').textContent = e.message; vaciar($('#clientes')); return; }
+    pintarClientes();
+    const h = leerHash();
+    const primero = clientes.find((c) => c.id === h.c) || clientes[0];
+    if (!primero) { vaciar($('#clientes')); $('#clientes').append(el('p', { class: 'gris' }, 'Todavía no hay clientes con el bot conectado.')); return; }
+    vista = h.v; charlaAbierta = h.k;
+    elegir(primero.id, true);
+  }
+  function pintarClientes() {
+    const caja = $('#clientes'); vaciar(caja);
+    for (const c of clientes) caja.append(el('button', { type: 'button', 'aria-pressed': String(c.id === actual), onclick: () => elegir(c.id) }, c.negocio, el('span', { class: 'cuantos' + (c.pendientes ? '' : ' cero'), title: c.pendientes === 1 ? '1 dato para aprobar' : `${c.pendientes} datos para aprobar` }, String(c.pendientes))));
+    // El contador del menú (admin/menu.js) se pone al día con lo que se acaba de aprobar o descartar.
+    if (window.MENU && window.MENU.contar) window.MENU.contar('aprendido.html', clientes.reduce((n, c) => n + c.pendientes, 0));
+  }
+  async function elegir(id, mantener) {
+    actual = id; datos = null; if (!mantener) { charlaAbierta = ''; }
+    pintarClientes(); $('#caja').hidden = false; ponerHash();
+    await cargarDatos(); verVista(vista);
+  }
+  async function cargarDatos() {
+    const id = actual;
+    try { const d = await api('/api/admin/aprendido', { id }); if (id !== actual) return; datos = d; }
+    catch (e) { if (id === actual) { datos = null; vaciar($('#vista')); $('#vista').append(el('p', { class: 'error' }, e.message)); } return; }
+    const n = datos.pendientes.length; const u = datos.aprendido.length;
+    $('#n-aprobar').textContent = String(n); $('#n-aprobar').className = 'cuantos' + (n ? '' : ' cero');
+    $('#n-usa').textContent = String(u);
+    const c = clientes.find((x) => x.id === id); if (c && (c.pendientes !== n || c.enUso !== u)) { c.pendientes = n; c.enUso = u; pintarClientes(); }
+  }
+  document.querySelectorAll('.vistas button').forEach((b) => b.addEventListener('click', () => verVista(b.dataset.vista)));
+  function verVista(v) {
+    vista = v; ponerHash();
+    document.querySelectorAll('.vistas button').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.vista === v)));
+    const caja = $('#vista'); vaciar(caja);
+    if (!datos && (v === 'aprobar' || v === 'usa')) return;
+    ({ aprobar: pintarAprobar, usa: pintarUsa, charlas: pintarCharlas, historial: pintarHistorial })[v](caja);
+  }
+  async function refrescar() { await cargarDatos(); if (vista === 'aprobar' || vista === 'usa') verVista(vista); }
+
+  // ---------- Textos de cada dato ----------
+  const ORIGEN = { historial: 'Historial de la app', app: 'Respuesta a mano desde el celular', panel: 'Respuesta a mano desde el panel', correccion: 'Corrección de una respuesta' };
+  const TEMAS = [['horarios', 'Horarios'], ['zonas', 'Zonas'], ['servicios', 'Qué hace y qué no'], ['como', 'Cómo se pide o se hace'], ['pagos', 'Pagos'], ['precios', 'Precios'], ['promesa', 'Promesas y condiciones'], ['tono', 'Cómo habla'], ['otro', 'Otros datos']];
+  // De dónde salió y cuándo. `dicho` es la fecha de la charla del historial; si no, la fecha en que se cargó.
+  function metaDe(a) {
+    const m = el('div', { class: 'meta' });
+    m.append(el('span', null, a.dicho ? `Dicho el ${dia(a.dicho)}` : a.aprobado ? `Aprobado el ${dia(a.aprobado)}` : `Cargado el ${dia(a.cuando)}`));
+    m.append(el('span', null, ORIGEN[a.origen && a.origen.tipo] || 'Origen sin anotar'));
+    if (a.charla && a.charla.id) m.append(el('button', { type: 'button', onclick: () => { charlaAbierta = a.charla.id; verVista('charlas'); } }, `Ver la charla${a.charla.nombre ? ' con ' + a.charla.nombre : ''}`));
+    if (a.aprobado && a.resueltoPor) m.append(el('span', null, `Lo aprobó ${a.resueltoPor.replace(/^MyM \((.+)\)$/, '$1')}`));
+    return m;
+  }
+  const parCharla = (a, quienResponde) => el('div', { class: 'charlita' },
+    el('div', { class: 'glo cli' }, el('small', null, 'Pregunta el cliente'), a.pregunta),
+    a.origen && a.origen.respuestaMala ? el('div', { class: 'glo mala' }, el('small', null, 'El bot había contestado'), a.origen.respuestaMala) : null,
+    el('div', { class: 'glo bot' }, el('small', null, quienResponde), a.respuesta));
+
+  // ---------- 1. Para aprobar ----------
+  function pintarAprobar(caja) {
+    caja.append(el('h2', null, 'Para aprobar'), el('p', { class: 'bajada' }, 'Precios, promesas, datos de cobro y datos que se contradicen. El Boti no los dice hasta que alguien de MyM los apruebe.'));
+    if (!datos.pendientes.length) { caja.append(el('p', { class: 'vacio' }, 'No hay nada esperando aprobación.')); return; }
+    for (const p of datos.pendientes) caja.append(tarjetaPendiente(p));
+  }
+  function tarjetaPendiente(p) {
+    const error = el('p', { class: 'error', role: 'alert' });
+    const cuerpo = el('div', { class: 'cuerpo' });
+    const motivo = el('div', { class: 'motivo' }, el('span', null, 'Espera porque ', el('b', null, p.riesgo || 'lo marcó la IA como precio o promesa'), '.'), p.veces > 1 ? el('span', { class: 'veces' }, `apareció ${p.veces} veces`) : null);
+    const tarjeta = el('article', { class: 'dato' }, motivo, parCharla(p, 'El Boti contestaría'), cuerpo);
+    cuerpo.append(metaDe(p));
+    if (p.otras && p.otras.length) cuerpo.append(el('div', { class: 'caja otras' }, el('p', null, el('b', null, p.otras.length === 1 ? 'Otra respuesta que se vio para lo mismo' : 'Otras respuestas que se vieron para lo mismo')), el('ul', null, p.otras.map((o) => el('li', null, o)))));
+    if (p.contradice) cuerpo.append(el('div', { class: 'caja choca' }, el('p', null, el('b', null, 'Hoy el Boti contesta otra cosa: '), `«${p.contradice.respuesta}»`), el('p', null, 'Si aprobás este dato, reemplaza al que está en uso. Si lo descartás, sigue el de hoy.')));
+    if (/datos de cobro/.test(p.riesgo || '')) cuerpo.append(el('div', { class: 'caja cobro' }, el('p', null, el('b', null, 'Antes de aprobar un alias, un CBU o un link de pago, confirmalo con el dueño por otro medio.'), ' Si alguien escribió uno falso y el bot lo repite, es una estafa.')));
+
+    const aprobar = el('button', { class: 'btn principal', type: 'button' }, 'Aprobar');
+    const editar = el('button', { class: 'btn', type: 'button' }, 'Editar y aprobar');
+    const descartar = el('button', { class: 'btn peligro', type: 'button' }, 'Descartar');
+    const acciones = el('div', { class: 'acciones' }, aprobar, editar, descartar);
+    const resolver = (boton, cuerpoPedido, cajaError = error) => conBoton(boton, cajaError, async () => {
+      try { await api('/api/admin/aprendido/resolver', { id: actual, aprendizaje: p.id, ...cuerpoPedido }); }
+      catch (e) { if (e.datos && e.datos.montoFuera && !cuerpoPedido.respuesta) { p.montoFuera = e.datos.montoFuera; avisoPrecio(); aprobar.disabled = true; } throw e; }
+      // Sale solo esta tarjeta: si en otra hay un texto a medio corregir, no se pierde.
+      await cargarDatos(); tarjeta.remove();
+      if (!datos || !datos.pendientes.length) verVista('aprobar');
+    });
+    aprobar.addEventListener('click', () => resolver(aprobar, { decision: 'aprobar' }));
+    descartar.addEventListener('click', () => { if (confirm(`¿Descartar este dato?\n\n«${p.pregunta}»\n\nEl Boti no lo va a usar. Queda guardado en «Anteriores».`)) resolver(descartar, { decision: 'descartar' }); });
+
+    // Regla del servidor: un monto que no está en la ficha no se aprueba. Se avisa antes y se ofrece cargarlo.
+    let cajaPrecio = null;
+    function avisoPrecio() {
+      if (cajaPrecio) cajaPrecio.remove();
+      const abrir = el('button', { class: 'btn chico', type: 'button' }, 'Cargar el precio en la lista');
+      cajaPrecio = el('div', { class: 'caja precio' }, el('p', null, el('b', null, `${p.montoFuera.replace('$', '$ ')} no está en la lista de precios de este cliente.`), ' El Boti sólo dice montos que estén en esa lista, así que así no se puede aprobar. Confirmá el precio con el dueño y cargalo, o corregí la respuesta para que no nombre el monto.'), abrir);
+      abrir.addEventListener('click', () => { abrir.remove(); cajaPrecio.append(editorPrecios(p)); });
+      cuerpo.insertBefore(cajaPrecio, acciones);
+    }
+    cuerpo.append(acciones, error);
+    if (p.montoFuera) { avisoPrecio(); aprobar.disabled = true; aprobar.title = 'Primero cargá el precio en la lista, o corregí la respuesta'; }
+
+    // «Editar y aprobar»: se corrige el texto y entra ya corregido.
+    editar.addEventListener('click', () => {
+      const t = el('textarea', { rows: '3', maxlength: '600', id: 'ed-' + p.id }); t.value = p.respuesta;
+      const errorEd = el('p', { class: 'error', role: 'alert' });
+      const ok = el('button', { class: 'btn principal', type: 'button' }, 'Aprobar con este texto');
+      const no = el('button', { class: 'btn', type: 'button' }, 'Cancelar');
+      const ed = el('div', { class: 'editor' }, el('label', { for: 'ed-' + p.id }, 'Así va a contestar el Boti'), t, el('div', { class: 'acciones' }, ok, no), errorEd);
+      acciones.hidden = true; error.textContent = ''; cuerpo.insertBefore(ed, acciones); t.focus(); t.setSelectionRange(t.value.length, t.value.length);
+      no.addEventListener('click', () => { ed.remove(); acciones.hidden = false; });
+      ok.addEventListener('click', () => { const v = t.value.trim(); if (!v) { errorEd.textContent = 'Escribí la respuesta.'; return; } resolver(ok, { decision: 'aprobar', respuesta: v }, errorEd); });
+    });
+    return tarjeta;
+  }
+  // El atajo: la lista de precios de la ficha, para sumarle el renglón que falta sin salir de la pantalla.
+  function editorPrecios(p) {
+    const t = el('textarea', { rows: '5', id: 'pr-' + p.id }); t.value = (datos.precios ? datos.precios.replace(/\s+$/, '') + '\n' : '');
+    const error = el('p', { class: 'error', role: 'alert' });
+    const ok = el('button', { class: 'btn principal chico', type: 'button' }, 'Guardar la lista de precios');
+    const caja = el('div', { class: 'editor', style: 'margin-top:10px' }, el('label', { for: 'pr-' + p.id }, 'Lista de precios de la ficha'), t,
+      el('p', { class: 'chica', style: 'margin:0' }, `Agregá un renglón con el precio confirmado, escrito igual que en la respuesta. Por ejemplo: «Cambio de canilla: ${p.montoFuera.replace('$', '$ ')}». Al guardar se le hacen al bot las pruebas de siempre.`), el('div', { class: 'acciones' }, ok), error);
+    ok.addEventListener('click', () => conBoton(ok, error, async () => {
+      ok.textContent = 'Guardando y probando el bot…';
+      try { await api('/api/admin/ficha', { id: actual, ficha: { precios: t.value.trim() } }); }
+      catch (e) { ok.textContent = 'Guardar la lista de precios'; if (e.datos && e.datos.faltan) throw new Error('A la ficha de este cliente le faltan datos obligatorios (' + e.datos.faltan.join(', ') + '). Completala desde «Clientes» y volvé.'); throw e; }
+      await refrescar();
+    }));
+    setTimeout(() => { t.focus(); t.setSelectionRange(t.value.length, t.value.length); }, 0);
+    return caja;
+  }
+
+  // ---------- 2. Lo que ya usa ----------
+  let busca = '';
+  function pintarUsa(caja) {
+    caja.append(el('h2', null, 'Lo que ya usa el Boti'), el('p', { class: 'bajada' }, 'Datos que aprendió y ya dice en las charlas. Si uno está mal, deshacelo: deja de usarlo en el momento y, si había reemplazado a otro, vuelve el anterior.'));
+    if (!datos.aprendido.length && !datos.anteriores.length) { caja.append(el('p', { class: 'vacio' }, 'Todavía no aprendió nada. Aprende de lo que el dueño contesta a mano, de las correcciones y del historial de la app.')); return; }
+    const lista = el('div');
+    if (datos.aprendido.length > 6) {
+      const b = el('input', { type: 'search', placeholder: 'Buscar en lo aprendido', 'aria-label': 'Buscar en lo aprendido' }); b.value = busca;
+      b.addEventListener('input', () => { busca = b.value; pintarTemas(lista); });
+      caja.append(b);
+    } else busca = '';
+    caja.append(lista); pintarTemas(lista);
+    if (datos.anteriores.length) {
+      const NOMBRE = { deshecho: 'Deshecho', descartado: 'Descartado', archivado: 'Reemplazado por uno más nuevo' };
+      caja.append(el('details', { class: 'anteriores' }, el('summary', null, `Anteriores (${datos.anteriores.length}): deshechos, descartados y reemplazados`),
+        datos.anteriores.map((a) => el('div', { class: 'fila' }, el('div', { class: 'p' }, a.pregunta), el('div', { class: 'r gris' }, a.respuesta),
+          el('div', { class: 'meta' }, el('span', { class: 'estado' }, NOMBRE[a.estado] || a.estado), a.resuelto ? el('span', null, dia(a.resuelto)) : null, a.resueltoPor ? el('span', null, a.resueltoPor) : null, a.motivoRevision ? el('span', null, mayus(a.motivoRevision)) : null)))));
+    }
+  }
+  function pintarTemas(lista) {
+    vaciar(lista);
+    const q = busca.trim().toLowerCase();
+    const ver = datos.aprendido.filter((a) => !q || `${a.pregunta} ${a.respuesta}`.toLowerCase().includes(q));
+    if (!ver.length) { lista.append(el('p', { class: 'vacio' }, q ? 'Nada coincide con esa búsqueda.' : 'No hay datos en uso.')); return; }
+    for (const [clave, nombre] of TEMAS) {
+      const del = ver.filter((a) => (TEMAS.some(([k]) => k === a.tema) ? a.tema : 'otro') === clave);
+      if (!del.length) continue;
+      lista.append(el('section', { class: 'tema' }, el('h3', null, nombre, el('span', null, String(del.length))), del.map(filaUsa)));
+    }
+  }
+  function filaUsa(a) {
+    const error = el('p', { class: 'error', role: 'alert', style: 'grid-column:1' });
+    const b = el('button', { class: 'btn chico', type: 'button' }, 'Deshacer');
+    b.addEventListener('click', () => {
+      if (!confirm(`¿Deshacer este dato?\n\n«${a.pregunta}»\n\nEl Boti deja de usarlo ahora.${a.reemplazaA ? ' Vuelve el dato anterior que había reemplazado.' : ''}`)) return;
+      conBoton(b, error, async () => { await api('/api/admin/aprendido/deshacer', { id: actual, aprendizaje: a.id }); await refrescar(); });
+    });
+    return el('div', { class: 'fila' }, el('div', { class: 'p' }, a.pregunta), el('div', { class: 'r' }, a.respuesta),
+      a.respuestaOriginal ? el('div', { class: 'antes' }, `Había llegado así: «${a.respuestaOriginal}»`) : null,
+      a.origen && a.origen.respuestaMala ? el('div', { class: 'antes' }, `El bot había contestado: «${a.origen.respuestaMala}»`) : null,
+      metaDe(a), b, error);
+  }
+
+  // ---------- 3. Corregir una respuesta (las charlas del cliente, sólo lectura) ----------
+  let charlas = null; let charlasDe = '';
+  async function pintarCharlas(caja) {
+    caja.append(el('h2', null, 'Corregir una respuesta'), el('p', { class: 'bajada' }, 'Abrí una charla y, en la respuesta del bot que esté mal, tocá «Esta respuesta está mal». Lo que escribas pasa por el mismo criterio: si no es un precio ni una promesa, el Boti lo usa enseguida.'));
+    const lista = el('ul', { class: 'lista-ch', 'aria-label': 'Charlas' }, el('li', { class: 'gris', style: 'padding:10px' }, 'Cargando las charlas…'));
+    const charla = el('div', { class: 'charla' });
+    const dos = el('div', { class: 'dos' }, el('div', { class: 'lista-caja' }, lista), charla);
+    caja.append(dos);
+    const id = actual;
+    if (charlasDe !== id) {
+      try { charlas = (await api('/api/admin/charlas', { id })).charlas; charlasDe = id; }
+      catch (e) { vaciar(lista); lista.append(el('li', { class: 'error' }, e.message)); return; }
+      if (id !== actual || vista !== 'charlas') return;
+    }
+    vaciar(lista);
+    if (!charlas.length) { lista.append(el('li', { class: 'gris', style: 'padding:10px' }, 'Este cliente todavía no tiene charlas.')); dos.classList.remove('abierta'); charla.hidden = true; return; }
+    const abrir = (k) => { charlaAbierta = k.id; ponerHash(); lista.querySelectorAll('button').forEach((b) => b.setAttribute('aria-current', String(b.dataset.id === k.id))); dos.classList.add('abierta'); pintarCharla(charla, k, () => { charlaAbierta = ''; ponerHash(); dos.classList.remove('abierta'); lista.querySelectorAll('button').forEach((b) => b.setAttribute('aria-current', 'false')); }); };
+    for (const k of charlas) lista.append(el('li', null, el('button', { type: 'button', 'data-id': k.id, 'aria-current': 'false', onclick: () => abrir(k) }, el('b', null, k.nombre || k.numero || 'Sin nombre'), el('span', null, k.ultimoTexto || '—'))));
+    const inicial = charlas.find((k) => k.id === charlaAbierta);
+    if (inicial) abrir(inicial); else { charlaAbierta = ''; vaciar(charla); charla.append(el('p', { class: 'vacio' }, 'Elegí una charla de la lista.')); }
+  }
+  async function pintarCharla(caja, k, alVolver) {
+    vaciar(caja);
+    const mensajes = el('div', { class: 'mensajes', role: 'log', 'aria-label': 'Mensajes de la charla' }, el('p', { class: 'dia' }, 'Cargando la charla…'));
+    caja.append(el('div', { class: 'charla-cab' }, el('button', { class: 'btn chico volver', type: 'button', onclick: alVolver }, '← Charlas'), el('div', null, el('b', null, k.nombre || k.numero || 'Sin nombre'), k.nombre && k.numero ? el('span', { class: 'num gris' }, '  ' + k.numero) : null)), mensajes);
+    let d;
+    try { d = await api('/api/admin/charla', { id: actual, contacto: k.id }); } catch (e) { vaciar(mensajes); mensajes.append(el('p', { class: 'error' }, e.message)); return; }
+    if (charlaAbierta !== k.id) return;
+    vaciar(mensajes);
+    const h = d.historial || []; let diaAnt = '';
+    if (!h.length) mensajes.append(el('p', { class: 'dia' }, 'Esta charla no tiene mensajes.'));
+    h.forEach((x, i) => {
+      const dd = dia(x.cuando); if (dd && dd !== diaAnt) { diaAnt = dd; mensajes.append(el('p', { class: 'dia' }, dd)); }
+      const clase = x.de === 'cliente' ? 'cli' : x.de === 'bot' ? 'bot' : 'dueno';
+      const quien = x.de === 'cliente' ? 'Cliente' : x.de === 'bot' ? 'Bot' : x.por === 'celular' ? 'El dueño, desde el celular' : 'El dueño';
+      const texto = x.texto || (x.transcripcion ? '🎤 ' + x.transcripcion : x.media ? 'Archivo adjunto' : 'Mensaje sin texto');
+      const g = el('div', { class: 'glo ' + clase }, el('small', null, quien), texto, el('time', { datetime: x.cuando }, hora(x.cuando)));
+      mensajes.append(g);
+      if (x.de !== 'bot' || !x.texto) return;
+      const antes = h.slice(0, i).reverse().find((m) => m.de === 'cliente');
+      const boton = el('button', { class: 'mal-btn', type: 'button' }, 'Esta respuesta está mal');
+      g.append(el('div', null, boton));
+      boton.addEventListener('click', () => {
+        const t = el('textarea', { rows: '3', maxlength: '600', placeholder: 'Escribí cómo tendría que haber contestado', id: 'co-' + i });
+        const error = el('p', { class: 'error', role: 'alert' });
+        const ok = el('button', { class: 'btn principal chico', type: 'button' }, 'Guardar la corrección'); const no = el('button', { class: 'btn chico', type: 'button' }, 'Cancelar');
+        const pregunta = antes && (antes.transcripcion || antes.texto);
+        const f = el('div', { class: 'corregir' }, pregunta ? el('p', { class: 'gris' }, 'El cliente había preguntado: ', el('b', null, `«${pregunta}»`)) : null, el('label', { for: 'co-' + i, style: 'font-weight:700' }, 'La correcta es…'), t, el('div', { class: 'acciones' }, ok, no), error);
+        boton.hidden = true; g.after(f); t.focus();
+        no.addEventListener('click', () => { f.remove(); boton.hidden = false; });
+        ok.addEventListener('click', () => { const v = t.value.trim(); if (!v) { error.textContent = 'Escribí la respuesta correcta.'; return; } conBoton(ok, error, async () => {
+          const r = await api('/api/admin/corregir', { id: actual, contacto: k.id, cuando: x.cuando, respuestaCorrecta: v });
+          f.replaceWith(el('p', { class: 'nota-ok' + (r.estado === 'pendiente' ? ' espera' : '') }, r.mensaje || 'Listo.'));
+          boton.hidden = false; await cargarDatos();
+        }); });
+      });
+    });
+    mensajes.scrollTop = mensajes.scrollHeight;
+  }
+
+  // ---------- 4. Historial de la app ----------
+  const ESTADO_H = { pedido: ['Pedido a Meta, todavía no llegó', 'aviso'], recibiendo: ['Llegando', 'aviso'], completo: ['Completo', 'ok'], error: ['Falló', 'mal'], 'no-compartido': ['El dueño no lo compartió', 'mal'] };
+  async function pintarHistorial(caja) {
+    caja.append(el('h2', null, 'Historial de la app'), el('p', { class: 'bajada' }, 'Cuando un cliente conecta el número que ya usaba en la app WhatsApp Business, Meta manda sus contactos y hasta seis meses de charlas. De ahí aprende el Boti.'));
+    const cuerpo = el('div', null, el('p', { class: 'gris' }, 'Cargando…')); caja.append(cuerpo);
+    const id = actual; let h;
+    try { h = await api('/api/admin/historial', { id }); } catch (e) { vaciar(cuerpo); cuerpo.append(el('p', { class: 'error' }, e.message)); return; }
+    if (id !== actual || vista !== 'historial') return;
+    vaciar(cuerpo);
+    if (!h.coexistencia) { cuerpo.append(el('p', { class: 'vacio' }, 'Este número se conectó como número nuevo, sin la app WhatsApp Business: no hay historial para traer. El Boti aprende de lo que el dueño contesta a mano y de las correcciones.')); return; }
+    const cifra = (n, t) => el('div', { class: 'cifra' }, el('b', null, Number(n || 0).toLocaleString('es-AR')), el('span', null, t));
+    cuerpo.append(el('div', { class: 'cifras' }, cifra(h.charlas, 'charlas'), cifra(h.mensajes, 'mensajes'), cifra(h.contactos, 'contactos')));
+    const sync = h.sync || {};
+    const fila = (que, s) => {
+      const [txt, clase] = ESTADO_H[s.estado] || ['Sin pedir', 'otro'];
+      const pct = s.estado === 'completo' ? 100 : Math.max(0, Math.min(100, Number(s.progreso) || 0));
+      return el('div', { class: 'llegada' }, el('div', { class: 'que' }, que), el('div', null,
+        el('span', { class: 'pill ' + clase }, s.estado === 'recibiendo' ? `Llegando: ${pct} %` : txt),
+        s.estado === 'recibiendo' || s.estado === 'completo' ? el('div', { class: 'barra', role: 'progressbar', 'aria-valuenow': String(pct), 'aria-valuemin': '0', 'aria-valuemax': '100', 'aria-label': `${que}: ${pct} %` }, el('i', { style: `width:${pct}%` })) : null,
+        s.error ? el('p', { class: 'error' }, s.error) : null,
+        el('div', { class: 'meta', style: 'margin-top:5px' }, s.pedido ? el('span', null, `Pedido el ${dia(s.pedido)} a las ${hora(s.pedido)}`) : null, s.ultimoAviso ? el('span', null, `Última parte: ${dia(s.ultimoAviso)} a las ${hora(s.ultimoAviso)}`) : null, s.borrado ? el('span', null, `Texto crudo borrado el ${dia(s.borrado)}`) : null)));
+    };
+    cuerpo.append(fila('Contactos', sync.contactos || {}), fila('Charlas', sync.historial || {}));
+    const completo = (sync.contactos || {}).estado === 'completo' && (sync.historial || {}).estado === 'completo';
+
+    // Volver a pedir: Meta sólo lo deja en las primeras 24 horas desde que se conectó el número.
+    const errorP = el('p', { class: 'error', role: 'alert' }); const okP = el('p', { class: 'bien', role: 'status' });
+    const pedir = el('button', { class: 'btn', type: 'button' }, 'Volver a pedir');
+    const dentro = h.horasParaPedir == null || h.horasParaPedir > 0;
+    const horas = h.horasParaPedir == null ? '' : h.horasParaPedir >= 1 ? `Quedan ${Math.floor(h.horasParaPedir)} h para pedirlo.` : `Quedan ${Math.max(1, Math.round(h.horasParaPedir * 60))} minutos para pedirlo.`;
+    const pasoPedir = el('div', { class: 'paso-h' });
+    if (completo) pasoPedir.append(el('p', null, el('b', null, 'Llegó completo.'), ' No hace falta volver a pedirlo.'));
+    else if (dentro) pasoPedir.append(el('p', null, el('b', null, 'Si no llegó o llegó incompleto, se puede volver a pedir. '), horas, ' Meta lo deja una sola vez por conexión: si ya estaba pedido, fijate que el dueño haya aceptado compartir el historial en su app.'), pedir, okP, errorP);
+    else pasoPedir.append(el('p', null, el('b', null, 'Ya no se puede volver a pedir. '), 'Pasaron más de 24 horas desde que se conectó el número y Meta sólo lo deja en ese plazo. Para traerlo hay que desconectar el número y volver a conectarlo.'));
+    pedir.addEventListener('click', () => conBoton(pedir, errorP, async () => { const r = await api('/api/admin/historial/pedir', { id }); okP.textContent = r.aviso || 'Pedido a Meta. Las charlas van llegando de a partes, en unos minutos.'; }));
+    cuerpo.append(pasoPedir);
+
+    // Aprender ahora: la IA lee las charlas que todavía no leyó.
+    const s = sync.historial || {};
+    const errorA = el('p', { class: 'error', role: 'alert' }); const okA = el('p', { class: 'bien', role: 'status' });
+    const aprender = el('button', { class: 'btn principal', type: 'button' }, 'Aprender ahora');
+    if (!h.charlas) aprender.disabled = true;
+    const leido = s.aprendidoDe ? `La IA ya leyó ${s.aprendidoDe.charlas} ${s.aprendidoDe.charlas === 1 ? 'charla' : 'charlas'} (${s.aprendidoDe.mensajes} mensajes), la última vez el ${dia(s.aprendido)} a las ${hora(s.aprendido)}.${s.sinLeer ? ` ${s.sinLeer === 1 ? 'Queda 1 sin leer.' : `Quedan ${s.sinLeer} sin leer.`}` : ''}` : h.charlas ? 'La IA todavía no leyó estas charlas.' : 'Todavía no hay charlas guardadas para leer.';
+    cuerpo.append(el('div', { class: 'paso-h' }, el('p', null, el('b', null, 'El Boti aprende solo cada hora. '), leido, ' Lo que sea precio, promesa o dato de cobro queda en «Para aprobar».'), aprender, okA, errorA));
+    aprender.addEventListener('click', () => conBoton(aprender, errorA, async () => {
+      aprender.textContent = 'Leyendo las charlas…'; okA.textContent = '';
+      let r; try { r = await api('/api/admin/historial/aprender', { id }); } finally { aprender.textContent = 'Aprender ahora'; }
+      const pl = (n, uno, muchos) => `${n} ${n === 1 ? uno : muchos}`;
+      okA.textContent = r.yaLeido ? r.mensaje : `Leyó ${pl(r.charlas, 'charla', 'charlas')}: ${pl(r.aprendidos, 'dato entró solo', 'datos entraron solos')} y ${pl(r.pendientes, 'quedó para aprobar', 'quedaron para aprobar')}. ${r.repetidos + r.agrupados ? pl(r.repetidos + r.agrupados, 'ya estaba', 'ya estaban') + '. ' : ''}${r.mensaje || ''}`;
+      await cargarDatos();
+    }));
+  }
+
+  // ---------- Entrada ----------
+  $('#entrar').onclick = () => ACCESO.entrar();
+  $('#salir').onclick = () => ACCESO.salir();
+  window.addEventListener('hashchange', () => { const h = leerHash(); if (!clientes.length) return; if (h.c && h.c !== actual && clientes.some((c) => c.id === h.c)) { vista = h.v; charlaAbierta = h.k; elegir(h.c, true); } else if (h.v !== vista) { charlaAbierta = h.k; verVista(h.v); } });
+  ACCESO.iniciar({
+    alEntrar(u) { $('#puerta').hidden = true; $('#panel').hidden = false; $('#quien').textContent = u.email; if (!API) { $('#error-gral').textContent = 'Falta configurar la dirección de la plataforma (config.js).'; return; } cargarClientes(); },
+    alSalir(m) { $('#panel').hidden = true; $('#puerta').hidden = false; $('#msj-puerta').textContent = m || ''; }
+  });
+})();
+</script>
+</body>
+</html>
