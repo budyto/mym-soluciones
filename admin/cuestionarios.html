@@ -14,6 +14,9 @@
      completó, qué falta y las respuestas ordenadas por sección; 3) compara lo que contestó con lo que ya está cargado
      y, con «Pasar a la ficha del Boti», vuelca la ficha, los datos del alta, los de la factura y las redes.
      Se puede entrar directo a un cliente con cuestionarios.html#idDelCliente (así llega el link del mail de aviso).
+     Fotos y archivos (21/11/2026, pedido de Matías): lo que el cliente sube desde su cuestionario queda en el Drive de
+     MyM. Acá se conecta la cuenta de Google (una sola vez), se abre la carpeta de cada cliente, se ven los archivos con
+     miniatura y se marca qué logo va a la web y a las redes (…/drive, …/carpeta, …/logo, …/archivo/miniatura).
      Rutas: /api/admin/cuestionarios, /api/admin/cuestionario, …/link y …/pasar (plataforma-bots/servidor/cuestionario.js). -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -83,6 +86,23 @@ h3{font:900 19px Archivo;margin:0 0 4px}
 .resp dd{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
 .resp .falta{color:var(--mal);font-weight:700}
 .resp .vacio{color:#9aa5bf}
+/* Fotos y archivos del cliente: una grilla de fichas con miniatura por cada carpeta (Logo, Fotos, Listas, Otros) */
+.permisos{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 0}
+.arch-zona{margin-top:16px}
+.arch-zona h4{font:900 15px Archivo;margin:0 0 8px}
+.arch-zona h4 span{font-weight:400;color:var(--gris)}
+.arch-lista{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.arch{border:1.5px solid var(--borde);border-radius:12px;background:#fff;overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.arch.elegido{border-color:var(--ok);box-shadow:0 0 0 2px #e2f6ee}
+.arch .mini{aspect-ratio:4/3;background:var(--suave);display:grid;place-items:center;font:900 20px Archivo;color:var(--azul-t)}
+.arch .mini img{width:100%;height:100%;object-fit:cover;display:block}
+.arch-zona[data-zona=logo] .mini img{object-fit:contain;padding:8px;background:#fff}
+.arch .dato{padding:8px 10px 10px;display:grid;gap:4px;font-size:13px;min-width:0}
+.arch .dato b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13.5px}
+.arch .dato .estado{white-space:normal;border-radius:8px;line-height:1.25;padding:5px 9px}
+@media(max-width:700px){.arch-lista{grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:10px}}
+.arch .dato a{color:var(--azul-t);font-weight:700;text-decoration:none}
+.arch .dato button{border:1.5px solid var(--borde);background:#fff;border-radius:8px;min-height:34px;font:700 12.5px Archivo;color:var(--azul-t);cursor:pointer}
 @media(max-width:700px){.lados,.resp{grid-template-columns:1fr}.faltan{columns:1}.tarjeta{padding:16px 14px}}
 </style>
 </head>
@@ -100,6 +120,7 @@ h3{font:900 19px Archivo;margin:0 0 4px}
 
     <div class="tarjeta" id="v-lista">
       <p class="gris chica" style="margin:0 0 12px">Cada cliente completa su cuestionario desde su link, sin contraseña, y se guarda solo. Cuando toca «Listo» llega un mail. Desde acá ves las respuestas y las pasás a la ficha.</p>
+      <div id="drive" style="margin:0 0 12px"></div>
       <div class="filtros" id="filtros">
         <button data-f="todos" aria-pressed="true">Todos</button><button data-f="pasar" aria-pressed="false">Para pasar a la ficha</button><button data-f="curso" aria-pressed="false">Completando</button><button data-f="sin" aria-pressed="false">Sin mandar</button>
       </div>
@@ -162,6 +183,54 @@ h3{font:900 19px Archivo;margin:0 0 4px}
   document.querySelectorAll('#filtros button').forEach((b) => (b.onclick = () => { filtro = b.dataset.f; document.querySelectorAll('#filtros button').forEach((x) => x.setAttribute('aria-pressed', x === b)); dibujar(); }));
   $('#lista').addEventListener('click', (e) => { const b = e.target.closest('[data-ver]'); if (b) abrir(b.dataset.ver); });
 
+  /* ---------- Google Drive: dónde se guardan las fotos y los archivos de los clientes ---------- */
+  // Se conecta una sola vez: quien toque el botón elige la cuenta de Google de MyM y acepta. `vuelta` es lo que dejó
+  // Google al volver (#drive=ok, error o cancelado).
+  async function cargarDrive(vuelta) {
+    const caja = $('#drive');
+    let e; try { e = await api('/api/admin/cuestionario/drive'); } catch (err) { caja.innerHTML = ''; return; }
+    const aviso = vuelta === 'ok' && e.conectado ? '<p class="ok">✓ Google Drive quedó conectado. Los clientes ya pueden subir fotos y archivos desde su cuestionario.</p>'
+      : vuelta === 'cancelado' ? '<p class="error">No se conectó: se canceló en la pantalla de Google.</p>'
+      : vuelta === 'error' ? '<p class="error">No se pudo conectar. Tocá el botón de nuevo; si sigue fallando, revisá los datos de Google Cloud en el servidor.</p>' : '';
+    if (!e.configurado) caja.innerHTML = aviso + '<p class="nota" style="margin:0">Fotos y archivos: falta cargar en el servidor los datos de Google Drive. Hasta entonces los clientes no ven la parte de subir archivos. El paso a paso está en plataforma-bots, docs/CUESTIONARIO-ARCHIVOS-DRIVE.md.</p>';
+    else if (!e.conectado) caja.innerHTML = aviso + `<p class="nota" style="margin:0">${e.falla ? esc(e.falla.motivo) : 'Fotos y archivos: falta conectar la cuenta de Google donde se van a guardar. Hasta entonces los clientes no ven la parte de subir archivos.'}</p>
+      <div class="acciones"><button class="btn principal" id="drive-conectar">Conectar Google Drive</button><span class="gris chica">Elegí la cuenta dagiodes1@gmail.com y aceptá. Se hace una sola vez.</span></div><p class="error" id="drive-error"></p>`;
+    else caja.innerHTML = aviso + `<p class="gris chica" style="margin:0">Las fotos y los archivos de los clientes se guardan en el Google Drive de <b>${esc(e.cuenta || 'la cuenta conectada')}</b>, una carpeta por cliente.${e.carpetaMadre ? ` <a href="${esc(e.carpetaMadre)}" target="_blank" rel="noopener" style="color:var(--azul-t);font-weight:700">Abrir la carpeta de todos los clientes</a>` : ''}</p>`;
+    if ($('#drive-conectar')) $('#drive-conectar').onclick = async () => { const b = $('#drive-conectar'); b.disabled = true;
+      try { location.href = (await api('/api/admin/cuestionario/drive/conectar')).url; }
+      catch (err) { $('#drive-error').textContent = err.message; b.disabled = false; } };
+  }
+  const peso = (b) => (b >= 1048576 ? (b / 1048576).toFixed(1).replace('.', ',') + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB');
+  const SIGLA = { 'image/jpeg': 'JPG', 'image/png': 'PNG', 'image/webp': 'WEBP', 'image/heic': 'HEIC', 'application/pdf': 'PDF' };
+  // La caja «Fotos y archivos» de un cliente: su carpeta, con quién está compartida y lo que subió, por carpeta.
+  function cajaArchivos(d) {
+    const A = d.archivos; if (!A) return '';
+    let arriba;
+    if (!A.carpeta) arriba = A.drive.conectado
+      ? '<p class="gris chica">Todavía no subió nada. La carpeta de Drive se arma sola con su primer archivo; si la querés tener antes (para cargarle cosas vos), armala ahora.</p><div class="acciones"><button class="btn" id="carpeta-armar">Armar la carpeta ahora</button></div>'
+      : '<p class="nota">Google Drive no está conectado: este cliente todavía no puede subir archivos. Se conecta arriba, en la lista de clientes.</p>';
+    else arriba = `<div class="acciones"><a class="btn principal" href="${esc(A.carpeta.link)}" target="_blank" rel="noopener">Abrir su carpeta de Drive</a><button class="btn" id="carpeta-armar">Volver a compartir</button></div>
+      <div class="permisos">${A.carpeta.compartida.map((p) => `<span class="estado ${p.ok ? (p.cliente ? 'e-listo' : 'e-otro') : 'e-aviso'}" title="${esc(p.error || '')}">${p.cliente ? 'Cliente' : 'MyM'}: ${esc(p.email || 'sin mail')} · ${p.ok ? esc(p.rol === 'lector' ? 'la ve' : p.rol === 'dueña' ? 'dueña' : 'edita') : 'no se pudo compartir'}</span>`).join('')}</div>
+      ${A.carpeta.compartida.some((p) => !p.ok) ? '<p class="nota">Algún permiso no se pudo dar (pasá el cursor por encima para ver el motivo). Si era el mail del cliente, corregilo en su ficha y tocá «Volver a compartir».</p>' : ''}`;
+    const zonas = A.zonas.map((z) => { const l = A.lista.filter((f) => f.zona === z.id); if (!l.length) return '';
+      return `<div class="arch-zona" data-zona="${z.id}"><h4>${esc(z.t)} <span>· ${l.length} de ${z.max}</span></h4><ul class="arch-lista">${l.map((f) => { const esLogo = z.id === 'logo' && A.logo === f.id;
+        return `<li class="arch${esLogo ? ' elegido' : ''}"><div class="mini" data-mini="${esc(f.id)}">${SIGLA[f.tipo] || 'Archivo'}</div><div class="dato"><b title="${esc(f.nombre)}">${esc(f.nombre)}</b><span class="gris">${peso(f.tamano)} · ${fecha(f.cuando)}</span>
+          ${esLogo ? '<span class="estado e-listo" style="justify-self:start">Logo para la web y las redes</span>' : z.id === 'logo' ? `<button type="button" data-logo="${esc(f.id)}">Usar este logo</button>` : ''}
+          <a href="${esc(f.link)}" target="_blank" rel="noopener">Abrir en Drive</a></div></li>`; }).join('')}</ul></div>`; }).join('');
+    return `<div class="caja" id="caja-archivos"><h3>Fotos y archivos</h3>${arriba}${zonas}${A.carpeta && !A.lista.length ? '<p class="gris chica" style="margin-top:10px">La carpeta está armada, pero todavía no subió nada.</p>' : ''}<p class="error" id="arch-error"></p></div>`;
+  }
+  // Las miniaturas se piden de a una, con la cuenta de MyM; si Drive todavía no la armó, queda la sigla del tipo.
+  async function miniaturas(idCliente) {
+    for (const el of [...document.querySelectorAll('#caja-archivos [data-mini]')]) {
+      if (abierto !== idCliente) return;
+      try {
+        const r = await fetch(API + '/api/admin/cuestionario/archivo/miniatura', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + await ACCESO.token() }, body: JSON.stringify({ id: idCliente, archivo: el.dataset.mini }) });
+        if (!r.ok || !el.isConnected) continue;
+        const img = new Image(); img.alt = ''; img.src = URL.createObjectURL(await r.blob()); el.textContent = ''; el.appendChild(img);
+      } catch (e) { /* queda la sigla */ }
+    }
+  }
+
   /* ---------- Detalle de un cliente ---------- */
   function abrir(id) { abierto = id; history.replaceState(null, '', '#' + encodeURIComponent(id)); ver(true); }
   function cajaLink(link, cliente) {
@@ -208,6 +277,8 @@ h3{font:900 19px Archivo;margin:0 0 4px}
         ${d.link ? cajaLink(d.link, c) : '<p class="gris chica">El link no se puede volver a mostrar. Armá uno nuevo (el anterior deja de andar; las respuestas quedan).</p><div class="acciones"><button class="btn principal" id="link-nuevo">Armar link nuevo</button></div>'}
         <p class="error" id="link-error"></p></div>
 
+      ${cajaArchivos(d)}
+
       ${d.faltan.length ? `<div class="caja"><h3>Falta contestar (${d.faltan.length})</h3><ul class="faltan">${d.faltan.map((f) => `<li>${esc(f.t)} <span class="gris chica">· ${esc(f.seccion)}</span></li>`).join('')}</ul></div>` : ''}
 
       <div class="caja" id="caja-pasar"><h3>Pasar a la ficha del Boti</h3>
@@ -226,6 +297,11 @@ h3{font:900 19px Archivo;margin:0 0 4px}
     $('#link-nuevo').onclick = async () => {
       if (d.link && !confirm('Se arma un link nuevo y el que tiene el cliente deja de andar. Las respuestas no se pierden. ¿Seguimos?')) return;
       try { await api('/api/admin/cuestionario/link', { id: abierto, nuevo: true }); await ver(); } catch (e) { $('#link-error').textContent = e.message; } };
+    if ($('#carpeta-armar')) $('#carpeta-armar').onclick = async () => { const b = $('#carpeta-armar'); b.disabled = true;
+      try { await api('/api/admin/cuestionario/carpeta', { id: abierto }); await ver(); } catch (e) { $('#arch-error').textContent = e.message; b.disabled = false; } };
+    caja.querySelectorAll('[data-logo]').forEach((b) => (b.onclick = async () => { b.disabled = true;
+      try { await api('/api/admin/cuestionario/logo', { id: abierto, archivo: b.dataset.logo }); await ver(); } catch (e) { $('#arch-error').textContent = e.message; b.disabled = false; } }));
+    miniaturas(abierto);
     if ($('#tildar')) $('#tildar').onclick = () => caja.querySelectorAll('[data-clave]:not([disabled])').forEach((x) => { x.checked = true; });
     if ($('#pasar')) $('#pasar').onclick = async () => {
       const campos = [...caja.querySelectorAll('[data-clave]:checked')].map((x) => x.dataset.clave);
@@ -245,7 +321,11 @@ h3{font:900 19px Archivo;margin:0 0 4px}
   $('#entrar').onclick = () => ACCESO.entrar();
   $('#salir').onclick = () => ACCESO.salir('');
   ACCESO.iniciar({
-    alEntrar(u) { $('#puerta').hidden = true; $('#panel').hidden = false; $('#quien').textContent = u.email; abierto = decodeURIComponent(location.hash.replace(/^#/, '')); cargar().then(() => ver(!!abierto)); },
+    alEntrar(u) { $('#puerta').hidden = true; $('#panel').hidden = false; $('#quien').textContent = u.email;
+      // Al volver de conectar Google Drive la dirección trae #drive=ok (o error): se muestra el resultado y se limpia.
+      const marca = decodeURIComponent(location.hash.replace(/^#/, '')); const vuelta = (/^drive=(ok|error|cancelado)$/.exec(marca) || [])[1];
+      if (vuelta) history.replaceState(null, '', location.pathname);
+      abierto = vuelta ? '' : marca; cargarDrive(vuelta); cargar().then(() => ver(!!abierto)); },
     alSalir(m) { $('#panel').hidden = true; $('#puerta').hidden = false; $('#msj-puerta').textContent = m || ''; }
   });
 })();
