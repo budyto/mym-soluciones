@@ -387,3 +387,52 @@
     }
   });
 })();
+
+// Banner de empresas (20/11/2026, Matías: «que se pueda clickear para arrastrar más rápido»). Lo mueve este código en
+// vez del CSS: va solo hacia la derecha y se puede agarrar y arrastrar con el mouse o el dedo; al soltarlo sigue con el
+// impulso y de a poco vuelve a su velocidad. Sin JavaScript queda la animación del CSS.
+(() => {
+  const caja = document.querySelector(".marcas");
+  const pista = caja && caja.querySelector(".marcas-pista");
+  if (!pista) return;
+  const lento = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const BASE = lento ? 20 : 45;            // px por segundo, hacia la derecha
+  let x = 0, vel = BASE, mitad = 0, agarrado = false, ultX = 0, ultT = 0, movido = 0, antes = performance.now();
+  const medir = () => { mitad = pista.scrollWidth / 2; };
+  caja.classList.add("marcas-js");
+  medir(); x = -mitad;                      // arranca con la segunda copia a la vista, así puede ir a la derecha
+  window.addEventListener("resize", medir);
+  pista.querySelectorAll("img").forEach((i) => { i.draggable = false; if (!i.complete) i.addEventListener("load", medir, { once: true }); });
+  const acomodar = () => { if (!mitad) return; while (x > 0) x -= mitad; while (x <= -mitad) x += mitad; };
+  function cuadro(t) {
+    const dt = Math.min(0.05, (t - antes) / 1000); antes = t;
+    if (!agarrado) {
+      x += vel * dt;
+      vel += (BASE - vel) * Math.min(1, dt * 1.5);   // el impulso se apaga y vuelve a la velocidad de siempre
+    }
+    acomodar();
+    pista.style.transform = "translate3d(" + x + "px,0,0)";
+    requestAnimationFrame(cuadro);
+  }
+  caja.addEventListener("pointerdown", (e) => {
+    agarrado = true; movido = 0; ultX = e.clientX; ultT = performance.now(); vel = 0;
+    caja.setPointerCapture(e.pointerId); caja.classList.add("agarrado");
+  });
+  caja.addEventListener("pointermove", (e) => {
+    if (!agarrado) return;
+    const ahora = performance.now(), dx = e.clientX - ultX;
+    x += dx; movido += Math.abs(dx);
+    const dt = Math.max(1, ahora - ultT) / 1000;
+    vel = vel * 0.6 + (dx / dt) * 0.4;
+    ultX = e.clientX; ultT = ahora;
+  });
+  const soltar = () => {
+    if (!agarrado) return;
+    agarrado = false; caja.classList.remove("agarrado");
+    if (performance.now() - ultT > 120) vel = BASE;   // lo soltó quieto: sigue normal
+    vel = Math.max(-3000, Math.min(3000, vel));
+  };
+  caja.addEventListener("pointerup", soltar);
+  caja.addEventListener("pointercancel", soltar);
+  requestAnimationFrame(cuadro);
+})();
