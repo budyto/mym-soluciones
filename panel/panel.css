@@ -252,6 +252,30 @@ dialog .btns .btn{flex:1 1 180px}
 .movs .vacio{color:var(--gris);border:0}
 .cobro{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center}
 .cobro .grande{font:900 24px Archivo,sans-serif;letter-spacing:-.01em}
+/* Prueba gratis, próximo vencimiento, cómo pagar y su página web (21/11/2026). La tira tiene un casillero por día:
+   los que ya pasaron, llenos; hoy, con borde grueso. */
+.gratis{background:var(--suave);border-radius:16px;padding:14px 16px 12px;margin:0 0 14px}
+.gratis .que{font:900 24px/1.2 Archivo,sans-serif;letter-spacing:-.01em;margin:0;color:var(--ink)}
+.dias{list-style:none;margin:12px 0 8px;padding:0;display:grid;grid-template-columns:repeat(var(--n),minmax(0,1fr));gap:3px}
+.dias.sin-hueco{gap:0}
+.dias li{height:12px;border-radius:3px;background:#fff;border:1.5px solid #c5d4f7}
+.dias.sin-hueco li{border-radius:0;border-width:1px 0}
+.dias li.ya{background:var(--azul);border-color:var(--azul)}
+.dias li.hoy{border:2.5px solid var(--azul)}
+.vence{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:10px 0 0;align-items:baseline}
+.vence dt{color:var(--gris);font-size:15px}
+.vence dd{margin:0;font:800 18px/1.3 Archivo,sans-serif}
+@media (max-width:479px){.vence{grid-template-columns:1fr;gap:0}.vence dd{margin:0 0 8px}}
+.pagar{border-top:1.5px dashed var(--borde);margin-top:14px;padding-top:12px}
+.pagar>b{display:block;font:800 16px Archivo,sans-serif;margin-bottom:2px}
+.alias-fila{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:6px 0 8px}
+.alias{font:500 17px "Martian Mono",monospace;background:#fff;border:1.5px solid var(--borde);border-radius:10px;padding:7px 12px;word-break:break-all}
+.mi-web{display:flex;align-items:center;gap:12px;border-top:1.5px dashed var(--borde);margin-top:14px;padding-top:14px}
+.mi-web .ic{flex:0 0 40px;height:40px;border-radius:12px;background:var(--suave);display:grid;place-items:center;color:var(--azul)}
+.mi-web .ic svg{width:22px;height:22px}
+.mi-web .tx{flex:1;min-width:0}
+.mi-web .tx b{display:block;font:800 16px Archivo,sans-serif}
+.mi-web .tx .chica{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sin-bot .resumen-boton,.sin-bot #r-espera,.sin-bot #r-estado,.sin-bot [data-bot]{display:none!important}
 @media (max-width:899px){
   .pestanas button{font-size:12.5px;padding:7px 1px}

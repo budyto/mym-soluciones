@@ -277,12 +277,52 @@
       if (S && !cuenta) $('#cuenta-error').textContent = e.status === 404 ? 'Esta sección todavía no está disponible. Para consultar tus pagos, contactanos.' : e.message;
     } finally { pidiendoCuenta = false; }
   }
+  // Prueba gratis (21/11/2026, pedido de Matías): cuántos días le quedan y hasta cuándo, con una tira de un casillero
+  // por día (los que ya pasaron, llenos). El servidor manda la cuenta hecha (prueba.js): acá no se calcula nada.
+  function bloquePrueba(pr) {
+    const usados = pr.porEmpezar ? 0 : pr.dias - pr.diasQuedan;
+    const tira = el('ol', { class: 'dias' + (pr.dias > 31 ? ' sin-hueco' : ''), style: '--n:' + pr.dias, 'aria-hidden': 'true' });
+    for (let i = 0; i < pr.dias; i++) tira.append(el('li', { class: i < usados ? 'ya' : i === usados && !pr.porEmpezar ? 'hoy' : '' }));
+    const que = pr.porEmpezar ? `Tu prueba gratis empieza el ${fecha(pr.inicio)}`
+      : pr.diasQuedan === 1 ? 'Hoy es tu último día gratis' : `Te quedan ${pr.diasQuedan} días`;
+    return el('div', { class: 'gratis' },
+      el('p', { class: 'que' }, que),
+      tira,
+      el('p', { class: 'chica' }, `${pr.dias} días sin cargo, hasta el ${fecha(pr.ultimoDia)} inclusive.`));
+  }
+  // Cómo pagar: el alias de MyM (el monto exacto llega por mail unos días antes) o, con Ualá, el link.
+  function bloquePagar(cp) {
+    if (!cp) return null;
+    if (cp.medio !== 'transferencia') return el('div', { class: 'pagar' }, el('b', null, 'Cómo pagar'), el('p', { class: 'chica' }, 'Unos días antes del vencimiento te llega por mail el link de pago.'));
+    const copiar = el('button', { class: 'btn-chico', type: 'button', onclick: (e) => {
+      const b = e.currentTarget;
+      navigator.clipboard.writeText(cp.alias).then(() => { b.textContent = 'Alias copiado'; setTimeout(() => { b.textContent = 'Copiar alias'; }, 2000); }).catch(() => {});
+    } }, 'Copiar alias');
+    return el('div', { class: 'pagar' },
+      el('b', null, 'Cómo pagar'),
+      el('p', { class: 'chica' }, 'Por transferencia al alias'),
+      el('div', { class: 'alias-fila' }, el('span', { class: 'alias' }, cp.alias), copiar),
+      el('p', { class: 'chica' }, `A nombre de ${cp.titular}${cp.banco ? ' (' + cp.banco + ')' : ''}. Unos días antes del vencimiento te llega por mail el monto exacto a transferir: con ese monto reconocemos tu pago solo.`));
+  }
   function pintarCobro(caja, conDetalle) {
     vaciar(caja);
     const co = (cuenta && cuenta.cobro) || {};
+    const pr = cuenta && cuenta.prueba; const px = cuenta && cuenta.proximo;
+    const enPrueba = !!(pr && (pr.activa || pr.porEmpezar));
+    if (!conDetalle) $('#caja-cobro-inicio .subtitulo').textContent = enPrueba ? 'Tu prueba gratis' : 'Próximo vencimiento';
+    if (enPrueba) caja.append(bloquePrueba(pr));
     if (co.pendiente && co.pendiente.monto) {
       caja.append(el('div', { class: 'cobro' }, el('span', { class: 'grande' }, plata(co.pendiente.monto)), el('span', { class: 'chica' }, co.pendiente.detalle || 'Pago pendiente')));
       if (co.pendiente.link) caja.append(el('p', { style: 'margin:12px 0 0' }, el('a', { class: 'btn', href: co.pendiente.link, target: '_blank', rel: 'noopener' }, 'Pagar ahora')));
+    } else if (px) {
+      // Próximo vencimiento con el monto (con IVA, como lo acordado) y cómo pagarlo.
+      const vencido = co.estado === 'vencido';
+      if (!enPrueba) caja.append(el('div', { class: 'cobro' }, el('span', { class: 'estado' + (vencido ? ' pausa' : '') }, vencido ? 'Vencido' : 'Al día')));
+      caja.append(el('dl', { class: 'vence' },
+        el('dt', null, vencido ? 'Venció el' : px.primerPago ? 'Primer vencimiento' : 'Próximo vencimiento'), el('dd', null, fecha(px.vence)),
+        el('dt', null, px.primerPago ? 'Primer mes' : 'Abono del mes'), el('dd', null, plata(px.monto) + ' con IVA')));
+      if (px.iaAparte) caja.append(el('p', { class: 'chica', style: 'margin-top:6px' }, px.iaDesde ? `Más la IA de tu Boti según lo que use, desde ${plata(px.iaDesde)} con IVA.` : 'Más la IA de tu Boti según lo que use.'));
+      const pagar = bloquePagar(cuenta.comoPagar); if (pagar) caja.append(pagar);
     } else if (co.vence) {
       const vencido = co.estado === 'vencido';
       caja.append(el('div', { class: 'cobro' }, el('span', { class: 'estado' + (vencido ? ' pausa' : '') }, vencido ? 'Vencido' : 'Al día'), el('span', { class: 'chica' }, (vencido ? 'Venció el ' : 'Próximo vencimiento: ') + fecha(co.vence))));
@@ -290,6 +330,13 @@
       caja.append(el('p', { class: 'chica' }, co.estado === 'al día' ? 'Tu cuenta está al día.' : 'No hay vencimientos programados.'));
     }
     if (conDetalle && co.medio) caja.append(el('p', { class: 'chica', style: 'margin-top:8px' }, 'Medio de pago: ' + co.medio));
+    // Tu página web: la landing o la web que le hicimos (la carga MyM).
+    if (!conDetalle && cuenta && cuenta.paginaWeb) {
+      let host = cuenta.paginaWeb; try { host = new URL(cuenta.paginaWeb).host.replace(/^www\./, ''); } catch (e) { /* queda el link entero */ }
+      caja.append(el('div', { class: 'mi-web' }, icono('web'),
+        el('div', { class: 'tx' }, el('b', null, 'Tu página web'), el('span', { class: 'chica' }, host)),
+        el('a', { class: 'btn-chico', href: cuenta.paginaWeb, target: '_blank', rel: 'noopener' }, 'Ver mi página')));
+    }
   }
   function pintarCuenta() {
     if (!cuenta) return;
