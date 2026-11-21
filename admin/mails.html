@@ -10,7 +10,7 @@
      quien tenga el mail de admin»). La tanda de comercios con su simulación y su mail listo para mandar.
      Los datos (con los mails de los comercios) NO están en esta web: viven en la base del Grupo MyM, en
      empresas/equipo/prospeccionMail/{código}. Según crm/firestore.rules de budyto/grupo-mym, «equipo» sin regla propia
-     sólo lo leen y escriben los admin (matiasvale32 y dagiodes1): ni los miembros de Soluciones lo ven.
+     sólo lo leen y escriben los admin del grupo y matiasnappe7 (prospeccionSol()): ni los miembros de Soluciones lo ven.
      Las simulaciones sí son públicas (por código, noindex): mymsoluciones.online/simulacion/<código>/.
      Se mandan de a uno, desde tu correo, con el tope del día (arrancar con 30 a 40). Plan y legal:
      grupo-mym/docs/soluciones/Prospeccion-sin-pauta.md -->
@@ -163,7 +163,7 @@ var ESTADOS = [['pendiente','Para mandar'],['enviado','Mandado'],['respondio','R
 var API = String((window.SITE || {}).ventasApi || '').replace(/\/+$/, '');
 var WA = String((window.SITE || {}).whatsapp || '5491133662080');
 var ADMIN = ((window.SITE || {}).adminEmails || []).map(function(e){ return String(e).toLowerCase(); });
-var S = { items:[], sel:null, filtro:'pendiente', rubro:'', q:'', ajustes:{ tope:25, baja:'info@mymsoluciones.online', modo:'webmail' }, mostrar:150, seg:{}, segOk:null };
+var S = { items:[], sel:null, filtro:'pendiente', rubro:'', q:'', ajustes:{ tope:25, baja:'info@mymsoluciones.online', modo:'webmail' }, mostrar:150, seg:{}, segOk:null, charlas:{}, charlasOk:null };
 var fs, auth, FV, quien = '';
 
 var $ = function(s, r){ return (r || document).querySelector(s); };
@@ -216,11 +216,39 @@ function cargarSeguimiento(){
     .then(function(j){ S.seg = (j && j.porCodigo) || {}; S.segOk = true; render(); })
     .catch(function(e){ S.segOk = false; S.segErr = e.message; render(); });
 }
+/* ---------- lo que respondieron por WhatsApp (21/11/2026, Matías: «tiene que poder ver todo, lo que salió, lo que
+   respondieron y todo») ----------
+   Las charlas del 11 3366-2080 (robot de ventas) se cruzan con cada comercio por los últimos 10 dígitos de su
+   teléfono. Así en la ficha se ve qué escribió, en qué etapa está y se abre la charla completa. Lo ven las tres
+   cuentas del panel: el server de MyM las verifica con VENTAS_SOL_PANEL_EMAILS. */
+function diez(t){ var d = String(t || '').replace(/\D/g, ''); return d.length >= 8 ? d.slice(-10) : ''; }
+function charlaDe(i){ var k = diez(i.telefono); return (k && S.charlas[k]) || null; }
+function respondio(i){ return i.estado === 'respondio' || i.estado === 'cliente' || !!seg(i).escribio || !!charlaDe(i); }
+function cargarCharlas(){
+  if (!API) return;
+  ACCESO.token().then(function(t){ return fetch(API + '/api/ventas-sol/charlas', { headers:{ Authorization:'Bearer ' + t } }); })
+    .then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(function(j){
+      var m = {};
+      ((j && j.charlas) || []).forEach(function(c){ var k = diez(c.telefono); if (k) m[k] = c; });
+      S.charlas = m; S.charlasOk = true; render();
+    })
+    .catch(function(e){ S.charlasOk = false; S.charlasErr = e.message; render(); });
+}
+function panelCharla(i){
+  var c = charlaDe(i);
+  if (!c) return S.charlasOk === false ? '<p class="small muted" style="margin:6px 0 0">No se pudieron leer las charlas del WhatsApp (' + esc(S.charlasErr || '') + ').</p>' : '';
+  var u = c.ultimo || {}, quien = u.de === 'cliente' ? (c.nombre_perfil || 'El comercio') : u.de === 'robot' ? 'Robot' : 'Equipo';
+  return '<div class="panel" style="margin-top:12px;background:#f7fbf9"><h3 style="margin:0 0 6px">💬 Escribió por WhatsApp</h3>'
+    + '<p class="small" style="margin:0 0 6px">Etapa: <b>' + esc(c.etapa || '—') + '</b>' + (c.espera_desde ? ' · <b style="color:var(--mal,#d43a4a)">espera una persona</b>' : '') + (c.actualizado ? ' · última actividad: ' + fecha(c.actualizado) : '') + '</p>'
+    + (u.texto ? '<p class="small" style="margin:0 0 8px"><b>' + esc(quien) + ':</b> ' + esc(String(u.texto).slice(0, 400)) + (u.ts ? ' <span class="muted">(' + fecha(u.ts) + ')</span>' : '') + '</p>' : '')
+    + '<a class="btn sm" href="whatsapp.html#tel=' + encodeURIComponent(c.telefono) + '">Abrir la charla completa →</a></div>';
+}
 function pintarEmbudo(){
   var env = S.items.filter(function(i){ return i.enviadoEn && ['enviado','respondio','cliente'].indexOf(i.estado) >= 0; });
   var abr = env.filter(function(i){ return (seg(i).visitas || 0) > 0; }).length;
   var wa = env.filter(function(i){ return (seg(i).whatsapp || 0) > 0; }).length;
-  var esc2 = env.filter(function(i){ return seg(i).escribio || i.estado === 'respondio' || i.estado === 'cliente'; }).length;
+  var esc2 = env.filter(respondio).length;
   var cli = env.filter(function(i){ return i.estado === 'cliente'; }).length;
   var filas = [['Mandados', env.length], ['Abrieron la simulación', abr], ['Tocaron WhatsApp', wa], ['Escribieron o respondieron', esc2], ['Clientes', cli]];
   var max = Math.max(1, env.length);
@@ -320,7 +348,7 @@ function contar(lista){
     var g = seg(i); c.mandados++;
     if ((g.visitas || 0) > 0) c.abrieron++;
     if ((g.whatsapp || 0) > 0) c.tocaronWa++;
-    if (g.escribio || i.estado === 'respondio') c.respondieron++;
+    if (g.escribio || i.estado === 'respondio' || charlaDe(i)) c.respondieron++;
     if ((i.llamadas || []).length){ c.llamados++; if (i.llamadas.some(function(l){ return l.resultado !== 'no_atendio'; })) c.atendieron++; }
     if (i.llamadaResultado === 'interesado') c.interesados++;
     if (i.waEnviadoEn) c.wa++;
@@ -355,6 +383,7 @@ function visibles(){
     if (S.filtro === 'llamar'){ if (!paraLlamar(i)) return false; }
     else if (S.filtro === 'seguir'){ if (!paraSeguir(i)) return false; }
     else if (S.filtro === 'abrieron'){ if (!abrio(i)) return false; }
+    else if (S.filtro === 'contestaron'){ if (!respondio(i)) return false; }
     else if (S.filtro !== 'todos' && i.estado !== S.filtro) return false;
     if (S.rubro && i.rubro !== S.rubro) return false;
     if (q && (i.nombre + ' ' + i.zona + ' ' + i.mail + ' ' + i.codigo).toLowerCase().indexOf(q) < 0) return false;
@@ -366,19 +395,20 @@ function visibles(){
 function abrio(i){ var g = seg(i); return !!i.enviadoEn && ((g.visitas || 0) > 0 || (g.whatsapp || 0) > 0); }
 function etiquetaAbrio(i){
   var g = seg(i), v = g.visitas || 0, w = g.whatsapp || 0;
-  if (!i.enviadoEn || (!v && !w)) return '';
-  return (v ? '<span class="vio">👀 abrió' + (v > 1 ? ' ' + v + ' veces' : '') + '</span>' : '') + (w ? '<span class="vio">💬 tocó WhatsApp</span>' : '');
+  var wa = charlaDe(i) ? '<span class="vio">↩️ escribió por WhatsApp</span>' : '';
+  if (!i.enviadoEn || (!v && !w)) return wa;
+  return wa + (v ? '<span class="vio">👀 abrió' + (v > 1 ? ' ' + v + ' veces' : '') + '</span>' : '') + (w ? '<span class="vio">💬 tocó WhatsApp</span>' : '');
 }
 function render(){
   var n = {}; S.items.forEach(function(i){ n[i.estado] = (n[i.estado] || 0) + 1; });
   var hoy = mandadosHoy();
   $('#cHoy').textContent = hoy + '/' + S.ajustes.tope;
   $('#cPend').textContent = n.pendiente || 0; $('#cEnv').textContent = (n.enviado || 0) + (n.respondio || 0); $('#cResp').textContent = n.respondio || 0;
-  var nSeguir = S.items.filter(paraSeguir).length, nLlamar = S.items.filter(paraLlamar).length, nAbrieron = S.items.filter(abrio).length;
+  var nSeguir = S.items.filter(paraSeguir).length, nLlamar = S.items.filter(paraLlamar).length, nAbrieron = S.items.filter(abrio).length, nContestaron = S.items.filter(respondio).length;
   if (!$('#panelResultados').hidden) pintarResultados();
   pintarEmbudo();
-  $('#filtros').innerHTML = [['llamar','📞 Llamar hoy'],['seguir','⏰ Para seguir hoy'],['abrieron','👀 Abrieron'],['todos','Todos']].concat(ESTADOS).map(function(e){
-    var c = e[0] === 'todos' ? S.items.length : e[0] === 'seguir' ? nSeguir : e[0] === 'llamar' ? nLlamar : e[0] === 'abrieron' ? nAbrieron : (n[e[0]] || 0);
+  $('#filtros').innerHTML = [['llamar','📞 Llamar hoy'],['seguir','⏰ Para seguir hoy'],['abrieron','👀 Abrieron'],['contestaron','↩️ Contestaron'],['todos','Todos']].concat(ESTADOS).map(function(e){
+    var c = e[0] === 'todos' ? S.items.length : e[0] === 'seguir' ? nSeguir : e[0] === 'llamar' ? nLlamar : e[0] === 'abrieron' ? nAbrieron : e[0] === 'contestaron' ? nContestaron : (n[e[0]] || 0);
     return '<button class="chip' + (S.filtro === e[0] ? ' on' : '') + '" type="button" data-f="' + e[0] + '">' + esc(e[1]) + ' · ' + c + '</button>';
   }).join('');
   var lista = visibles();
@@ -414,6 +444,7 @@ function ficha(){
     + (S.segOk ? '<p class="small" style="margin:8px 0 0">👀 Abrió la simulación: <b>' + (seg(i).visitas || 0) + '</b> ' + ((seg(i).visitas || 0) === 1 ? 'vez' : 'veces')
         + (seg(i).ultima_visita ? ' (última: ' + fecha(seg(i).ultima_visita) + ')' : '') + ' · 💬 Tocó WhatsApp: <b>' + (seg(i).whatsapp || 0) + '</b>'
         + (seg(i).escribio ? ' · ✅ Escribió al WhatsApp' + (seg(i).escribio_en ? ' el ' + fecha(seg(i).escribio_en) : '') : '') + '</p>' : '')
+    + panelCharla(i)
     + (i.seg24En ? '<p class="small muted" style="margin:4px 0 0">Seguimiento de 24 h mandado el ' + fecha(i.seg24En) + '</p>' : '')
     + (i.seg72En ? '<p class="small muted" style="margin:4px 0 0">Último mail (72 h) mandado el ' + fecha(i.seg72En) + '</p>' : '')
     + '</section>'
@@ -587,7 +618,7 @@ function seguir(){
   if (ADMIN.indexOf(String(u.email || '').toLowerCase()) < 0){ entradaMsg(u.email + ' no es una cuenta de admin.'); auth.signOut(); return; }
   quien = u.email;
   $('#entrada').hidden = true; $('#app').hidden = false;
-  if (!escuchando){ escuchando = true; escuchar(); cargarSeguimiento(); setInterval(function(){ if (!document.hidden) cargarSeguimiento(); }, 300000); }
+  if (!escuchando){ escuchando = true; escuchar(); cargarSeguimiento(); cargarCharlas(); setInterval(function(){ if (!document.hidden){ cargarSeguimiento(); cargarCharlas(); } }, 300000); }
 }
 ACCESO.iniciar({
   alEntrar: function(){ googleOk = true; seguir(); },
