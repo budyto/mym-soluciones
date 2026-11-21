@@ -346,7 +346,8 @@
   // =====================================================================================
   // Inicio: lo que consume el Boti, el calendario de redes y el material (21/11/2026, pedido de Matías).
   // Tres pedidos sueltos: si uno falla o el servidor todavía no lo tiene, esa caja no aparece y el resto sigue.
-  // Todo es sólo lectura; para aprobar una publicación se va al CRM.
+  // El consumo y el material son sólo lectura. Cada publicación se toca y se abre entera, con Aprobar y Pedir un
+  // cambio (pieza.js); el calendario completo sigue en el CRM para quien lo quiera.
   // =====================================================================================
   const WA = '11 3366-2080';
   const pes = (n) => plata(n).replace(' ', String.fromCharCode(160)); // el monto no se parte en dos renglones
@@ -431,7 +432,8 @@
   // ---------- Calendario de redes (viene del CRM de MyM) ----------
   const RED = { instagram: 'Instagram', facebook: 'Facebook', tiktok: 'TikTok', youtube: 'YouTube' };
   const FORMATO = { posteo: 'Posteo', carrusel: 'Carrusel', reel: 'Reel', historia: 'Historia', video: 'Video', short: 'Short' };
-  const ESTADO_PIEZA = { esperando_ok: ['Espera tu OK', 'pausa'], programado: ['Programada', 'revision'], publicado: ['Publicada', ''] };
+  const ESTADO_PIEZA = { esperando_ok: ['Espera tu OK', 'pausa'], programado: ['Programada', 'revision'], publicado: ['Publicada', ''], vencida: ['Venció sin aprobar', 'vencida'] };
+  const estadoPieza = (x) => ESTADO_PIEZA[x.vencida ? 'vencida' : x.estado] || ['', ''];
   function miniPieza(x) {
     const hueco = () => { const s = el('span', { class: 'mini-pieza', 'aria-hidden': 'true' }); s.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M3 16l5-4 4 3 3-2 6 4"/></svg>'; return s; };
     let m = null;
@@ -450,28 +452,45 @@
         el('div', { class: 'fila-btns' }, abrir('Abrir mi calendario', 'btn sec')));
       return true;
     }
-    caja.append(el('p', { class: 'paso' }, 'Lo que te vamos a publicar en los próximos 14 días.'));
-    if (d.esperanOk > 0) caja.append(el('div', { class: 'aviso' }, d.esperanOk === 1 ? 'Hay 1 publicación que espera tu OK para salir.' : `Hay ${d.esperanOk} publicaciones que esperan tu OK para salir.`, el('br'), abrir('Revisar y aprobar', 'btn')));
     const piezas = d.piezas || [];
+    // Tocar una publicación la abre entera en esta misma página (pieza.js). Si ese archivo no cargó, queda el CRM.
+    const visor = window.PiezaMyM;
+    const ver = (x) => visor.abrir(x, piezas);
+    const esperan = piezas.filter((x) => x.estado === 'esperando_ok' && !x.vencida);
+    caja.append(el('p', { class: 'paso' }, visor ? 'Lo que te vamos a publicar en los próximos 14 días. Tocá una publicación para verla entera.' : 'Lo que te vamos a publicar en los próximos 14 días.'));
+    if (esperan.length) caja.append(el('div', { class: 'aviso' }, esperan.length === 1 ? 'Hay 1 publicación que espera tu OK para salir.' : `Hay ${esperan.length} publicaciones que esperan tu OK para salir.`, el('br'),
+      visor ? el('button', { class: 'btn', type: 'button', onclick: () => ver(esperan[0]) }, 'Revisar y aprobar') : abrir('Revisar y aprobar', 'btn')));
     if (!piezas.length) caja.append(el('p', { class: 'chica' }, 'Todavía no hay publicaciones cargadas para estos días. Cuando las armemos, aparecen acá.'));
     else {
       const ul = el('ul', { class: 'piezas' }); let previa = null;
       for (const x of piezas) {
         const f = new Date(x.fecha + 'T12:00:00-03:00');
-        const est = ESTADO_PIEZA[x.estado] || ['', ''];
+        const est = estadoPieza(x);
         const datos = [x.hora, RED[x.red], FORMATO[x.formato]].filter(Boolean).join(' · ');
-        ul.append(el('li', { class: x.fecha === previa ? 'mismo-dia' : null },
-          el('div', { class: 'dia-caja' }, el('small', null, f.toLocaleDateString('es-AR', { timeZone: TZ, weekday: 'short' }).replace('.', '')), el('b', null, String(f.toLocaleDateString('es-AR', { timeZone: TZ, day: 'numeric' })))),
+        const adentro = [
+          el('span', { class: 'dia-caja' }, el('small', null, f.toLocaleDateString('es-AR', { timeZone: TZ, weekday: 'short' }).replace('.', '')), el('b', null, String(f.toLocaleDateString('es-AR', { timeZone: TZ, day: 'numeric' })))),
           miniPieza(x),
-          el('div', { class: 'tx' }, el('b', null, x.titulo || 'Publicación'), datos ? el('small', null, datos) : null, el('span', { class: 'estado ' + est[1] }, est[0]),
-            x.enlace ? el('a', { href: x.enlace, target: '_blank', rel: 'noopener' }, 'Ver publicada') : null)));
+          el('span', { class: 'tx' }, el('b', null, x.titulo || 'Publicación'), datos ? el('small', null, datos) : null, el('span', { class: 'estado ' + est[1] }, est[0]))];
+        const flecha = el('span', { class: 'ver-pieza', 'aria-hidden': 'true' }); flecha.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
+        ul.append(el('li', { class: x.fecha === previa ? 'mismo-dia' : null },
+          visor ? el('button', { class: 'pieza-fila', type: 'button', 'aria-haspopup': 'dialog', onclick: () => ver(x) }, adentro, flecha)
+            : el('div', { class: 'pieza-fila' }, adentro),
+          !visor && x.enlace ? el('a', { href: x.enlace, target: '_blank', rel: 'noopener' }, 'Ver publicada') : null));
         previa = x.fecha;
       }
       caja.append(ul);
     }
-    caja.append(el('div', { class: 'fila-btns' }, abrir('Abrir mi calendario completo', 'btn-chico'), el('span', { class: 'chica' }, 'Entrás con tu cuenta de Google. Ahí aprobás o pedís cambios.')));
+    caja.append(el('div', { class: 'fila-btns' }, abrir('Abrir mi calendario completo', 'btn-chico'), el('span', { class: 'chica' }, visor ? 'Es el tablero de redes de MyM: entrás con tu cuenta de Google.' : 'Entrás con tu cuenta de Google. Ahí aprobás o pedís cambios.')));
     return true;
   }
+  // Lo que usa pieza.js (el visor de una publicación) de este archivo: los pedidos con la sesión, los avisos y los nombres.
+  window.PanelMyM = {
+    api: (ruta, cuerpo) => api(ruta, con(cuerpo)),
+    tostada,
+    negocio: () => { const c = S && S.clientes.find((k) => k.id === cliente()); return (c && c.negocio) || ''; },
+    refrescarRedes: () => refrescarExtras(true),
+    RED, FORMATO, estadoPieza
+  };
 
   // ---------- Material: la carpeta de Drive compartida y el cuestionario ----------
   function pintarMaterial(d) {

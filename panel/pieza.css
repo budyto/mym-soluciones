@@ -1,0 +1,124 @@
+/* Ver una publicación entera en el panel del cliente (21/11/2026). Lo usa pieza.js.
+   La pieza va sobre un fondo oscuro, como en una vidriera: es lo único que tiene que llamar la atención. Al lado
+   (o abajo, en el celular) van los datos en el mismo estilo del resto del panel, y los botones quedan siempre a mano.
+   Celular: toda la pantalla. Desde 900 px: ventana de dos columnas. Colores y letras: los de ../tramites/tramite.css. */
+html.pz-abierta{overflow:hidden}
+dialog.pz{padding:0;border:0;margin:0;width:100vw;max-width:none;height:100vh;height:100dvh;max-height:none;border-radius:0;background:#fff;color:var(--ink);overflow:hidden}
+dialog.pz:not([open]){display:none}
+dialog.pz::backdrop{background:rgba(8,15,32,.72)}
+.pz-caja{display:flex;flex-direction:column;height:100%;min-height:0}
+
+/* Barra de arriba: la red y el formato con su logo, y la cruz. */
+.pz-barra{flex:none;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 10px 10px 18px;padding-top:calc(10px + env(safe-area-inset-top));border-bottom:1px solid var(--borde);background:#fff}
+.pz-red{display:flex;align-items:center;gap:10px;min-width:0;font:700 17px Archivo,sans-serif}
+.pz-logo{display:inline-flex;flex:none}
+.pz-logo svg{display:block}
+.pz-cerrar{flex:none;width:46px;height:46px;border:0;border-radius:50%;background:var(--suave);color:var(--ink);display:grid;place-items:center;cursor:pointer}
+.pz-cerrar:hover{background:#dfe8ff}
+.pz-cerrar svg{width:22px;height:22px;stroke-width:2.4}
+
+.pz-desliza{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+
+/* ---------- La vidriera ---------- */
+.pz-escena{display:grid;place-items:center;padding:22px 16px 26px;background:radial-gradient(120% 70% at 15% 0%,#1d3f8f 0%,rgba(29,63,143,0) 62%),radial-gradient(90% 60% at 100% 100%,#0b5c59 0%,rgba(11,92,89,0) 60%),#0e1a33}
+.pz-visor{position:relative;background:#060b17;overflow:hidden}
+.pz-medio{position:relative;width:100%;height:100%;display:grid;place-items:center;background:#060b17}
+.pz-medio img,.pz-medio video{display:block;width:100%;height:100%;object-fit:contain;background:#060b17;transition:opacity .25s}
+.pz-medio.cargando img,.pz-medio.cargando video{opacity:0}
+.pz-medio.cargando::before{content:"";position:absolute;inset:0;background:linear-gradient(100deg,rgba(255,255,255,0) 30%,rgba(255,255,255,.09) 50%,rgba(255,255,255,0) 70%) 0 0/220% 100%,#101a33;animation:pz-brillo 1.3s linear infinite}
+@keyframes pz-brillo{to{background-position:-220% 0,0 0}}
+.pz-sin{margin:0;padding:18px;color:#c9d4ee;font-size:15.5px;line-height:1.45;text-align:center}
+.pz-reintentar{margin-top:12px;border:1.5px solid rgba(255,255,255,.4);background:none;color:#fff;border-radius:12px;padding:9px 16px;font:700 15px Archivo,sans-serif;cursor:pointer;min-height:44px}
+
+/* Carrusel: se pasa con el dedo (scroll con imán), las flechas o los puntos. */
+.pz-pista{display:flex;width:100%;height:100%;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain}
+.pz-pista::-webkit-scrollbar{display:none}
+.pz-pista>.pz-medio{flex:0 0 100%;scroll-snap-align:center;scroll-snap-stop:always}
+.pz-pista:focus-visible{outline:3px solid #8fb1ff;outline-offset:-3px}
+.pz-flecha{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border:0;border-radius:50%;background:rgba(255,255,255,.94);color:var(--ink);display:grid;place-items:center;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.pz-flecha.antes{left:10px}.pz-flecha.despues{right:10px}
+.pz-flecha svg{width:22px;height:22px;stroke-width:2.6}
+.pz-flecha:hover{background:#fff}
+.pz-cuenta{position:absolute;top:12px;right:12px;background:rgba(6,11,23,.72);color:#fff;border-radius:99px;padding:3px 11px;font:500 12.5px "Martian Mono",monospace}
+.pz-puntos{display:flex;justify-content:center;gap:2px;padding:6px 0 0}
+.pz-puntos button{width:24px;height:24px;border:0;background:none;padding:0;display:grid;place-items:center;cursor:pointer}
+.pz-puntos button::before{content:"";width:7px;height:7px;border-radius:50%;background:#c3cde3;transition:transform .15s,background .15s}
+.pz-puntos button[aria-current]::before{background:var(--azul);transform:scale(1.35)}
+
+/* Posteo y carrusel: la tarjeta como se ve en el inicio de la red. */
+.pz-post{width:min(100%,440px);background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 24px 50px -18px rgba(0,0,0,.6)}
+.pz-post .pz-visor{aspect-ratio:4/5}
+.pz-post.ancho .pz-visor{aspect-ratio:16/9}
+.pz-post-cab{display:flex;align-items:center;gap:10px;padding:11px 14px}
+.pz-post-cab span:last-child{display:grid;line-height:1.2;min-width:0}
+.pz-post-cab b{font:700 15px Archivo,sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pz-post-cab small{color:var(--gris);font-size:12.5px}
+.pz-avatar{flex:none;width:34px;height:34px;border-radius:50%;background:var(--deg);color:#fff;display:grid;place-items:center;font:800 15px Archivo,sans-serif}
+.pz-post-pie{display:flex;align-items:center;gap:16px;padding:8px 14px 13px;color:var(--ink)}
+.pz-post-pie svg{width:25px;height:25px;display:block;stroke-width:1.8}
+.pz-post-pie .pz-hueco{flex:1}
+.pz-post-pie.fb{justify-content:space-around;gap:6px;border-top:1px solid #e7ecf7;margin-top:8px;padding:10px 8px;color:var(--gris);font:600 14px Archivo,sans-serif}
+.pz-post-pie.fb span{display:inline-flex;align-items:center;gap:6px}
+.pz-post-pie.fb svg{width:20px;height:20px}
+
+/* Historia, reel y short: adentro de un celular. */
+.pz-celu{position:relative;width:min(74vw,300px);aspect-ratio:9/16;border:9px solid #05080f;border-radius:42px;background:#05080f;overflow:hidden;box-shadow:0 0 0 1.5px #2b3550,0 30px 60px -20px rgba(0,0,0,.7)}
+.pz-celu .pz-visor{position:absolute;inset:0;border-radius:32px}
+.pz-isla{position:absolute;z-index:3;top:9px;left:50%;transform:translateX(-50%);width:27%;height:19px;border-radius:99px;background:#05080f}
+
+/* ---------- Los datos ---------- */
+.pz-info{padding:22px 20px 26px;display:grid;gap:0;align-content:start}
+.pz-info h2{font:900 25px/1.18 Archivo,sans-serif;letter-spacing:-.01em;margin:0 0 6px;overflow-wrap:anywhere}
+.pz-info .pz-cuando{font:600 17px/1.4 Archivo,sans-serif;color:var(--ink);margin:0 0 12px}
+.pz-info .pz-estado{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin:0 0 4px}
+.pz-estado a{font-weight:700;color:var(--azul-t)}
+.pz-info .pz-nota{margin:10px 0 0;color:var(--gris);font-size:16px;line-height:1.45}
+.pz-info .pz-nota.mal{color:#a3203a}
+.pz-info h3{font:700 14.5px Archivo,sans-serif;color:var(--gris);margin:24px 0 8px;padding-top:20px;border-top:1px solid var(--borde)}
+.pz-info .pz-texto{margin:0;color:var(--ink);font-size:17px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere;max-width:62ch}
+.pz-info .pz-texto.vacio{color:var(--gris)}
+.pz-tag{color:var(--azul-t);font-weight:600}
+.pz-info .pz-crm{margin:24px 0 0;color:var(--gris);font-size:14.5px;line-height:1.5}
+.pz-crm a{color:var(--azul-t);font-weight:700}
+.pz-renglones{display:grid;gap:10px;margin-top:26px}
+.pz-renglones i{height:14px;border-radius:8px;background:var(--suave)}
+.pz-renglones i:nth-child(2){width:86%}.pz-renglones i:nth-child(3){width:58%}
+
+/* ---------- Aprobar y pedir un cambio: siempre a mano, abajo ---------- */
+.pz-acciones{flex:none;padding:12px 16px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--borde);background:#fff;box-shadow:0 -10px 24px -18px rgba(14,26,51,.45)}
+.pz-btns{display:flex;flex-wrap:wrap;gap:10px}
+.pz-btns:empty{display:none}
+.pz-btns .btn{flex:1 1 150px;min-height:54px;font-size:17px;padding:12px 12px;white-space:nowrap}
+.pz-btns .btn.listo{flex-grow:1.4}
+.pz-btns .btn svg{width:22px;height:22px;stroke-width:2.8}
+.pz-btns .btn span{display:inline-flex}
+.pz-acciones .pz-motivo{margin:0 0 10px;color:var(--gris);font-size:15.5px;line-height:1.45}
+.pz-acciones .pz-motivo.mal{color:#a3203a;font-weight:600}
+.pz-acciones .pz-error{margin:0 0 10px;background:var(--rojo-suave);color:#a3203a;border-radius:12px;padding:10px 14px;font-size:15.5px;line-height:1.4}
+.pz-acciones .pz-listo{display:flex;align-items:center;gap:9px;margin:2px 0 12px;color:var(--ok);font:700 17px/1.35 Archivo,sans-serif}
+.pz-listo span{flex:none;width:28px;height:28px;border-radius:50%;background:#e2f6ee;display:grid;place-items:center}
+.pz-listo svg{width:17px;height:17px;stroke-width:3}
+.pz-form{display:grid;gap:8px;margin:0}
+.pz-form label{margin:0;font:700 16px Archivo,sans-serif}
+.pz-form textarea{width:100%;min-height:92px;max-height:32vh;border:1.5px solid var(--borde);border-radius:14px;padding:11px 13px;font:400 17px/1.45 Archivo,sans-serif;color:var(--ink);background:#fff;resize:vertical}
+.pz-form textarea:focus-visible{outline:3px solid var(--azul);outline-offset:1px;border-color:var(--azul)}
+.pz-form .pz-error{margin:0}
+.pz button:focus-visible,.pz a:focus-visible{outline:3px solid var(--azul);outline-offset:2px}
+.pz-escena button:focus-visible{outline-color:#8fb1ff}
+
+/* ---------- Compu: ventana de dos columnas, la pieza a la izquierda ---------- */
+@media (min-width:900px){
+  dialog.pz{inset:0;margin:auto;width:min(1060px,calc(100vw - 48px));height:min(780px,calc(100dvh - 48px));border-radius:28px;box-shadow:0 40px 90px -30px rgba(8,15,32,.8)}
+  .pz-caja{display:grid;grid-template-columns:minmax(0,1fr) 430px;grid-template-rows:auto minmax(0,1fr) auto;grid-template-areas:"escena barra" "escena info" "escena acciones"}
+  .pz-barra{grid-area:barra;padding:14px 14px 14px 26px}
+  .pz-desliza{display:contents}
+  .pz-escena{grid-area:escena;padding:28px;min-height:0;overflow:auto}
+  .pz-info{grid-area:info;padding:24px 26px 28px;overflow-y:auto;overscroll-behavior:contain}
+  .pz-acciones{grid-area:acciones;padding:16px 26px 22px}
+  .pz-post{width:min(440px,100%,calc((min(780px,100dvh - 48px) - 56px - 150px)*.8))}
+  .pz-celu{width:auto;height:min(100%,640px,calc(100dvh - 104px));max-width:100%}
+}
+@media (prefers-reduced-motion:reduce){
+  .pz-medio.cargando::before{animation:none}
+  .pz-pista{scroll-behavior:auto}
+}
