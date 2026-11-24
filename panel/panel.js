@@ -318,10 +318,15 @@
       // Próximo vencimiento con el monto (con IVA, como lo acordado) y cómo pagarlo.
       const vencido = co.estado === 'vencido';
       if (!enPrueba) caja.append(el('div', { class: 'cobro' }, el('span', { class: 'estado' + (vencido ? ' pausa' : '') }, vencido ? 'Vencido' : 'Al día')));
+      // Pago anual (24/11/2026): si paga por año, el monto es el del año (10 meses por 12); si ya pagó el año, se
+      // muestra hasta cuándo y el próximo pago es sólo la IA del mes (si tiene bot).
+      const abonoQue = px.anualHasta ? 'Abono' : px.anual ? (px.primerPago ? 'Primer año (12 meses por el precio de 10)' : 'Abono del año (12 meses por el precio de 10)') : px.primerPago ? 'Primer mes' : 'Abono del mes';
+      const abonoCuanto = px.anualHasta ? 'Pago por año hasta el ' + fecha(px.anualHasta) : plata(px.monto) + ' con IVA';
       caja.append(el('dl', { class: 'vence' },
         el('dt', null, vencido ? 'Venció el' : px.primerPago ? 'Primer vencimiento' : 'Próximo vencimiento'), el('dd', null, fecha(px.vence)),
-        el('dt', null, px.primerPago ? 'Primer mes' : 'Abono del mes'), el('dd', null, plata(px.monto) + ' con IVA')));
-      if (px.iaAparte) caja.append(el('p', { class: 'chica', style: 'margin-top:6px' }, px.iaDesde ? `Más la IA de tu Boti según lo que use, desde ${plata(px.iaDesde)} con IVA.` : 'Más la IA de tu Boti según lo que use.'));
+        el('dt', null, abonoQue), el('dd', null, abonoCuanto)));
+      if (co.anual && Date.parse(co.anual.hasta) > Date.now()) caja.append(el('p', { class: 'chica', style: 'margin-top:6px' }, `Ya pagaste el abono por año: del ${fecha(co.anual.desde)} al ${fecha(co.anual.hasta)}.`));
+      if (px.iaAparte) caja.append(el('p', { class: 'chica', style: 'margin-top:6px' }, (px.anualHasta ? 'Este mes pagás sólo la IA de tu Boti, según lo que use' : 'Más la IA de tu Boti según lo que use') + (px.iaDesde ? `, desde ${plata(px.iaDesde)} con IVA.` : '.') + (px.anual || px.anualHasta ? ' La IA se paga por mes, aunque el abono sea por año.' : '')));
       const pagar = bloquePagar(cuenta.comoPagar); if (pagar) caja.append(pagar);
     } else if (co.vence) {
       const vencido = co.estado === 'vencido';
@@ -589,7 +594,7 @@
     if (!seg.incluido) $('#seg-explica').textContent = 'El seguimiento no está incluido en tu plan. Escribinos si lo querés sumar.';
     const p = seg.plantillas || {};
     const pend = Object.values(p).some((x) => x !== 'APPROVED');
-    $('#seg-plantillas').textContent = seg.incluido ? (Object.keys(p).length && !pend ? 'Los mensajes de 3 y 7 días ya están aprobados por WhatsApp.' : 'Los mensajes de 3 y 7 días están en revisión de WhatsApp: hasta que los aprueben, sale sólo el de las 20 horas.') : '';
+    $('#seg-plantillas').textContent = seg.incluido ? (Object.keys(p).length && !pend ? 'Los mensajes de 1, 3 y 7 días ya están aprobados por WhatsApp.' : 'Los mensajes de 1, 3 y 7 días están en revisión de WhatsApp: hasta que los aprueben, el seguimiento espera.') : '';
     const filas = seg.filas.filter((f) => filtroSeg === 'todos' || f.estado === filtroSeg);
     const tb = $('#seg-tabla tbody'); tb.textContent = '';
     for (const f of filas) {
