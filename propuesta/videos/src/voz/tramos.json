@@ -87,7 +87,7 @@
   "cortina": "cortina.m4a"
  },
  "seguimiento-de-clientes": {
-  "dura": 33.8,
+  "dura": 34.9,
   "fuente": "gemini",
   "modelo": "gemini-3.8-flash-tts",
   "voz": "es-419-csagent-10",
@@ -117,22 +117,22 @@
    },
    {
     "tramo": 3,
-    "se_ve": "Chat: días 1, 3 y 7",
+    "se_ve": "Chat: al día siguiente, a los 3 y a los 7 días",
     "pantalla_desde": 7.0,
-    "pantalla_hasta": 11.0,
-    "pantalla_dura": 4.0,
+    "pantalla_hasta": 12.1,
+    "pantalla_dura": 5.1,
     "voz_desde": 7.35,
-    "voz_dura": 3.23,
-    "aire_al_final": 0.42,
+    "voz_dura": 4.32,
+    "aire_al_final": 0.43,
     "mp3": "seguimiento-de-clientes-3.mp3"
    },
    {
     "tramo": 4,
     "se_ve": "Planilla con estados",
-    "pantalla_desde": 11.0,
-    "pantalla_hasta": 16.1,
+    "pantalla_desde": 12.1,
+    "pantalla_hasta": 17.2,
     "pantalla_dura": 5.1,
-    "voz_desde": 11.35,
+    "voz_desde": 12.45,
     "voz_dura": 4.4,
     "aire_al_final": 0.35,
     "mp3": "seguimiento-de-clientes-4.mp3"
@@ -140,10 +140,10 @@
    {
     "tramo": 5,
     "se_ve": "Aviso",
-    "pantalla_desde": 16.1,
-    "pantalla_hasta": 19.1,
+    "pantalla_desde": 17.2,
+    "pantalla_hasta": 20.2,
     "pantalla_dura": 3.0,
-    "voz_desde": 16.45,
+    "voz_desde": 17.55,
     "voz_dura": 2.09,
     "aire_al_final": 0.56,
     "mp3": "seguimiento-de-clientes-5.mp3"
@@ -151,10 +151,10 @@
    {
     "tramo": 6,
     "se_ve": "Qué incluye",
-    "pantalla_desde": 19.1,
-    "pantalla_hasta": 24.1,
+    "pantalla_desde": 20.2,
+    "pantalla_hasta": 25.2,
     "pantalla_dura": 5.0,
-    "voz_desde": 19.45,
+    "voz_desde": 20.55,
     "voz_dura": 2.23,
     "aire_al_final": 2.42,
     "mp3": "seguimiento-de-clientes-6.mp3"
@@ -162,10 +162,10 @@
    {
     "tramo": 7,
     "se_ve": "Precio",
-    "pantalla_desde": 24.1,
-    "pantalla_hasta": 31.1,
+    "pantalla_desde": 25.2,
+    "pantalla_hasta": 32.2,
     "pantalla_dura": 7.0,
-    "voz_desde": 24.45,
+    "voz_desde": 25.55,
     "voz_dura": 6.23,
     "aire_al_final": 0.42,
     "mp3": "seguimiento-de-clientes-7.mp3"
@@ -173,10 +173,10 @@
    {
     "tramo": 8,
     "se_ve": "Contacto",
-    "pantalla_desde": 31.1,
-    "pantalla_hasta": 33.8,
+    "pantalla_desde": 32.2,
+    "pantalla_hasta": 34.9,
     "pantalla_dura": 2.7,
-    "voz_desde": 31.45,
+    "voz_desde": 32.55,
     "voz_dura": 1.1,
     "aire_al_final": 1.25,
     "mp3": "seguimiento-de-clientes-8.mp3"
