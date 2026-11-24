@@ -289,8 +289,8 @@
       el('p', { class: 'que' }, que),
       tira,
       el('p', { class: 'chica' }, `${pr.dias} días sin cargo, hasta el ${fecha(pr.ultimoDia)} inclusive.`),
-      // Budy, 24/11/2026: la prueba es del bot y del seguimiento; lo demás (la landing del Paquete completo) se cobra igual.
-      ...((pr.sinPrueba || []).length ? [el('p', { class: 'chica' }, `La prueba es del bot y del seguimiento. ${pr.sinPrueba.join(', ')} se cobra igual desde el inicio.`)] : []));
+      // Budy, 24/11/2026: los días gratis son del bot y del seguimiento; la landing se cobra desde el primer día.
+      ...((pr.sinPrueba || []).length ? [el('p', { class: 'chica' }, `Los días gratis son del bot y del seguimiento. ${pr.sinPrueba.join(', ')}: se cobra desde el primer día.`)] : []));
   }
   // Cómo pagar: el alias de MyM (el monto exacto llega por mail unos días antes) o, con Ualá, el link.
   function bloquePagar(cp) {
@@ -596,7 +596,7 @@
     if (!seg.incluido) $('#seg-explica').textContent = 'El seguimiento no está incluido en tu plan. Escribinos si lo querés sumar.';
     const p = seg.plantillas || {};
     const pend = Object.values(p).some((x) => x !== 'APPROVED');
-    $('#seg-plantillas').textContent = seg.incluido ? (Object.keys(p).length && !pend ? 'Los mensajes de 1, 3 y 7 días ya están aprobados por WhatsApp.' : 'Los mensajes de 1, 3 y 7 días están en revisión de WhatsApp: hasta que los aprueben, el seguimiento espera.') : '';
+    $('#seg-plantillas').textContent = seg.incluido ? (Object.keys(p).length && !pend ? 'Los mensajes de 3 y 7 días ya están aprobados por WhatsApp.' : 'Los mensajes de 3 y 7 días están en revisión de WhatsApp: hasta que los aprueben, sale sólo el de las 20 horas.') : '';
     const filas = seg.filas.filter((f) => filtroSeg === 'todos' || f.estado === filtroSeg);
     const tb = $('#seg-tabla tbody'); tb.textContent = '';
     for (const f of filas) {
