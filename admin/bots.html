@@ -291,14 +291,26 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
   }
   function cajaPrueba(c) {
     const pr = pruebaDe(c);
+    // Budy, 24/11/2026: la prueba es sólo del Bot de WhatsApp y del Seguimiento. Lo que no entra (la landing del Paquete
+    // completo, la web, las redes…) se cobra desde el inicio: el servidor lo calcula al marcarla (prueba.cobrarAhora).
+    const claves = Array.isArray(c.servicios) ? c.servicios : (c.plan === 'paquete' ? ['bot', 'seguimiento', 'landing'] : ['bot']);
+    const admite = claves.some((k) => k === 'bot' || k === 'seguimiento');
+    const ca = c.prueba && c.prueba.cobrarAhora;
+    const sinPrueba = ca ? `<div class="peligro" style="margin:8px 0 0"><p class="chica" style="margin:0 0 6px"><b>No entra en la prueba: ${esc(ca.servicios.join(', '))}.</b> ${ca.acordado ? 'Tiene precio acordado por todo: definí a mano cuánto se cobra ahora.' : `Se cobra desde el inicio: instalación ${pesos(ca.instalacion)} + IVA y ${esc(String(c.prueba.dias))} días de abono ${pesos(ca.abonoDias)} + IVA = <b>${pesos(ca.total)}</b> con IVA.`}${ca.aCotizar && ca.aCotizar.length ? ` A cotizar aparte: ${esc(ca.aCotizar.join(', '))}.` : ''}</p>${!ca.acordado && ca.total > 0 ? '<button class="btn" type="button" id="b-pedir-sin-prueba">Pedirlo por transferencia</button>' : ''}<p class="gris chica" id="aviso-sin-prueba" style="margin:6px 0 0"></p></div>` : '';
     const estado = !pr ? 'Sin prueba gratis. Marcala para que el cliente vea en su panel los días que le quedan y el primer vencimiento.'
       : pr.terminada ? `La prueba terminó: el último día gratis fue el ${diaLindo(pr.ultimoDia)}.`
       : pr.porEmpezar ? `La prueba empieza el ${diaLindo(pr.inicio)} y dura ${pr.dias} días: último día gratis el ${diaLindo(pr.ultimoDia)}.`
       : `En prueba gratis: quedan ${pr.quedan} día${pr.quedan === 1 ? '' : 's'}. Último día gratis el ${diaLindo(pr.ultimoDia)}.`;
     const venceProp = pr && c.cobro && c.cobro.vence && c.cobro.vence !== c.prueba.fin;
+    if (!admite) return `<section class="caja" aria-labelledby="tit-prueba"><div class="caja-tit"><h3 id="tit-prueba">Prueba gratis y página web</h3></div>
+      <p class="gris chica" style="margin:6px 0 10px">La prueba gratis es sólo para el Bot de WhatsApp y el Seguimiento de clientes: este cliente no tiene ninguno de los dos.</p>
+      <form id="form-web" class="campos" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr))">
+        <label class="campo">Su página web (la ve en su panel)<input name="url" inputmode="url" autocomplete="off" autocapitalize="none" spellcheck="false" maxlength="300" placeholder="https://plomeriamansilla.com.ar" value="${esc(c.paginaWeb || '')}"></label>
+        <button class="btn" type="submit">Guardar</button></form>
+      <p class="gris chica" id="aviso-web" style="margin:6px 0 0"></p><p class="error chica" id="error-web"></p></section>`;
     return `<section class="caja" aria-labelledby="tit-prueba"><div class="caja-tit"><h3 id="tit-prueba">Prueba gratis y página web</h3></div>
       <p class="chica" id="estado-prueba" style="margin:6px 0 4px"><b>${esc(estado)}</b>${pr && !venceProp ? ` Primer vencimiento: ${esc(new Date(Date.parse(pr.fin)).toLocaleDateString('es-AR'))}.` : ''}${venceProp ? ' Ya tiene su propio vencimiento por un pago: la prueba no lo cambia.' : ''}</p>
-      <p class="gris chica" style="margin:0 0 10px">El fin de la prueba es el primer vencimiento: 3 días antes le llega el mail con el abono y cómo pagarlo. Antes no se le pide ni se le pausa nada.</p>
+      <p class="gris chica" style="margin:0 0 10px">Es sólo del bot y del seguimiento. El fin de la prueba es el primer vencimiento: 3 días antes le llega el mail con el abono y cómo pagarlo. Antes no se le pide ni se le pausa nada. Lo que no tiene prueba (la landing del Paquete completo, la web, las redes) se cobra desde el inicio.</p>${sinPrueba}
       <form id="form-prueba" class="campos" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
         <label class="campo">Empieza el<input name="inicio" type="date" required value="${esc(pr ? pr.inicio : hoyAca())}"></label>
         <label class="campo">Días de prueba<input name="dias" type="number" min="1" max="90" step="1" required inputmode="numeric" value="${esc(pr ? pr.dias : 14)}"></label>
@@ -505,6 +517,18 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
           await cargar(); await verCliente(id);
           if (r.aviso && $('#aviso-prueba')) $('#aviso-prueba').textContent = r.aviso;
         } catch (err) { $('#error-prueba').textContent = sinServidor(err); btn.disabled = false; }
+      };
+      if ($('#b-pedir-sin-prueba')) $('#b-pedir-sin-prueba').onclick = async (e) => {
+        const ca = c.prueba.cobrarAhora;
+        if (!confirm(`¿Pedirle a ${c.negocio} lo que no entra en la prueba?
+
+${ca.servicios.join(', ')}: ${pesos(ca.total)} con IVA (instalación y días de la prueba).`)) return;
+        e.currentTarget.disabled = true;
+        try {
+          const r = await api('/api/admin/pedir-transferencia', { id, servicio: ca.servicio, concepto: `${ca.servicios.join(', ')}: instalación y días de la prueba`.slice(0, 80), monto: ca.total, abono: false });
+          $('#aviso-sin-prueba').textContent = `Pedido ${r.ref}: tiene que transferir exactamente ${pesos(r.monto)}. No corre el vencimiento del fin de la prueba.`;
+          cargarTransferencias();
+        } catch (err) { $('#aviso-sin-prueba').textContent = sinServidor(err); e.currentTarget.disabled = false; }
       };
       if ($('#b-sin-prueba')) $('#b-sin-prueba').onclick = async (e) => {
         if (!confirm(`¿Sacarle la prueba gratis a ${c.negocio}?\n\nSi todavía no pagó, también se borra el primer vencimiento.`)) return;

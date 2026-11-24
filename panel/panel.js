@@ -288,7 +288,9 @@
     return el('div', { class: 'gratis' },
       el('p', { class: 'que' }, que),
       tira,
-      el('p', { class: 'chica' }, `${pr.dias} días sin cargo, hasta el ${fecha(pr.ultimoDia)} inclusive.`));
+      el('p', { class: 'chica' }, `${pr.dias} días sin cargo, hasta el ${fecha(pr.ultimoDia)} inclusive.`),
+      // Budy, 24/11/2026: la prueba es del bot y del seguimiento; lo demás (la landing del Paquete completo) se cobra igual.
+      ...((pr.sinPrueba || []).length ? [el('p', { class: 'chica' }, `La prueba es del bot y del seguimiento. ${pr.sinPrueba.join(', ')} se cobra igual desde el inicio.`)] : []));
   }
   // Cómo pagar: el alias de MyM (el monto exacto llega por mail unos días antes) o, con Ualá, el link.
   function bloquePagar(cp) {
