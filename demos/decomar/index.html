@@ -1,0 +1,633 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Web de muestra de MyM Soluciones para Decomar Revestimientos (Mariela), 24/11/2026.
+     Productos y precios: los que Decomar publicó en Instagram (@decomar_revestimientos) entre septiembre y octubre de 2026.
+     Fotos: ilustrativas, libres de Unsplash (créditos en img/creditos-unsplash.json). En la web final van las de sus productos.
+     Logo: redibujado en SVG a partir del de Instagram (que mide 150 px), para que se vea nítido a cualquier tamaño.
+     WhatsApp y teléfono: el número de sus publicaciones (11 6822-3789). Los botones abren el chat con el mensaje escrito.
+     DE EJEMPLO, a confirmar con la clienta: el mail, el Facebook, el TikTok, los horarios y el punto del mapa (Mataderos).
+     El teléfono de la sección «Consultas» es el mismo «celular que contesta solo» de mymsoluciones.online (main.js, 17/11/2026).
+     Sin indexar hasta que tenga dominio propio. -->
+<meta name="robots" content="noindex">
+<title>Decomar Revestimientos · Renová tus espacios sin obra</title>
+<meta name="description" content="Placas antihumedad, placas símil mármol, cerámicas, wall panel, vanitorys y espejos LED. Mataderos y Parque Avellaneda. Envíos en CABA y alrededores.">
+<meta name="theme-color" content="#121212">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='31' fill='%23121212'/%3E%3Cpath d='M14 34 32 18l18 16' fill='none' stroke='%23e2231a' stroke-width='5'/%3E%3Ctext x='32' y='48' text-anchor='middle' font-family='Arial Black' font-size='15' fill='%238cc63f'%3ED%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500;62..125,700;62..125,800;62..125,900&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --carbon:#121212; --carbon-2:#1d1d1d; --hueso:#f3f2ee; --blanco:#fff; --linea:#e2e0d9;
+  --verde:#8cc63f; --verde-osc:#4f7a14; --amarillo:#ffd200; --rojo:#e2231a; --azul:#1f5aa6;
+  --gris:#5c5c58; --wa:#25d366; --wa-tinta:#063d1c;
+  --tit:"Archivo",Impact,sans-serif; --txt:Manrope,system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;overflow-x:clip}
+body{font:17px/1.6 var(--txt);color:var(--carbon);background:var(--hueso);overflow-x:hidden}
+img{display:block;max-width:100%}
+button{font:inherit;cursor:pointer}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--verde);outline-offset:3px;border-radius:4px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+.wrap{max-width:1200px;margin:0 auto;padding:0 16px}
+@media(min-width:760px){.wrap{padding:0 28px}}
+.tit{font-family:var(--tit);font-stretch:80%;font-weight:900;letter-spacing:-.01em;line-height:.95}
+
+/* LOGO (SVG redibujado) */
+.logo-dm{display:block;flex:none}
+.marca{display:flex;align-items:center;gap:12px;text-decoration:none}
+.marca .logo-dm{width:66px;height:66px;filter:drop-shadow(0 4px 12px rgba(0,0,0,.35))}
+.marca-txt{display:grid;line-height:1}
+.marca-txt b{font:900 30px/.9 var(--tit);font-stretch:82%;color:#fff;letter-spacing:-.01em}
+.marca-txt b span{color:var(--verde)}
+.marca-txt small{font:800 11.5px/1 var(--tit);font-stretch:100%;letter-spacing:.32em;color:var(--amarillo);margin-top:5px}
+@media(min-width:760px){.marca .logo-dm{width:78px;height:78px}.marca-txt b{font-size:36px}}
+
+/* ENCABEZADO */
+header{position:absolute;top:0;left:0;right:0;z-index:30;color:#fff}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;height:100px}
+nav{display:none;gap:26px;font-weight:600;font-size:15px}
+nav a{text-decoration:none;color:#e9e9e9}
+nav a:hover{color:var(--verde)}
+@media(min-width:1000px){nav{display:flex}}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:50px;padding:13px 22px;border-radius:999px;border:0;font:700 16px/1.2 var(--txt);text-decoration:none;white-space:nowrap}
+.btn svg{width:20px;height:20px;flex:none}
+.btn.wa{background:var(--wa);color:var(--wa-tinta)}
+.btn.wa:hover{background:#3be07a}
+.btn.verde{background:var(--verde);color:var(--carbon)}
+.btn.verde:hover{background:#a3d860}
+.btn.claro{background:rgba(255,255,255,.12);color:#fff;border:1.5px solid rgba(255,255,255,.55)}
+.btn.claro:hover{background:rgba(255,255,255,.22)}
+.btn.chico{min-height:42px;padding:9px 16px;font-size:15px}
+@media(max-width:420px){header .btn.chico span{display:none}header .btn.chico{padding:0;width:46px}}
+
+/* PORTADA */
+.portada{position:relative;min-height:92vh;min-height:92svh;color:#fff;display:flex;align-items:flex-end;padding:130px 0 56px;overflow:hidden}
+.portada>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 40%}
+.portada:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(18,18,18,.62) 0%,rgba(18,18,18,.15) 40%,rgba(18,18,18,.9) 100%)}
+.portada .wrap{position:relative;z-index:1;width:100%}
+.portada h1{font-size:clamp(50px,11vw,112px);max-width:900px;text-wrap:balance}
+.portada p{max-width:560px;margin:18px 0 26px;font-size:clamp(17px,2.2vw,20px);color:#ececec}
+.portada .acc{display:flex;flex-wrap:wrap;gap:10px}
+.datos{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px}
+.datos span{background:rgba(18,18,18,.6);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.18);padding:7px 13px;border-radius:999px;font-size:14px;font-weight:600}
+.datos b{color:var(--verde)}
+
+.cinta{background:var(--verde);color:var(--carbon);overflow:hidden;white-space:nowrap;padding:13px 0}
+.cinta-in{display:inline-flex;gap:34px;font:900 21px/1 var(--tit);font-stretch:80%;text-transform:uppercase;animation:cinta 32s linear infinite}
+.cinta-in span:after{content:"";display:inline-block;width:8px;height:8px;background:var(--carbon);border-radius:50%;margin-left:34px;vertical-align:4px}
+@keyframes cinta{to{transform:translateX(-50%)}}
+
+.sec{padding:80px 0}
+.sec.oscura{background:var(--carbon);color:#fff}
+.sec.blanca{background:var(--blanco)}
+.cab{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:30px}
+.cab h2{font-size:clamp(40px,7vw,72px);max-width:720px}
+.cab p{max-width:430px;color:var(--gris)}
+.oscura .cab p{color:#bdbdbd}
+
+/* OFERTAS */
+.ofertas{display:grid;gap:16px;grid-template-columns:1fr}
+@media(min-width:720px){.ofertas{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1080px){.ofertas{grid-template-columns:repeat(3,1fr)}}
+.oferta{background:var(--blanco);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;border:1px solid var(--linea)}
+.oferta-foto{position:relative;aspect-ratio:5/4;overflow:hidden;background:#ddd}
+.oferta-foto img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.oferta:hover .oferta-foto img{transform:scale(1.04)}
+.precio{position:absolute;left:14px;bottom:14px;background:var(--amarillo);color:var(--carbon);font:900 30px/1 var(--tit);font-stretch:80%;padding:8px 12px 7px;border-radius:10px;transform:rotate(-2deg);box-shadow:0 6px 16px rgba(0,0,0,.22)}
+.precio small{font:700 13px var(--txt);margin-left:3px}
+.oferta-txt{padding:18px 18px 0}
+.oferta h3{font:800 24px/1.05 var(--tit);font-stretch:85%}
+.oferta p{color:var(--gris);font-size:15px;margin-top:6px;line-height:1.45}
+.incluye{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.incluye span{background:#eef7e2;color:var(--verde-osc);font-size:13px;font-weight:700;padding:4px 10px;border-radius:999px}
+.oferta-acc{margin-top:auto;padding:16px 18px 18px;display:flex;gap:8px;align-items:center}
+.oferta-acc .btn{flex:1}
+.sumar{min-height:42px;padding:0 16px;border-radius:999px;border:1.5px solid var(--carbon);background:transparent;font-weight:700;font-size:14.5px}
+.sumar[aria-pressed="true"]{background:var(--carbon);color:#fff}
+.aviso{font-size:13px;color:var(--gris);margin-top:18px}
+
+/* ANTES Y DESPUÉS */
+.ad{display:grid;gap:34px;align-items:center}
+@media(min-width:900px){.ad{grid-template-columns:1.15fr .85fr}}
+.comparar{position:relative;aspect-ratio:4/3;border-radius:18px;overflow:hidden;user-select:none;touch-action:pan-y;background:#333}
+.comparar img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.comparar .despues{clip-path:inset(0 0 0 var(--corte,50%))}
+.comparar .barra-ad{position:absolute;top:0;bottom:0;left:var(--corte,50%);width:3px;background:#fff;transform:translateX(-50%)}
+.comparar .tirador{position:absolute;top:50%;left:var(--corte,50%);width:54px;height:54px;border-radius:50%;background:var(--verde);transform:translate(-50%,-50%);display:grid;place-items:center;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+.comparar .etq{position:absolute;top:14px;padding:5px 12px;border-radius:999px;font-weight:800;font-size:13.5px}
+.comparar .etq.a{left:14px;background:rgba(18,18,18,.75);color:#fff}
+.comparar .etq.d{right:14px;background:var(--verde);color:var(--carbon)}
+.comparar input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;margin:0}
+.ilus{font-size:12.5px;color:#8f8f8f;margin-top:10px}
+.ad-txt h2{font-size:clamp(40px,6vw,64px)}
+.ad-txt p{color:#cfcfcf;margin:16px 0 22px;max-width:480px}
+.ad-txt ul{list-style:none;display:grid;gap:10px;margin-bottom:26px}
+.ad-txt li{display:flex;gap:10px;align-items:flex-start}
+.ad-txt li:before{content:"";flex:none;width:20px;height:20px;margin-top:3px;border-radius:50%;background:var(--verde) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath d='M5 10.5l3 3 7-7' fill='none' stroke='%23121212' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/14px no-repeat}
+
+/* AMBIENTES */
+.ambientes{display:grid;gap:10px;grid-template-columns:1fr 1fr;grid-auto-rows:190px}
+.amb{position:relative;border-radius:16px;overflow:hidden;text-decoration:none;color:#fff;background:#333}
+.amb img{width:100%;height:100%;object-fit:cover;transition:transform .6s}
+.amb:hover img{transform:scale(1.05)}
+.amb:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(0,0,0,.72))}
+.amb span{position:absolute;left:16px;bottom:14px;z-index:1;font:900 26px/1 var(--tit);font-stretch:80%}
+.amb small{display:block;font:600 13px var(--txt);color:#e6e6e6;margin-top:4px}
+.amb.grande{grid-column:1/-1;grid-row:span 2}
+@media(min-width:860px){.ambientes{grid-template-columns:repeat(4,1fr);grid-auto-rows:240px}.amb.grande{grid-column:span 2;grid-row:span 2}.amb.alta{grid-row:span 2}}
+
+/* CATÁLOGO */
+.filtros{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.filtro{border:1.5px solid var(--linea);background:var(--blanco);font-weight:700;font-size:15px;padding:9px 16px;border-radius:999px}
+.filtro[aria-pressed="true"]{background:var(--carbon);border-color:var(--carbon);color:#fff}
+.prods{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+@media(min-width:760px){.prods{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:1080px){.prods{grid-template-columns:repeat(4,1fr)}}
+.prod{background:var(--blanco);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;border:1px solid var(--linea)}
+.prod img{aspect-ratio:1;width:100%;object-fit:cover}
+.prod-txt{padding:12px 12px 0}
+.prod h3{font:800 18px/1.1 var(--tit);font-stretch:88%}
+.prod p{font-size:13.5px;color:var(--gris);margin-top:3px;line-height:1.4}
+.prod b.p{display:block;margin-top:6px;font-weight:800;font-size:15px}
+.prod .cant{margin:12px;display:flex;align-items:center;justify-content:space-between;border:1.5px solid var(--carbon);border-radius:999px;overflow:hidden}
+.prod .cant button{width:42px;height:38px;border:0;background:transparent;font-size:20px;font-weight:700}
+.prod .cant button:hover{background:var(--verde)}
+.prod .cant output{font-weight:800}
+.prod.con{outline:2.5px solid var(--verde)}
+.prod-pie{margin-top:auto;padding-top:4px}
+
+/* CONSULTAS: el celular que contesta solo (copiado de mymsoluciones.online, colores de Decomar en el marco) */
+.asis{display:grid;gap:44px;align-items:center}
+@media(min-width:900px){.asis{grid-template-columns:1fr 1fr}}
+.asis h2{font-size:clamp(40px,6vw,64px)}
+.asis p{color:#cfcfcf;margin-top:16px;max-width:470px}
+.asis ul{list-style:none;display:grid;gap:10px;margin:22px 0 26px}
+.asis li{display:flex;gap:10px;color:#e6e6e6}
+.asis li:before{content:"";flex:none;width:8px;height:8px;margin-top:9px;border-radius:50%;background:var(--verde)}
+.tel{position:relative;width:min(100%,330px);margin:0 auto;padding:9px;border-radius:46px;background:linear-gradient(150deg,#3a3a3a 0%,#0d0d0d 22%,#0d0d0d 74%,#2e2e2e 100%);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.12),0 34px 70px -18px rgba(0,0,0,.6),0 18px 46px -18px rgba(140,198,63,.45)}
+.tel::before{content:"";position:absolute;inset:6% -12% 2%;z-index:-1;border-radius:50%;background:radial-gradient(circle,var(--verde),transparent 70%);filter:blur(50px);opacity:.35;pointer-events:none}
+.tel::after{content:"";position:absolute;right:-2.5px;top:132px;width:3px;height:58px;border-radius:0 3px 3px 0;background:#262626}
+.tel-pant{position:relative;display:flex;flex-direction:column;overflow:hidden;border-radius:38px;height:560px;background:#efeae2;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:#111b21;line-height:1.35}
+.tel-pant svg{flex:none}
+.tel-est{position:relative;display:flex;justify-content:space-between;align-items:center;padding:11px 22px 5px 24px;background:#008069;color:#fff;font-size:12px;font-weight:600}
+.tel-est::after{content:"";position:absolute;left:50%;top:10px;width:11px;height:11px;margin-left:-5.5px;border-radius:50%;background:#0d0d0d}
+.tel-est-ic{display:flex;align-items:center;gap:5px}
+.tel-cab{display:flex;align-items:center;gap:9px;padding:6px 10px 9px 8px;background:#008069;color:#fff;box-shadow:0 1px 3px rgba(11,20,26,.18);position:relative;z-index:1}
+.tel-cab>svg:nth-of-type(n+2){margin-left:7px}
+.tel-foto{flex:none;width:36px;height:36px;margin-left:-4px;border-radius:50%;overflow:hidden;box-shadow:0 0 0 1.5px rgba(255,255,255,.35)}
+.tel-foto .logo-dm{width:36px;height:36px}
+.tel-quien-cab{flex:1;min-width:0;display:grid}
+.tel-quien-cab b{font-size:15.5px;font-weight:600;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tel-quien-cab small{font-size:12px;line-height:1.25;opacity:.88}
+.tel-chat{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;gap:7px;padding:10px 12px 8px;transition:opacity .4s}
+.tel-chat>:first-child{margin-top:auto}
+.tel-chat.tel-reinicia{opacity:0}
+.tel-m{position:relative;max-width:86%;padding:6px 9px 7px;border-radius:9px;font-size:13.5px;box-shadow:0 1px .5px rgba(11,20,26,.14);flex:none}
+.tel-m::before{content:"";position:absolute;top:0;width:8px;height:11px;background:inherit}
+.tel-entra{align-self:flex-start;background:#fff;border-top-left-radius:0}
+.tel-entra::before{left:-7px;clip-path:polygon(0 0,100% 0,100% 100%)}
+.tel-sale{align-self:flex-end;background:#d9fdd3;border-top-right-radius:0}
+.tel-sale::before{right:-7px;clip-path:polygon(0 0,100% 0,0 100%)}
+.tel-m::after{content:"";display:block;clear:both}
+.tel-quien{display:block;margin-bottom:1px;font-size:12px;font-weight:600;color:#4f7a14}
+.tel-h{float:right;display:flex;align-items:center;gap:3px;margin:7px -2px -3px 12px;font-size:10.5px;line-height:1;color:#667781}
+.tel-tilde{width:16px;height:11px;color:#8696a0;transition:color .25s}
+.tel-tilde.leido{color:#53bdeb}
+.tel-sis{flex:none;align-self:center;max-width:92%;padding:4px 10px;border-radius:7px;font-size:11px;text-align:center;background:#fff;color:#54656f;box-shadow:0 1px .5px rgba(11,20,26,.12)}
+.tel-hoy{margin-bottom:3px;text-transform:uppercase;letter-spacing:.03em}
+.tel-nota{background:#dff6f1;color:#006b5a;font-weight:600}
+.tel-luego{display:none}
+.quieto .tel-luego{display:block}
+.tel-nuevo{animation:telEntra .3s cubic-bezier(.2,.8,.2,1) both}
+@keyframes telEntra{from{opacity:0;transform:translateY(8px) scale(.94)}}
+.tel-puntos{display:flex;gap:4px;padding:11px 12px}
+.tel-puntos::after{content:none}
+.tel-puntos i{width:6.5px;height:6.5px;border-radius:50%;background:#8696a0;animation:telPunto 1.1s ease-in-out infinite}
+.tel-puntos i:nth-child(2){animation-delay:.16s}.tel-puntos i:nth-child(3){animation-delay:.32s}
+@keyframes telPunto{0%,60%,100%{opacity:.35;transform:none}30%{opacity:1;transform:translateY(-3px)}}
+.tel-barra{display:flex;align-items:center;gap:6px;padding:4px 7px 20px;position:relative}
+.tel-barra::after{content:"";position:absolute;left:50%;bottom:7px;width:96px;height:4px;margin-left:-48px;border-radius:4px;background:rgba(11,20,26,.32)}
+.tel-caja{flex:1;min-width:0;display:flex;align-items:center;gap:9px;height:42px;padding:0 12px 0 10px;border-radius:22px;background:#fff;color:#54656f;box-shadow:0 1px .5px rgba(11,20,26,.14)}
+.tel-campo{flex:1;min-width:0;font-size:14.5px;line-height:22px;color:#8696a0;white-space:nowrap;overflow:hidden}
+.tel-barra.escribe .tel-campo{color:#111b21}
+.tel-barra.escribe .tel-campo::after{content:"";display:inline-block;vertical-align:-3px;width:1.5px;height:17px;margin-left:1px;background:#00a884;animation:telCursor 1s steps(1) infinite}
+@keyframes telCursor{50%{opacity:0}}
+.tel-boton{flex:none;width:42px;height:42px;border-radius:50%;background:#00a884;color:#fff;display:grid;place-items:center}
+.tel-boton svg{grid-area:1/1;transition:opacity .15s,transform .15s}
+.tel-enviar{opacity:0;transform:scale(.6);margin-left:2px}
+.tel-barra.escribe .tel-enviar{opacity:1;transform:none}
+.tel-barra.escribe .tel-mic{opacity:0;transform:scale(.6)}
+.demo-note{font-size:12.5px;color:#8f8f8f;text-align:center;margin-top:16px}
+
+/* PASOS, ZONA Y MAPA */
+.pasos{display:grid;gap:12px;counter-reset:p}
+@media(min-width:860px){.pasos{grid-template-columns:repeat(4,1fr)}}
+.paso{background:var(--blanco);border:1px solid var(--linea);border-radius:16px;padding:22px;counter-increment:p}
+.paso:before{content:counter(p);display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--verde);font:900 20px var(--tit);margin-bottom:14px}
+.paso h3{font:800 22px/1.1 var(--tit);font-stretch:88%}
+.paso p{color:var(--gris);font-size:15px;margin-top:6px}
+.zona{display:grid;gap:16px;margin-top:44px}
+@media(min-width:900px){.zona{grid-template-columns:1.15fr .85fr}}
+.mapa{border-radius:18px;overflow:hidden;min-height:380px;background:#ddd;border:1px solid var(--linea)}
+.mapa iframe{display:block;width:100%;height:100%;min-height:380px;border:0}
+.zona-lado{display:grid;gap:12px;align-content:start}
+.zona-card{background:var(--carbon);color:#fff;border-radius:18px;padding:24px}
+.zona-card h3{font:900 30px/1 var(--tit);font-stretch:80%;margin-bottom:10px}
+.zona-card p{color:#cfcfcf;font-size:15.5px}
+.zona-card .btn{margin-top:16px}
+details{background:var(--blanco);border:1px solid var(--linea);border-radius:14px;padding:2px 18px}
+summary{cursor:pointer;font:800 18px/1.3 var(--tit);font-stretch:90%;padding:14px 0;list-style:none;display:flex;justify-content:space-between;gap:12px}
+summary::-webkit-details-marker{display:none}
+summary:after{content:"+";color:var(--verde-osc);font-size:24px;line-height:1}
+details[open] summary:after{content:"–"}
+details p{color:var(--gris);padding-bottom:16px;font-size:15.5px}
+
+.cierre{position:relative;color:#fff;padding:96px 0;overflow:hidden}
+.cierre>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cierre:after{content:"";position:absolute;inset:0;background:rgba(18,18,18,.72)}
+.cierre .wrap{position:relative;z-index:1}
+.cierre h2{font-size:clamp(46px,9vw,96px);max-width:820px}
+.cierre p{margin:16px 0 26px;max-width:520px;color:#e2e2e2}
+
+/* PIE */
+footer{background:#0c0c0c;color:#b4b4b4;font-size:15px;padding:64px 0 0;border-top:4px solid var(--verde)}
+.pie-grid{display:grid;gap:36px;grid-template-columns:1fr}
+@media(min-width:760px){.pie-grid{grid-template-columns:1.3fr 1fr 1fr 1fr}}
+.pie-marca .logo-dm{width:120px;height:120px;margin-bottom:16px}
+.pie-marca p{max-width:300px}
+footer h4{font:900 20px/1 var(--tit);font-stretch:85%;color:#fff;margin-bottom:16px;text-transform:uppercase;letter-spacing:.02em}
+footer ul{list-style:none;display:grid;gap:10px}
+footer a{text-decoration:none;color:#d8d8d8}
+footer a:hover{color:var(--verde)}
+.contacto li{display:flex;gap:10px;align-items:flex-start}
+.contacto svg{width:18px;height:18px;flex:none;margin-top:3px;color:var(--verde)}
+.redes{display:flex;gap:10px;margin-top:20px}
+.redes a{width:44px;height:44px;border-radius:50%;background:#1f1f1f;display:grid;place-items:center;color:#fff}
+.redes a:hover{background:var(--verde);color:var(--carbon)}
+.redes svg{width:20px;height:20px}
+.pie-baja{margin-top:52px;border-top:1px solid #242424;padding:20px 0 110px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;font-size:13px;color:#7d7d7d}
+.pie-baja b{color:#cfcfcf}
+
+.flota{position:fixed;right:16px;bottom:16px;z-index:35;width:60px;height:60px;border-radius:50%;background:var(--wa);display:grid;place-items:center;box-shadow:0 10px 24px rgba(0,0,0,.3);text-decoration:none}
+.flota svg{width:31px;height:31px;color:#fff}
+body.con-pedido .flota{display:none}
+.carrito{position:fixed;left:12px;right:12px;bottom:12px;z-index:40;background:var(--carbon);color:#fff;border-radius:18px;padding:10px 10px 10px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 16px 36px rgba(0,0,0,.4);transform:translateY(160%);transition:transform .25s}
+.carrito.ver{transform:none}
+.carrito b{font:900 22px var(--tit);font-stretch:85%;color:var(--verde)}
+.carrito span{display:block;font-size:13px;color:#bdbdbd}
+@media(min-width:700px){.carrito{left:auto;right:24px;bottom:24px;width:430px}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-wa" viewBox="0 0 32 32"><path fill="currentColor" d="M16 3a13 13 0 0 0-11.2 19.6L3 29l6.6-1.7A13 13 0 1 0 16 3zm0 23.6c-2 0-4-.5-5.7-1.6l-.4-.2-3.9 1 1-3.8-.3-.4A10.6 10.6 0 1 1 16 26.6zm5.8-7.9c-.3-.2-1.9-.9-2.2-1s-.5-.2-.7.2-.8 1-1 1.2-.4.2-.7.1a8.7 8.7 0 0 1-4.3-3.8c-.3-.6.3-.5.9-1.7.1-.2 0-.4 0-.5l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6a1.2 1.2 0 0 0-.9.4 3.7 3.7 0 0 0-1.1 2.7 6.4 6.4 0 0 0 1.3 3.4 14.7 14.7 0 0 0 5.6 5c2.1.9 2.9 1 4 .8.6-.1 1.9-.8 2.2-1.5s.3-1.4.2-1.5-.3-.2-.6-.3z"/></symbol>
+  <symbol id="i-tel" viewBox="0 0 24 24"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><path d="M3 6h18v12H3zM3 7l9 6 9-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></symbol>
+  <symbol id="i-reloj" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 7v5l3 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-ig" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.3" fill="currentColor"/></symbol>
+  <symbol id="i-fb" viewBox="0 0 24 24"><path fill="currentColor" d="M13.5 21v-8h2.7l.4-3.2h-3.1V7.8c0-.9.3-1.5 1.6-1.5h1.6V3.4A22 22 0 0 0 14.4 3c-2.3 0-3.9 1.4-3.9 4v2.8H7.9V13h2.6v8z"/></symbol>
+  <symbol id="i-tt" viewBox="0 0 24 24"><path fill="currentColor" d="M16.6 3c.4 2.2 1.8 3.6 4 3.8v3.1a7.3 7.3 0 0 1-4-1.3v6.2A5.8 5.8 0 1 1 10.8 9v3.2a2.7 2.7 0 1 0 2.7 2.7V3z"/></symbol>
+  <!-- Logo de Decomar redibujado: círculo negro, textos en arco, techito rojo y azul y DECOMAR en verde con borde amarillo -->
+  <symbol id="logo-dm" viewBox="0 0 200 200">
+    <defs>
+      <path id="arco-arriba" d="M24 100a76 76 0 0 1 152 0"/>
+      <path id="arco-abajo" d="M20 100a80 80 0 0 0 160 0"/>
+    </defs>
+    <circle cx="100" cy="100" r="98" fill="#121212"/>
+    <circle cx="100" cy="100" r="92" fill="none" stroke="#8cc63f" stroke-width="2"/>
+    <text font-family="Archivo,Arial Black,sans-serif" font-weight="800" font-size="10.4" letter-spacing=".5" fill="#fff"><textPath href="#arco-arriba" startOffset="50%" text-anchor="middle">MATERIALES DE CONSTRUCCIÓN</textPath></text>
+    <text font-family="Archivo,Arial Black,sans-serif" font-weight="800" font-size="10" letter-spacing=".5" fill="#fff" dy="-2"><textPath href="#arco-abajo" startOffset="50%" text-anchor="middle">DECORACIÓN PARA TU HOGAR</textPath></text>
+    <path d="M56 98 100 62l44 36" fill="none" stroke="#e2231a" stroke-width="9" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M70 92 100 68l30 24" fill="none" stroke="#1f5aa6" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+    <rect x="94" y="80" width="12" height="12" fill="#fff"/><path d="M100 80v12M94 86h12" stroke="#121212" stroke-width="1.6"/>
+    <text x="100" y="122" text-anchor="middle" font-family="Archivo,Arial Black,sans-serif" font-weight="900" font-size="26" font-style="italic" letter-spacing="-.5" fill="#8cc63f" stroke="#ffd200" stroke-width="1.6" paint-order="stroke">DECOMAR</text>
+    <path d="M62 129h76" stroke="#ffd200" stroke-width="2.4" stroke-linecap="round"/>
+  </symbol>
+</svg>
+
+<header>
+  <div class="wrap">
+    <a class="marca" href="#inicio" aria-label="Decomar Revestimientos, inicio"><svg class="logo-dm" aria-hidden="true"><use href="#logo-dm"/></svg><span class="marca-txt"><b>Deco<span>mar</span></b><small>REVESTIMIENTOS</small></span></a>
+    <nav aria-label="Secciones"><a href="#ofertas">Ofertas</a><a href="#antes-despues">Antes y después</a><a href="#catalogo">Catálogo</a><a href="#consultas">Consultas</a><a href="#zona">Dónde estamos</a></nav>
+    <a class="btn wa chico" data-wa="Hola Decomar, quisiera hacer una consulta." href="#" aria-label="Consultar por WhatsApp"><svg aria-hidden="true"><use href="#i-wa"/></svg><span>Consultar</span></a>
+  </div>
+</header>
+
+<main id="inicio">
+<section class="portada">
+  <img src="img/hero-bano-marmol.jpg" alt="Baño revestido con placas símil mármol" fetchpriority="high">
+  <div class="wrap">
+    <h1 class="tit">Renueve sus espacios sin obra</h1>
+    <p>Placas antihumedad, símil mármol, wall panel y cerámicas para transformar paredes, baños y cocinas en un día, sin polvo ni escombros.</p>
+    <div class="acc">
+      <a class="btn verde" href="#ofertas">Ver ofertas</a>
+      <a class="btn claro" data-wa="Hola Decomar, quisiera asesoramiento para renovar un ambiente." href="#"><svg aria-hidden="true"><use href="#i-wa"/></svg>Pedir asesoramiento</a>
+    </div>
+    <div class="datos">
+      <span><b>Envío sin cargo</b> en CABA en productos seleccionados</span>
+      <span>Mataderos y Parque Avellaneda</span>
+      <span>CABA y alrededores</span>
+    </div>
+  </div>
+</section>
+
+<div class="cinta" aria-hidden="true"><div class="cinta-in">
+  <span>Placas antihumedad</span><span>Símil mármol</span><span>Wall panel</span><span>Cerámicas</span><span>Vanitorys</span><span>Espejos LED</span>
+  <span>Placas antihumedad</span><span>Símil mármol</span><span>Wall panel</span><span>Cerámicas</span><span>Vanitorys</span><span>Espejos LED</span>
+</div></div>
+
+<section class="sec" id="ofertas">
+  <div class="wrap">
+    <div class="cab"><h2 class="tit">Ofertas de la semana</h2><p>Consulte stock, colores disponibles y costo de envío a su zona.</p></div>
+    <div class="ofertas" id="ofertasLista"></div>
+    <p class="aviso">Precios en pesos publicados por Decomar en octubre de 2026, sujetos a cambios y a disponibilidad de stock. Imágenes ilustrativas.</p>
+  </div>
+</section>
+
+<section class="sec oscura" id="antes-despues">
+  <div class="wrap ad">
+    <div>
+      <div class="comparar" id="comparar" style="--corte:50%">
+        <img src="img/antes.jpg" alt="Pared con manchas de humedad y moho">
+        <img class="despues" src="img/despues.jpg" alt="Pared revestida con placas símil piedra">
+        <span class="etq a">Antes</span><span class="etq d">Después</span>
+        <div class="barra-ad"></div>
+        <div class="tirador" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M9 6l-6 6 6 6M15 6l6 6-6 6" fill="none" stroke="#121212" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <input type="range" min="0" max="100" value="50" aria-label="Deslice para comparar el antes y el después">
+      </div>
+      <p class="ilus">Deslice para comparar. Imagen ilustrativa.</p>
+    </div>
+    <div class="ad-txt">
+      <h2 class="tit">Chau humedad, en una tarde</h2>
+      <p>Las placas antihumedad cubren la pared dañada sin picar ni revocar. Se pegan, se sellan y el ambiente queda listo para usar.</p>
+      <ul>
+        <li>Resisten la humedad y el moho</li>
+        <li>Se limpian con un paño húmedo</li>
+        <li>Variedad de colores y texturas símil piedra</li>
+      </ul>
+      <a class="btn verde" data-wa="Hola Decomar, tengo humedad en una pared. ¿Me pueden asesorar con las placas antihumedad?" href="#"><svg aria-hidden="true"><use href="#i-wa"/></svg>Consultar por mi pared</a>
+    </div>
+  </div>
+</section>
+
+<section class="sec blanca">
+  <div class="wrap">
+    <div class="cab"><h2 class="tit">Un material para cada ambiente</h2><p>Toque un ambiente para ver los productos que mejor le quedan.</p></div>
+    <div class="ambientes">
+      <a class="amb grande" href="#catalogo" data-ir="marmol"><img src="img/living-marmol.jpg" alt="Living con pared símil mármol detrás del televisor" loading="lazy"><span>Living<small>Placas símil mármol de pared completa</small></span></a>
+      <a class="amb alta" href="#catalogo" data-ir="bano"><img src="img/bano-led.jpg" alt="Baño con espejo LED y revestimiento de piedra" loading="lazy"><span>Baños<small>Vanitorys, espejos y revestimientos</small></span></a>
+      <a class="amb" href="#catalogo" data-ir="madera"><img src="img/living-listones.jpg" alt="Pared con wall panel de listones de madera" loading="lazy"><span>Wall panel<small>Calidez de madera</small></span></a>
+      <a class="amb" href="#catalogo" data-ir="piedra"><img src="img/despues.jpg" alt="Pared con revestimiento símil piedra" loading="lazy"><span>Símil piedra<small>Placas antihumedad</small></span></a>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="catalogo">
+  <div class="wrap">
+    <div class="cab"><h2 class="tit">Arme su pedido</h2><p>Elija productos y cantidades. Le llega la lista ordenada por WhatsApp y le respondemos con precio y envío.</p></div>
+    <div class="filtros" role="group" aria-label="Filtrar el catálogo">
+      <button class="filtro" aria-pressed="true" data-f="todo">Todo</button>
+      <button class="filtro" aria-pressed="false" data-f="piedra">Antihumedad</button>
+      <button class="filtro" aria-pressed="false" data-f="marmol">Símil mármol</button>
+      <button class="filtro" aria-pressed="false" data-f="madera">Madera</button>
+      <button class="filtro" aria-pressed="false" data-f="bano">Baño</button>
+    </div>
+    <div class="prods" id="prods"></div>
+  </div>
+</section>
+
+<section class="sec oscura" id="consultas">
+  <div class="wrap asis">
+    <div>
+      <h2 class="tit">Le responde al instante, también de noche</h2>
+      <p>El asistente de WhatsApp de Decomar atiende cada consulta en segundos, a toda hora.</p>
+      <ul>
+        <li>Calcula cuántas placas necesita con la medida de su pared</li>
+        <li>Le pasa precios, colores y costo de envío</li>
+        <li>Arma el pedido y le pasa la charla a Mariela para cerrar la venta</li>
+      </ul>
+      <a class="btn wa" data-wa="Hola Decomar, quisiera hacer una consulta." href="#"><svg aria-hidden="true"><use href="#i-wa"/></svg>Escribir a Decomar</a>
+    </div>
+    <div>
+      <div class="tel" id="tel" role="img" aria-label="Charla de ejemplo: una clienta pregunta por placas antihumedad para una pared de 3 por 2,5 metros, el asistente le calcula la cantidad y el precio, toma su dirección y le pasa la charla a Mariela.">
+        <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="tel-i-tilde" viewBox="0 0 18 12"><path d="M1 6.6l3.3 3.3L11.2 2M7.6 9.2l.8.7L15.3 2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol></svg>
+        <div class="tel-pant">
+          <div class="tel-est">
+            <span>21:44</span>
+            <span class="tel-est-ic">
+              <svg viewBox="0 0 16 12" width="15" height="11"><path fill="currentColor" d="M0 9h2.6v3H0zM4.4 6.4H7V12H4.4zM8.8 3.4h2.6V12H8.8zM13.2 0h2.6v12h-2.6z"/></svg>
+              <svg viewBox="0 0 26 12" width="24" height="11"><rect x=".7" y=".7" width="21.6" height="10.6" rx="3" fill="none" stroke="currentColor" stroke-width="1.2" opacity=".7"/><rect x="2.4" y="2.4" width="14.5" height="7.2" rx="1.6" fill="currentColor"/></svg>
+            </span>
+          </div>
+          <div class="tel-cab">
+            <svg viewBox="0 0 24 24" width="22" height="22"><path d="M19 12H5.5M11 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="tel-foto"><svg class="logo-dm" aria-hidden="true"><use href="#logo-dm"/></svg></span>
+            <span class="tel-quien-cab"><b>Decomar Revestimientos</b><small id="tel-estado">en línea</small></span>
+            <svg viewBox="0 0 24 24" width="20" height="20"><path d="M6.6 3.5h2.7l1.4 4-2 1.5a12 12 0 0 0 6.3 6.3l1.5-2 4 1.4v2.7a2 2 0 0 1-2.2 2A16.5 16.5 0 0 1 4.6 5.7a2 2 0 0 1 2-2.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            <svg viewBox="0 0 24 24" width="20" height="20"><circle cx="12" cy="5" r="1.8" fill="currentColor"/><circle cx="12" cy="12" r="1.8" fill="currentColor"/><circle cx="12" cy="19" r="1.8" fill="currentColor"/></svg>
+          </div>
+          <div class="tel-chat" id="tel-chat">
+            <div class="tel-sis tel-hoy">Hoy</div>
+            <div class="tel-m tel-sale"><span class="tel-tx">Hola! Tengo humedad en una pared, ¿qué me recomiendan?</span><span class="tel-h">21:41<svg class="tel-tilde leido" viewBox="0 0 18 12" aria-hidden="true"><use href="#tel-i-tilde"/></svg></span></div>
+            <div class="tel-m tel-entra"><span class="tel-tx">¡Hola! Para eso van las placas antihumedad: se colocan sin picar y quedan como piedra. ¿Qué medida tiene la pared?</span><span class="tel-h">21:41</span></div>
+            <div class="tel-m tel-sale tel-luego"><span class="tel-tx">3 metros de ancho por 2,5 de alto</span><span class="tel-h">21:42<svg class="tel-tilde leido" viewBox="0 0 18 12" aria-hidden="true"><use href="#tel-i-tilde"/></svg></span></div>
+            <div class="tel-m tel-entra tel-luego"><span class="tel-tx">Son 7,5 m²: le recomiendo 8 m² por los cortes. A $ 25.000 el m², son $ 200.000, con pegamento, sellajuntas y envío sin cargo en CABA. ¿Me pasa su nombre y dirección?</span><span class="tel-h">21:42</span></div>
+            <div class="tel-m tel-sale tel-luego"><span class="tel-tx">Laura, Av. Eva Perón 5800, Mataderos</span><span class="tel-h">21:43<svg class="tel-tilde leido" viewBox="0 0 18 12" aria-hidden="true"><use href="#tel-i-tilde"/></svg></span></div>
+            <div class="tel-sis tel-nota tel-luego">Datos guardados · pedido armado</div>
+            <div class="tel-m tel-entra tel-luego"><span class="tel-tx">¡Gracias, Laura! Ya quedó su pedido. Para elegir el color y coordinar la entrega le paso con Mariela.</span><span class="tel-h">21:43</span></div>
+            <div class="tel-sis tel-nota tel-luego">Mariela se sumó a la charla</div>
+            <div class="tel-m tel-entra tel-luego"><b class="tel-quien">Mariela · Decomar</b><span class="tel-tx">Hola, Laura. Ya vi su pedido: mañana le paso los colores disponibles.</span><span class="tel-h">21:44</span></div>
+          </div>
+          <div class="tel-barra">
+            <div class="tel-caja">
+              <svg viewBox="0 0 24 24" width="21" height="21"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M8.3 14.2a4.4 4.4 0 0 0 7.4 0" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><circle cx="9" cy="10" r="1.1" fill="currentColor"/><circle cx="15" cy="10" r="1.1" fill="currentColor"/></svg>
+              <span class="tel-campo" id="tel-campo">Mensaje</span>
+              <svg viewBox="0 0 24 24" width="20" height="20"><path d="M4 8.5a2 2 0 0 1 2-2h2l1.5-2h5l1.5 2h2a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="12" cy="12.5" r="3.2" fill="none" stroke="currentColor" stroke-width="1.7"/></svg>
+            </div>
+            <span class="tel-boton">
+              <svg class="tel-mic" viewBox="0 0 24 24" width="20" height="20"><rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              <svg class="tel-enviar" viewBox="0 0 24 24" width="20" height="20"><path d="M4 4.5 21 12 4 19.5l2.3-7.5z" fill="currentColor"/></svg>
+            </span>
+          </div>
+        </div>
+      </div>
+      <p class="demo-note">Charla de ejemplo del asistente de WhatsApp</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="zona">
+  <div class="wrap">
+    <div class="cab"><h2 class="tit">Así de simple</h2></div>
+    <div class="pasos">
+      <div class="paso"><h3>Elija o consulte</h3><p>Desde la web o con una foto de la pared que quiere renovar.</p></div>
+      <div class="paso"><h3>Le cotizamos</h3><p>Le decimos cuánto material necesita y el precio total.</p></div>
+      <div class="paso"><h3>Confirma</h3><p>Acordamos la forma de pago y el día de entrega.</p></div>
+      <div class="paso"><h3>Lo recibe</h3><p>En CABA y alrededores, con envío sin cargo en productos seleccionados.</p></div>
+    </div>
+    <div class="zona">
+      <div class="mapa"><iframe title="Mapa de la zona de Decomar: Mataderos, Ciudad de Buenos Aires" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=Mataderos,+Ciudad+Aut%C3%B3noma+de+Buenos+Aires&z=14&output=embed"></iframe></div>
+      <div class="zona-lado">
+        <div class="zona-card">
+          <h3>Mataderos y Parque Avellaneda</h3>
+          <p>Entregamos en toda la Ciudad de Buenos Aires y alrededores. El costo de envío a su zona se informa con la cotización.</p>
+          <a class="btn verde chico" data-wa="Hola Decomar, ¿cuánto sale el envío a mi zona?" href="#"><svg aria-hidden="true"><use href="#i-wa"/></svg>Consultar envío</a>
+        </div>
+        <details><summary>¿Las placas se colocan sobre la humedad?</summary><p>Sí: cubren la pared dañada sin picar. Le recomendamos el adhesivo y el sellador según el estado de la pared.</p></details>
+        <details><summary>¿Cuántas placas necesito?</summary><p>Envíenos el ancho y el alto de la pared y le calculamos la cantidad exacta, con un pequeño margen para cortes.</p></details>
+        <details><summary>¿Qué incluye el envío sin cargo?</summary><p>Aplica a los productos que lo indican y a entregas en CABA. Para otras zonas se cotiza aparte.</p></details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cierre">
+  <img src="img/bano-piedra.jpg" alt="" loading="lazy">
+  <div class="wrap">
+    <h2 class="tit">¿Qué ambiente renovamos primero?</h2>
+    <p>Envíenos una foto y le decimos qué material le conviene y cuánto le sale.</p>
+    <a class="btn wa" data-wa="Hola Decomar, les envío una foto del ambiente que quiero renovar." href="#"><svg aria-hidden="true"><use href="#i-wa"/></svg>Enviar foto por WhatsApp</a>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="pie-grid">
+      <div class="pie-marca">
+        <svg class="logo-dm" role="img" aria-label="Decomar"><use href="#logo-dm"/></svg>
+        <p>Materiales de construcción y decoración para su hogar. Revestimientos que renuevan sin obra.</p>
+        <div class="redes">
+          <a href="https://www.instagram.com/decomar_revestimientos/" target="_blank" rel="noopener" aria-label="Instagram de Decomar"><svg aria-hidden="true"><use href="#i-ig"/></svg></a>
+          <a href="#" aria-label="Facebook de Decomar"><svg aria-hidden="true"><use href="#i-fb"/></svg></a>
+          <a href="#" aria-label="TikTok de Decomar"><svg aria-hidden="true"><use href="#i-tt"/></svg></a>
+          <a data-wa="Hola Decomar, quisiera hacer una consulta." href="#" aria-label="WhatsApp de Decomar"><svg aria-hidden="true"><use href="#i-wa"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <h4>Productos</h4>
+        <ul>
+          <li><a href="#catalogo" data-ir="piedra">Placas antihumedad</a></li>
+          <li><a href="#catalogo" data-ir="marmol">Placas símil mármol</a></li>
+          <li><a href="#catalogo" data-ir="madera">Wall panel y cerámicas</a></li>
+          <li><a href="#catalogo" data-ir="bano">Vanitorys y espejos LED</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contacto</h4>
+        <ul class="contacto">
+          <li><svg aria-hidden="true"><use href="#i-wa"/></svg><a data-wa="Hola Decomar, quisiera hacer una consulta." href="#">11 6822-3789</a></li>
+          <li><svg aria-hidden="true"><use href="#i-tel"/></svg><a href="tel:+5491168223789">Llamar</a></li>
+          <li><svg aria-hidden="true"><use href="#i-mail"/></svg><a href="mailto:ventas@decomar.com.ar">ventas@decomar.com.ar</a></li>
+          <li><svg aria-hidden="true"><use href="#i-pin"/></svg><span>Mataderos y Parque Avellaneda, CABA</span></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Horarios</h4>
+        <ul class="contacto">
+          <li><svg aria-hidden="true"><use href="#i-reloj"/></svg><span>Lunes a viernes<br>9 a 18 h</span></li>
+          <li><svg aria-hidden="true"><use href="#i-reloj"/></svg><span>Sábados<br>9 a 13 h</span></li>
+          <li><svg aria-hidden="true"><use href="#i-wa"/></svg><span>WhatsApp: el asistente responde las 24 h</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="pie-baja">
+      <span>© 2026 <b>Decomar Revestimientos</b> · Precios sujetos a cambios · Imágenes ilustrativas</span>
+      <span>Sitio hecho por <b>MyM Soluciones</b></span>
+    </div>
+  </div>
+</footer>
+
+<a class="flota" data-wa="Hola Decomar, quisiera hacer una consulta." href="#" aria-label="Escribir a Decomar por WhatsApp"><svg aria-hidden="true"><use href="#i-wa"/></svg></a>
+<div class="carrito" id="carrito" role="region" aria-label="Su pedido"><div><b id="carritoCant">0 productos</b><span>en su pedido</span></div><a class="btn wa chico" id="enviar" href="#" target="_blank" rel="noopener">Enviar pedido</a></div>
+
+<script>
+const WA='5491168223789';
+const link=t=>'https://wa.me/'+WA+'?text='+encodeURIComponent(t);
+document.querySelectorAll('[data-wa]').forEach(a=>{a.href=link(a.dataset.wa);a.target='_blank';a.rel='noopener';});
+
+/* Productos y precios: los de sus publicaciones de Instagram (sep. y oct. de 2026). Fotos ilustrativas. */
+const PRODS=[
+ {id:'ah',c:'piedra',n:'Placas antihumedad',d:'Símil piedra, varios colores y texturas',p:'$ 25.000',u:'el m²',f:'despues.jpg',inc:['Sellajuntas','Pegamento','Envío sin cargo en CABA']},
+ {id:'pm',c:'marmol',n:'Placa símil mármol',d:'Placa grande de 1,28 × 2,44 m para pared completa',p:'$ 80.000',u:'c/u',f:'living-marmol.jpg',inc:['Sellador','Envío sin cargo']},
+ {id:'am',c:'marmol',n:'Placas autoadhesivas símil mármol',d:'60 × 60 cm, se pegan sin adhesivo',p:'$ 6.000',u:'c/u',f:'marmol-textura.jpg',inc:['Colocación rápida']},
+ {id:'cm',c:'madera',n:'Cerámica tipo madera',d:'36 × 36 cm, española, porcelánico HD',p:'$ 15.500',u:'',f:'madera-veta.jpg',inc:['Resistente al uso diario']},
+ {id:'va',c:'bano',n:'Vanitory laqueado 80 cm',d:'Con mesada símil mármol travertino y patas antihumedad',p:'$ 480.000',u:'',f:'vanitory.jpg',inc:['Sellajuntas','Pegamento','Envío sin cargo en CABA']},
+ {id:'wp',c:'madera',n:'Wall panel símil madera',d:'Listones para paredes y respaldos',p:'',u:'',f:'living-listones.jpg'},
+ {id:'el',c:'bano',n:'Espejos con luz LED',d:'Redondos y rectangulares, para baños',p:'',u:'',f:'espejo-led.jpg'},
+ {id:'mb',c:'bano',n:'Revestimiento para baño',d:'Placas resistentes a la humedad',p:'',u:'',f:'bano-led.jpg'},
+ {id:'mc',c:'marmol',n:'Revestimiento para cocina',d:'Placas símil mármol para la pared de la mesada',p:'',u:'',f:'cocina-marmol.jpg'},
+ {id:'pp',c:'piedra',n:'Revestimiento símil piedra',d:'Para frentes, livings y galerías',p:'',u:'',f:'pared-piedra.jpg'}
+];
+document.getElementById('ofertasLista').innerHTML=PRODS.filter(p=>p.p).map(p=>`<article class="oferta">
+ <div class="oferta-foto"><img src="img/${p.f}" alt="${p.n}" loading="lazy"><div class="precio">${p.p}<small>${p.u}</small></div></div>
+ <div class="oferta-txt"><h3>${p.n}</h3><p>${p.d}</p><div class="incluye">${p.inc.map(i=>`<span>${i}</span>`).join('')}</div></div>
+ <div class="oferta-acc"><a class="btn wa chico" target="_blank" rel="noopener" href="${link('Hola Decomar, me interesa: '+p.n+' ('+p.p+(p.u?' '+p.u:'')+'). ¿Tienen stock?')}"><svg aria-hidden="true"><use href="#i-wa"/></svg>Lo quiero</a><button class="sumar" data-id="${p.id}" aria-pressed="false">Sumar al pedido</button></div>
+</article>`).join('');
+
+const cant={};
+const cont=document.getElementById('prods');
+cont.innerHTML=PRODS.map(p=>`<article class="prod" data-cat="${p.c}" data-id="${p.id}">
+ <img src="img/${p.f}" alt="${p.n}" loading="lazy">
+ <div class="prod-txt"><h3>${p.n}</h3><p>${p.d}</p><b class="p">${p.p?p.p+(p.u?' '+p.u:''):'Consultar precio'}</b></div>
+ <div class="prod-pie"><div class="cant"><button aria-label="Restar ${p.n}" data-d="-1">−</button><output aria-live="polite">0</output><button aria-label="Sumar ${p.n}" data-d="1">+</button></div></div></article>`).join('');
+function poner(id,v){cant[id]=Math.max(0,v);const a=cont.querySelector(`[data-id="${id}"]`);a.querySelector('output').textContent=cant[id];a.classList.toggle('con',cant[id]>0);
+ document.querySelectorAll(`.sumar[data-id="${id}"]`).forEach(b=>b.setAttribute('aria-pressed',cant[id]>0));actualizar();}
+cont.addEventListener('click',e=>{const b=e.target.closest('button[data-d]');if(!b)return;const id=b.closest('.prod').dataset.id;poner(id,(cant[id]||0)+Number(b.dataset.d));});
+document.getElementById('ofertasLista').addEventListener('click',e=>{const b=e.target.closest('.sumar');if(!b)return;const id=b.dataset.id;poner(id,(cant[id]||0)>0?0:1);});
+function actualizar(){const l=PRODS.filter(p=>cant[p.id]>0);const n=l.length;
+ document.getElementById('carritoCant').textContent=n+(n===1?' producto':' productos');
+ document.getElementById('carrito').classList.toggle('ver',n>0);document.body.classList.toggle('con-pedido',n>0);
+ document.getElementById('enviar').href=link('Hola Decomar, quisiera cotizar este pedido:\n\n'+l.map(p=>`• ${p.n}: ${cant[p.id]}`).join('\n')+'\n\nZona de entrega: ');}
+function filtrar(c){document.querySelectorAll('.filtro').forEach(x=>x.setAttribute('aria-pressed',x.dataset.f===c));cont.querySelectorAll('.prod').forEach(p=>p.hidden=!(c==='todo'||p.dataset.cat===c));}
+document.querySelectorAll('.filtro').forEach(f=>f.addEventListener('click',()=>filtrar(f.dataset.f)));
+document.querySelectorAll('[data-ir]').forEach(a=>a.addEventListener('click',()=>filtrar(a.dataset.ir)));
+
+/* Antes y después */
+const comp=document.getElementById('comparar');
+comp.querySelector('input').addEventListener('input',e=>comp.style.setProperty('--corte',e.target.value+'%'));
+
+/* Celular que contesta solo: el mismo de mymsoluciones.online (main.js, 17/11/2026) */
+(function(){
+  const $=(s,c=document)=>c.querySelector(s),$$=(s,c=document)=>[...c.querySelectorAll(s)];
+  const tel=$('#tel'); if(!tel) return;
+  const chat=$('#tel-chat'),telEstado=$('#tel-estado'),campo=$('#tel-campo'),barra=$('.tel-barra',tel);
+  const luego=$$('.tel-luego',chat);
+  const alFinal=s=>{if(s&&chat.scrollTo)chat.scrollTo({top:chat.scrollHeight,behavior:'smooth'});else chat.scrollTop=chat.scrollHeight;};
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){tel.classList.add('quieto');alFinal(false);return;}
+  let enPantalla=true;const cola=[];
+  const sigue=()=>enPantalla&&!document.hidden;
+  const despierta=()=>{if(sigue())cola.splice(0).forEach(f=>f());};
+  const espera=ms=>new Promise(ok=>setTimeout(()=>(sigue()?ok():cola.push(ok)),ms));
+  document.addEventListener('visibilitychange',despierta);
+  if('IntersectionObserver' in window)new IntersectionObserver(en=>{enPantalla=en[en.length-1].isIntersecting;despierta();}).observe(tel);
+  const puntos=document.createElement('div');puntos.className='tel-m tel-entra tel-puntos';puntos.innerHTML='<i></i><i></i><i></i>';
+  const muestra=el=>{el.classList.remove('tel-luego');el.classList.add('tel-nuevo');alFinal(true);};
+  (async()=>{for(;;){
+    await espera(2200);
+    for(const el of luego){
+      if(el.classList.contains('tel-sale')){
+        const tilde=$('.tel-tilde',el);barra.classList.add('escribe');campo.textContent='';
+        for(const letra of Array.from($('.tel-tx',el).textContent)){campo.textContent+=letra;campo.scrollLeft=campo.scrollWidth;await espera(34+Math.random()*46);}
+        await espera(380);barra.classList.remove('escribe');campo.textContent='Mensaje';campo.scrollLeft=0;tilde.classList.remove('leido');
+        muestra(el);await espera(750);tilde.classList.add('leido');await espera(350);
+      }else if(el.classList.contains('tel-entra')){
+        telEstado.textContent='escribiendo…';chat.appendChild(puntos);alFinal(true);
+        await espera(1000+Math.min(1300,el.textContent.length*14));puntos.remove();telEstado.textContent='en línea';muestra(el);await espera(1300);
+      }else{muestra(el);await espera(1000);}
+    }
+    await espera(5200);chat.classList.add('tel-reinicia');await espera(450);
+    luego.forEach(el=>{el.classList.add('tel-luego');el.classList.remove('tel-nuevo');});chat.scrollTop=0;chat.classList.remove('tel-reinicia');
+  }})();
+})();
+</script>
+</body>
+</html>
