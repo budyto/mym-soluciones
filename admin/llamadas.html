@@ -64,6 +64,8 @@ header a{color:var(--gris);text-decoration:none;font-weight:600}
 .e-wa{background:var(--verde-s);color:var(--ok)}
 .e-corta{background:var(--ambar-s);color:var(--aviso)}
 .e-ok{background:var(--suave);color:var(--azul-t)}
+.e-derivada{background:var(--verde-s);color:var(--ok)}
+.e-noatendio{background:var(--rojo-s);color:var(--mal)}
 .vacio{padding:28px 16px;text-align:center;color:var(--gris)}
 
 .detalle{position:sticky;top:16px;max-height:calc(100vh - 32px);overflow:auto}
@@ -136,6 +138,8 @@ details pre{white-space:pre-wrap;font-size:12px;background:#f6f8fd;border-radius
       <input id="buscar" type="search" placeholder="Buscar por nombre, número, rubro o lo que se habló" aria-label="Buscar llamadas">
       <select id="rango" aria-label="Período"><option value="1">Hoy</option><option value="7">Últimos 7 días</option><option value="30" selected>Últimos 30 días</option></select>
       <button class="chip" type="button" data-estado="" aria-pressed="true">Todas</button>
+      <button class="chip" type="button" data-estado="derivada" aria-pressed="false">Pasadas a una persona</button>
+      <button class="chip" type="button" data-estado="noatendio" aria-pressed="false">No se pudo pasar</button>
       <button class="chip" type="button" data-estado="persona" aria-pressed="false">Pidieron que los llamen</button>
       <button class="chip" type="button" data-estado="wa" aria-pressed="false">Siguen por WhatsApp</button>
       <button class="chip" type="button" data-estado="corta" aria-pressed="false">Cortaron rápido</button>
@@ -145,7 +149,7 @@ details pre{white-space:pre-wrap;font-size:12px;background:#f6f8fd;border-radius
       <section class="tarjeta lista" id="lista" aria-label="Lista de llamadas"><p class="vacio">Cargando…</p></section>
       <section class="tarjeta detalle" id="detalle" aria-label="Detalle de la llamada" tabindex="-1"><p class="vacio">Elegí una llamada para escucharla y leer la charla.</p></section>
     </div>
-    <p class="nota-pie">Las grabaciones, las charlas y los resúmenes se borran solos a los 30 días. El costo estimado es el de Gemini (la IA de voz); el servidor cuesta aparte unos US$ 25 por mes fijos y las llamadas en Meta son gratis.</p>
+    <p class="nota-pie">Las grabaciones, las charlas y los resúmenes se borran solos a los 30 días. El costo estimado es el de Gemini (la IA de voz); el servidor cuesta aparte unos US$ 25 por mes fijos y las llamadas que entran son gratis en Meta (las que se pasan a una persona, Meta las cobra por minuto mientras hablan).</p>
   </div>
 </div>
 
@@ -175,7 +179,19 @@ details pre{white-space:pre-wrap;font-size:12px;background:#f6f8fd;border-radius
   const telLindo = (t) => { const d = String(t || ''); const m = /^549(11|\d{2,4})(\d{4})(\d{4})$/.exec(d); return m ? `${m[1]} ${m[2]}-${m[3]}` : (d ? '+' + d : ''); };
   const usd = (n) => 'US$ ' + (n < 1 ? n.toFixed(2) : n.toFixed(1)).replace('.', ',');
   const quien = (l) => l.nombre || l.perfil || telLindo(l.tel) || 'Número oculto';
+  // Derivación: el asistente quiso sumar a una persona a la misma llamada (pedido de Matías, 21/11/2026).
+  // Si estaba apagada o sin persona cargada no hubo intento: queda como «Pidió que lo llamen».
+  const SIN_INTENTO = ['apagado', 'sin_persona', 'motivo_invalido'];
+  const POR_QUE_NO = { no_atendio: 'no atendió', rechazo: 'rechazó la llamada', sin_permiso: 'falta el permiso de llamada en WhatsApp', error: 'falló la llamada', fuera_de_horario: 'fuera de horario', corto_quien_llamo: 'quien llamó cortó mientras sonaba', ya_se_intento: 'ya se había intentado' };
+  const derivada = (l) => (l.derivacion && !SIN_INTENTO.includes(l.derivacion.resultado) ? l.derivacion : null);
+  function textoDerivacion(d) {
+    if (d.atendio) return `Se pasó a ${d.a}: atendió${d.sonoSeg ? ' a los ' + d.sonoSeg + ' s' : ''} y hablaron ${dur(d.duracionSeg)} min`;
+    return `No se pudo pasar${d.a ? ' a ' + d.a : ''}: ${POR_QUE_NO[d.resultado] || d.resultado}${d.sonoSeg ? ' (sonó ' + d.sonoSeg + ' s)' : ''}. Hay que llamarlo.`;
+  }
   function estadoDe(l) {
+    const d = derivada(l);
+    if (d && d.atendio) return ['derivada', 'Pasada a ' + d.a];
+    if (d) return ['noatendio', d.resultado === 'fuera_de_horario' ? 'Fuera de horario' : (d.a || 'La persona') + ' no atendió'];
     if (l.pidioPersona) return ['persona', 'Pidió que lo llamen'];
     if (l.pidioWhatsapp && !/^no salió|sin número/.test(l.pidioWhatsapp)) return ['wa', 'Sigue por WhatsApp'];
     if ((l.segundos || 0) < 30) return ['corta', 'Cortó rápido'];
@@ -209,7 +225,7 @@ details pre{white-space:pre-wrap;font-size:12px;background:#f6f8fd;border-radius
     return todas.filter((l) => {
       if (dias === 1 ? diaClave(l.fecha) !== desdeHoy : new Date(l.fecha).getTime() < desde) return false;
       if (estado && estadoDe(l)[0] !== estado) return false;
-      if (q && ![l.nombre, l.perfil, l.tel, telLindo(l.tel), l.rubro, l.necesidad, l.resumen, l.pidioPersona].join(' ').toLowerCase().includes(q)) return false;
+      if (q && ![l.nombre, l.perfil, l.tel, telLindo(l.tel), l.rubro, l.necesidad, l.resumen, l.pidioPersona, l.derivacion && l.derivacion.a].join(' ').toLowerCase().includes(q)) return false;
       return true;
     });
   }
@@ -267,14 +283,15 @@ details pre{white-space:pre-wrap;font-size:12px;background:#f6f8fd;border-radius
       <div class="det-cab"><div><h2>${esc(quien(l))}</h2>
         <p class="det-dato">${esc(dia(l.fecha))} a las ${esc(hhmm(l.fecha))} · ${dur(l.segundos)} min${tel ? ` · <a class="tel" href="https://wa.me/${esc(l.tel)}" target="_blank" rel="noopener">${esc(tel)}</a>` : ''}</p></div>
         <button class="btn cerrar" type="button" data-cerrar>Volver</button></div>
-      ${l.audio ? `<div class="reproductor"><audio controls preload="metadata" src="${esc(l.audio)}"></audio><p>A la izquierda se oye quien llamó; a la derecha, el asistente. El link de la grabación vence en 15 minutos: si se corta, tocá Actualizar.</p></div>`
+      ${l.audio ? `<div class="reproductor"><audio controls preload="metadata" src="${esc(l.audio)}"></audio><p>A la izquierda se oye quien llamó; a la derecha, el asistente${derivada(l) && derivada(l).atendio ? ' y después ' + esc(derivada(l).a) : ''}. El link de la grabación vence en 15 minutos: si se corta, tocá Actualizar.</p></div>`
                 : `<div class="reproductor sin">${esc(l.nota || 'Esta llamada no tiene grabación.')}</div>`}
       <dl class="ficha">
         <dt>Estado</dt><dd><span class="estado e-${cls}">${txt}</span></dd>
         ${l.perfil && l.nombre ? `<dt>Perfil</dt><dd>${esc(l.perfil)}</dd>` : ''}
         ${l.rubro ? `<dt>Rubro</dt><dd>${esc(l.rubro)}</dd>` : ''}
         ${l.necesidad ? `<dt>Necesita</dt><dd>${esc(l.necesidad)}</dd>` : ''}
-        ${l.pidioPersona ? `<dt>Llamarlo por</dt><dd>${esc(l.pidioPersona)}</dd>` : ''}
+        ${derivada(l) ? `<dt>Derivación</dt><dd>${esc(textoDerivacion(derivada(l)))}${derivada(l).motivo ? ` <span class="gris">· Motivo: ${esc(derivada(l).motivo)}</span>` : ''}</dd>` : ''}
+        ${l.pidioPersona ? `<dt>${derivada(l) && derivada(l).atendio ? 'Lo que se le dijo' : 'Llamarlo por'}</dt><dd>${esc(l.pidioPersona)}</dd>` : ''}
         ${l.pidioWhatsapp ? `<dt>WhatsApp</dt><dd>${esc(l.pidioWhatsapp)}</dd>` : ''}
       </dl>
       ${l.resumen ? `<p class="resumen">${esc(l.resumen)}</p>` : ''}
