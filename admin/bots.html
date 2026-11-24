@@ -116,6 +116,7 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
           <label><input type="checkbox" name="servicio" value="empresaAutomatica"> Empresa en automático</label>
           <label><input type="checkbox" name="servicio" value="agenteExtra"> Agente extra</label>
           <label><input type="checkbox" name="servicio" value="aMedida"> Software a medida</label>
+          <label><input type="checkbox" name="servicio" value="llamadas"> Bot de llamadas de WhatsApp</label>
           <p class="gris chica" style="margin:6px 0 0">El paquete y el precio se arman solos. La IA del bot se suma sola al abono. La página web y los servicios con diagnóstico piden el precio acordado.</p>
         </fieldset>
         <!-- Precio acordado (Budy, 19/11/2026): opcional; manda sobre el de lista. Obligatorio con la web (no tiene precio fijo). -->
@@ -124,6 +125,10 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
           <div class="grilla" style="margin:0"><input name="acInstalacion" inputmode="decimal" placeholder="Instalación en $ (vacío = 0)"><input name="acAbono" inputmode="decimal" placeholder="Abono por mes en $"></div>
           <label><input type="checkbox" name="acConIva"> Los montos ya incluyen IVA</label>
           <label><input type="checkbox" name="acIa"> La IA del bot va incluida (no se cobra aparte)</label>
+        </fieldset>
+        <!-- Pago anual (Budy, 24/11/2026): 10 abonos por 12 meses; el primer pago es el año. -->
+        <fieldset class="servicios"><legend>Cómo paga el abono</legend>
+          <label><input type="checkbox" name="pagoAnual"> Paga por año: 10 meses de abono por 12 (la IA del bot sigue por mes)</label>
         </fieldset>
         <button class="btn principal" type="submit">Crear y abrir su alta</button>
       </form>
@@ -305,6 +310,28 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
         <button class="btn" type="submit">Guardar</button></form>
       <p class="gris chica" id="aviso-web" style="margin:6px 0 0"></p><p class="error chica" id="error-web"></p></section>`;
   }
+  // Pago anual (Budy, 24/11/2026; ver docs/PAGO-ANUAL.md de la plataforma): 10 meses de abono por 12. Se marca acá; el
+  // próximo vencimiento pide el año. Muestra el año pago y calcula la devolución si se da de baja antes.
+  function cajaAnual(c, proximo) {
+    const a = c.cobro && c.cobro.anual; const porAnio = c.pagoAnual === true;
+    const dia = (iso) => (iso ? new Date(Date.parse(iso)).toLocaleDateString('es-AR', { timeZone: 'America/Argentina/Buenos_Aires' }) : '');
+    const estado = a ? `Abono pago por año del ${dia(a.desde)} al ${dia(a.hasta)} (pagó ${pesos(a.importe)} con IVA por el abono).` : porAnio ? 'Paga por año: el próximo vencimiento pide el abono del año.' : 'Paga por mes.';
+    const venceMs = c.cobro && c.cobro.vence ? Date.parse(c.cobro.vence) : 0;
+    // El pedido del año se ofrece cuando le toca: sin año pago, o con el vencimiento a menos de 30 días.
+    const tocaPedir = !a || (venceMs && venceMs - Date.now() < 30 * 864e5);
+    const prox = proximo && proximo.total > 0 ? `<p class="chica" style="margin:4px 0 0">Próximo pago${venceMs ? ` (vence el ${dia(c.cobro.vence)})` : ''}: <b>${pesos(proximo.total)}</b> con IVA · ${esc(proximo.detalle)}</p>` : '';
+    return `<section class="caja" aria-labelledby="tit-anual"><div class="caja-tit"><h3 id="tit-anual">Pago anual</h3></div>
+      <p class="chica" style="margin:6px 0 0"><b id="estado-anual">${esc(estado)}</b></p>${prox}
+      <p class="gris chica" style="margin:6px 0 10px">Paga 10 meses de abono y usa 12. La IA del bot no entra en el año: se sigue pidiendo por mes. Cambiar esto vale para el próximo pago; lo ya pagado no se toca.</p>
+      <div class="acciones" style="margin:0">
+        <button class="btn${porAnio ? '' : ' principal'}" type="button" id="b-anual" data-anual="${porAnio ? 'no' : 'si'}">${porAnio ? 'Pasar a pago por mes' : 'Paga por año'}</button>
+        ${tocaPedir && proximo && proximo.anual && proximo.total > 0 ? '<button class="btn" type="button" id="b-pedir-anual">Pedir el año por transferencia</button>' : ''}
+      </div>
+      <p class="gris chica" id="aviso-anual" style="margin:6px 0 0"></p><p class="error chica" id="error-anual"></p>
+      ${a ? `<form id="form-devolucion" class="campos" style="grid-template-columns:repeat(auto-fit,minmax(170px,1fr));margin-top:10px">
+        <label class="campo">Si se da de baja el<input name="fecha" type="date" required value="${esc(hoyAca())}"></label>
+        <button class="btn" type="submit">Calcular la devolución</button></form><p class="chica" id="res-devolucion" style="margin:6px 0 0"></p>` : ''}</section>`;
+  }
   // Calendario de redes en el panel del cliente (21/11/2026): qué espacio del CRM (crm.creditosmym.com) es el suyo.
   // La plataforma trae de ahí las próximas publicaciones; el cliente no elige ni ve el nombre del espacio.
   function cajaCrm(c) {
@@ -318,7 +345,7 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
   async function verCliente(id) {
     $('#detalle').innerHTML = '<div class="tarjeta gris">Cargando…</div>';
     try {
-      const { cliente: c, eventos } = await api('/api/admin/cliente', { id });
+      const { cliente: c, eventos, proximo } = await api('/api/admin/cliente', { id });
       const f = c.ficha || c.borrador || {};
       const resumen = clientes.find((x) => x.id === id) || {}; // de la lista: noContesta y medición del mes
       const precio = c.precio || {};
@@ -351,7 +378,7 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
           <dt>Audios sin transcribir</dt><dd>${c.audiosPendientes ? `${c.audiosPendientes} (llegaron con el bot cortado: se transcriben solos cuando vuelve a contestar)` : 'Ninguno'}</dd>
         </dl>
         ${vivo ? `<div class="acciones"><button class="btn" id="b-alta">Abrir su alta (link nuevo)</button><button class="btn" id="b-panel">Link para su panel</button></div>
-        <div id="links"></div>${cajaPrueba(c)}${cajaPanel(c)}${cajaCrm(c)}` : ''}
+        <div id="links"></div>${cajaPrueba(c)}${cajaAnual(c, proximo)}${cajaPanel(c)}${cajaCrm(c)}` : ''}
         <section class="caja" id="caja-cobros" aria-labelledby="tit-cobros">
           <div class="caja-tit"><h3 id="tit-cobros">Cobros</h3>${estadoCobro(c)}</div>
           <p class="gris chica" style="margin:6px 0 0">${c.fiscal ? `Factura: sale sola con cada pago, a nombre de ${esc(c.fiscal.nombre)} (${esc(c.fiscal.doc_tipo)} ${esc(c.fiscal.doc_nro)}, ${esc(({ RI: 'Responsable Inscripto', MT: 'Monotributo', CF: 'Consumidor final', EX: 'Exento' })[c.fiscal.condicion_iva] || c.fiscal.condicion_iva)}).` : 'Factura: todavía no tiene sus datos fiscales. Los pagos quedan en <a href="facturacion.html">Facturación</a> para cargarlos una vez.'}</p>
@@ -381,7 +408,7 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
             <p class="gris chica" style="margin:0">${vivo ? 'Anotá una transferencia que entró sin pedirla con el botón de arriba. Las que pediste arriba se registran solas: no las anotes de nuevo.' : 'El cliente está eliminado, pero un pago que llegó después se anota igual y queda para facturar.'}</p>
             <form id="form-pago" class="campos" style="margin-top:10px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr))">
               <label class="campo">Qué pagó<select name="servicio" required><option value="" selected disabled>Elegí el servicio</option>${opcionesServicio}</select></label>
-              <label class="campo">Por qué concepto<select name="concepto"><option value="instalación y primer mes"${pagos.length ? '' : ' selected'}>Instalación y primer mes</option><option value="abono mensual"${pagos.length ? ' selected' : ''}>Abono mensual</option><option value="pago único">Pago único</option><option value="otro">Otro</option></select></label>
+              <label class="campo">Por qué concepto<select name="concepto"><option value="instalación y primer mes"${pagos.length ? '' : ' selected'}>Instalación y primer mes</option><option value="abono mensual"${pagos.length ? ' selected' : ''}>Abono mensual</option><option value="abono anual">Abono anual (12 meses)</option><option value="pago único">Pago único</option><option value="otro">Otro</option></select></label>
               <label class="campo">Monto que llegó ($)<input name="monto" class="monto" inputmode="decimal" autocomplete="off" placeholder="Ej.: 150.000"></label>
               <button class="btn principal" type="submit">Registrar el pago</button>
             </form>
@@ -483,6 +510,34 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
         if (!confirm(`¿Sacarle la prueba gratis a ${c.negocio}?\n\nSi todavía no pagó, también se borra el primer vencimiento.`)) return;
         const b = e.currentTarget; b.disabled = true;
         try { await api('/api/admin/prueba', { id, quitar: true }); await cargar(); verCliente(id); } catch (err) { $('#error-prueba').textContent = sinServidor(err); b.disabled = false; }
+      };
+      // Pago anual: marcar o sacar (/api/admin/pago-anual), pedir el año (/api/admin/pedir-transferencia con anual)
+      // y calcular la devolución (/api/admin/devolucion-anual, sólo calcula).
+      if ($('#b-anual')) $('#b-anual').onclick = async (e) => {
+        const anual = e.currentTarget.dataset.anual === 'si'; e.currentTarget.disabled = true; $('#error-anual').textContent = '';
+        try {
+          const r = await api('/api/admin/pago-anual', { id, anual });
+          if (r.aviso) alert(r.aviso);
+          await cargar(); verCliente(id);
+        } catch (err) { $('#error-anual').textContent = sinServidor(err); e.currentTarget.disabled = false; }
+      };
+      if ($('#b-pedir-anual')) $('#b-pedir-anual').onclick = async (e) => {
+        if (!confirm(`¿Pedirle a ${c.negocio} el abono del año por transferencia?\n\n${pesos(proximo.total)} con IVA · ${proximo.detalle}\n\nLe llega el mail con el monto exacto y el alias.`)) return;
+        e.currentTarget.disabled = true; $('#error-anual').textContent = '';
+        try {
+          const r = await api('/api/admin/pedir-transferencia', { id, servicio: 'bot', concepto: proximo.concepto, monto: proximo.total, abono: true, anual: true });
+          $('#aviso-anual').textContent = `Pedido ${r.ref}: tiene que transferir exactamente ${pesos(r.monto)}. Cuando entra, se registra solo y vence a los 12 meses.`;
+          cargarTransferencias();
+        } catch (err) { $('#error-anual').textContent = sinServidor(err); e.currentTarget.disabled = false; }
+      };
+      const fd2 = $('#form-devolucion');
+      if (fd2) fd2.onsubmit = async (e) => {
+        e.preventDefault(); $('#res-devolucion').textContent = '';
+        try {
+          const r = await api('/api/admin/devolucion-anual', { id, fecha: fd2.fecha.value });
+          const d = r.devolucion;
+          $('#res-devolucion').innerHTML = d.monto > 0 ? `Usó <b>${d.mesesUsados}</b> de 12 meses: se le devuelven <b>${d.mesesNoUsados}</b> × ${esc(pesos(d.valorMes))} = <b>${esc(pesos(d.monto))}</b> con IVA. La devolución se hace a mano.` : 'Ya usó el año entero: no hay nada que devolver.';
+        } catch (err) { $('#res-devolucion').textContent = sinServidor(err); }
       };
       const fw = $('#form-web');
       if (fw) fw.onsubmit = async (e) => {
@@ -672,12 +727,13 @@ Con ese mail va a entrar a su panel y ahí le van a llegar los mails.`)) return;
   };
 
   NOMBRE.servicios = 'Con servicios, sin bot'; // clientes sin bot (19/11/2026): se ven en «Todos»
-  const SERVICIO = { bot: 'Bot de WhatsApp', seguimiento: 'Seguimiento de clientes', landing: 'Landing de ventas', web: 'Página web institucional', orquestador: 'Orquestador de IA', empresaAutomatica: 'Empresa en automático', agenteExtra: 'Agente extra', aMedida: 'Software a medida', redesEsencial: 'Redes en automático Esencial', redesProfesional: 'Redes en automático Profesional', redesPremium: 'Redes en automático Premium' };
+  const SERVICIO = { bot: 'Bot de WhatsApp', seguimiento: 'Seguimiento de clientes', landing: 'Landing de ventas', web: 'Página web institucional', orquestador: 'Orquestador de IA', empresaAutomatica: 'Empresa en automático', agenteExtra: 'Agente extra', aMedida: 'Software a medida', llamadas: 'Bot de llamadas de WhatsApp', redesEsencial: 'Redes en automático Esencial', redesProfesional: 'Redes en automático Profesional', redesPremium: 'Redes en automático Premium' };
   $('#form-nuevo').onsubmit = async (e) => {
     e.preventDefault(); const f = e.target; const fd = new FormData(f); $('#error-nuevo').textContent = '';
     const monto = (k) => String(fd.get(k) || '').replace(/\./g, '').replace(',', '.').replace(/[^\d.]/g, '');
     const d = { negocio: fd.get('negocio'), contacto: fd.get('contacto'), email: fd.get('email'), celular: fd.get('celular'), servicios: [...fd.getAll('servicio'), fd.get('redes')].filter(Boolean) };
     if (!d.servicios.length) { $('#error-nuevo').textContent = 'Elegí al menos un servicio.'; return; }
+    if (fd.get('pagoAnual') === 'on') d.pagoAnual = true;
     if (monto('acInstalacion') || monto('acAbono')) d.acordado = { instalacion: monto('acInstalacion'), abono: monto('acAbono'), conIva: fd.get('acConIva') === 'on', iaIncluida: fd.get('acIa') === 'on' };
     try { const r = await api('/api/admin/nuevo', d); f.reset(); $('#link-nuevo').innerHTML = r.sinBot ? '<p class="ok">Cliente creado (sin bot: no hay WhatsApp que conectar). Pedile el pago desde su ficha, abajo.</p>' : `<p class="ok">Cliente creado.</p><div class="link-caja">${esc(r.linkAlta)}</div><a class="btn principal" href="${esc(r.linkAlta)}" target="_blank" rel="noopener">Abrir su alta</a>`; filtro = 'todos'; document.querySelectorAll('#filtros button').forEach((x) => x.setAttribute('aria-pressed', x.dataset.f === 'todos')); await cargar(); }
     catch (err) { $('#error-nuevo').textContent = err.message; }
