@@ -223,6 +223,11 @@
   .wa-transcr { display: block; font-size: 12.5px; font-style: italic; opacity: .9; margin-top: 2px; }
   .wa-transcr.mal { font-style: normal; opacity: .7; }
   .wa-arch-err { display: block; font-size: 11.5px; opacity: .75; margin-top: 3px; }
+  /* 24/11/2026 (Matías: «no veo qué link mandó»). Lo que WhatsApp no deja recibir dice qué fue y por qué; los links se tocan. */
+  .wa-norec { display: block; border: 1px dashed #c9a43a; background: #fff8e1; color: #5a4300; border-radius: 10px; padding: 6px 9px; font-size: 13px; }
+  .wa-norec small { display: block; font-size: 11.5px; opacity: .85; margin-top: 2px; }
+  .wa-reac { font-style: italic; opacity: .8; }
+  .wa-b a.wa-link { color: inherit; text-decoration: underline; word-break: break-all; }
   .wa-resp { position: absolute; top: 4px; border: 0; background: #fff; color:var(--azul-t); border-radius: 999px; width: 26px; height: 26px; font-size: 14px; cursor: pointer; box-shadow: 0 2px 8px rgba(14,26,51,.18); opacity: 0; transition: opacity .12s; }
   .wa-cliente .wa-resp { right: -32px; } .wa-robot .wa-resp, .wa-humano .wa-resp { left: -32px; }
   .wa-b:hover .wa-resp, .wa-resp:focus-visible { opacity: 1; }
@@ -554,6 +559,23 @@
     return '';
   }
   const QUIEN = { cliente: 'Cliente', robot: 'Robot', humano: 'Equipo' };
+  // Los links del texto se pueden tocar (24/11/2026). Sobre el texto YA escapado: sólo http(s):// y www.
+  function conLinks(html) {
+    return String(html).replace(/\b(https?:\/\/|www\.)[^\s<]+/gi, (u) => {
+      const fin = (u.match(/[.,;:!?)\]]+$/) || [''])[0], url = fin ? u.slice(0, -fin.length) : u;
+      const href = /^www\./i.test(url) ? 'https://' + url : url;
+      return '<a class="wa-link" href="' + href + '" target="_blank" rel="noopener noreferrer">' + url + '</a>' + fin;
+    });
+  }
+  // Lo que WhatsApp no deja recibir: qué fue y por qué. Las charlas viejas no traen el detalle (Meta no lo
+  // guardaba): se explica qué puede haber sido. El contenido no se puede recuperar.
+  function noRecibido(m) {
+    const nr = m.no_recibido || {};
+    const que = nr.que || 'Mandó algo que WhatsApp no deja recibir: puede ser un mensaje de una sola vista, una encuesta, un mensaje reenviado de un canal, una reacción o una ubicación en tiempo real.';
+    const motivo = nr.motivo || 'WhatsApp no les pasa ese tipo de mensaje a los sistemas como el nuestro: no se puede ver ni recuperar.';
+    return '<span class="wa-norec">⚠️ ' + esc(que) + '<small>' + esc(motivo) + ' Si hace falta, pedile que lo mande como texto o como link.'
+      + (nr.codigo ? ' (código de WhatsApp ' + esc(nr.codigo) + ')' : '') + '</small></span>';
+  }
   function burbuja(m, c) {
     const a = m.archivo;
     const esPdf = a && (a.mime === 'application/pdf' || /\.pdf$/i.test(a.ruta || ''));
@@ -569,7 +591,7 @@
     if (!a && m.de === 'cliente' && m.tipo === 'audio' && m.transcripcion) texto = '';
     const boton = a && (esPdf ? '<button type="button" class="wa-verpdf" data-ruta="' + esc(a.ruta) + '" data-nombre="' + esc(a.nombre) + '">👁 Ver PDF</button>'
       : a.tipo === 'documento' ? '<button type="button" class="wa-verpdf" data-bajar="' + esc(a.ruta) + '" data-nombre="' + esc(a.nombre) + '">⬇ Descargar ' + esc(a.nombre || 'archivo') + '</button>' : '');
-    const transcr = m.transcripcion ? '<span class="wa-transcr">📝 ' + esc(m.transcripcion) + '</span>'
+    const transcr = m.transcripcion ? '<span class="wa-transcr">📝 ' + conLinks(esc(m.transcripcion)) + '</span>'
       : (m.transcripcion_fallo ? '<span class="wa-transcr mal">No se pudo transcribir este audio.</span>' : '');
     const cita = m.cita ? '<span class="wa-cita"><b>' + esc(QUIEN[m.cita.de] || 'Mensaje') + '</b>' + esc(m.cita.texto || '') + '</span>' : '';
     // Responder citando: sólo a un mensaje con id de WhatsApp (wamid) y no por el número 2.
@@ -579,7 +601,7 @@
     const sePuedeCitar = c.ventana_abierta && !c.por_puente && /^wamid\./.test(m.id || '') && !fallo;
     return '<div class="wa-b wa-' + esc(m.de) + (fallo ? ' wa-fallo' : '') + '" data-id="' + esc(m.id || '') + '">'
       + (sePuedeCitar ? '<button type="button" class="wa-resp" data-citar="' + esc(m.id) + '" title="Responder citando este mensaje" aria-label="Responder citando">↩</button>' : '')
-      + cita + medio + esc(texto) + (boton ? (texto ? '<br>' : '') + boton : '') + transcr
+      + cita + medio + (m.tipo === 'no_soportado' ? noRecibido(m) : m.tipo === 'reaccion' ? '<span class="wa-reac">' + esc(texto) + '</span>' : conLinks(esc(texto))) + (boton ? (texto ? '<br>' : '') + boton : '') + transcr
       + (m.archivo_error ? '<span class="wa-arch-err">📎 El archivo no se guardó: ' + esc(m.archivo_error) + '</span>' : '')
       + '<span class="wa-t">' + (DE[m.de] ? DE[m.de] + ' · ' : '') + fecha(m.ts) + (m.de !== 'cliente' ? tildeDe(m, c) : '') + '</span>'
       + (fallo ? '<span class="wa-nosalio">' + (m.error ? 'No se envió · ' : 'No se entregó · ') + esc(fallo) + '</span>' : '') + '</div>';
