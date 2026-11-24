@@ -199,3 +199,6 @@
 .pp-maq-lista li { display: flex; align-items: center; gap: 8px; }
 .pp-maq-lista li::before { content: "✓"; flex: none; width: 18px; height: 18px; border-radius: 50%; background: var(--fondo-2); color: var(--azul-t); font-size: 12.5px; font-weight: 800; display: grid; place-items: center; }
 .pp-maq-boton { display: block; text-align: center; background: #25d366; color: #fff; font-weight: 800; font-size: 13.5px; border-radius: 999px; padding: 12px 10px; }
+
+/* Bot de llamadas de WhatsApp (24/11/2026): a todo el ancho de «También hacemos», con sus requisitos. */
+.pp-tambien .pp-llamadas { grid-column: 1 / -1; }

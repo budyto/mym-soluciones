@@ -848,3 +848,30 @@ h2 .em, h3 .em { font-family: inherit; font-style: normal; font-weight: inherit;
   .marcas-lista li span { font-size: 9.5px; }
 }
 @media (prefers-reduced-motion: reduce) { .marcas-pista { animation-duration: 70s; } }
+
+
+/* ============ Prueba gratis, pago anual y bot de llamadas (Budy, 24/11/2026) ============ */
+/* Prueba gratis: el «14» grande es lo único que llama la atención en la sección; lo demás, en voz baja. */
+.prueba-gratis { display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: center; margin: 0 0 26px; padding: 22px 30px; border-radius: var(--r); border: 2px solid transparent; background: linear-gradient(var(--blanco), var(--blanco)) padding-box, var(--deg) border-box; }
+.prueba-dias { display: grid; justify-items: center; line-height: 1; min-width: 74px; }
+.prueba-dias b { font: 900 66px/.9 var(--sans); letter-spacing: -.04em; background: var(--deg-fuerte); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.prueba-dias span { font: italic 400 22px/1 var(--serif); color: var(--ink-2); margin-top: 4px; }
+.prueba-gratis h3 { font-size: 22px; font-weight: 900; margin: 0; }
+.prueba-gratis p { margin: 6px 0 0; color: var(--ink-2); font-size: 15px; max-width: 72ch; }
+/* Bot de llamadas de WhatsApp: tarjeta ancha con los requisitos al costado, para que nadie lo confunda con una línea común. */
+.paq-llamadas { margin-top: 24px; padding: 32px 34px; display: grid; grid-template-columns: 1.1fr 1fr; gap: 22px 40px; align-items: start; }
+.paq-llamadas h3 { font-size: 26px; font-weight: 900; margin: 0; }
+.llam-precio { margin: 8px 0 0; font-size: 15px; font-weight: 700; color: var(--azul-t); }
+.llam-cuerpo > p:not(.llam-precio) { margin: 10px 0 20px; color: var(--ink-2); font-size: 15px; }
+.llam-req { background: var(--fondo); border-radius: var(--r-s); padding: 20px 22px; }
+.llam-req h4 { margin: 0 0 10px; font-size: 16px; font-weight: 800; }
+.llam-req ul { margin: 0; padding-left: 18px; display: grid; gap: 9px; font-size: 14.5px; color: var(--ink-2); }
+.llam-req b { color: var(--ink); }
+@media (max-width: 860px) { .paq-llamadas { grid-template-columns: 1fr; padding: 26px; } }
+@media (max-width: 640px) {
+  .prueba-gratis { padding: 18px; gap: 16px; }
+  .prueba-dias { min-width: 56px; }
+  .prueba-dias b { font-size: 50px; }
+  .prueba-gratis h3 { font-size: 19px; }
+  .paq-llamadas .btn { width: 100%; justify-content: center; }
+}

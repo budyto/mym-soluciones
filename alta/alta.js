@@ -81,11 +81,13 @@
     const b = f.querySelector('button'); b.disabled = true; b.textContent = 'Guardando…'; $('#error1').textContent = '';
     try {
       const fiscal = { nombre: String(d.razon_social || '').trim() || (nro.length === 11 ? d.negocio : d.contacto), doc_nro: nro, condicion_iva: d.condicion_iva, domicilio: d.domicilio };
-      const r = await api('/api/alta', { negocio: d.negocio, contacto: d.contacto, email: d.email, celular: d.celular, servicios, modo: d.modo, fiscal });
+      const r = await api('/api/alta', { negocio: d.negocio, contacto: d.contacto, email: d.email, celular: d.celular, servicios, modo: d.modo, fiscal, pagoAnual: d.pago === 'anual' });
       if (r.sinBot) {
         // Sin bot no hay alta que seguir: se muestra lo pedido y MyM le escribe.
         const p = r.precio || {}; const $p = (n) => '$ ' + Number(n || 0).toLocaleString('es-AR');
-        $('#resumen-servicios').textContent = `Pediste ${p.nombre}: ${p.instalacion ? 'instalación ' + $p(p.instalacion) + ' + IVA y ' : ''}${$p(p.abono)} + IVA por mes${(p.aCotizar || []).length ? `. ${p.aCotizar.join(', ')}: te pasamos el precio después del diagnóstico` : ''}.`;
+        // Pago anual (24/11/2026): el abono del año es 10 abonos y cubre 12 meses.
+        const abonoTxt = p.pagoAnual ? `${$p(p.abonoAnual)} + IVA por año (12 meses por el precio de 10)` : `${$p(p.abono)} + IVA por mes`;
+        $('#resumen-servicios').textContent = `Pediste ${p.nombre}: ${p.instalacion ? 'instalación ' + $p(p.instalacion) + ' + IVA y ' : ''}${abonoTxt}${(p.aCotizar || []).length ? `. ${p.aCotizar.join(', ')}: te pasamos el precio después del diagnóstico` : ''}.`;
         return verPaso('servicios');
       }
       sesion = { id: r.cliente, llave: r.llave }; guardarSesion(sesion);

@@ -288,7 +288,9 @@
     return el('div', { class: 'gratis' },
       el('p', { class: 'que' }, que),
       tira,
-      el('p', { class: 'chica' }, `${pr.dias} días sin cargo, hasta el ${fecha(pr.ultimoDia)} inclusive.`));
+      el('p', { class: 'chica' }, `${pr.dias} días sin cargo, hasta el ${fecha(pr.ultimoDia)} inclusive.`),
+      // Budy, 24/11/2026: los días gratis son del bot y del seguimiento; la landing se cobra desde el primer día.
+      ...((pr.sinPrueba || []).length ? [el('p', { class: 'chica' }, `Los días gratis son del bot y del seguimiento. ${pr.sinPrueba.join(', ')}: se cobra desde el primer día.`)] : []));
   }
   // Cómo pagar: el alias de MyM (el monto exacto llega por mail unos días antes) o, con Ualá, el link.
   function bloquePagar(cp) {
@@ -318,10 +320,15 @@
       // Próximo vencimiento con el monto (con IVA, como lo acordado) y cómo pagarlo.
       const vencido = co.estado === 'vencido';
       if (!enPrueba) caja.append(el('div', { class: 'cobro' }, el('span', { class: 'estado' + (vencido ? ' pausa' : '') }, vencido ? 'Vencido' : 'Al día')));
+      // Pago anual (24/11/2026): si paga por año, el monto es el del año (10 meses por 12); si ya pagó el año, se
+      // muestra hasta cuándo y el próximo pago es sólo la IA del mes (si tiene bot).
+      const abonoQue = px.anualHasta ? 'Abono' : px.anual ? (px.primerPago ? 'Primer año (12 meses por el precio de 10)' : 'Abono del año (12 meses por el precio de 10)') : px.primerPago ? 'Primer mes' : 'Abono del mes';
+      const abonoCuanto = px.anualHasta ? 'Pago por año hasta el ' + fecha(px.anualHasta) : plata(px.monto) + ' con IVA';
       caja.append(el('dl', { class: 'vence' },
         el('dt', null, vencido ? 'Venció el' : px.primerPago ? 'Primer vencimiento' : 'Próximo vencimiento'), el('dd', null, fecha(px.vence)),
-        el('dt', null, px.primerPago ? 'Primer mes' : 'Abono del mes'), el('dd', null, plata(px.monto) + ' con IVA')));
-      if (px.iaAparte) caja.append(el('p', { class: 'chica', style: 'margin-top:6px' }, px.iaDesde ? `Más la IA de tu Boti según lo que use, desde ${plata(px.iaDesde)} con IVA.` : 'Más la IA de tu Boti según lo que use.'));
+        el('dt', null, abonoQue), el('dd', null, abonoCuanto)));
+      if (co.anual && Date.parse(co.anual.hasta) > Date.now()) caja.append(el('p', { class: 'chica', style: 'margin-top:6px' }, `Ya pagaste el abono por año: del ${fecha(co.anual.desde)} al ${fecha(co.anual.hasta)}.`));
+      if (px.iaAparte) caja.append(el('p', { class: 'chica', style: 'margin-top:6px' }, (px.anualHasta ? 'Este mes pagás sólo la IA de tu Boti, según lo que use' : 'Más la IA de tu Boti según lo que use') + (px.iaDesde ? `, desde ${plata(px.iaDesde)} con IVA.` : '.') + (px.anual || px.anualHasta ? ' La IA se paga por mes, aunque el abono sea por año.' : '')));
       const pagar = bloquePagar(cuenta.comoPagar); if (pagar) caja.append(pagar);
     } else if (co.vence) {
       const vencido = co.estado === 'vencido';

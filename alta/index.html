@@ -102,6 +102,14 @@
         <label><input type="checkbox" name="servicio" value="empresaAutomatica"> Empresa en automático</label>
         <label><input type="checkbox" name="servicio" value="agenteExtra"> Agente extra</label>
         <label><input type="checkbox" name="servicio" value="aMedida"> Software a medida</label>
+        <label><input type="checkbox" name="servicio" value="llamadas"> Bot de llamadas de WhatsApp</label>
+      </div>
+      <!-- Pago anual (Budy, 24/11/2026): cualquier abono se paga por mes o por año, 10 meses por 12. El servidor guarda
+           pagoAnual y pide el año en el primer pago (plataforma-bots/docs/PAGO-ANUAL.md). -->
+      <p class="leyenda" id="ley-pago">¿Cómo querés pagar el abono?</p>
+      <div class="planes" role="radiogroup" aria-labelledby="ley-pago" style="margin-bottom:16px">
+        <label class="opcion"><input type="radio" name="pago" value="mes" checked><b>Por mes</b><span>Pagás el abono cada mes. Sin permanencia.</span></label>
+        <label class="opcion"><input type="radio" name="pago" value="anual"><b>Por año: pagás 10 meses y usás 12</b><span>Si das de baja antes, te devolvemos los meses que no usaste. La IA del bot se sigue pagando por mes, según lo que se usa.</span></label>
       </div>
       <p class="leyenda" id="ley-fac" style="margin-bottom:2px">Datos para la factura</p>
       <p class="nota" style="margin:0 0 10px">Con esto la factura te llega sola cuando pagás.</p>
@@ -128,7 +136,7 @@
       <label class="trampa" aria-hidden="true">No completar<input name="web" tabindex="-1" autocomplete="off"></label>
       <p class="error" id="error1" role="alert"></p>
       <button class="btn" type="submit">Seguir</button>
-      <p class="nota">Precios en pesos, más IVA (21 %). El pago es por transferencia: te pasamos los datos cuando tu bot esté listo.</p>
+      <p class="nota">El Bot de WhatsApp y el Seguimiento tienen dos semanas de prueba gratis para ver cómo funciona todo: su primer pago vence el día que termina. La landing (también la del Paquete completo) se cobra desde el primer día: se hace una sola vez y ya queda. Lo demás no tiene días gratis. Precios en pesos, más IVA (21 %). El pago es por transferencia: te mandamos el monto y los datos por mail antes de cobrarte.</p>
     </form>
 
     <!-- Sin bot (19/11/2026): no hay WhatsApp que conectar; MyM le escribe para coordinar y cobrar. -->
@@ -267,7 +275,7 @@
   <footer>MyM Soluciones · <a href="https://wa.me/5491133662080" target="_blank" rel="noopener">WhatsApp 11 3366-2080</a> · <a href="mailto:info@mymsoluciones.online">info@mymsoluciones.online</a><br><a href="../privacidad.html">Política de privacidad</a> · <a href="../arrepentimiento/">Botón de arrepentimiento</a> · <a href="../baja/">Botón de baja</a></footer>
 </div>
 <script src="../config.js?v=202611142100"></script>
-<script src="alta.js?v=202611171700"></script>
+<script src="alta.js?v=202611241200"></script>
 <script src="../whatsapp-link.js?v=202611211930" defer></script>
 </body>
 </html>
