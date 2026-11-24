@@ -130,7 +130,7 @@
   "modelo": "gemini-3.8-flash-tts"
  },
  "seguimiento-de-clientes-3.mp3": {
-  "texto": "Solo, al día uno, al día tres y al día siete.",
+  "texto": "Solo: al día siguiente a las ocho de la noche, a los tres días y a los siete.",
   "voz": "es-419-csagent-10",
   "modelo": "gemini-3.8-flash-tts"
  },

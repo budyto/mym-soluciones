@@ -33,7 +33,7 @@ de la animación el tiempo que necesita la voz y deja la pista en `voz/<plan>.m4
 
 1. **Portada.** Seguimiento de clientes, de eme y eme Soluciones.
 2. **Chat: el cliente no contesta más.** Le vuelve a escribir al que preguntó y no compró.
-3. **Chat: días 1, 3 y 7.** Solo, al día uno, al día tres y al día siete.
+3. **Chat: al día siguiente, a los 3 y a los 7 días.** Solo: al día siguiente a las ocho de la noche, a los tres días y a los siete.
 4. **Planilla con estados.** Cada contacto queda en una planilla o en un ce erre eme, con su estado.
 5. **Aviso.** Y te avisa cuando alguien está listo para comprar.
 6. **Qué incluye.** Incluye también un resumen semanal de lo que entró.
