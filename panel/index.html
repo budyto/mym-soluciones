@@ -274,11 +274,14 @@
 
 <div class="tostada" id="tostada" role="status" aria-live="polite"></div>
 
+<!-- Links directos a «Para revisar» (25/11/2026): panel.js borra el hash al entrar con el link del mail
+     (#t=…&ir=preguntas), así que aprendido.js lo encuentra guardado acá. -->
+<script>try{var h=new URLSearchParams(location.hash.slice(1)),ir=h.get('ir');if(ir==='preguntas'||ir==='revisar')sessionStorage.setItem('panel-ir',ir)}catch(e){}</script>
 <script src="../config.js?v=202611142100"></script>
 <script src="pieza.js?v=202611212200"></script>
 <script src="panel.js?v=202611241700"></script>
-<!-- «Lo que aprendió tu bot» (21/11/2026): archivo aparte, se cuelga de lo que dibuja panel.js. -->
-<script src="aprendido.js?v=202611211900"></script>
+<!-- «Lo que aprendió tu Boti» (21/11/2026; aprobar desde el panel y preguntas sin respuesta, 25/11/2026): archivo aparte, se cuelga de lo que dibuja panel.js. -->
+<script src="aprendido.js?v=202611251800"></script>
 <script src="../whatsapp-link.js?v=202611211930" defer></script>
 </body>
 </html>
