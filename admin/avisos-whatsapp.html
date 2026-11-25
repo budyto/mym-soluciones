@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Avisos por WhatsApp · MyM Soluciones</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<!-- Avisos por WhatsApp a los dueños (25/11/2026, pedido de Budy). Muestra cada plantilla tal como le llega al dueño,
+     cómo está en Meta (sin crear, en revisión, aprobada o rechazada) y los últimos avisos que salieron o se simularon.
+     Las plantillas se mandan a revisión de Meta UNA vez, desde acá y escribiendo MANDAR: nada sale a Meta sin el OK de
+     Budy. Ruta: /api/admin/avisos-whatsapp (plataforma-bots/servidor/index.js y aviso-whatsapp.js). -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;900&family=Martian+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--azul:#2f6bff;--azul-t:#1f57e6;--deg:linear-gradient(120deg,#2458e6,#007a6a);--ink:#0e1a33;--gris:#4a5878;--borde:#dbe4f7;--suave:#eef3ff;--ok:#0a8a60;--aviso:#9a5c00;--aviso-f:#fff3d9;--mal:#c2364e;--chat:#efeae2}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;min-height:100vh;background:linear-gradient(180deg,#f4f7ff,#e6eeff) fixed;color:var(--ink);font:16px/1.5 Archivo,system-ui,sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:0 18px 60px}
+header{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:18px 0}
+header h1{font:900 24px Archivo;margin:0;letter-spacing:-.02em}
+header a{color:var(--gris);text-decoration:none;font-weight:600}
+.der{margin-left:auto;display:flex;gap:10px;align-items:center;color:var(--gris);font-size:14px}
+.btn{border:0;border-radius:11px;padding:10px 14px;min-height:42px;font:700 14px Archivo;cursor:pointer;background:var(--suave);color:var(--azul-t)}
+.btn.principal{background:var(--deg);color:#fff}
+.btn[disabled]{opacity:.55;cursor:default}
+.tarjeta{background:#fff;border-radius:20px;box-shadow:0 1px 2px rgba(23,48,120,.06),0 10px 26px -10px rgba(23,48,120,.18);padding:20px;margin-bottom:16px}
+.puerta{max-width:420px;margin:12vh auto;text-align:center}
+.gris{color:var(--gris)}.chica{font-size:13.5px}
+.error{color:var(--mal);font-size:14px}.error:empty{display:none}
+:focus-visible{outline:3px solid var(--azul);outline-offset:2px}
+
+.estado-linea{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
+.estado-linea p{margin:0}
+.modo{display:inline-block;border-radius:99px;padding:4px 12px;font-weight:800;font-size:13.5px}
+.m-simulado{background:var(--aviso-f);color:var(--aviso)}.m-real{background:#e2f6ee;color:var(--ok)}.m-sin{background:#fde9ed;color:var(--mal)}
+.estado-linea .btn{margin-left:auto}
+
+/* Las plantillas: cada una como le llega al dueño, sobre el fondo del chat de WhatsApp */
+.plantillas{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px}
+.pl{background:var(--chat);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.pl-cab{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.pl-cab b{font-size:15.5px;line-height:1.25}
+.pl-nombre{font:500 12px "Martian Mono",monospace;color:var(--gris);overflow-wrap:anywhere}
+.globo{background:#fff;border-radius:4px 16px 16px 16px;box-shadow:0 1px 1px rgba(0,0,0,.09);overflow:hidden}
+.globo p{margin:0;padding:9px 12px 0;font-size:15px;line-height:1.45;white-space:pre-line}
+.globo .pie{font-size:12px;color:var(--gris);padding-bottom:9px}
+.globo .boton{display:block;text-align:center;border-top:1px solid #e3e7ef;color:#027eb5;font-weight:600;font-size:15px;padding:8px 12px}
+.var{background:#fff6c9;border-radius:4px;padding:0 3px}
+.ficha{font-size:13px;color:var(--gris);margin:0}
+.ficha code{font:500 12px "Martian Mono",monospace;color:var(--ink)}
+.e{display:inline-block;border-radius:99px;padding:2px 10px;font-weight:800;font-size:12.5px;white-space:nowrap}
+.e-APPROVED{background:#e2f6ee;color:var(--ok)}.e-PENDING,.e-IN_APPEAL{background:var(--aviso-f);color:var(--aviso)}.e-REJECTED,.e-ERROR{background:#fde9ed;color:var(--mal)}.e-otro{background:#fff;color:var(--gris)}
+
+/* Últimos avisos */
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+th{text-align:left;font-weight:700;color:var(--gris);font-size:13px;padding:6px 8px;border-bottom:1.5px solid var(--borde)}
+td{padding:9px 8px;border-bottom:1px solid #edf1fb;vertical-align:top}
+td.txt{max-width:460px;color:var(--gris)}
+.hora{font:400 12.5px "Martian Mono",monospace;white-space:nowrap}
+.s-enviado{color:var(--ok);font-weight:700}.s-simulado{color:var(--aviso);font-weight:700}.s-no{color:var(--mal);font-weight:700}
+@media(max-width:760px){.tabla-caja{overflow-x:auto}.plantillas{grid-template-columns:1fr}.estado-linea .btn{margin-left:0}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="puerta" class="tarjeta puerta" hidden>
+    <h1 style="font:900 22px Archivo;margin:0 0 6px">Avisos por WhatsApp</h1>
+    <p class="gris">Entrá con tu cuenta de Google autorizada.</p>
+    <p class="error" id="msj-puerta"></p>
+    <button class="btn principal" id="entrar">Entrar con Google</button>
+  </div>
+
+  <div id="panel" hidden>
+    <header><a href="./">← Inicio del panel</a><h1>Avisos por WhatsApp</h1><div class="der"><span id="quien"></span><button class="btn" id="salir">Salir</button></div></header>
+
+    <div class="tarjeta">
+      <div class="estado-linea">
+        <p><span class="modo" id="modo">Cargando…</span></p>
+        <p class="gris chica" id="modo-texto"></p>
+        <button class="btn principal" id="mandar" disabled>Mandar a revisión de Meta las que faltan</button>
+      </div>
+      <p class="error" id="error"></p>
+    </div>
+
+    <h2 style="font:900 20px Archivo;margin:22px 0 10px">Las plantillas, como le llegan al dueño</h2>
+    <p class="gris chica" style="margin:0 0 14px">Categoría Utilidad, idioma español (Argentina). En amarillo, lo que cambia en cada aviso. El botón abre mymsoluciones.online con el resto del link.</p>
+    <div class="plantillas" id="plantillas"></div>
+
+    <div class="tarjeta" style="margin-top:22px">
+      <h2 style="font:900 20px Archivo;margin:0 0 10px">Últimos avisos</h2>
+      <div class="tabla-caja"><table><thead><tr><th>Cuándo</th><th>Negocio</th><th>Aviso</th><th>Desde</th><th>A</th><th>Cómo salió</th><th>Texto</th></tr></thead><tbody id="ultimos"><tr><td colspan="7" class="gris">Cargando…</td></tr></tbody></table></div>
+    </div>
+  </div>
+</div>
+<script src="../config.js?v=20261117b"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" integrity="sha384-AQ3POAMqIhwS81FrUH95ekxqBZHeP5tG2JfEL3+7GuTtfRLWnrRh32UxwzM+//A9" crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js" integrity="sha384-TnlRYaR4JYz/lpaGuaiU61PjNberSA4vjLjtF+oRC/IkohkJqnWxw5EmDSOt1vA1" crossorigin="anonymous"></script>
+<script src="acceso.js?v=20261121b"></script>
+<script>
+(function () {
+  const API = String((window.SITE || {}).plataformaApi || '').replace(/\/+$/, '');
+  const $ = (s) => document.querySelector(s);
+  const esc = (t) => String(t ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+  const fecha = (iso) => (iso ? new Date(iso).toLocaleString('es-AR', { dateStyle: 'short', timeStyle: 'short' }) : '');
+  const ESTADOS = { APPROVED: 'Aprobada', PENDING: 'En revisión', REJECTED: 'Rechazada', IN_APPEAL: 'Apelada', ERROR: 'Meta no la aceptó', 'SIN CREAR': 'Sin crear' };
+
+  async function api(ruta, cuerpo) {
+    const r = await fetch(API + ruta, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + await ACCESO.token() }, body: JSON.stringify(cuerpo || {}) });
+    const d = await r.json().catch(() => ({}));
+    if (r.status === 401) { ACCESO.salir('Tu sesión venció o esa cuenta no tiene acceso.'); throw new Error('sin acceso'); }
+    if (!r.ok) throw new Error(d.error || 'No se pudo completar.');
+    return d;
+  }
+  // El cuerpo con las variables a la vista: {{n}} se pinta con el nombre de la variable.
+  const conVariables = (p) => esc(p.cuerpo).replace(/\{\{(\d+)\}\}/g, (_, n) => `<span class="var">${esc(p.vars[n - 1] || '')}</span>`);
+
+  function pintar(d) {
+    const modos = { simulado: ['Simulado', 'm-simulado', 'No se manda nada a Meta: cada aviso se arma y queda anotado acá abajo.'], real: ['Mandando de verdad', 'm-real', `Desde ${d.numero} (cuenta de WhatsApp ${d.waba}).`], 'sin token': ['Sin token', 'm-sin', 'Falta AVISOS_WA_TOKEN en el servidor: los avisos por WhatsApp no salen (el mail sí).'] };
+    const [txt, cls, expl] = modos[d.modo] || modos.simulado;
+    $('#modo').textContent = txt; $('#modo').className = 'modo ' + cls; $('#modo-texto').textContent = expl;
+    const faltan = d.plantillas.filter((p) => p.estado === 'SIN CREAR').length;
+    $('#mandar').disabled = d.modo !== 'real' || !faltan;
+    $('#mandar').textContent = d.modo === 'real' && faltan ? `Mandar a revisión de Meta las ${faltan} que faltan` : 'Mandar a revisión de Meta las que faltan';
+    $('#error').textContent = d.error || '';
+    $('#plantillas').innerHTML = d.plantillas.map((p) => `
+      <article class="pl">
+        <div class="pl-cab"><b>${esc(p.aviso)}</b>${p.estado ? `<span class="e e-${esc(ESTADOS[p.estado] ? p.estado : 'otro')}">${esc(ESTADOS[p.estado] || p.estado)}</span>` : ''}</div>
+        <div class="globo"><p>${conVariables(p)}</p><p class="pie">${esc(p.pie || 'MyM Soluciones · Lo cambiás en tu panel, en «Avisos»')}</p>${p.boton ? `<span class="boton">${esc(p.boton.texto)}</span>` : ''}</div>
+        <p class="ficha">Para: ${esc(p.para)}. Nombre en Meta: <code>${esc(p.name)}</code>. Ejemplo: ${esc(p.ejemplo)}</p>
+      </article>`).join('');
+    const quien = { mym: 'MyM Soluciones', negocio: 'Su número', no: '—' };
+    $('#ultimos').innerHTML = d.ultimos.length ? d.ultimos.map((a) => `
+      <tr><td class="hora">${esc(fecha(a.cuando))}</td><td>${esc(a.negocio)}</td><td>${esc(a.aviso)}</td><td>${esc(quien[a.canal] || a.canal)}</td><td class="hora">${esc(a.para)}</td>
+      <td class="${a.estado === 'enviado' ? 's-enviado' : a.estado === 'simulado' ? 's-simulado' : 's-no'}">${esc(a.estado)}${a.motivo ? `<br><span class="gris chica">${esc(a.motivo)}</span>` : ''}${a.nota ? `<br><span class="gris chica">${esc(a.nota)}</span>` : ''}</td>
+      <td class="txt">${esc(a.texto)}${a.boton ? `<br><span class="chica">Botón «${esc(a.boton.texto)}»</span>` : ''}</td></tr>`).join('') : '<tr><td colspan="7" class="gris">Todavía no salió ningún aviso por WhatsApp.</td></tr>';
+  }
+  async function cargar(extra) {
+    try { pintar(await api('/api/admin/avisos-whatsapp', extra || {})); }
+    catch (e) { $('#error').textContent = e.message; }
+  }
+  $('#mandar').addEventListener('click', async () => {
+    const ok = prompt('Esto crea en Meta las plantillas que faltan, en la cuenta de WhatsApp de MyM Soluciones. Meta las revisa en minutos u horas.\n\nPara seguir, escribí MANDAR:');
+    if (ok !== 'MANDAR') return;
+    $('#mandar').disabled = true; $('#mandar').textContent = 'Mandando…';
+    await cargar({ mandar: true, confirmo: 'MANDAR' });
+  });
+
+  ACCESO.iniciar({
+    alEntrar(u) { $('#puerta').hidden = true; $('#panel').hidden = false; $('#quien').textContent = u.email || ''; cargar(); },
+    alSalir(m) { $('#panel').hidden = true; $('#puerta').hidden = false; $('#msj-puerta').textContent = m || ''; }
+  });
+  $('#entrar').addEventListener('click', () => ACCESO.entrar());
+  $('#salir').addEventListener('click', () => ACCESO.salir(''));
+})();
+</script>
+</body>
+</html>
