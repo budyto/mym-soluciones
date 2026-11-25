@@ -29,7 +29,8 @@
 # - SAMEORIGIN y frame-ancestors: nadie puede meter la web ni el panel admin adentro de un marco ajeno
 #   (clickjacking). No afecta las ventanas de Google ni de Meta, que se abren como ventana aparte.
 # - Referrer-Policy: a los sitios de afuera sólo les llega el dominio, nunca la ruta (ej. admin/whatsapp.html#tel=...).
-# - Permissions-Policy: la web no usa cámara, micrófono, ubicación ni USB.
+# - Permissions-Policy: la web no usa cámara, ubicación ni USB. El micrófono sí, sólo en nuestra propia web: lo usa
+#   el panel de WhatsApp para grabar audios (25/11/2026, Budy: en el celular Chrome lo rechazaba sin preguntar).
 # - CSP en dos partes: lo que no puede romper nada se aplica ya; la lista completa de orígenes queda en modo
 #   "sólo informar" (Report-Only): el navegador avisa en la consola lo que bloquearía, sin bloquearlo.
 #   Cuando se sume el registro insertado de Meta hay que agregar connect.facebook.net y www.facebook.com.
@@ -44,9 +45,9 @@
   Header always set X-Content-Type-Options "nosniff"
   Header always set X-Frame-Options "SAMEORIGIN"
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
-  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), usb=(), serial=(), hid=()"
+  Header always set Permissions-Policy "camera=(), microphone=(self), geolocation=(), usb=(), serial=(), hid=()"
   Header always set Content-Security-Policy "frame-ancestors 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
-  Header always set Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://apis.google.com https://cdn.jsdelivr.net https://connect.facebook.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; media-src 'self'; connect-src 'self' https://firestore.googleapis.com https://grupomym.online https://mym-creditos-81440681742.southamerica-east1.run.app https://dolarapi.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://www.googleapis.com https://*.facebook.com https://*.run.app; frame-src 'self' https://appmym-5fdd1.firebaseapp.com https://accounts.google.com https://www.google.com https://www.facebook.com https://web.facebook.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'"
+  Header always set Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://apis.google.com https://cdn.jsdelivr.net https://connect.facebook.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; media-src 'self' blob:; connect-src 'self' https://firestore.googleapis.com https://grupomym.online https://mym-creditos-81440681742.southamerica-east1.run.app https://dolarapi.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://www.googleapis.com https://*.facebook.com https://*.run.app; frame-src 'self' https://appmym-5fdd1.firebaseapp.com https://accounts.google.com https://www.google.com https://www.facebook.com https://web.facebook.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'"
 </IfModule>
 
 # (13/11/2026) La planilla de ejemplo de la guía TAREA tiene que bajar como Excel y no como texto (sin esto Hostinger
