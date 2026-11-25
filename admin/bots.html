@@ -51,6 +51,8 @@ tr.fila{cursor:pointer}tr.fila:hover td{background:#f8faff}
 .estado{display:inline-block;padding:3px 10px;border-radius:99px;font-size:12.5px;font-weight:700;white-space:nowrap}
 .e-eliminado{background:#ececec;color:#555;text-decoration:line-through}
 .peligro{margin-top:22px;border:1.5px solid #f3c3cc;border-radius:14px;padding:14px;background:#fff8f9}
+.caja-encendido{border:1.5px solid #f1d58a;border-radius:14px;padding:12px 14px;background:#fffaf0;font-size:15px}
+.ok-caja{border:1.5px solid #bfe6cf;border-radius:14px;padding:10px 14px;background:#f2fbf5;font-size:15px}
 .e-activo{background:#e2f6ee;color:var(--ok)}.e-revision{background:#fff3d9;color:var(--aviso)}.e-pausado,.e-pruebas{background:#fde9ed;color:var(--mal)}.e-otro{background:var(--suave);color:var(--gris)}
 .gris{color:var(--gris)}.chica{font-size:13px}
 pre{white-space:pre-wrap;font:12px/1.6 "Martian Mono",monospace;background:#f6f8fe;border-radius:12px;padding:12px;color:var(--gris);max-height:320px;overflow:auto}
@@ -297,7 +299,7 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
     const admite = claves.some((k) => k === 'bot' || k === 'seguimiento');
     const ca = c.prueba && c.prueba.cobrarAhora;
     const sinPrueba = ca ? `<div class="peligro" style="margin:8px 0 0"><p class="chica" style="margin:0 0 6px"><b>Se cobra desde el primer día: ${esc(ca.servicios.join(', '))}.</b> ${ca.acordado ? 'Tiene precio acordado por todo: definí a mano cuánto se cobra ahora.' : `Instalación ${pesos(ca.instalacion)} + IVA y ${esc(String(c.prueba.dias))} días de abono ${pesos(ca.abonoDias)} + IVA = <b>${pesos(ca.total)}</b> con IVA.`}${ca.aCotizar && ca.aCotizar.length ? ` A cotizar aparte: ${esc(ca.aCotizar.join(', '))}.` : ''}</p>${!ca.acordado && ca.total > 0 ? '<button class="btn" type="button" id="b-pedir-sin-prueba">Pedirlo por transferencia</button>' : ''}<p class="gris chica" id="aviso-sin-prueba" style="margin:6px 0 0"></p></div>` : '';
-    const estado = !pr ? 'Sin prueba gratis. Marcala para que el cliente vea en su panel los días que le quedan y el primer vencimiento.'
+    const estado = !pr ? (['activo', 'pausado'].includes(c.estado) ? 'Sin prueba gratis. Marcala para que el cliente vea en su panel los días que le quedan y el primer vencimiento.' : 'Sin prueba gratis todavía: arranca sola (14 días) el día que el Boti se prende. Si acordaste otra cosa, marcala acá antes.')
       : pr.terminada ? `La prueba terminó: el último día gratis fue el ${diaLindo(pr.ultimoDia)}.`
       : pr.porEmpezar ? `La prueba empieza el ${diaLindo(pr.inicio)} y dura ${pr.dias} días: último día gratis el ${diaLindo(pr.ultimoDia)}.`
       : `En prueba gratis: quedan ${pr.quedan} día${pr.quedan === 1 ? '' : 's'}. Último día gratis el ${diaLindo(pr.ultimoDia)}.`;
@@ -354,10 +356,21 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
         <button class="btn" type="submit">Guardar</button></form>
       <p class="gris chica" id="aviso-crm" style="margin:6px 0 0"></p><p class="error chica" id="error-crm"></p></section>`;
   }
+  // Se prende solo (25/11/2026): el Boti se prende sin que MyM toque nada cuando tiene el WhatsApp conectado, lo aprobó
+  // el cliente y tiene la prueba gratis o un pago. Acá se ve en qué paso está y qué le falta (y quién lo tiene que hacer).
+  function cajaEncendido(c, e) {
+    if (!e) return '';
+    if (c.estado === 'activo' && e.solo) return `<p class="ok-caja" style="margin-top:10px">✓ <b>Se prendió solo</b> el ${esc(fecha(c.activado))}: WhatsApp conectado, aprobado por el cliente y ${c.prueba ? 'con la prueba gratis' : 'con el pago registrado'}. No hizo falta tocar nada.</p>`;
+    const t = e.trabado; const falta = e.falta || [];
+    if (!t && !falta.length) return '';
+    const items = falta.length ? falta : [{ texto: t.texto, quien: t.quien }];
+    const fila = (x) => `<li>${esc(x.texto)} <span class="gris chica">(${x.quien === 'mym' ? 'lo resuelve MyM' : 'lo hace el cliente'})</span></li>`;
+    return `<div class="caja-encendido" style="margin-top:10px"><b>Se prende solo cuando esté todo.</b>${t && t.desde ? ` <span class="gris chica">Esperando desde el ${esc(fecha(t.desde))}.</span>` : ''}<ul style="margin:6px 0 0 18px;padding:0">${items.map(fila).join('')}</ul>${c.estado === 'revision' ? '<p class="gris chica" style="margin:6px 0 0">Si ya está bien, podés prenderlo vos con «Prender el bot».</p>' : ''}</div>`;
+  }
   async function verCliente(id) {
     $('#detalle').innerHTML = '<div class="tarjeta gris">Cargando…</div>';
     try {
-      const { cliente: c, eventos, proximo } = await api('/api/admin/cliente', { id });
+      const { cliente: c, eventos, proximo, encendido } = await api('/api/admin/cliente', { id });
       const f = c.ficha || c.borrador || {};
       const resumen = clientes.find((x) => x.id === id) || {}; // de la lista: noContesta y medición del mes
       const precio = c.precio || {};
@@ -376,6 +389,7 @@ input,select{font:400 15px Archivo;padding:9px 11px;border:1.5px solid var(--bor
         <div id="pausa-motivo" hidden class="peligro" style="margin-top:10px"><b>¿Por qué lo pausás?</b><p class="gris chica" style="margin:4px 0 8px">Si es por falta de pago, el dueño no lo puede prender desde su panel y el bot vuelve solo cuando se registra el pago del abono (concepto «abono…», o el que cubre el abono del mes con el vencimiento a menos de 5 días).</p><div class="acciones" style="margin:0"><button class="btn mal" type="button" data-motivo="falta_de_pago">Por falta de pago</button><button class="btn mal" type="button" data-motivo="otro">Por otro motivo</button><button class="btn" type="button" id="pausa-cancelar">Cancelar</button></div></div>
         <nav class="indice" aria-label="Partes del detalle"><a href="#det-datos">Datos</a><a href="#caja-cobros">Cobros</a><a href="#det-ficha">Ficha</a></nav>
         <p class="error" id="error-det"></p>
+        ${vivo ? cajaEncendido(c, encendido) : ''}
         ${vivo && resumen.noContesta ? `<p class="peligro" style="margin-top:8px"><b style="color:var(--mal)">No está contestando:</b> ${esc(resumen.noContesta.texto)}.</p>` : ''}
         ${vivo ? '' : `<p class="peligro" style="margin-top:8px">Eliminado el ${esc(fecha(el.cuando))} por ${esc(el.por || '—')}${el.motivo ? ' · motivo: ' + esc(el.motivo) : ''}. Estaba «${esc(NOMBRE[el.estadoAnterior] || el.estadoAnterior || '—')}». WhatsApp: ${esc(el.meta || '—')}. Los pagos quedan registrados para la facturación.</p>`}
         <dl id="det-datos">

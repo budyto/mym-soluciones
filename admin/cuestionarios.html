@@ -13,6 +13,8 @@
      Acá MyM: 1) arma el link de cada cliente («Mandar cuestionario») y lo copia o lo abre en WhatsApp; 2) ve cuánto
      completó, qué falta y las respuestas ordenadas por sección; 3) compara lo que contestó con lo que ya está cargado
      y, con «Pasar a la ficha del Boti», vuelca la ficha, los datos del alta, los de la factura y las redes.
+     Desde el 25/11/2026 (Budy) cuando el cliente toca «Listo» todo eso se pasa solo y el Boti se arma y se prueba; esta
+     pantalla queda para ver lo que contestó y para pasar a mano lo que haya cambiado después.
      Se puede entrar directo a un cliente con cuestionarios.html#idDelCliente (así llega el link del mail de aviso).
      Fotos y archivos (21/11/2026, pedido de Matías): lo que el cliente sube desde su cuestionario queda en el Drive de
      MyM. Acá se conecta la cuenta de Google (una sola vez), se abre la carpeta de cada cliente, se ven los archivos con
@@ -270,7 +272,7 @@ h3{font:900 19px Archivo;margin:0 0 4px}
             <div class="lados"><div class="lado hoy"><small>Hoy</small>${x.actual ? esc(x.actual) : '<span class="gris">(vacío)</span>'}</div><div class="lado nuevo"><small>Del cuestionario</small>${esc(x.nuevo)}</div></div></label>`).join(''); }).join('');
     const puedeArmar = !d.tieneBot && !d.faltanFicha.length;
     caja.innerHTML = `<div class="tarjeta" id="det">
-      <div class="cab"><div style="flex:1;min-width:220px"><h2>${esc(c.negocio)}</h2><p class="gris chica" style="margin:4px 0 0">${esc(c.contacto || '')} · armado el ${fecha(q.creado)}${q.listoCuando ? ` · avisó que terminó el ${fecha(q.listoCuando)}` : ''}${q.pasado ? ` · pasado a la ficha el ${fecha(q.pasado)}` : ''}</p></div>
+      <div class="cab"><div style="flex:1;min-width:220px"><h2>${esc(c.negocio)}</h2><p class="gris chica" style="margin:4px 0 0">${esc(c.contacto || '')} · armado el ${fecha(q.creado)}${q.listoCuando ? ` · avisó que terminó el ${fecha(q.listoCuando)}` : ''}${q.pasado ? ` · ${d.pasado && d.pasado.solo ? 'se pasó solo a la ficha (al tocar «Listo»)' : 'pasado a la ficha'} el ${fecha(q.pasado)}` : ''}</p></div>
         <span class="estado ${s.clase}">${s.texto}</span></div>
       <div class="avance" style="margin-top:14px"><div class="barra" style="height:12px" aria-hidden="true"><i style="width:${d.porcentaje}%"></i></div><span class="pct">${d.porcentaje} % de lo obligatorio</span></div>
       <div class="caja"><h3>Link del cliente</h3>

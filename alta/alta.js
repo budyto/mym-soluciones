@@ -52,7 +52,9 @@
       conectado = !!(v.whatsapp && v.whatsapp.conectado);
       // Lo arma MyM: se puede completar la ficha antes de conectar el número (el número se conecta en la llamada).
       if (!conectado && v.armadoPor !== 'mym' && !['aprobar', 'pruebas', 'revision', 'activo', 'pausado'].includes(v.estado)) return verPaso(2);
-      if (['revision', 'activo'].includes(v.estado)) return mostrarListo();
+      // Aprobó sin conectar el WhatsApp (25/11/2026): el Boti se prende solo apenas lo conecta.
+      if (!conectado && v.estado === 'revision') { $('#aviso2').hidden = false; return verPaso(2); }
+      if (['revision', 'activo', 'pausado'].includes(v.estado)) return mostrarListo(v.estado);
       if (v.estado === 'pago') return mostrarPago();
       if (['pruebas', 'aprobar'].includes(v.estado) && v.pruebas) { mostrarPruebas(v); return verPaso(4); }
       cargarFicha(v); verPaso(3);
@@ -231,13 +233,24 @@
   });
   $('#aprobar').addEventListener('click', async () => {
     const b = $('#aprobar'); b.disabled = true; $('#error4').textContent = '';
-    try { const r = await api('/api/aprobar', conLlave()); if (r.estado === 'pago') mostrarPago(r); else mostrarListo(); } catch (e) { $('#error4').textContent = e.message; }
+    try {
+      const r = await api('/api/aprobar', conLlave());
+      if (r.estado === 'pago') mostrarPago(r);
+      // Le falta conectar el WhatsApp: se lo pedimos ahora; apenas lo conecta, se prende solo.
+      else if (r.estado === 'revision' && (r.falta || []).includes('whatsapp')) { $('#aviso2').hidden = false; verPaso(2); }
+      else mostrarListo(r.estado);
+    } catch (e) { $('#error4').textContent = e.message; }
     b.disabled = false;
   });
   $('#corregir').addEventListener('click', async () => { try { cargarFicha(await api('/api/ficha/obtener', conLlave())); } catch (e) { /* sigue igual */ } verPaso(3); });
 
   // ---------- Paso 5: pago con Ualá (si el cobro está prendido) y confirmación ----------
-  function mostrarListo() { $('#caja-pago').hidden = true; $('#caja-listo').hidden = false; verPaso(5); }
+  // Prendido (25/11/2026: se prende solo cuando tiene el WhatsApp conectado y está aprobado) o esperando a MyM.
+  function mostrarListo(estado) {
+    const prendido = estado === 'activo' || estado === 'pausado';
+    $('#listo-prendido').hidden = !prendido; $('#listo-revision').hidden = prendido;
+    $('#caja-pago').hidden = true; $('#caja-listo').hidden = false; verPaso(5);
+  }
   let consultas = 0;
   async function mostrarPago(datos) {
     $('#caja-listo').hidden = true; $('#caja-pago').hidden = false; verPaso(5);
