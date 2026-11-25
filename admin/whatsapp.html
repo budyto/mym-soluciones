@@ -373,8 +373,12 @@
     body.charla-abierta .wa-barra { display: none; }
     #wamsg { padding: 4px 12px; }
     .wa-col-lista { padding: 8px 10px 0; position: relative; }
-    .fab { display: grid; position: absolute; right: 16px; bottom: calc(18px + env(safe-area-inset-bottom)); width: 56px; height: 56px; border-radius: 18px; font-size: 24px; z-index: 4; place-items: center; border: 0; background: var(--deg); color: #fff; box-shadow: 0 10px 26px rgba(14,26,51,.3); cursor: pointer; }
-    #waLista { padding-bottom: 84px; }
+    /* 25/11/2026, Budy no encontraba el botón redondo sin texto: ahora es una pastilla «💬 Nueva charla». La lista
+       deja abajo lugar de sobra (alto de la pastilla + margen) para que no tape el último renglón. */
+    .fab { display: inline-flex; align-items: center; gap: 8px; position: absolute; right: 14px; bottom: calc(16px + env(safe-area-inset-bottom)); height: 50px; padding: 0 20px 0 16px; border-radius: 999px; font: 700 15px Archivo, system-ui, sans-serif; z-index: 4; border: 0; background: var(--deg); color: #fff; box-shadow: 0 10px 26px rgba(14,26,51,.3); cursor: pointer; white-space: nowrap; }
+    .fab span { font-size: 20px; line-height: 1; }
+    .fab:focus-visible { outline: 3px solid var(--agua); outline-offset: 3px; }
+    #waLista { padding-bottom: calc(84px + env(safe-area-inset-bottom)); }
     /* Los filtros, en una sola fila que se desliza (como los de WhatsApp): antes ocupaban tres renglones. */
     .wa-tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; overscroll-behavior-x: contain; }
     .wa-tabs::-webkit-scrollbar { display: none; }
@@ -473,6 +477,20 @@
   .arch-tira .mas input { display: none; }
   #archEstado { font: 600 12.5px Archivo, system-ui, sans-serif; color: rgba(255,255,255,.8); padding: 0 14px; min-height: 0; }
   #archEstado:empty { display: none; }
+  #archEstado .err { color: #ffb3bb; }
+  /* Adjuntar en «Nueva charla» (25/11/2026, Budy): el archivo elegido se ve antes de mandar y se puede sacar. */
+  .nueva-adj { display: grid; gap: 8px; }
+  .nueva-adj[hidden] { display: none; }
+  .nueva-adj > .btn { justify-self: start; font-size: 13px; padding: 8px 14px; }
+  .nueva-adj .btn:focus-visible { outline: 3px solid var(--agua); outline-offset: 2px; }
+  #nuevaAdj { display: flex; align-items: center; gap: 10px; padding: 8px; border: 1px solid var(--borde); border-radius: 12px; background: var(--fondo); }
+  #nuevaAdj[hidden] { display: none; }
+  #nuevaAdj .mini { flex: 0 0 auto; width: 52px; height: 52px; border-radius: 9px; overflow: hidden; background: var(--fondo-2); display: grid; place-items: center; font-size: 24px; border: 0; padding: 0; cursor: pointer; }
+  #nuevaAdj .mini img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  #nuevaAdj .q { flex: 1; min-width: 0; display: grid; font-size: 13px; }
+  #nuevaAdj .q b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #nuevaAdj .q small { color: var(--gris); font-size: 12px; line-height: 1.35; overflow-wrap: anywhere; }
+  #nuevaAdj .btn { flex: 0 0 auto; }
   .escribir .cam { display: none; }
   @media (hover: none) and (pointer: coarse) { .escribir .cam { display: inline-flex; } }
   .escribir .cam input { display: none; }
@@ -526,7 +544,7 @@
       <div class="wa-buscar"><input type="search" id="wabuscar" placeholder="🔍 Buscar por nombre, negocio o teléfono" autocomplete="off"></div>
       <div class="wa-tabs" id="waTabs"></div>
       <div id="waLista" class="scroll"></div>
-      <button class="fab" id="fabNueva" type="button" aria-label="Nueva charla" title="Nueva charla">💬</button>
+      <button class="fab" id="fabNueva" type="button"><span aria-hidden="true">💬</span>Nueva charla</button>
     </div>
     <div id="waChat"><div class="vacio">Elegí una conversación de la lista.</div></div>
   </div>
@@ -563,6 +581,11 @@
     <label>Nombre<input name="nombre" placeholder="Juan" maxlength="60" required autocomplete="off"></label>
     <label><span>Negocio <span class="opc">(opcional)</span></span><input name="negocio" placeholder="Plomería Mansilla" maxlength="80" autocomplete="off"></label>
     <label id="nuevaTextoL">Mensaje<textarea name="texto" rows="4" maxlength="4000" placeholder="Hola Juan, ¿cómo estás? Te escribo de MyM Soluciones…"></textarea></label>
+    <!-- Adjuntar (25/11/2026, Budy): sale después del mensaje, por la misma ruta que el 📎 de la charla. -->
+    <div class="nueva-adj" id="nuevaAdjL">
+      <button class="btn gris" type="button" id="nuevaAdjBtn" title="Foto, video, audio o documento: sale después del mensaje">📎 Adjuntar</button><input type="file" id="nuevaAdjunto" hidden>
+      <div id="nuevaAdj" hidden></div>
+    </div>
     <div id="nuevaEstado" class="estado-n" aria-live="polite"></div>
     <p id="nuevaMsg" class="ayuda" aria-live="polite"></p>
     <div class="acc">
@@ -889,6 +912,7 @@
       + (c.propuesta && !c.propuesta.enviada && !c.propuesta.cancelada ? '<p class="wa-prop">📄 La propuesta (' + esc(c.propuesta.archivo) + ') espera que toque «Sí, mandala»' + (c.propuesta.error ? ' · <span class="err">último intento: ' + esc(c.propuesta.error) + '</span>' : '') + '</p>' : '');
   }
   const ICONO_ENVIAR = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.4 20.4 21 12 3.4 3.6v6.6l12.6 1.8-12.6 1.8z"/></svg>';
+  const ICONO_LISTO = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.2 16.6 4.9 12.3a1 1 0 1 0-1.4 1.4l5 5a1 1 0 0 0 1.4 0l11-11a1 1 0 1 0-1.4-1.4z"/></svg>';
   const ICONO_MIC = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 14.5a3.5 3.5 0 0 0 3.5-3.5V5.5a3.5 3.5 0 0 0-7 0V11a3.5 3.5 0 0 0 3.5 3.5Zm6-3.5a.9.9 0 1 0-1.8 0 4.2 4.2 0 0 1-8.4 0 .9.9 0 1 0-1.8 0 6 6 0 0 0 5.1 5.9V20H8.6a.9.9 0 1 0 0 1.8h6.8a.9.9 0 1 0 0-1.8H12.9v-3.1A6 6 0 0 0 18 11Z"/></svg>';
   // El cuadro de texto se arma una sola vez por charla: sólo se rehace si cambia la ventana, la línea o las
   // respuestas rápidas, y aun así conserva lo escrito, el foco y el cursor.
@@ -1245,26 +1269,32 @@
   // Desde la tanda 2 (25/11/2026, Budy) son VARIAS: hasta 10, cada una con su texto, como en WhatsApp. Abajo va la
   // tira de miniaturas (tocar una la muestra, ✕ la saca, ＋ suma más) y «Enviar» las manda en orden.
   const MAX_ARCH = 10;
-  let previa = null;   // { items: [{ file, url, texto }], i, tel, desdeElCuadro }
-  function abrirVistaPrevia(archivos, textoInicial, desdeElCuadro) {
-    if (!abierta) return;
+  let previa = null;   // { items: [{ file, url, texto }], i, tel, desdeElCuadro, nueva }
+  // nueva = true: la abre el 📎 de «Nueva charla» (todavía no hay charla). Es un solo archivo, y «Enviar» no lo manda:
+  // lo deja listo en el diálogo (con su texto) para que salga después del mensaje.
+  function abrirVistaPrevia(archivos, textoInicial, desdeElCuadro, nueva) {
+    if (!nueva && !abierta) return;
     let files = (archivos instanceof File ? [archivos] : Array.from(archivos || [])).filter(Boolean);
     if (!files.length) return;
-    if (!abierta.ventana_abierta) { msg('La ventana de 24 h está cerrada: WhatsApp no deja mandarle archivos hasta que vuelva a escribir.'); return; }
+    const avisar = nueva ? avisoNueva : msg;
+    if (!nueva && !abierta.ventana_abierta) { msg('La ventana de 24 h está cerrada: WhatsApp no deja mandarle archivos hasta que vuelva a escribir.'); return; }
     const grandes = files.filter((f) => f.size > TOPE(f.type));
-    if (grandes.length) msg('«' + grandes[0].name + '» pesa más de ' + Math.round(TOPE(grandes[0].type) / 1048576) + ' MB: achicalo antes de mandarlo.' + (grandes.length > 1 ? ' (y ' + (grandes.length - 1) + ' más)' : ''));
+    if (grandes.length) avisar('«' + grandes[0].name + '» pesa más de ' + Math.round(TOPE(grandes[0].type) / 1048576) + ' MB: achicalo antes de mandarlo.' + (grandes.length > 1 ? ' (y ' + (grandes.length - 1) + ' más)' : ''));
     files = files.filter((f) => f.size <= TOPE(f.type));
     if (!files.length) return;
-    const sumar = !!(previa && previa.tel === abierta.telefono && $('#dlgArch').open);
-    if (!sumar) previa = { items: [], i: 0, tel: abierta.telefono, desdeElCuadro };
+    const tope = nueva ? 1 : MAX_ARCH;
+    const sumar = !nueva && !!(previa && !previa.nueva && previa.tel === abierta.telefono && $('#dlgArch').open);
+    if (!sumar) previa = { items: [], i: 0, tel: nueva ? '' : abierta.telefono, desdeElCuadro, nueva: !!nueva };
     else guardarTextoPrevia();
-    const lugar = MAX_ARCH - previa.items.length;
-    if (files.length > lugar) msg('Van hasta ' + MAX_ARCH + ' archivos por vez: quedaron ' + MAX_ARCH + '.');
+    const lugar = tope - previa.items.length;
+    if (files.length > lugar) avisar(nueva ? 'En «Nueva charla» va un archivo; los demás mandalos desde la charla.' : 'Van hasta ' + MAX_ARCH + ' archivos por vez: quedaron ' + MAX_ARCH + '.');
     const desde = previa.items.length;
     files.slice(0, Math.max(0, lugar)).forEach((f) => previa.items.push({ file: f, url: URL.createObjectURL(f), texto: '' }));
     if (!sumar && textoInicial && previa.items[0]) previa.items[0].texto = textoInicial;
     mostrarPrevia(sumar ? desde : 0);
     $('#archMandar').disabled = false; $('#archEstado').textContent = '';
+    $('#archMandar').innerHTML = nueva ? ICONO_LISTO : ICONO_ENVIAR;
+    $('#archMandar').title = nueva ? 'Listo: sale después del mensaje' : 'Enviar';
     if (!$('#dlgArch').open) $('#dlgArch').showModal();
     const it = previa.items[previa.i];
     if (matchMedia('(hover: hover)').matches && it && !/^audio\//.test(it.file.type || '')) $('#archTexto').focus(); else $('#archMandar').focus();
@@ -1276,7 +1306,8 @@
     const { file, url, texto } = previa.items[previa.i], tipo = file.type || '', n = previa.items.length;
     const esPdf = /pdf$/i.test(tipo) || /\.pdf$/i.test(file.name || '');
     const ficha = (ico, extra) => '<div class="arch-doc"><span class="ico" aria-hidden="true">' + ico + '</span><b>' + esc(file.name || 'archivo') + '</b><small>' + esc(peso(file.size)) + (extra || '') + '</small></div>';
-    $('#archNombre').textContent = (n > 1 ? (previa.i + 1) + ' de ' + n + ' · ' : '') + (file.name || 'Archivo') + ' · ' + nombre(abierta);
+    const para = previa.nueva ? (nf.nombre.value.trim() || 'Nueva charla') : nombre(abierta);
+    $('#archNombre').textContent = (n > 1 ? (previa.i + 1) + ' de ' + n + ' · ' : '') + (file.name || 'Archivo') + ' · ' + para;
     const vista = $('#archVista');
     if (/^image\//.test(tipo)) vista.innerHTML = '<img alt="Vista previa de la imagen" src="' + esc(url) + '">';
     else if (/^video\//.test(tipo)) vista.innerHTML = '<video controls playsinline src="' + esc(url) + '"></video>';
@@ -1286,7 +1317,7 @@
     const sinTexto = /^audio\//.test(tipo);
     $('#archTexto').hidden = sinTexto; $('#archTexto').value = sinTexto ? '' : (texto || '');
     $('#archTexto').placeholder = n > 1 ? 'Texto para esta (cada una lleva el suyo)…' : 'Agregá un texto…';
-    $('#archMandar').setAttribute('aria-label', n > 1 ? 'Enviar los ' + n : 'Enviar');
+    $('#archMandar').setAttribute('aria-label', previa.nueva ? 'Listo, adjuntar' : n > 1 ? 'Enviar los ' + n : 'Enviar');
     pintarTira();
   }
   function pintarTira() {
@@ -1297,7 +1328,7 @@
       return '<div class="mini' + (i === previa.i ? ' on' : '') + '" role="option" tabindex="0" aria-selected="' + (i === previa.i) + '" data-ver="' + i + '" title="' + esc(it.file.name || 'archivo') + '">' + dentro
         + '<button type="button" class="x" data-quitar="' + i + '" aria-label="Sacar ' + esc(it.file.name || 'este archivo') + '">✕</button></div>';
     }).join('') : '')
-      + (n < MAX_ARCH ? '<label class="mas" title="Sumar más archivos" aria-label="Sumar más archivos">＋<input type="file" id="archMas" multiple accept="' + ACEPTA + '"></label>' : '');
+      + (n < (previa && previa.nueva ? 1 : MAX_ARCH) ? '<label class="mas" title="Sumar más archivos" aria-label="Sumar más archivos">＋<input type="file" id="archMas" multiple accept="' + ACEPTA + '"></label>' : '');
   }
   $('#archTira').addEventListener('click', (e) => {
     const q = e.target.closest('[data-quitar]');
@@ -1306,14 +1337,14 @@
       const i = +q.dataset.quitar, it = previa.items[i];
       if (it) URL.revokeObjectURL(it.url);
       previa.items.splice(i, 1);
-      if (!previa.items.length) { $('#dlgArch').close(); return; }
+      if (!previa.items.length) { if (previa.nueva) quitarAdjNueva(); $('#dlgArch').close(); return; }
       mostrarPrevia(i >= previa.i ? Math.min(previa.i, previa.items.length - 1) : previa.i - 1);
       return;
     }
     const v = e.target.closest('[data-ver]'); if (v) { guardarTextoPrevia(); mostrarPrevia(+v.dataset.ver); }
   });
   $('#archTira').addEventListener('keydown', (e) => { const v = e.target.closest('[data-ver]'); if (v && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); guardarTextoPrevia(); mostrarPrevia(+v.dataset.ver); } });
-  $('#archTira').addEventListener('change', (e) => { if (e.target.id !== 'archMas') return; const fs = [...e.target.files]; e.target.value = ''; abrirVistaPrevia(fs, '', false); });
+  $('#archTira').addEventListener('change', (e) => { if (e.target.id !== 'archMas') return; const fs = [...e.target.files]; e.target.value = ''; abrirVistaPrevia(fs, '', false, !!(previa && previa.nueva)); });
   async function primeraHoja(file) {
     try {
       const pdfjs = await cargarPdfjs();
@@ -1328,7 +1359,16 @@
   }
   $('#archForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const p = previa; if (!p || !abierta || abierta.telefono !== p.tel) { $('#dlgArch').close(); return; }
+    const p = previa;
+    if (p && p.nueva) {
+      // Desde «Nueva charla»: no sale todavía; queda adjunto en el diálogo y sale después del mensaje.
+      guardarTextoPrevia();
+      const it = p.items[0];
+      if (it) ponerAdjNueva(it.file, /^audio\//.test(it.file.type || '') ? '' : String(it.texto || '').trim());
+      $('#dlgArch').close();
+      return;
+    }
+    if (!p || !abierta || abierta.telefono !== p.tel) { $('#dlgArch').close(); return; }
     guardarTextoPrevia();
     const items = p.items.map((it) => ({ file: it.file, texto: /^audio\//.test(it.file.type || '') ? '' : String(it.texto || '').trim() }));
     $('#archMandar').disabled = true;
@@ -2122,7 +2162,7 @@
   }
   const nf = $('#nuevaForm');
   function abrirNueva() {
-    cerrarMenu(); nf.reset(); $('#nuevaMsg').textContent = '';
+    cerrarMenu(); nf.reset(); $('#nuevaMsg').textContent = ''; quitarAdjNueva();
     const p = puenteDe();
     $('#nuevaDesde').innerHTML = (p ? '<option value="' + esc(p.id) + '">' + esc(p.nombre) + ' (número 2)</option>' : '') + '<option value="">Oficial · 11 3366-2080</option>';
     // Con el número 2 conectado, arranca por ahí: es el único que deja escribir primero con texto libre.
@@ -2161,6 +2201,63 @@
     box.className = 'estado-n' + (cls ? ' ' + cls : ''); box.innerHTML = html;
     $('#nuevaMandar').disabled = !puede; $('#nuevaProp').hidden = !prop;
     $('#nuevaTextoL').hidden = !puede && prop;
+    $('#nuevaAdjL').hidden = $('#nuevaTextoL').hidden;
+  }
+  // ---------- Adjuntar en «Nueva charla» (25/11/2026, Budy: antes había que mandar el texto, esperar la charla y
+  // recién ahí usar el 📎). Se elige con la misma vista previa del 📎 (mismos tipos y topes), queda a la vista en el
+  // diálogo con «Quitar», y al tocar «Mandar» sale primero el mensaje y después el archivo, en ese orden.
+  let adjNueva = null;   // { file, texto, url }
+  function avisoNueva(t) { $('#nuevaMsg').innerHTML = t ? '<span class="err">' + esc(t) + '</span>' : ''; }
+  function ponerAdjNueva(file, texto) {
+    quitarAdjNueva();
+    const tipo = file.type || '';
+    adjNueva = { file, texto: texto || '', url: /^image\//.test(tipo) ? URL.createObjectURL(file) : '' };
+    const ico = /^video\//.test(tipo) ? '🎬' : /^audio\//.test(tipo) ? '🎧' : '📄';
+    const box = $('#nuevaAdj');
+    box.innerHTML = '<button type="button" class="mini" data-nadj="ver" title="Ver cómo sale" aria-label="Ver ' + esc(file.name || 'el archivo') + '">'
+      + (adjNueva.url ? '<img alt="" src="' + esc(adjNueva.url) + '">' : '<span aria-hidden="true">' + ico + '</span>') + '</button>'
+      + '<div class="q"><b>' + esc(file.name || 'archivo') + '</b><small>' + esc(peso(file.size)) + ' · '
+      + (adjNueva.texto ? 'con el texto «' + esc(adjNueva.texto) + '»' : 'sale después del mensaje') + '</small></div>'
+      + '<button type="button" class="btn gris" data-nadj="quitar" aria-label="Quitar ' + esc(file.name || 'el archivo') + '">✕ Quitar</button>';
+    box.hidden = false;
+    $('#nuevaAdjBtn').textContent = '📎 Cambiar archivo';
+    avisoNueva('');
+  }
+  function quitarAdjNueva() {
+    if (adjNueva && adjNueva.url) URL.revokeObjectURL(adjNueva.url);
+    adjNueva = null; $('#nuevaAdj').hidden = true; $('#nuevaAdj').innerHTML = '';
+    $('#nuevaAdjBtn').textContent = '📎 Adjuntar';
+  }
+  $('#nuevaAdjunto').accept = ACEPTA;
+  $('#nuevaAdjBtn').addEventListener('click', () => $('#nuevaAdjunto').click());
+  $('#nuevaAdjunto').addEventListener('change', (e) => { const fs = [...e.target.files]; e.target.value = ''; if (fs.length) abrirVistaPrevia(fs, '', false, true); });
+  $('#nuevaAdj').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-nadj]'); if (!b || !adjNueva) return;
+    if (b.dataset.nadj === 'quitar') { quitarAdjNueva(); $('#nuevaAdjBtn').focus(); }
+    else abrirVistaPrevia(adjNueva.file, adjNueva.texto, false, true);
+  });
+  // Ya salió el mensaje: ahora el archivo, por la misma ruta que el 📎 de la charla. Si falla, la charla queda
+  // abierta con el aviso y el archivo cargado en la vista previa, listo para «Enviar» de nuevo.
+  async function mandarAdjNueva(j, adj) {
+    const tel = j.telefono, n = adj.file.name || 'el archivo';
+    $('#wamsg').textContent = 'Salió el mensaje. Mandando ' + n + '…';
+    try {
+      await post(ruta(tel, '/archivo'), { archivo: await leerArchivo(adj.file), texto: adj.texto || '' });
+      bajarAlFinal = true;
+      if (abierta && abierta.telefono === tel) await abrir(tel);
+      await cargar();   // (cargar borra el aviso de arriba: el «Listo» va después)
+      $('#wamsg').textContent = j.modo === 'puente' ? '✅ Listo: el mensaje y «' + n + '» quedaron en la cola del número 2 (salen en ese orden, en menos de un minuto).' : '✅ Listo: le llegaron el mensaje y «' + n + '».';
+    } catch (err) {
+      $('#wamsg').textContent = '';
+      const aviso = 'El mensaje salió, pero «' + n + '» no: ' + seRompioRuta(err);
+      if (err.status === 409 && abierta && abierta.telefono === tel) { abierta.ventana_abierta = false; pintarChat(); }
+      const reintentar = !!(abierta && abierta.telefono === tel && abierta.ventana_abierta);
+      msg(aviso + (reintentar ? ' Quedó listo para mandarlo de nuevo.' : ''));
+      if (reintentar) {
+        abrirVistaPrevia(adj.file, adj.texto, false);
+        $('#archEstado').innerHTML = '<span class="err">' + esc(aviso) + '</span> Tocá Enviar para probar de nuevo.';
+      }
+    }
   }
   nf.addEventListener('input', evaluarNueva);
   $('#nuevaDesde').addEventListener('change', evaluarNueva);
@@ -2178,13 +2275,16 @@
     if (!telParaCharla(nf.telefono.value)) { $('#nuevaMsg').innerHTML = '<span class="err">Revisá el celular: tiene que tener código de área.</span>'; nf.telefono.focus(); return; }
     if (!nf.nombre.value.trim()) { $('#nuevaMsg').innerHTML = '<span class="err">Poné el nombre: así aparece la charla en la lista.</span>'; nf.nombre.focus(); return; }
     if (!nf.texto.value.trim()) { $('#nuevaMsg').innerHTML = '<span class="err">Escribí el mensaje.</span>'; nf.texto.focus(); return; }
-    b.disabled = true; $('#nuevaMsg').textContent = 'Mandando…';
+    const adj = adjNueva ? { file: adjNueva.file, texto: adjNueva.texto } : null;
+    b.disabled = true; $('#nuevaMsg').textContent = adj ? 'Mandando el mensaje (después sale el archivo)…' : 'Mandando…';
     try {
       const j = await post('/api/ventas-sol/nueva', { telefono: nf.telefono.value, nombre: nf.nombre.value, negocio: nf.negocio.value, texto: nf.texto.value, linea: $('#nuevaDesde').value || '' });
       $('#dlgNueva').close();
       $('#wamsg').textContent = j.modo === 'puente' ? '✅ Listo: quedó en la cola del número 2 (sale en menos de un minuto, con una pausa natural).' : '✅ Listo: le llegó el mensaje.';
       bajarAlFinal = true;
-      await cargar(); if (j.telefono) abrir(j.telefono);
+      await cargar();
+      if (j.telefono && adj) { await abrir(j.telefono); await mandarAdjNueva(j, adj); }
+      else if (j.telefono) abrir(j.telefono);
     } catch (err) {
       b.disabled = false;
       if (err.datos && err.datos.plantilla) { evaluarNueva(); $('#nuevaEstado').className = 'estado-n no'; $('#nuevaEstado').innerHTML = '<b>' + esc(err.message) + '</b>'; $('#nuevaProp').hidden = false; $('#nuevaMandar').disabled = true; $('#nuevaMsg').textContent = ''; return; }
