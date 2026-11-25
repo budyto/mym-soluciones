@@ -300,7 +300,7 @@ details.anteriores summary{cursor:pointer;font-weight:700;color:var(--gris);padd
 
   // ---------- 1. Para aprobar ----------
   function pintarAprobar(caja) {
-    caja.append(el('h2', null, 'Para aprobar'), el('p', { class: 'bajada' }, 'Precios, promesas, datos de cobro y datos que se contradicen. El Boti no los dice hasta que alguien los apruebe. Desde el 25/11 el dueño también los aprueba desde su panel, menos los datos de cobro: esos los confirma MyM con el dueño por otro medio y los aprueba acá.'));
+    caja.append(el('h2', null, 'Para aprobar'), el('p', { class: 'bajada' }, 'Precios, promesas, datos de cobro y datos que se contradicen. El Boti no los dice hasta que alguien los apruebe. Desde el 25/11 el dueño también los aprueba desde su panel, incluso los datos de cobro (al aprobar uno confirma que es su cuenta). Si aprobás acá un alias o un CBU, confirmalo antes con el dueño.'));
     if (!datos.pendientes.length) { caja.append(el('p', { class: 'vacio' }, 'No hay nada esperando aprobación.')); return; }
     for (const p of datos.pendientes) caja.append(tarjetaPendiente(p));
   }

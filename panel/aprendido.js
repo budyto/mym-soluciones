@@ -4,10 +4,10 @@
 //   - «Para revisar», con el contador en Inicio («N cosas para revisar»):
 //       · Preguntas que no supo contestar: lo que el Boti no supo responder, agrupado; el dueño escribe la respuesta y
 //         el Boti la aprende (o la saca de la lista).
-//       · Para aprobar: precios, promesas, plazos que el Boti sacó de las charlas. El dueño los aprueba, los cambia o
-//         los descarta. Si nombra un precio que no está en su lista, lo suma a «Tus precios» en el mismo toque.
-//       · MyM lo está confirmando: los datos de cobro (alias, CBU, cuentas, links de pago). Sólo se miran: los aprueba
-//         MyM después de confirmarlos con el dueño por otro medio.
+//       · Para aprobar: precios, promesas, plazos y datos de cobro que el Boti sacó de las charlas, cada uno con de
+//         dónde salió (quién lo dijo, a quién y cuándo, con «Ver la charla»). El dueño los aprueba, los cambia o los
+//         descarta. Si nombra un precio que no está en su lista, lo suma a «Tus precios» en el mismo toque. Un dato de
+//         cobro (alias, CBU, cuentas, links de pago) es suyo: al aprobarlo confirma que es su cuenta (Budy, 25/11).
 //   - Lo que ya usa (por tema, con la fecha y de dónde salió; se deshace con un toque) y lo que ya no usa.
 //   - En cada respuesta del Boti en una charla: «👎 Está mal, corregir» → «¿Qué tendría que haber dicho?».
 // El servidor (plataforma-bots/servidor/aprendizaje.js) decide qué negocio ve cada sesión y qué puede aprobar:
@@ -25,7 +25,7 @@
   const API = String((local && new URLSearchParams(location.search).get('api')) || cfg.plataformaApi || '').replace(/\/+$/, '');
   const $ = (s) => document.querySelector(s);
   if (!API || !$('#v-panel')) return;
-  const css = document.createElement('link'); css.rel = 'stylesheet'; css.href = 'aprendido.css?v=202611251800'; document.head.appendChild(css);
+  const css = document.createElement('link'); css.rel = 'stylesheet'; css.href = 'aprendido.css?v=202611252100'; document.head.appendChild(css);
 
   function el(etiqueta, attrs, ...hijos) {
     const e = document.createElement(etiqueta);
@@ -134,8 +134,7 @@
       if (!seccion.hidden && !escribiendo) { pintar(); irAlFoco(); }
     } catch (e) { if (!seccion.hidden && !datos) { vaciar(seccion); seccion.append(cabecera(), el('p', { class: 'aviso mal' }, e.message)); } }
   }
-  const paraAprobar = () => datos.pendientes.filter((p) => !p.esperaMyM);
-  const enMyM = () => datos.pendientes.filter((p) => p.esperaMyM);
+  const paraAprobar = () => datos.pendientes;
   function pintarContadores() {
     const preg = (datos.preguntas || []).length; const apr = paraAprobar().length; const total = preg + apr; const u = datos.aprendido.length;
     vaciar(cuentaInicio); vaciar(detalleInicio);
@@ -150,7 +149,6 @@
       cuentaInicio.append('Nada para revisar');
       detalleInicio.append(u ? `Tu Boti está al día y ya usa ${plural(u, 'dato que aprendió', 'datos que aprendió')} de tus charlas.` : 'Tu Boti aprende de lo que contestás a mano y de las respuestas que le corregís.');
     }
-    if (enMyM().length) detalleInicio.append(` En MyM estamos confirmando ${plural(enMyM().length, 'dato de cobro', 'datos de cobro')} con vos.`);
     botonInicio.hidden = total === 0;
     linkBot.textContent = u ? `Ver lo que aprendió solo (${u})` : 'Ver lo que aprendió solo';
     globo.hidden = total === 0; globo.textContent = total > 99 ? '99+' : String(total); globo.title = total === 1 ? '1 cosa para revisar' : `${total} cosas para revisar`;
@@ -158,12 +156,12 @@
   const cabecera = () => el('div', null,
     el('button', { class: 'btn-chico apr-volver', type: 'button', onclick: volver }, '← Volver'),
     el('div', { class: 'tarjeta' }, el('h2', { class: 'titulo' }, 'Lo que aprendió tu Boti'),
-      el('p', { class: 'paso', style: 'margin:0' }, 'Tu Boti aprende de lo que contestás a mano, de las respuestas que le corregís y de tus charlas anteriores. Lo que tenga precios o promesas no lo dice hasta que lo apruebes vos. Los datos de cobro los confirmamos en MyM con vos.')));
+      el('p', { class: 'paso', style: 'margin:0' }, 'Tu Boti aprende de lo que contestás a mano, de las respuestas que le corregís y de tus charlas anteriores. Lo que tenga precios, promesas o datos de cobro no lo dice hasta que lo apruebes vos.')));
 
   const ORIGEN = { historial: 'De tus charlas anteriores', app: 'De lo que contestaste desde el celular', panel: 'De lo que contestaste desde acá', correccion: 'De una respuesta corregida', pregunta: 'De una pregunta que contestaste' };
   const TEMAS = [['horarios', 'Horarios'], ['zonas', 'Zonas'], ['servicios', 'Qué hacés y qué no'], ['como', 'Cómo se pide o se hace'], ['pagos', 'Pagos'], ['precios', 'Precios'], ['promesa', 'Promesas y condiciones'], ['tono', 'Cómo habla'], ['otro', 'Otros datos']];
   // El motivo, en palabras del dueño (el servidor lo dice como lo lee MyM).
-  const MOTIVO = { 'nombra plata': 'nombra un precio', 'es un precio o una promesa': 'es un precio o una promesa', 'habla de promociones, descuentos o cuotas': 'habla de promociones, descuentos o cuotas', 'promete un plazo': 'promete un plazo', 'habla de garantías o promete algo': 'promete algo (garantía, stock o una reserva)' };
+  const MOTIVO = { 'nombra plata': 'nombra un precio', 'es un precio o una promesa': 'es un precio o una promesa', 'habla de promociones, descuentos o cuotas': 'habla de promociones, descuentos o cuotas', 'promete un plazo': 'promete un plazo', 'habla de garantías o promete algo': 'promete algo (garantía, stock o una reserva)', 'da datos de cobro o de pago (alias, CBU, cuenta, titular o link de pago)': 'es un dato de cobro (alias, CBU, cuenta o link de pago)' };
   const motivo = (r) => MOTIVO[r] || (/contradic/.test(r || '') ? 'dice algo distinto de lo que tu Boti ya sabe' : r || 'es un precio o una promesa');
   const fechaDe = (a) => (a.dicho ? `Dicho el ${dia(a.dicho)}` : a.aprobado ? `Aprobado el ${dia(a.aprobado)}` : `Desde el ${dia(a.cuando)}`);
 
@@ -173,7 +171,7 @@
   function pintar() {
     vaciar(seccion); seccion.append(cabecera());
     if (!datos || datosDe !== cliente()) { seccion.append(el('p', { class: 'apr-vacio' }, 'Cargando…')); return; }
-    const preguntas = datos.preguntas || []; const aprobar = paraAprobar(); const myM = enMyM();
+    const preguntas = datos.preguntas || []; const aprobar = paraAprobar();
     // 1. Para revisar.
     const rev = el('div', { class: 'tarjeta apr-revisar', id: 'apr-revisar' }); seccion.append(rev);
     rev.append(el('h2', { class: 'apr-tit' }, 'Para revisar', el('span', { class: 'apr-num' }, String(preguntas.length + aprobar.length))));
@@ -187,13 +185,6 @@
       rev.append(el('h3', { class: 'apr-sub' }, 'Para aprobar', el('span', null, String(aprobar.length))),
         el('p', { class: 'apr-nota' }, 'Tu Boti sacó esto de tus charlas, pero todavía no lo dice. Si está bien, aprobalo. Si no, cambialo o descartalo.'));
       for (const p of aprobar) rev.append(tarjetaAprobar(p));
-    }
-    // 2. Lo que confirma MyM (datos de cobro): sólo se mira.
-    if (myM.length) {
-      const c = el('div', { class: 'tarjeta apr-mym' }); seccion.append(c);
-      c.append(el('h3', { class: 'apr-sub', style: 'margin-top:0' }, 'MyM lo está confirmando', el('span', null, String(myM.length))),
-        el('p', { class: 'apr-nota' }, 'Son datos de cobro: alias, CBU, cuentas o links de pago. Para que nadie pueda cambiarlos desde acá, te los confirmamos por WhatsApp o por teléfono antes de que tu Boti los diga.'));
-      for (const p of myM) c.append(el('article', { class: 'apr-dato' }, par(p), el('div', { class: 'apr-pie' }, el('p', { class: 'apr-estado-mym' }, 'MyM lo está confirmando'), el('p', null, fechaDe(p) + '.'))));
     }
     // 3. Lo que ya usa, por tema.
     const caja = el('div', { class: 'tarjeta', id: 'apr-usa' }); seccion.append(caja);
@@ -241,6 +232,34 @@
     return art;
   }
 
+  // De dónde salió un dato para aprobar, en palabras del dueño (Budy, 25/11: «¿en base a qué dato dice que vale 38 mil?»).
+  function deDonde(p) {
+    const t = p.origen && p.origen.tipo; const a = p.charla && p.charla.nombre ? ` a ${p.charla.nombre}` : p.charla ? ' a un cliente' : '';
+    const f = cuando(p.dicho || p.cuando);
+    const txt = t === 'app' ? `Lo escribiste vos desde el celular${a}, ${f}.`
+      : t === 'panel' ? `Lo escribiste vos desde este panel${a}, ${f}.`
+      : t === 'correccion' ? `Lo escribiste al corregir una respuesta de tu Boti, ${f}.`
+      : t === 'pregunta' ? `Lo escribiste al contestar una pregunta que tu Boti no supo, ${f}.`
+      : p.dicho ? `Salió de tus charlas anteriores de WhatsApp: lo dijiste ${f}.` : 'Salió de tus charlas anteriores de WhatsApp.';
+    const ver = p.charla && p.charla.id ? el('button', { class: 'btn-chico apr-ver', type: 'button', onclick: () => irACharla(p.charla.id) }, 'Ver la charla') : null;
+    return el('div', { class: 'apr-origen' }, el('p', null, el('b', null, 'De dónde salió: '), txt, p.veces > 1 ? ` Apareció ${p.veces} veces.` : ''), ver);
+  }
+  function irACharla(id) {
+    cerrar(false); const b = $('.pestanas [data-seccion="charlas"]'); if (b) b.click();
+    setTimeout(() => { location.hash = 'charla=' + encodeURIComponent(id); }, 0);
+  }
+  // Un dato de cobro: antes de aprobarlo, el dueño confirma que es su cuenta.
+  const confirmarCobro = (texto) => confirmar('¿Es tu cuenta?', `Tu Boti le va a pasar «${String(texto).slice(0, 160)}» a los clientes que pregunten cómo pagarte. Aprobalo sólo si es tu cuenta y está bien escrito: si está mal, la plata va a otro lado.`, 'Sí, es mi cuenta');
+  // Manda la decisión; si el servidor avisa que es un dato de cobro, pregunta y la vuelve a mandar confirmada.
+  async function mandarResolver(p, cuerpo, texto) {
+    try { return await api('/api/panel/aprendido/resolver', { aprendizaje: p.id, ...cuerpo }); }
+    catch (e) {
+      if (!(e.datos && e.datos.cobro) || cuerpo.confirmoCobro) throw e;
+      if (!(await confirmarCobro(texto))) throw Object.assign(new Error(''), { cancelado: true });
+      return api('/api/panel/aprendido/resolver', { aprendizaje: p.id, ...cuerpo, confirmoCobro: true });
+    }
+  }
+
   // Un dato para aprobar: aprobar, cambiar o descartar. Con un precio que no está en su lista, «Sumarlo a mis precios».
   function tarjetaAprobar(p) {
     const error = el('p', { class: 'error', role: 'alert' });
@@ -250,7 +269,8 @@
     const cambiar = el('button', { class: 'btn sec', type: 'button' }, 'Cambiar');
     const descartar = el('button', { class: 'btn-chico', type: 'button' }, 'Descartar');
     const botones = el('div', { class: 'apr-btns' }, aprobar, cambiar, descartar);
-    const pie = el('div', { class: 'apr-pie' }, el('p', null, fechaDe(p) + (p.veces > 1 ? `. Apareció ${p.veces} veces.` : '.')));
+    const pie = el('div', { class: 'apr-pie' }, deDonde(p));
+    if (p.cobro) pie.append(el('p', { class: 'apr-cobro' }, el('b', null, 'Es un dato de cobro.'), ' Fijate que sea tu cuenta y que esté bien escrito: tu Boti se lo va a pasar a los clientes que te quieran pagar.'));
     if (p.contradice) pie.append(el('p', { class: 'apr-hoy' }, 'Hoy tu Boti dice: ', el('q', null, p.contradice.respuesta)));
     if (monto) pie.append(el('p', { class: 'apr-precio' }, el('b', null, `${pesos(monto)} no está en tus precios.`), ' Tu Boti sólo dice los precios de tu lista. Si es el precio correcto, lo sumamos a «Tus precios» al aprobar.'));
     pie.append(botones, error);
@@ -258,9 +278,11 @@
     const todos = [aprobar, cambiar, descartar]; const trabar = (v) => todos.forEach((b) => { b.disabled = v; });
     const resolver = async (cuerpo, okTexto) => {
       trabar(true); error.textContent = '';
-      try { await api('/api/panel/aprendido/resolver', { aprendizaje: p.id, ...cuerpo }); hecho(art, okTexto, false); refrescarLuego(); }
-      catch (e) {
-        trabar(false);
+      try {
+        if (p.cobro && cuerpo.decision === 'aprobar') { if (!(await confirmarCobro(p.respuesta))) { trabar(false); return; } cuerpo = { ...cuerpo, confirmoCobro: true }; }
+        await mandarResolver(p, cuerpo, p.respuesta); hecho(art, okTexto, false); refrescarLuego();
+      } catch (e) {
+        trabar(false); if (e.cancelado) return;
         // Cambió el texto y ahora nombra otro precio: se ofrece sumarlo.
         if (e.datos && e.datos.montoFuera && !cuerpo.sumarPrecio) { error.textContent = e.message; aprobar.textContent = `Sumar ${pesos(e.datos.montoFuera)} a mis precios y aprobar`; p.montoFuera = e.datos.montoFuera; }
         else error.textContent = e.message;
@@ -281,15 +303,15 @@
       guardar.addEventListener('click', async () => {
         const v = t.value.trim(); if (!v) { error.textContent = 'Escribí la respuesta.'; return; }
         guardar.disabled = true; error.textContent = '';
-        try { await api('/api/panel/aprendido/resolver', { aprendizaje: p.id, decision: 'aprobar', respuesta: v }); hecho(art, 'Listo: tu Boti ya contesta así.', false); refrescarLuego(); }
+        try { await mandarResolver(p, { decision: 'aprobar', respuesta: v }, v); hecho(art, 'Listo: tu Boti ya contesta así.', false); refrescarLuego(); }
         catch (e) {
-          guardar.disabled = false; error.textContent = e.message;
+          guardar.disabled = false; if (e.cancelado) return; error.textContent = e.message;
           if (e.datos && e.datos.montoFuera) {
             const sumar = el('button', { class: 'btn sec', type: 'button' }, `Sumar ${pesos(e.datos.montoFuera)} a mis precios y aprobar`);
             sumar.addEventListener('click', async () => {
               sumar.disabled = true;
-              try { await api('/api/panel/aprendido/resolver', { aprendizaje: p.id, decision: 'aprobar', respuesta: v, sumarPrecio: true }); hecho(art, `Listo: sumamos ${pesos(e.datos.montoFuera)} a tus precios y tu Boti ya lo dice.`, false); refrescarLuego(); }
-              catch (e2) { sumar.disabled = false; error.textContent = e2.message; }
+              try { await mandarResolver(p, { decision: 'aprobar', respuesta: v, sumarPrecio: true }, v); hecho(art, `Listo: sumamos ${pesos(e.datos.montoFuera)} a tus precios y tu Boti ya lo dice.`, false); refrescarLuego(); }
+              catch (e2) { sumar.disabled = false; if (!e2.cancelado) error.textContent = e2.message; }
             });
             const fila = f.querySelector('.apr-btns'); if (fila && !fila.querySelector('.btn.sec')) fila.prepend(sumar);
           }

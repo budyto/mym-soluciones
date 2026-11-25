@@ -78,10 +78,10 @@
 .apr-hoy q{font-style:italic}
 .apr-resuelto{border-color:#bfe6d6;background:#f3fbf8}
 .apr-resuelto .apr-hecho{margin:0;padding:14px 16px;background:none;font-size:16px}
-.apr-mym{margin-bottom:16px}
-.apr-mym .apr-dato{border-style:dashed}
-.apr-estado-mym{display:inline-flex;align-items:center;gap:7px;font:700 14.5px Archivo,sans-serif;color:#33456e!important;background:var(--suave);border-radius:99px;padding:4px 12px}
-.apr-estado-mym::before{content:"";width:8px;height:8px;border-radius:50%;background:#7d93c8}
+.apr-origen{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;width:100%}
+.apr-origen p{margin:0;font-size:15.5px;color:var(--ink)!important;flex:1 1 260px}
+.apr-origen .apr-ver{min-height:38px;padding:6px 12px;font-size:14.5px}
+.apr-pie .apr-cobro{background:var(--suave);color:#22325a;border-radius:12px;padding:9px 12px}
 
 @media (max-width:899px){
   .apr-pie .apr-btns .btn{flex:1 1 auto}
