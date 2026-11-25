@@ -6,6 +6,12 @@
 <meta name="robots" content="noindex, nofollow">
 <title>WhatsApp · MyM Soluciones</title>
 <link rel="icon" href="../img/favicon.png" type="image/png">
+<!-- Instalable como app (25/11/2026): con el manifest y el service worker de admin/ se agrega a la pantalla de inicio
+     y recibe los avisos con el panel cerrado. -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#2f6bff">
+<link rel="apple-touch-icon" href="../img/icono-192.png">
+<meta name="apple-mobile-web-app-title" content="WhatsApp MyM">
 <!-- EL PANEL DEL WHATSAPP DE MyM SOLUCIONES (30/10/2026): las charlas del 11 3366-2080, que atiende
      el robot de ventas en el server de MyM (ventas-sol.js de AppMyM). Desde el 12/11/2026 se entra
      con Google (admin/acceso.js) y sólo las cuentas de VENTAS_SOL_PANEL_EMAILS; antes era una clave
@@ -388,6 +394,103 @@
     .escribir .adj { padding: 10px; }
     .cerrada { margin: 8px; }
   }
+
+  /* ============ Como WhatsApp, tanda 2 (25/11/2026, Budy) ============ */
+  /* La lista que sigue cargando al bajar */
+  .lista-pie { flex: 0 0 auto; text-align: center; font-size: 12px; color: var(--gris-2); padding: 10px 0 14px; }
+  .lista-pie button { border: 1px solid var(--borde); background: #fff; color: var(--azul-t); border-radius: 999px; padding: 5px 14px; font: 600 12.5px Archivo, system-ui, sans-serif; cursor: pointer; }
+  /* Lupa de la cabecera y la barra de búsqueda dentro de la charla */
+  .wa-cab .ico-btn { flex: 0 0 auto; width: 36px; height: 36px; padding: 0; justify-content: center; font-size: 15px; }
+  #buscarBar { display: flex; align-items: center; gap: 6px; background: #fff; border: 1.5px solid var(--azul); border-radius: 12px; padding: 4px 6px 4px 12px; flex: 0 0 auto; }
+  #buscarBar input { flex: 1; min-width: 0; border: 0; outline: none; background: none; padding: 6px 0; font-size: 14px; }
+  #buscarBar .cuenta { font-size: 12px; color: var(--gris); white-space: nowrap; min-width: 52px; text-align: right; }
+  #buscarBar button { border: 0; background: var(--fondo); color: var(--ink); width: 32px; height: 32px; border-radius: 9px; cursor: pointer; font-size: 14px; flex: 0 0 auto; }
+  #buscarBar button:disabled { opacity: .35; cursor: default; }
+  #buscarBar button:focus-visible { outline: 2px solid var(--azul); }
+  mark.wa-hl { background: #ffe27a; color: #2a2100; border-radius: 3px; padding: 0 1px; }
+  mark.wa-hl.actual { background: #ff9d2e; color: #1c1200; box-shadow: 0 0 0 2px #ff9d2e; }
+  .wa-b.destello { animation: destello 1.4s ease-out; }
+  @keyframes destello { 0%, 30% { box-shadow: 0 0 0 4px rgba(255,157,46,.75); } 100% { box-shadow: 0 0 0 0 rgba(255,157,46,0); } }
+  /* Elegir varios mensajes: el círculo a la izquierda y la barra con las acciones arriba */
+  #msgs.eligiendo .wa-b { cursor: pointer; }
+  #msgs.eligiendo .wa-b::before { content: ""; position: absolute; top: 50%; width: 20px; height: 20px; margin-top: -10px; border-radius: 50%; border: 2px solid #9aa7c2; background: #fff; box-sizing: border-box; }
+  #msgs.eligiendo .wa-cliente::before { left: -30px; } #msgs.eligiendo .wa-robot::before, #msgs.eligiendo .wa-humano::before { left: -30px; }
+  #msgs.eligiendo .wa-cliente { margin-left: 30px; }
+  #msgs.eligiendo .wa-b.sel::before { background: var(--verde); border-color: var(--verde); box-shadow: inset 0 0 0 3px #fff; }
+  #msgs.eligiendo .wa-b.sel { box-shadow: 0 0 0 2px var(--verde); }
+  #msgs.eligiendo .wa-b.no-elegible { opacity: .45; cursor: default; }
+  #msgs.eligiendo .wa-b.no-elegible::before { display: none; }
+  #msgs.eligiendo .wa-resp, #msgs.eligiendo .wa-reac-btn { display: none; }
+  #selBar { display: flex; align-items: center; gap: 6px; background: var(--ink); color: #fff; border-radius: 12px; padding: 5px 6px 5px 8px; flex: 0 0 auto; }
+  #selBar b { flex: 1; font-size: 14px; }
+  #selBar button { border: 0; background: rgba(255,255,255,.12); color: #fff; height: 36px; min-width: 36px; padding: 0 11px; border-radius: 10px; cursor: pointer; font: 600 13px Archivo, system-ui, sans-serif; display: inline-flex; align-items: center; gap: 5px; }
+  #selBar button:hover:not(:disabled) { background: rgba(255,255,255,.22); }
+  #selBar button:disabled { opacity: .4; cursor: default; }
+  #selBar button:focus-visible { outline: 2px solid var(--agua); }
+  /* Reacciones: la pastillita debajo de la burbuja, como en WhatsApp */
+  .wa-b.con-reac { margin-bottom: 14px; }
+  .wa-reacs { position: absolute; bottom: -15px; display: inline-flex; gap: 1px; align-items: center; background: #fff; border: 1px solid var(--borde); border-radius: 999px; padding: 1px 6px; font-size: 14px; line-height: 20px; box-shadow: 0 2px 6px rgba(14,26,51,.12); white-space: nowrap; cursor: default; }
+  .wa-cliente .wa-reacs { left: 8px; } .wa-robot .wa-reacs, .wa-humano .wa-reacs { right: 8px; }
+  .wa-reac-btn { position: absolute; top: 4px; border: 0; background: #fff; color: var(--gris); border-radius: 999px; width: 26px; height: 26px; font-size: 14px; cursor: pointer; box-shadow: 0 2px 8px rgba(14,26,51,.18); opacity: 0; transition: opacity .12s; }
+  .wa-cliente .wa-reac-btn { right: -62px; } .wa-robot .wa-reac-btn, .wa-humano .wa-reac-btn { left: -62px; }
+  .wa-cliente:not(:has(.wa-resp)) .wa-reac-btn { right: -32px; } .wa-robot:not(:has(.wa-resp)) .wa-reac-btn, .wa-humano:not(:has(.wa-resp)) .wa-reac-btn { left: -32px; }
+  .wa-b:hover .wa-reac-btn, .wa-reac-btn:focus-visible { opacity: 1; }
+  @media (hover: none) { .wa-reac-btn { display: none; } }
+  .ctx-emojis { display: flex; gap: 2px; padding: 4px 4px 8px; border-bottom: 1px solid var(--borde); margin-bottom: 4px; justify-content: space-between; }
+  .ctx-emojis button { border: 0; background: none; font-size: 22px; line-height: 1; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; }
+  .ctx-emojis button:hover, .ctx-emojis button:focus-visible { background: #eef3ff; outline: none; }
+  .ctx-emojis button[aria-pressed="true"] { background: #dfe8ff; box-shadow: inset 0 0 0 2px var(--azul); }
+  .ctx.hoja .ctx-emojis button { width: 44px; height: 44px; font-size: 26px; }
+  /* Destacado y reenviado */
+  .wa-est { font-size: 11px; margin-right: 3px; }
+  .wa-reenv { display: block; font-size: 11.5px; font-style: italic; opacity: .78; margin-bottom: 2px; }
+  #waDest { position: absolute; top: 0; right: 0; bottom: 0; width: min(340px, 100%); background: #fff; border-left: 1px solid var(--borde); padding: 14px; z-index: 6; box-shadow: -12px 0 28px rgba(14,26,51,.12); display: flex; flex-direction: column; gap: 8px; }
+  #waDest .tit { display: flex; align-items: center; gap: 8px; }
+  #waDest .tit h2 { flex: 1; margin: 0; font-size: 15px; }
+  #waDest .lista { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 6px; }
+  #waDest .item { text-align: left; border: 1px solid var(--borde); background: var(--fondo); border-radius: 12px; padding: 8px 10px; cursor: pointer; display: grid; gap: 3px; font: inherit; color: inherit; }
+  #waDest .item:hover, #waDest .item:focus-visible { border-color: var(--azul); outline: none; }
+  #waDest .item small { color: var(--gris); font-size: 11.5px; }
+  #waDest .item span { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; white-space: pre-wrap; font-size: 13px; }
+  /* Reenviar a otra charla */
+  #reenvBuscar { width: 100%; }
+  #reenvLista { display: grid; gap: 4px; max-height: min(46vh, 380px); overflow-y: auto; margin: 0 -4px; padding: 0 4px; }
+  #reenvLista button { display: flex; align-items: center; gap: 10px; text-align: left; border: 1px solid transparent; background: none; border-radius: 12px; padding: 6px 8px; cursor: pointer; font: inherit; color: inherit; }
+  #reenvLista button:hover:not(:disabled), #reenvLista button:focus-visible { background: #eef3ff; outline: none; }
+  #reenvLista button[aria-pressed="true"] { border-color: var(--azul); background: #eef3ff; }
+  #reenvLista button:disabled { opacity: .5; cursor: default; }
+  #reenvLista .q { flex: 1; min-width: 0; display: grid; }
+  #reenvLista .q b, #reenvLista .q small { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #reenvLista .q small { color: var(--gris); font-size: 12px; }
+  /* Varias fotos en la vista previa: la tira de miniaturas */
+  .arch-tira { display: flex; gap: 8px; padding: 6px 12px 2px; overflow-x: auto; scrollbar-width: none; flex: 0 0 auto; }
+  .arch-tira::-webkit-scrollbar { display: none; }
+  .arch-tira .mini { position: relative; flex: 0 0 auto; width: 58px; height: 58px; border-radius: 10px; overflow: hidden; border: 2px solid transparent; background: rgba(255,255,255,.1); cursor: pointer; padding: 0; display: grid; place-items: center; color: #fff; font-size: 22px; }
+  .arch-tira .mini img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .arch-tira .mini.on { border-color: var(--agua); }
+  .arch-tira .mini .x { position: absolute; top: 2px; right: 2px; width: 20px; height: 20px; border-radius: 50%; background: rgba(6,12,24,.75); color: #fff; font-size: 11px; display: grid; place-items: center; border: 0; cursor: pointer; padding: 0; }
+  .arch-tira .mas { flex: 0 0 auto; width: 58px; height: 58px; border-radius: 10px; border: 2px dashed rgba(255,255,255,.4); background: none; color: #fff; font-size: 24px; cursor: pointer; display: grid; place-items: center; }
+  .arch-tira .mas input { display: none; }
+  #archEstado { font: 600 12.5px Archivo, system-ui, sans-serif; color: rgba(255,255,255,.8); padding: 0 14px; min-height: 0; }
+  #archEstado:empty { display: none; }
+  .escribir .cam { display: none; }
+  @media (hover: none) and (pointer: coarse) { .escribir .cam { display: inline-flex; } }
+  .escribir .cam input { display: none; }
+  /* Deslizar para responder (celular) */
+  @media (hover: none) { #msgs .wa-b { touch-action: pan-y; } }
+  .wa-b.deslizando { transition: none; }
+  .wa-b.volviendo { transition: transform .18s ease-out; }
+  .desliza-ico { position: absolute; top: 50%; left: -34px; margin-top: -14px; width: 28px; height: 28px; border-radius: 50%; background: #fff; color: var(--azul-t); display: grid; place-items: center; font-size: 15px; box-shadow: 0 2px 8px rgba(14,26,51,.2); opacity: 0; pointer-events: none; }
+  /* Avisos en este celular */
+  #dlgAvisos .opcion { display: flex; gap: 10px; align-items: flex-start; font-weight: 400; border: 1.5px solid var(--borde); border-radius: 12px; padding: 10px 12px; cursor: pointer; grid-template-columns: none; }
+  #dlgAvisos .opcion:has(input:checked) { border-color: var(--azul); background: #eef3ff; }
+  #dlgAvisos .opcion input { width: auto; margin-top: 3px; }
+  #dlgAvisos .opcion span { display: grid; gap: 2px; }
+  #dlgAvisos .opcion b { font-size: 14px; }
+  #dlgAvisos .opcion small { color: var(--gris); font-size: 12.5px; }
+  .wa-aviso-flot { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom)); transform: translateX(-50%); z-index: 95; background: var(--ink); color: #fff; border-radius: 999px; padding: 9px 16px; font: 600 13px Archivo, system-ui, sans-serif; box-shadow: 0 10px 26px rgba(14,26,51,.3); display: flex; gap: 10px; align-items: center; max-width: calc(100vw - 32px); }
+  .wa-aviso-flot button { border: 0; background: none; color: #7fe3d4; font: 700 13px Archivo, system-ui, sans-serif; cursor: pointer; padding: 0; }
+  @media (prefers-reduced-motion: reduce) { .wa-b.destello { animation: none; outline: 3px solid #ff9d2e; } .wa-b.volviendo { transition: none; } }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Martian+Mono:wght@500&display=swap" rel="stylesheet">
@@ -407,7 +510,7 @@
       <button class="btn gris" id="puenteBtn" type="button" hidden title="El segundo número de WhatsApp (por el puente): estado y QR para vincularlo"><span class="pt"></span>📱<span class="wa-lbl"> Número 2</span></button>
       <button class="btn" id="nuevaBtn" type="button" title="Escribirle a alguien que no está en la lista">💬<span class="wa-lbl"> Nueva charla</span></button>
       <button class="btn" id="propuestaBtn" type="button" title="Mandarle la propuesta en PDF a un cliente, aunque no haya escrito">📄<span class="wa-lbl"> Mandar propuesta</span></button>
-      <button class="btn gris" id="avisos" type="button" hidden title="Que el navegador avise cuando entra un mensaje">🔔<span class="wa-lbl"> Activar avisos</span></button>
+      <button class="btn gris" id="avisos" type="button" title="Avisos en este celular o compu, aunque el panel esté cerrado">🔔<span class="wa-lbl"> Avisos</span></button>
       <button class="btn gris" id="sonido" type="button" title="Sonido cuando escribe un cliente">🔊<span class="wa-lbl"> Sonido</span></button>
       <button class="btn" id="pausar" type="button" title="Pausar o prender TODAS las respuestas automáticas del robot">⏸️<span class="wa-lbl"> Pausar bot</span></button>
       <button class="btn gris" id="warecargar" type="button" title="Actualizar">↻</button>
@@ -492,14 +595,44 @@
   </div>
 </dialog>
 <!-- Vista previa antes de mandar un archivo (25/11/2026, Budy), como en WhatsApp: la foto, el video, el audio o la
-     primera hoja del PDF, el texto que lo acompaña y «Enviar». -->
+     primera hoja del PDF, el texto que lo acompaña y «Enviar». Desde la tanda 2, varias a la vez: una tira de
+     miniaturas abajo (cada una con su texto, ✕ para sacarla y ＋ para sumar más). -->
 <dialog id="dlgArch" aria-labelledby="archNombre">
   <div class="arch-cab"><button type="button" id="archCerrar" aria-label="Cancelar">✕</button><b id="archNombre">Archivo</b></div>
   <div id="archVista"></div>
+  <div class="arch-tira" id="archTira" role="listbox" aria-label="Archivos para mandar"></div>
+  <p id="archEstado" aria-live="polite"></p>
   <form id="archForm">
     <input id="archTexto" placeholder="Agregá un texto…" maxlength="1000" autocomplete="off" aria-label="Texto que acompaña al archivo">
     <button class="redondo" type="submit" id="archMandar" aria-label="Enviar" title="Enviar"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.4 20.4 21 12 3.4 3.6v6.6l12.6 1.8-12.6 1.8z"/></svg></button>
   </form>
+</dialog>
+<!-- Reenviar a otra charla (25/11/2026, Budy). -->
+<dialog id="dlgReenv" class="dlg" aria-labelledby="reenvTit">
+  <div class="in">
+    <h2 id="reenvTit">↪ Reenviar</h2>
+    <p class="ayuda" id="reenvQue"></p>
+    <input id="reenvBuscar" type="search" placeholder="Buscar la charla por nombre, negocio o teléfono" autocomplete="off" aria-label="Buscar la charla">
+    <div id="reenvLista" role="listbox" aria-label="Charlas"></div>
+    <p id="reenvMsg" class="ayuda" aria-live="polite"></p>
+    <div class="acc"><button class="btn gris" type="button" id="reenvCerrar">Cancelar</button><button class="btn" type="button" id="reenvMandar" disabled>Reenviar</button></div>
+  </div>
+</dialog>
+<!-- Avisos con el panel cerrado (25/11/2026, Budy): Web Push desde el server de MyM. -->
+<dialog id="dlgAvisos" class="dlg" aria-labelledby="avisosTit">
+  <div class="in">
+    <h2 id="avisosTit">🔔 Avisos en este equipo</h2>
+    <div id="avisosEstado" class="estado-n" aria-live="polite">Revisando…</div>
+    <label class="opcion"><input type="radio" name="avisoModo" value="humano" checked><span><b>Sólo las que piden a una persona</b><small>Cuando el robot deriva una charla o le escribe alguien que atiende el equipo.</small></span></label>
+    <label class="opcion"><input type="radio" name="avisoModo" value="todas"><span><b>Todos los mensajes</b><small>Cada vez que escribe un cliente, aunque lo atienda el robot.</small></span></label>
+    <p id="avisosMsg" class="ayuda" aria-live="polite"></p>
+    <div class="acc">
+      <button class="btn gris" type="button" id="avisosCerrar">Cerrar</button>
+      <button class="btn gris" type="button" id="avisosBaja" hidden>Apagar</button>
+      <button class="btn gris" type="button" id="avisosProbar" hidden>Mandar uno de prueba</button>
+      <button class="btn" type="button" id="avisosActivar">Activar los avisos</button>
+    </div>
+  </div>
 </dialog>
 <div id="ctxVelo" hidden></div>
 <div class="ctx" id="ctxMenu" role="menu" hidden></div>
@@ -546,6 +679,9 @@
   // La Bandeja (17/11/2026): filtro por etiqueta, el mensaje que se está citando y la firma de las burbujas
   // (si no cambió nada, el refresco no vuelve a dibujarlas: así no se corta un audio que se está escuchando).
   let etq = '', respondiendo = null;
+  // Tanda 2 (25/11/2026, Budy: «que se sienta como WhatsApp»): la lista de a páginas (`paginas` dice si el server ya
+  // las sabe dar), las archivadas aparte, la búsqueda dentro de la charla y los mensajes elegidos.
+  let siguiente = '', paginas = false, cargandoMas = false, archivadas = null, eligiendo = null, busqueda = null;
 
   // 12/11/2026: se entra con Google (acceso.js). Cada pedido lleva el token de Google y el server de MyM
   // verifica la cuenta. Antes era una clave compartida guardada en la pestaña.
@@ -621,10 +757,17 @@
     archivadas: (c) => !!c.archivada,
   };
   // Las archivadas (25/11/2026) no cuentan en la bandeja: sólo en su pestaña. Vuelven solas si el cliente escribe.
+  // Con el server nuevo ni siquiera vienen en la lista (no ocupan lugar de las 50): se piden aparte al abrir la pestaña.
   const enBandeja = () => charlas.filter((c) => !c.archivada);
+  const listaArchivadas = () => (paginas ? (archivadas || []) : charlas.filter((c) => !!c.archivada));
+  async function cargarArchivadas() {
+    if (!paginas) return;
+    try { archivadas = (await pedir('/api/ventas-sol/charlas?vista=archivadas')).charlas || []; pintarCharlas(); }
+    catch (e) { msg('No se pudieron leer las archivadas: ' + seRompioRuta(e)); }
+  }
   function pintarTabs() {
     const bandeja = enBandeja();
-    const n = (f) => (f === 'archivadas' ? charlas : bandeja).filter(FILTRO[f]).length;
+    const n = (f) => (f === 'archivadas' ? listaArchivadas() : bandeja).filter(FILTRO[f]).length;
     const tab = (f, txt, cls) => '<button type="button" class="wa-tab ' + (cls || '') + (filtro === f && !etapa && !etq ? ' on' : '') + '" data-filtro="' + f + '">' + txt + '</button>';
     // Las etiquetas internas (17/11/2026): un chip por etiqueta, con cuántas charlas la tienen.
     const porEtq = {}; bandeja.forEach((c) => (c.etiquetas || []).forEach((e) => { const k = e.toLowerCase(); porEtq[k] = porEtq[k] || { txt: e, n: 0 }; porEtq[k].n++; }));
@@ -639,17 +782,18 @@
       + Object.keys(ETAPAS).filter((k) => porEtapa[k]).map((k) => '<button type="button" class="wa-tab' + (etapa === k ? ' on' : '') + '" data-etapa="' + esc(k) + '">' + esc(ETAPAS[k]) + ' · ' + porEtapa[k] + '</button>').join('')
       + (n('sin_whatsapp') ? tab('sin_whatsapp', 'Sin WhatsApp · ' + n('sin_whatsapp'), 'rojo') : '')
       + tabsEtq
-      + (n('archivadas') || filtro === 'archivadas' ? tab('archivadas', '🗄 Archivadas · ' + n('archivadas')) : '');
+      + (paginas ? tab('archivadas', '🗄 Archivadas' + (archivadas ? ' · ' + archivadas.length : ''))
+        : (n('archivadas') || filtro === 'archivadas' ? tab('archivadas', '🗄 Archivadas · ' + n('archivadas')) : ''));
   }
   function pintarCharlas() {
     pintarTabs(); pintarBarra();
     const q = $('#wabuscar').value.trim().toLowerCase();
-    const base = filtro === 'archivadas' && !etapa && !etq ? charlas : enBandeja();
+    const base = filtro === 'archivadas' && !etapa && !etq ? listaArchivadas() : enBandeja();
     let lista = base.filter((c) => (etq ? (c.etiquetas || []).some((e) => e.toLowerCase() === etq) : etapa ? (c.etapa || 'nuevo') === etapa : FILTRO[filtro](c)))
       .filter((c) => !q || [c.datos.nombre, c.datos.negocio, c.nombre_perfil, c.telefono, (c.etiquetas || []).join(' ')].join(' ').toLowerCase().includes(q));
     // En "Piden humano" manda la espera: primero el que hace más que espera.
     if (filtro === 'esperando' && !etapa) lista = lista.slice().sort((a, b) => String(a.espera_desde).localeCompare(String(b.espera_desde)));
-    $('#waLista').innerHTML = lista.length ? lista.map((c) => {
+    $('#waLista').innerHTML = (lista.length ? lista.map((c) => {
       const d = c.datos || {}, ult = c.ultimo || {}, minUlt = minDesde(ult.ts), minEsp = esperando(c) ? minDesde(c.espera_desde) : null;
       const nueva = (c.etapa || 'nuevo') === 'nuevo' && minDesde(c.creado) != null && minDesde(c.creado) < 1440;
       return '<div class="wa-item' + (abierta && abierta.telefono === c.telefono ? ' on' : '') + (c.resuelta ? ' resuelta' : '') + (menuDe === 'charla:' + c.telefono ? ' menu-on' : '') + '" data-tel="' + esc(c.telefono) + '">'
@@ -671,7 +815,27 @@
         + (!c.ventana_abierta ? '<i title="Ventana de 24 h cerrada: no se le puede escribir">🔒</i>' : '')
         + '</div></div></div>'
         + '<button type="button" class="wa-mas" data-menu="' + esc(c.telefono) + '" aria-haspopup="menu" aria-label="Opciones de la charla con ' + esc(nombre(c)) + '" title="Opciones (también con clic derecho)">⋯</button></div>';
-    }).join('') : '<div class="vacio-lista">' + (filtro === 'archivadas' ? 'No hay charlas archivadas.' : 'No hay conversaciones con este filtro.') + '</div>';
+    }).join('') : '<div class="vacio-lista">' + (filtro === 'archivadas' ? (paginas && !archivadas ? 'Cargando las archivadas…' : 'No hay charlas archivadas.') : 'No hay conversaciones con este filtro.') + '</div>')
+      + pieDeLista(q);
+  }
+  // Abajo de la lista: «Cargando más…», el botón para pedir más o «No hay más charlas» (25/11/2026).
+  function pieDeLista(q) {
+    if (!paginas || (filtro === 'archivadas' && !etapa && !etq)) return '';
+    if (cargandoMas) return '<div class="lista-pie" aria-live="polite">Cargando más charlas…</div>';
+    if (siguiente) return '<div class="lista-pie">' + (q ? 'Se buscó en las ' + charlas.length + ' charlas cargadas. ' : '') + '<button type="button" data-mas="1">Cargar más charlas</button></div>';
+    return charlas.length > 12 ? '<div class="lista-pie">No hay más charlas.</div>' : '';
+  }
+  // LA LISTA QUE SIGUE CARGANDO (25/11/2026, Budy): al llegar abajo se piden las 50 siguientes.
+  async function cargarMas() {
+    if (!paginas || !siguiente || cargandoMas) return;
+    cargandoMas = true; pintarCharlas();
+    try {
+      const j = await pedir('/api/ventas-sol/charlas?bandeja=1&antes=' + encodeURIComponent(siguiente));
+      const ya = new Set(charlas.map((c) => c.telefono));
+      charlas = charlas.concat((j.charlas || []).filter((c) => !ya.has(c.telefono)));
+      siguiente = j.siguiente || '';
+    } catch (e) { msg('No se pudieron traer más charlas: ' + seRompioRuta(e)); }
+    cargandoMas = false; pintarCharlas();
   }
 
   // ---------- Charla y ficha ----------
@@ -692,7 +856,19 @@
   const cercaDelFinal = (el) => el.scrollHeight - el.scrollTop - el.clientHeight < CERCA;
   const claveMsg = (m, i) => (m.id ? 'w' + m.id : 'n' + i + '|' + (m.ts || '') + '|' + m.de);
   const firmaMsg = (m, c) => JSON.stringify([m.texto, m.caption, m.error, m.transcripcion, m.transcripcion_fallo, m.archivo && m.archivo.ruta, m.cita && m.cita.texto, m.no_recibido, m.archivo_error, m.tipo,
-    m.estado && m.estado.estado === 'fallido' ? (m.estado.error || 'fallido') : '', c.ventana_abierta, c.por_puente]);
+    m.estado && m.estado.estado === 'fallido' ? (m.estado.error || 'fallido') : '', c.ventana_abierta, c.por_puente,
+    (c._reac || {})[m.id] || null, !!(c._dest && m.k && c._dest.has(m.k)), reaccionOculta(m, c), !!m.reenviado]);
+  // Antes de dibujar (25/11/2026): las reacciones de cada mensaje (la última del cliente y la del equipo) y los destacados.
+  // Una reacción del cliente a un mensaje que está en la charla no es una burbuja: se ve como el emoji debajo de ese mensaje.
+  function prepararCharla(c) {
+    const ids = new Set(), reac = {};
+    (c.mensajes || []).forEach((m) => { if (m.id) ids.add(m.id); });
+    (c.mensajes || []).forEach((m) => { if (m.tipo === 'reaccion' && m.reaccion && m.reaccion.a) reac[m.reaccion.a] = { ...(reac[m.reaccion.a] || {}), cliente: m.reaccion.emoji || '' }; });
+    Object.entries(c.reacciones_equipo || {}).forEach(([id, e]) => { reac[id] = { ...(reac[id] || {}), equipo: e || '' }; });
+    Object.keys(reac).forEach((id) => { if (!reac[id].cliente && !reac[id].equipo) delete reac[id]; });
+    c._ids = ids; c._reac = reac; c._dest = new Set(c.destacados || []);
+  }
+  const reaccionOculta = (m, c) => !!(m.tipo === 'reaccion' && m.reaccion && m.reaccion.a && c._ids && c._ids.has(m.reaccion.a));
   const firmaTilde = (m) => JSON.stringify(m.estado || null);
 
   function cabecera(c) {
@@ -704,6 +880,7 @@
       + (c.robot_activo ? '<button class="btn" id="robot" type="button" title="El robot deja de contestar en esta charla">✋ Tomar la charla</button>' : '<button class="btn gris" id="robot" type="button" title="El robot vuelve a contestar en esta charla">🤖 Devolver al robot</button>')
       + (c.resuelta ? '<button class="btn gris" id="resolver" type="button" title="Vuelve a Esperando">Reabrir</button>' : '<button class="btn gris" id="resolver" type="button" title="Sale de Esperando hasta que vuelva a escribir">✓ Ya la atendí</button>')
       + '<button class="btn gris" id="verficha" type="button" aria-expanded="' + fichaAbierta + '">📋 Ficha</button></div>'
+      + '<button class="btn gris ico-btn" id="cabBuscar" type="button" aria-label="Buscar en la charla" title="Buscar en la charla (Ctrl+F)">🔍</button>'
       + '<button class="btn gris" id="cabMas" type="button" aria-haspopup="menu" aria-label="Más opciones de esta charla" title="Más opciones">⋮</button>';
   }
   function avisosDe(c) {
@@ -726,9 +903,11 @@
     pie.innerHTML = c.ventana_abierta
       ? (respuestas.length ? '<div class="rapidas" role="toolbar" aria-label="Respuestas rápidas">' + respuestas.map((r, i) => '<button type="button" data-rapida="' + i + '" title="' + esc(r.texto) + '">' + esc(r.titulo) + '</button>').join('') + '</div>' : '')
         + '<div id="respBar" hidden></div><div id="avisoMic" hidden></div>'
-        + '<form class="escribir" id="escribir"><label class="btn gris adj" title="Mandar un archivo: foto, video, audio o documento">📎<input type="file" id="adjunto" accept="' + ACEPTA + '"></label>'
+        + '<form class="escribir" id="escribir"><label class="btn gris adj" title="Mandar archivos: fotos, videos, audios o documentos (podés elegir varios)">📎<input type="file" id="adjunto" multiple accept="' + ACEPTA + '"></label>'
+        + '<label class="btn gris adj cam" title="Sacar una foto con la cámara">📷<input type="file" id="camara" accept="image/*" capture="environment"></label>'
         + '<div id="grabBar" hidden></div>'
-        + '<textarea id="texto" rows="1" placeholder="' + (c.por_puente ? 'Escribile desde el número 2…' : 'Escribile desde el 11 3366-2080…') + '" aria-label="Mensaje"></textarea>'
+        // En el celular, con 📎 y 📷 al lado, el texto largo no entraba en un renglón: ahí dice «Mensaje», como WhatsApp.
+        + '<textarea id="texto" rows="1" placeholder="' + (hojaMovil() ? (c.por_puente ? 'Mensaje (número 2)' : 'Mensaje') : c.por_puente ? 'Escribile desde el número 2…' : 'Escribile desde el 11 3366-2080…') + '" aria-label="Mensaje"></textarea>'
         + '<button class="redondo" type="button" id="accion" aria-label="Enviar">' + ICONO_ENVIAR + '</button></form>'
       : '<div class="cerrada"><b>🔒 Ventana de 24 h cerrada.</b> Pasaron más de 24 horas desde su último mensaje: WhatsApp no permite escribirle hasta que el contacto vuelva a escribir. <button class="btn" type="button" id="propDeCharla" style="margin-top:8px">📄 Mandarle la propuesta</button></div>';
     const tn = $('#texto');
@@ -758,9 +937,17 @@
     if (chatTel && $('#texto')) borradores.set(chatTel, $('#texto').value);
     if (grab && grab.tel !== c.telefono) pararGrabacion(true);
     chatTel = c.telefono; burb = { keys: [], firmas: [], tildes: [] }; pegado = true; nuevosAbajo = 0; fichaSucia = '';
+    if (busqueda) busqueda = null;
+    eligiendo = null;
     $('#waChat').innerHTML = '<div class="wa-cab" id="waCab"></div>'
+      + '<div id="selBar" hidden></div>'
+      + '<form id="buscarBar" hidden role="search"><input id="buscarTxt" type="search" placeholder="Buscar en esta charla" autocomplete="off" aria-label="Buscar en esta charla">'
+      + '<span class="cuenta" id="buscarCuenta" aria-live="polite"></span>'
+      + '<button type="button" id="buscarArriba" aria-label="Resultado anterior (más viejo)" title="Más viejo (Enter)">▲</button>'
+      + '<button type="button" id="buscarAbajo" aria-label="Resultado siguiente (más nuevo)" title="Más nuevo (Shift+Enter)">▼</button>'
+      + '<button type="button" id="buscarCerrar" aria-label="Cerrar la búsqueda" title="Cerrar (Esc)">✕</button></form>'
       + '<div class="wa-caja-msgs"><div class="wa-burbujas scroll" id="msgs" aria-live="polite"></div><button type="button" class="wa-bajar" id="bajar" hidden></button></div>'
-      + '<div id="waAvisos"></div><div id="waPie"></div><aside id="waFicha" class="scroll" hidden></aside>';
+      + '<div id="waAvisos"></div><div id="waPie"></div><aside id="waFicha" class="scroll" hidden></aside><aside id="waDest" hidden></aside>';
     const msgs = $('#msgs');
     msgs.addEventListener('scroll', () => { pegado = cercaDelFinal(msgs); if (pegado && nuevosAbajo) { nuevosAbajo = 0; pintarPastilla(); } }, { passive: true });
   }
@@ -788,7 +975,9 @@
   function htmlBurbujas(lista, c, desde) { return lista.map((m, i) => burbuja(m, c, claveMsg(m, desde + i))).join(''); }
   function pintarBurbujas(c) {
     const msgs = $('#msgs'), ms = c.mensajes || [];
+    prepararCharla(c);
     const keys = ms.map(claveMsg), firmas = ms.map((m) => firmaMsg(m, c)), tildes = ms.map(firmaTilde);
+    let tocado = false;
     const n = burb.keys.length;
     const mismoPrincipio = n > 0 && n <= keys.length && burb.keys.every((k, i) => k === keys[i]);
     const estabaAbajo = pegado;
@@ -797,7 +986,7 @@
       if (n && reproduciendo(msgs)) return;
       const ancla = n ? anclaDe(msgs) : null, topViejo = msgs.scrollTop;
       msgs.innerHTML = htmlBurbujas(ms, c, 0);
-      cargarMedios(msgs);
+      cargarMedios(msgs); tocado = true;
       if (!n || estabaAbajo || bajarAlFinal) alFinal(); else volverAlAncla(msgs, ancla, topViejo);
     } else {
       const ancla = estabaAbajo ? null : anclaDe(msgs), topViejo = msgs.scrollTop;
@@ -815,15 +1004,20 @@
       }
       if (keys.length > n) {
         msgs.insertAdjacentHTML('beforeend', htmlBurbujas(ms.slice(n), c, n));
-        [...msgs.children].slice(n).forEach(cargarMedios);
+        [...msgs.children].slice(n).forEach(cargarMedios); tocado = true;
+        // Una reacción del cliente no es «un mensaje nuevo»: se ve debajo del mensaje al que reaccionó.
+        const visibles = ms.slice(n).filter((m) => !reaccionOculta(m, c)).length;
         if (estabaAbajo || bajarAlFinal) alFinal();
-        else { nuevosAbajo += keys.length - n; pintarPastilla(); }
+        else if (visibles) { nuevosAbajo += visibles; pintarPastilla(); }
       }
+      if (tocoViejo) tocado = true;
       if (tocoViejo && ancla) volverAlAncla(msgs, ancla, topViejo);
       if (estabaAbajo && keys.length === n && tocoViejo) alFinal();
     }
     burb = { keys, firmas, tildes };
     bajarAlFinal = false;
+    if (tocado && busqueda && busqueda.q) resaltar(busqueda.q, true);
+    if (tocado && eligiendo) pintarEleccion();
   }
   function pintarFicha(c) {
     const aside = $('#waFicha');
@@ -902,8 +1096,12 @@
       + (nr.codigo ? ' (código de WhatsApp ' + esc(nr.codigo) + ')' : '') + '</small></span>';
   }
   // La hora y las tildes de una burbuja (se cambia sola cuando llega un «entregado» o un «leído»).
-  const pieDeBurbuja = (m, c) => (DE[m.de] ? DE[m.de] + ' · ' : '') + fecha(m.ts) + (m.de !== 'cliente' ? tildeDe(m, c) : '');
+  const pieDeBurbuja = (m, c) => (c._dest && m.k && c._dest.has(m.k) ? '<span class="wa-est" title="Destacado">⭐</span>' : '') + (DE[m.de] ? DE[m.de] + ' · ' : '') + fecha(m.ts) + (m.de !== 'cliente' ? tildeDe(m, c) : '');
+  // ¿Se le puede poner un emoji? Sólo a un mensaje con id de WhatsApp, con la ventana abierta y por el oficial.
+  const puedeReaccionar = (m, c) => !!(c.ventana_abierta && !c.por_puente && /^wamid\./.test(m.id || '') && m.tipo !== 'reaccion' && !m.error);
+  const EMOJIS = ['👍🏻', '❤️', '😂', '😮', '😢', '🙏🏻'];
   function burbuja(m, c, k) {
+    if (reaccionOculta(m, c)) return '<div class="wa-b wa-cliente" hidden data-id="' + esc(m.id || '') + '" data-k="' + esc(k || '') + '"></div>';
     const a = m.archivo;
     const esPdf = a && (a.mime === 'application/pdf' || /\.pdf$/i.test(a.ruta || ''));
     let medio = '';
@@ -926,12 +1124,16 @@
     // lo que no salió en el momento: la burbuja punteada y la pastilla con el motivo.
     const fallo = m.error || (m.estado && m.estado.estado === 'fallido' ? (m.estado.error || 'WhatsApp no lo entregó') : '');
     const sePuedeCitar = c.ventana_abierta && !c.por_puente && /^wamid\./.test(m.id || '') && !fallo;
-    return '<div class="wa-b wa-' + esc(m.de) + (fallo ? ' wa-fallo' : '') + '" data-id="' + esc(m.id || '') + '" data-k="' + esc(k || '') + '">'
+    const r = (c._reac || {})[m.id];
+    const reacs = r ? '<span class="wa-reacs" title="' + esc([r.cliente ? 'Cliente: ' + r.cliente : '', r.equipo ? 'Equipo: ' + r.equipo : ''].filter(Boolean).join(' · ')) + '">' + esc((r.cliente || '') + (r.equipo || '')) + '</span>' : '';
+    return '<div class="wa-b wa-' + esc(m.de) + (fallo ? ' wa-fallo' : '') + (reacs ? ' con-reac' : '') + (eligiendo && eligiendo.has(k) ? ' sel' : '') + '" data-id="' + esc(m.id || '') + '" data-k="' + esc(k || '') + '">'
       + (sePuedeCitar ? '<button type="button" class="wa-resp" data-citar="' + esc(m.id) + '" title="Responder citando este mensaje" aria-label="Responder citando">↩</button>' : '')
+      + (puedeReaccionar(m, c) && !fallo ? '<button type="button" class="wa-reac-btn" data-reac="1" title="Reaccionar con un emoji" aria-label="Reaccionar con un emoji">☺</button>' : '')
+      + (m.reenviado ? '<span class="wa-reenv">↪ Reenviado</span>' : '')
       + cita + medio + (m.tipo === 'no_soportado' ? noRecibido(m) : m.tipo === 'reaccion' ? '<span class="wa-reac">' + esc(texto) + '</span>' : conLinks(esc(texto))) + (boton ? (texto ? '<br>' : '') + boton : '') + transcr
       + (m.archivo_error ? '<span class="wa-arch-err">📎 El archivo no se guardó: ' + esc(m.archivo_error) + '</span>' : '')
       + '<span class="wa-t">' + pieDeBurbuja(m, c) + '</span>'
-      + (fallo ? '<span class="wa-nosalio">' + (m.error ? 'No se envió · ' : 'No se entregó · ') + esc(fallo) + '</span>' : '') + '</div>';
+      + (fallo ? '<span class="wa-nosalio">' + (m.error ? 'No se envió · ' : 'No se entregó · ') + esc(fallo) + '</span>' : '') + reacs + '</div>';
   }
   const reproduciendo = (el) => [...el.querySelectorAll('audio, video')].some((x) => !x.paused && !x.ended);
 
@@ -1017,20 +1219,22 @@
       fr.readAsDataURL(file);
     });
   }
-  async function mandarArchivo(file, texto) {
-    const c = abierta; if (!c) return;
-    msg(''); $('#wamsg').textContent = 'Mandando ' + (file.name || 'el archivo') + '…';
+  async function mandarArchivo(file, texto, varios) {
+    const c = abierta; if (!c) return false;
+    msg(''); $('#wamsg').textContent = varios ? 'Mandando ' + varios.n + ' de ' + varios.total + '…' : 'Mandando ' + (file.name || 'el archivo') + '…';
     try {
       const cita = respondiendo && respondiendo.tel === c.telefono ? respondiendo.id : '';
       const j = await post(ruta(c.telefono, '/archivo'), { archivo: await leerArchivo(file), texto: texto || '', ...(cita ? { responder_a: cita } : {}) });
       respondiendo = null;
       $('#wamsg').textContent = j.tipo === 'document' && /audio|webm/.test(file.type || '') ? '✅ Salió como archivo (WhatsApp no acepta ese formato como audio).' : '';
       bajarAlFinal = true;
-      await abrir(c.telefono); cargar();
+      if (!varios) { await abrir(c.telefono); cargar(); }
+      return true;
     } catch (err) {
       $('#wamsg').textContent = '';
       if (err.status === 409) { abierta.ventana_abierta = false; pintarChat(); }
-      msg('No se pudo mandar: ' + err.message);
+      msg('No se pudo mandar' + (varios ? ' «' + (file.name || 'el archivo') + '»' : '') + ': ' + err.message);
+      return false;
     }
   }
   const peso = (n) => (n < 1048576 ? Math.max(1, Math.round(n / 1024)) + ' KB' : (n / 1048576).toFixed(1).replace('.', ',') + ' MB');
@@ -1038,17 +1242,41 @@
   // ---------- Vista previa antes de mandar (25/11/2026, Budy: «no me deja ver lo que estoy mandando») ----------
   // Como en WhatsApp: la foto, el video, el audio o la primera hoja del PDF, con el texto que lo acompaña. Antes era
   // un confirm() con el nombre del archivo.
-  let previa = null;
-  function abrirVistaPrevia(file, textoInicial, desdeElCuadro) {
-    if (!abierta || !file) return;
+  // Desde la tanda 2 (25/11/2026, Budy) son VARIAS: hasta 10, cada una con su texto, como en WhatsApp. Abajo va la
+  // tira de miniaturas (tocar una la muestra, ✕ la saca, ＋ suma más) y «Enviar» las manda en orden.
+  const MAX_ARCH = 10;
+  let previa = null;   // { items: [{ file, url, texto }], i, tel, desdeElCuadro }
+  function abrirVistaPrevia(archivos, textoInicial, desdeElCuadro) {
+    if (!abierta) return;
+    let files = (archivos instanceof File ? [archivos] : Array.from(archivos || [])).filter(Boolean);
+    if (!files.length) return;
     if (!abierta.ventana_abierta) { msg('La ventana de 24 h está cerrada: WhatsApp no deja mandarle archivos hasta que vuelva a escribir.'); return; }
-    if (file.size > TOPE(file.type)) { msg('«' + file.name + '» pesa más de ' + Math.round(TOPE(file.type) / 1048576) + ' MB: achicalo antes de mandarlo.'); return; }
-    if (previa && previa.url) URL.revokeObjectURL(previa.url);
-    const url = URL.createObjectURL(file), tipo = file.type || '';
-    previa = { file, url, tel: abierta.telefono, desdeElCuadro };
+    const grandes = files.filter((f) => f.size > TOPE(f.type));
+    if (grandes.length) msg('«' + grandes[0].name + '» pesa más de ' + Math.round(TOPE(grandes[0].type) / 1048576) + ' MB: achicalo antes de mandarlo.' + (grandes.length > 1 ? ' (y ' + (grandes.length - 1) + ' más)' : ''));
+    files = files.filter((f) => f.size <= TOPE(f.type));
+    if (!files.length) return;
+    const sumar = !!(previa && previa.tel === abierta.telefono && $('#dlgArch').open);
+    if (!sumar) previa = { items: [], i: 0, tel: abierta.telefono, desdeElCuadro };
+    else guardarTextoPrevia();
+    const lugar = MAX_ARCH - previa.items.length;
+    if (files.length > lugar) msg('Van hasta ' + MAX_ARCH + ' archivos por vez: quedaron ' + MAX_ARCH + '.');
+    const desde = previa.items.length;
+    files.slice(0, Math.max(0, lugar)).forEach((f) => previa.items.push({ file: f, url: URL.createObjectURL(f), texto: '' }));
+    if (!sumar && textoInicial && previa.items[0]) previa.items[0].texto = textoInicial;
+    mostrarPrevia(sumar ? desde : 0);
+    $('#archMandar').disabled = false; $('#archEstado').textContent = '';
+    if (!$('#dlgArch').open) $('#dlgArch').showModal();
+    const it = previa.items[previa.i];
+    if (matchMedia('(hover: hover)').matches && it && !/^audio\//.test(it.file.type || '')) $('#archTexto').focus(); else $('#archMandar').focus();
+  }
+  function guardarTextoPrevia() { const it = previa && previa.items[previa.i]; if (it && !$('#archTexto').hidden) it.texto = $('#archTexto').value; }
+  function mostrarPrevia(i) {
+    if (!previa || !previa.items.length) return;
+    previa.i = Math.max(0, Math.min(i, previa.items.length - 1));
+    const { file, url, texto } = previa.items[previa.i], tipo = file.type || '', n = previa.items.length;
     const esPdf = /pdf$/i.test(tipo) || /\.pdf$/i.test(file.name || '');
     const ficha = (ico, extra) => '<div class="arch-doc"><span class="ico" aria-hidden="true">' + ico + '</span><b>' + esc(file.name || 'archivo') + '</b><small>' + esc(peso(file.size)) + (extra || '') + '</small></div>';
-    $('#archNombre').textContent = (file.name || 'Archivo') + ' · ' + nombre(abierta);
+    $('#archNombre').textContent = (n > 1 ? (previa.i + 1) + ' de ' + n + ' · ' : '') + (file.name || 'Archivo') + ' · ' + nombre(abierta);
     const vista = $('#archVista');
     if (/^image\//.test(tipo)) vista.innerHTML = '<img alt="Vista previa de la imagen" src="' + esc(url) + '">';
     else if (/^video\//.test(tipo)) vista.innerHTML = '<video controls playsinline src="' + esc(url) + '"></video>';
@@ -1056,11 +1284,36 @@
     else if (esPdf) { vista.innerHTML = '<div style="display:grid;gap:10px;justify-items:center"><canvas id="archPdf" width="10" height="10" hidden></canvas>' + ficha('📄', '<span id="archPags"></span>') + '</div>'; primeraHoja(file); }
     else vista.innerHTML = ficha('📄');
     const sinTexto = /^audio\//.test(tipo);
-    $('#archTexto').hidden = sinTexto; $('#archTexto').value = sinTexto ? '' : (textoInicial || '');
-    $('#archMandar').disabled = false;
-    $('#dlgArch').showModal();
-    if (matchMedia('(hover: hover)').matches && !sinTexto) $('#archTexto').focus(); else $('#archMandar').focus();
+    $('#archTexto').hidden = sinTexto; $('#archTexto').value = sinTexto ? '' : (texto || '');
+    $('#archTexto').placeholder = n > 1 ? 'Texto para esta (cada una lleva el suyo)…' : 'Agregá un texto…';
+    $('#archMandar').setAttribute('aria-label', n > 1 ? 'Enviar los ' + n : 'Enviar');
+    pintarTira();
   }
+  function pintarTira() {
+    const t = $('#archTira'), n = previa ? previa.items.length : 0;
+    t.innerHTML = (previa ? previa.items.map((it, i) => {
+      const tipo = it.file.type || '';
+      const dentro = /^image\//.test(tipo) ? '<img alt="" src="' + esc(it.url) + '">' : '<span aria-hidden="true">' + (/^video\//.test(tipo) ? '🎬' : /^audio\//.test(tipo) ? '🎧' : '📄') + '</span>';
+      return '<div class="mini' + (i === previa.i ? ' on' : '') + '" role="option" tabindex="0" aria-selected="' + (i === previa.i) + '" data-ver="' + i + '" title="' + esc(it.file.name || 'archivo') + '">' + dentro
+        + '<button type="button" class="x" data-quitar="' + i + '" aria-label="Sacar ' + esc(it.file.name || 'este archivo') + '">✕</button></div>';
+    }).join('') : '')
+      + (n < MAX_ARCH ? '<label class="mas" title="Sumar más archivos" aria-label="Sumar más archivos">＋<input type="file" id="archMas" multiple accept="' + ACEPTA + '"></label>' : '');
+  }
+  $('#archTira').addEventListener('click', (e) => {
+    const q = e.target.closest('[data-quitar]');
+    if (q) {
+      e.stopPropagation(); guardarTextoPrevia();
+      const i = +q.dataset.quitar, it = previa.items[i];
+      if (it) URL.revokeObjectURL(it.url);
+      previa.items.splice(i, 1);
+      if (!previa.items.length) { $('#dlgArch').close(); return; }
+      mostrarPrevia(i >= previa.i ? Math.min(previa.i, previa.items.length - 1) : previa.i - 1);
+      return;
+    }
+    const v = e.target.closest('[data-ver]'); if (v) { guardarTextoPrevia(); mostrarPrevia(+v.dataset.ver); }
+  });
+  $('#archTira').addEventListener('keydown', (e) => { const v = e.target.closest('[data-ver]'); if (v && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); guardarTextoPrevia(); mostrarPrevia(+v.dataset.ver); } });
+  $('#archTira').addEventListener('change', (e) => { if (e.target.id !== 'archMas') return; const fs = [...e.target.files]; e.target.value = ''; abrirVistaPrevia(fs, '', false); });
   async function primeraHoja(file) {
     try {
       const pdfjs = await cargarPdfjs();
@@ -1073,17 +1326,26 @@
       const p = $('#archPags'); if (p) p.textContent = ' · ' + doc.numPages + (doc.numPages === 1 ? ' hoja' : ' hojas');
     } catch (e) { /* sin vista de la hoja: queda el nombre y el peso */ }
   }
-  $('#archForm').addEventListener('submit', (e) => {
+  $('#archForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const p = previa; if (!p || !abierta || abierta.telefono !== p.tel) { $('#dlgArch').close(); return; }
-    const texto = $('#archTexto').hidden ? '' : $('#archTexto').value.trim();
+    guardarTextoPrevia();
+    const items = p.items.map((it) => ({ file: it.file, texto: /^audio\//.test(it.file.type || '') ? '' : String(it.texto || '').trim() }));
     $('#archMandar').disabled = true;
     $('#dlgArch').close();
     if (p.desdeElCuadro && $('#texto')) { $('#texto').value = ''; $('#texto').style.height = ''; pintarAccion(); }
-    mandarArchivo(p.file, texto);
+    if (items.length === 1) { mandarArchivo(items[0].file, items[0].texto); return; }
+    // Varios: en orden, uno por uno (así llegan en el orden de la tira), y al final se relee la charla una vez.
+    const tel = p.tel; let bien = 0;
+    for (let i = 0; i < items.length; i++) {
+      if (!abierta || abierta.telefono !== tel) break;
+      if (await mandarArchivo(items[i].file, items[i].texto, { n: i + 1, total: items.length })) bien++;
+    }
+    if (bien === items.length) $('#wamsg').textContent = '✅ Salieron los ' + bien + ' archivos.';
+    if (abierta && abierta.telefono === tel) { await abrir(tel); cargar(); }
   });
   $('#archCerrar').addEventListener('click', () => $('#dlgArch').close());
-  $('#dlgArch').addEventListener('close', () => { $('#archVista').innerHTML = ''; if (previa && previa.url) URL.revokeObjectURL(previa.url); previa = null; });
+  $('#dlgArch').addEventListener('close', () => { $('#archVista').innerHTML = ''; $('#archTira').innerHTML = ''; if (previa) previa.items.forEach((it) => URL.revokeObjectURL(it.url)); previa = null; });
 
   // ---------- Grabar un audio como en WhatsApp (25/11/2026, Budy: «en mobile no me deja mandar audios») ----------
   // Tocar 🎤: graba con el tiempo a la vista, 🗑 descarta, ⏹ para escucharlo antes y ➤ lo manda. Mantener apretado:
@@ -1296,9 +1558,21 @@
   $('#sonido').addEventListener('click', () => { sonidoOn = !sonidoOn; try { localStorage.setItem(CLAVE_SONIDO, sonidoOn ? 'si' : 'no'); } catch (e) {} pintarSonido(); despertarAudio(); if (sonidoOn) setTimeout(sonar, 50); });
   pintarSonido();
 
+  // La primera página de la lista. Si ya se habían cargado más (bajando), se conservan las de abajo: una charla
+  // vieja que cambia sube sola a la primera página porque se ordena por su último movimiento.
   async function cargar() {
-    try { charlas = (await pedir('/api/ventas-sol/charlas')).charlas || []; msg(''); avisar(); pintarCharlas(); }
-    catch (e) { msg('No se pudieron leer las conversaciones: ' + e.message); }
+    try {
+      const j = await pedir('/api/ventas-sol/charlas?bandeja=1');
+      const nuevas = j.charlas || [];
+      paginas = typeof j.siguiente === 'string';
+      if (paginas) {
+        const tels = new Set(nuevas.map((c) => c.telefono)), ultima = nuevas.length ? String(nuevas[nuevas.length - 1].actualizado || '') : '';
+        const abajo = charlas.filter((c) => !tels.has(c.telefono) && ultima && String(c.actualizado || '') < ultima && !c.archivada && !c.eliminada);
+        charlas = nuevas.concat(abajo);
+        if (!abajo.length) siguiente = j.siguiente || '';
+      } else charlas = nuevas;
+      msg(''); avisar(); pintarCharlas();
+    } catch (e) { msg('No se pudieron leer las conversaciones: ' + e.message); }
   }
   async function abrir(t) {
     try {
@@ -1333,8 +1607,7 @@
     document.title = (pend ? '(' + pend + ') ' : '') + TITULO;
   }
   document.addEventListener('visibilitychange', () => { if (!document.hidden) { nuevos = 0; tick(); } });
-  if (window.Notification && Notification.permission === 'default') $('#avisos').hidden = false;
-  $('#avisos').addEventListener('click', () => Notification.requestPermission().then(() => { $('#avisos').hidden = Notification.permission !== 'default'; }));
+  // 25/11/2026: el 🔔 abre «Avisos en este equipo» (más abajo): permiso del navegador y avisos con el panel cerrado.
 
   // ============================================================
   //  MENÚ PROPIO (25/11/2026, Budy: «que me aparezcan opciones en cada chat apretando clic derecho»)
@@ -1352,15 +1625,17 @@
     menuDe = de || '';
     marcarDueno(true);
     m.classList.toggle('hoja', hoja); $('#ctxVelo').classList.toggle('hoja', hoja);
+    items = items.filter(Boolean);
     m.innerHTML = (titulo ? '<div class="ctx-tit">' + titulo + '</div>' : '') + itemsHtml(items);
     m._items = items;
     $('#ctxVelo').hidden = false; m.hidden = false;
     if (!hoja) ubicar(m, x, y);
     ultimoMenu = Date.now();
-    const primero = m.querySelector('button.ctx-i'); if (primero) primero.focus({ preventScroll: true });
+    const primero = m.querySelector('button.ctx-i, .ctx-emojis button'); if (primero) primero.focus({ preventScroll: true });
   }
   function itemsHtml(items) {
     return items.filter(Boolean).map((it, i) => it === '-' ? '<hr>'
+      : it.emojis ? '<div class="ctx-emojis" role="group" aria-label="Reaccionar">' + it.emojis.map((em) => '<button type="button" data-emoji="' + esc(em) + '" data-i="' + i + '" aria-pressed="' + (it.actual === em) + '" aria-label="Reaccionar con ' + esc(em) + (it.actual === em ? ' (tocá de nuevo para sacarla)' : '') + '">' + esc(em) + '</button>').join('') + '</div>'
       : it.form ? '<form data-i="' + i + '"><input placeholder="' + esc(it.form.placeholder) + '" maxlength="24" aria-label="' + esc(it.form.placeholder) + '"' + (it.form.lista ? ' list="ctxLista"' : '') + '><button class="btn" type="submit">' + esc(it.form.boton || 'Listo') + '</button></form>'
         + (it.form.lista ? '<datalist id="ctxLista">' + it.form.lista.map((e) => '<option value="' + esc(e) + '">').join('') + '</datalist>' : '')
       : '<button type="button" class="ctx-i' + (it.peligro ? ' peligro' : '') + '" role="' + (it.marcado != null ? 'menuitemradio' : 'menuitem') + '" data-i="' + i + '"'
@@ -1407,7 +1682,11 @@
   }
   ['#ctxMenu', '#ctxSub'].forEach((sel) => {
     const cont = $(sel);
-    cont.addEventListener('click', (e) => { const b = e.target.closest('button.ctx-i'); if (b) elegir(cont, b); });
+    cont.addEventListener('click', (e) => {
+      const em = e.target.closest('[data-emoji]');
+      if (em) { const it = (cont._items || [])[+em.dataset.i]; cerrarMenu(); if (it) it.fn(em.dataset.emoji); return; }
+      const b = e.target.closest('button.ctx-i'); if (b) elegir(cont, b);
+    });
     cont.addEventListener('submit', async (e) => {
       e.preventDefault();
       const it = cont._items[+e.target.dataset.i], v = e.target.querySelector('input').value.trim();
@@ -1441,6 +1720,8 @@
   window.addEventListener('blur', cerrarMenu);
   // Desplazar la lista lo cierra (salvo el scroll que puede llegar justo después de abrirlo).
   $('#waLista').addEventListener('scroll', () => { if (Date.now() - ultimoMenu > 250) cerrarMenu(); }, { passive: true });
+  // A 300 px del final de la lista se piden las 50 siguientes.
+  $('#waLista').addEventListener('scroll', (e) => { const l = e.currentTarget; if (l.scrollHeight - l.scrollTop - l.clientHeight < 300) cargarMas(); }, { passive: true });
 
   // Una pregunta de sí o no con el estilo del panel. Devuelve una promesa con true o false.
   function preguntar(titulo, texto, boton, peligro) {
@@ -1486,6 +1767,7 @@
       { ico: '🗄', txt: c.archivada ? 'Desarchivar' : 'Archivar', fn: async () => {
         const ch = (await post(ruta(tel, '/archivar'), { archivada: !c.archivada })).charla;
         if (!c.archivada && abierta && abierta.telefono === tel) { abierta = null; pintarChat(); }
+        if (paginas) { if (!c.archivada) charlas = charlas.filter((x) => x.telefono !== tel); cargarArchivadas(); }
         await despues(tel, ch);
         $('#wamsg').textContent = c.archivada ? 'Volvió a la bandeja.' : '🗄 Archivada. Está en la pestaña «Archivadas» y vuelve sola si te escribe.';
       } },
@@ -1494,6 +1776,9 @@
       { ico: '📋', txt: 'Copiar teléfono', fn: () => copiar('+' + tel, '📋 Copiado: +' + tel) },
       { ico: '📄', txt: 'Mandar propuesta', fn: () => abrirPropuesta(c) },
       { ico: '🗂', txt: enLaCharla ? (fichaAbierta ? 'Cerrar la ficha' : 'Abrir la ficha') : 'Abrir la ficha', fn: async () => { fichaAbierta = enLaCharla ? !fichaAbierta : true; if (!enLaCharla || !abierta) await abrir(tel); else pintarChat(); } },
+      enLaCharla && { ico: '🔍', txt: 'Buscar en la charla', fn: () => abrirBusqueda() },
+      enLaCharla && { ico: '⭐', txt: 'Mensajes destacados', fn: () => abrirDestacados() },
+      enLaCharla && { ico: '☑', txt: 'Elegir mensajes', fn: () => empezarEleccion('') },
       '-',
       { ico: '🗑', txt: 'Eliminar la charla', peligro: true, fn: async () => {
         const si = await preguntar('¿Eliminar la charla con ' + nombre(c) + '?', 'Sale del panel, nada más: no se borra del WhatsApp del cliente ni se pierde lo que hablaron. Si vuelve a escribir, aparece de nuevo.', 'Eliminar del panel', true);
@@ -1508,19 +1793,24 @@
   }
   const tituloCharla = (c) => '<b>' + esc(nombre(c)) + '</b>' + esc(telLindo(c.telefono));
   function menuCharla(tel, x, y) {
-    const c = charlas.find((k) => k.telefono === tel) || (abierta && abierta.telefono === tel ? abierta : null); if (!c) return;
+    const c = charlas.find((k) => k.telefono === tel) || (archivadas || []).find((k) => k.telefono === tel) || (abierta && abierta.telefono === tel ? abierta : null); if (!c) return;
     abrirMenu(itemsCharla(c, false), x, y, 'charla:' + tel, tituloCharla(c));
   }
   // Las burbujas (en la compu con clic derecho; en el celular con toque largo): citar, copiar y bajar el archivo.
   function menuBurbuja(el, x, y) {
-    const c = abierta; if (!c) return;
+    const c = abierta; if (!c || eligiendo) return;
     const i = burb.keys.indexOf(el.dataset.k), m = (c.mensajes || [])[i]; if (!m) return;
     const texto = String(m.transcripcion || m.caption || (m.archivo && m.de === 'cliente' ? '' : m.texto) || '').trim();
     const a = m.archivo, esPdf = a && (a.mime === 'application/pdf' || /\.pdf$/i.test(a.ruta || ''));
     const citar = el.querySelector('[data-citar]');
+    const dest = !!(m.k && c._dest && c._dest.has(m.k));
     const items = [
+      puedeReaccionar(m, c) && { emojis: EMOJIS, actual: (c.reacciones_equipo || {})[m.id] || '', fn: (e) => reaccionar(m, e) },
       citar && { ico: '↩', txt: 'Responder citando', fn: () => citar.click() },
       texto && { ico: '📋', txt: m.transcripcion ? 'Copiar la transcripción' : 'Copiar texto', fn: () => copiar(texto) },
+      elegible(m) && { ico: '↪', txt: 'Reenviar', fn: () => abrirReenviar([m]) },
+      elegible(m) && { ico: dest ? '☆' : '⭐', txt: dest ? 'Quitar de destacados' : 'Destacar', fn: () => destacar([m], !dest) },
+      elegible(m) && { ico: '☑', txt: 'Elegir varios', fn: () => empezarEleccion(el.dataset.k) },
       a && a.ruta && (a.tipo === 'imagen' || a.tipo === 'sticker') && { ico: '🖼', txt: 'Ver la imagen', fn: () => verImagen(a.ruta, a.nombre) },
       a && a.ruta && esPdf && { ico: '👁', txt: 'Ver el PDF', fn: () => verPdf(a.ruta, a.nombre) },
       a && a.ruta && { ico: '⬇', txt: 'Descargar el archivo', fn: () => bajar(a.ruta, a.nombre || 'archivo') }
@@ -1553,7 +1843,7 @@
     soltarLargo(); if (largo) largo.hecho = true;
     menuCharla(it.dataset.tel, e.clientX, e.clientY);
   });
-  $('#waChat').addEventListener('pointerdown', (e) => { if (e.target.closest('#msgs .wa-b') && !e.target.closest('audio, video, a, button')) tocarLargo(e, abrirMenuBurbujaDe); });
+  $('#waChat').addEventListener('pointerdown', (e) => { if (!eligiendo && e.target.closest('#msgs .wa-b') && !e.target.closest('audio, video, a, button')) tocarLargo(e, abrirMenuBurbujaDe); });
   $('#waChat').addEventListener('contextmenu', (e) => {
     const b = e.target.closest('#msgs .wa-b'); if (!b || e.shiftKey || e.target.closest('audio, video')) return;
     e.preventDefault();
@@ -1562,6 +1852,225 @@
     soltarLargo(); if (largo) largo.hecho = true;
     menuBurbuja(b, e.clientX, e.clientY);
   });
+
+
+  // ============================================================
+  //  COMO WHATSAPP, TANDA 2 (25/11/2026, Budy)
+  // ============================================================
+  const msgDeEl = (el) => { const c = abierta; if (!c || !el) return null; const i = burb.keys.indexOf(el.dataset.k); return (c.mensajes || [])[i] || null; };
+  const elDeClave = (k) => [...document.querySelectorAll('#msgs .wa-b')].find((x) => x.dataset.k === k);
+  function avisoFlot(texto, boton, fn) {
+    document.querySelectorAll('.wa-aviso-flot').forEach((x) => x.remove());
+    const d = document.createElement('div'); d.className = 'wa-aviso-flot'; d.setAttribute('role', 'status');
+    d.innerHTML = '<span>' + esc(texto) + '</span>' + (boton ? '<button type="button">' + esc(boton) + '</button>' : '');
+    if (boton) d.querySelector('button').onclick = () => { d.remove(); fn(); };
+    document.body.appendChild(d); setTimeout(() => d.remove(), 6000);
+  }
+  // Ir a un mensaje: lo centra y lo hace brillar un momento.
+  function irAMensaje(k) {
+    const el = elDeClave(k); if (!el) return false;
+    el.scrollIntoView({ block: 'center', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    el.classList.remove('destello'); void el.offsetWidth; el.classList.add('destello');
+    setTimeout(() => el.classList.remove('destello'), 1500);
+    return true;
+  }
+
+  // ---------- Buscar dentro de la charla (🔍 en la cabecera): resalta y salta entre resultados ----------
+  // Sin importar mayúsculas ni tildes («nino» encuentra «Niño»). Se busca en lo que se ve de cada burbuja (texto,
+  // transcripciones, epígrafes), no en la hora. El primero es el más nuevo, como en WhatsApp.
+  const sinTilde = (t) => { let o = ''; for (let i = 0; i < t.length; i++) { const ch = t[i], n = ch.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); o += n.length === 1 ? n : ch; } return o; };
+  function limpiarResaltado() {
+    const msgs = $('#msgs'); if (!msgs) return;
+    msgs.querySelectorAll('mark.wa-hl').forEach((mk) => { const pa = mk.parentNode; mk.replaceWith(document.createTextNode(mk.textContent)); pa.normalize(); });
+  }
+  function resaltar(q, quieto) {
+    const msgs = $('#msgs'); if (!msgs || !busqueda) return;
+    const actual = busqueda.marcas[busqueda.i];
+    const ref = actual ? { k: (actual.closest('.wa-b') || {}).dataset.k, n: [...actual.closest('.wa-b').querySelectorAll('mark.wa-hl')].indexOf(actual) } : null;
+    limpiarResaltado();
+    busqueda.q = q; busqueda.marcas = [];
+    const nq = sinTilde(q.trim());
+    if (nq) {
+      msgs.querySelectorAll('.wa-b:not([hidden])').forEach((b) => {
+        const tw = document.createTreeWalker(b, NodeFilter.SHOW_TEXT, { acceptNode: (n) => (n.parentElement.closest('.wa-t, button, .wa-reacs, .wa-nosalio, .wa-reenv') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT) });
+        const nodos = []; while (tw.nextNode()) nodos.push(tw.currentNode);
+        nodos.forEach((nodo) => {
+          const txt = nodo.nodeValue, nt = sinTilde(txt);
+          let i = nt.indexOf(nq); if (i < 0) return;
+          const fr = document.createDocumentFragment(); let desde = 0;
+          while (i >= 0) {
+            fr.append(txt.slice(desde, i));
+            const mk = document.createElement('mark'); mk.className = 'wa-hl'; mk.textContent = txt.slice(i, i + nq.length);
+            fr.append(mk); busqueda.marcas.push(mk);
+            desde = i + nq.length; i = nt.indexOf(nq, desde);
+          }
+          fr.append(txt.slice(desde)); nodo.replaceWith(fr);
+        });
+      });
+    }
+    const ms = busqueda.marcas;
+    let i = ms.length - 1;
+    if (quieto && ref) { const b = elDeClave(ref.k); const enB = b ? [...b.querySelectorAll('mark.wa-hl')] : []; const x = enB[Math.min(ref.n, enB.length - 1)]; if (x) i = ms.indexOf(x); }
+    irResultado(i, quieto);
+  }
+  function irResultado(i, quieto) {
+    const ms = busqueda.marcas;
+    ms.forEach((x) => x.classList.remove('actual'));
+    busqueda.i = ms.length ? Math.max(0, Math.min(i, ms.length - 1)) : -1;
+    $('#buscarCuenta').textContent = !busqueda.q.trim() ? '' : ms.length ? (ms.length - busqueda.i) + ' de ' + ms.length : 'Sin resultados';
+    $('#buscarArriba').disabled = busqueda.i <= 0; $('#buscarAbajo').disabled = busqueda.i < 0 || busqueda.i >= ms.length - 1;
+    const mk = ms[busqueda.i]; if (!mk) return;
+    mk.classList.add('actual');
+    if (!quieto) { mk.scrollIntoView({ block: 'center' }); pegado = cercaDelFinal($('#msgs')); }
+  }
+  function abrirBusqueda() {
+    if (!abierta || !$('#buscarBar')) return;
+    if (eligiendo) terminarEleccion();
+    busqueda = busqueda || { q: '', marcas: [], i: -1 };
+    $('#buscarBar').hidden = false; const t = $('#buscarTxt'); t.focus(); t.select();
+  }
+  function cerrarBusqueda() { limpiarResaltado(); busqueda = null; const b = $('#buscarBar'); if (b) { b.hidden = true; $('#buscarTxt').value = ''; $('#buscarCuenta').textContent = ''; } }
+  let relojBusca = null;
+  $('#waChat').addEventListener('input', (e) => { if (e.target.id !== 'buscarTxt') return; clearTimeout(relojBusca); relojBusca = setTimeout(() => resaltar(e.target.value), 140); });
+  $('#waChat').addEventListener('keydown', (e) => {
+    if (e.target.id === 'buscarTxt') {
+      if (e.key === 'Escape') { e.preventDefault(); cerrarBusqueda(); return; }
+      if (e.key === 'Enter') { e.preventDefault(); if (busqueda && busqueda.q !== e.target.value) resaltar(e.target.value); else if (busqueda) irResultado(busqueda.i + (e.shiftKey ? 1 : -1)); }
+    }
+  });
+  document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'f' && abierta && $('#buscarBar') && !document.querySelector('dialog[open]')) { e.preventDefault(); abrirBusqueda(); }
+    if (e.key === 'Escape' && eligiendo && !document.querySelector('dialog[open]') && $('#ctxMenu').hidden) terminarEleccion();
+  });
+
+  // ---------- Elegir varios mensajes: copiar, destacar o reenviar juntos ----------
+  const elegible = (m) => !!(m && m.k && m.tipo !== 'reaccion' && m.tipo !== 'no_soportado');
+  function empezarEleccion(k) {
+    if (!$('#msgs')) return;
+    if (busqueda) cerrarBusqueda();
+    eligiendo = new Set(k ? [k] : []);
+    $('#msgs').classList.add('eligiendo');
+    pintarEleccion();
+  }
+  function terminarEleccion() {
+    eligiendo = null;
+    const msgs = $('#msgs'); if (msgs) { msgs.classList.remove('eligiendo'); msgs.querySelectorAll('.wa-b.sel, .wa-b.no-elegible').forEach((b) => b.classList.remove('sel', 'no-elegible')); }
+    const bar = $('#selBar'); if (bar) { bar.hidden = true; bar.innerHTML = ''; }
+  }
+  function pintarEleccion() {
+    const bar = $('#selBar'); if (!bar || !eligiendo) return;
+    document.querySelectorAll('#msgs .wa-b').forEach((b) => { const m = msgDeEl(b); b.classList.toggle('no-elegible', !elegible(m)); b.classList.toggle('sel', eligiendo.has(b.dataset.k)); });
+    const n = eligiendo.size, ms = elegidos(), todos = ms.length && ms.every((m) => abierta._dest && abierta._dest.has(m.k));
+    bar.hidden = false;
+    bar.innerHTML = '<button type="button" id="selCerrar" aria-label="Dejar de elegir" title="Dejar de elegir (Esc)">✕</button><b>' + (n ? n + (n === 1 ? ' elegido' : ' elegidos') : 'Tocá los mensajes') + '</b>'
+      + '<button type="button" id="selCopiar"' + (n ? '' : ' disabled') + ' title="Copiar el texto">📋<span class="wa-lbl"> Copiar</span></button>'
+      + '<button type="button" id="selDestacar"' + (n ? '' : ' disabled') + ' title="' + (todos ? 'Quitar de destacados' : 'Destacar') + '">' + (todos ? '☆' : '⭐') + '<span class="wa-lbl"> ' + (todos ? 'Quitar' : 'Destacar') + '</span></button>'
+      + '<button type="button" id="selReenviar"' + (n && n <= 10 ? '' : ' disabled') + ' title="' + (n > 10 ? 'Hasta 10 por vez' : 'Reenviar a otra charla') + '">↪<span class="wa-lbl"> Reenviar</span></button>';
+  }
+  const elegidos = () => (abierta && eligiendo ? (abierta.mensajes || []).filter((m, i) => eligiendo.has(burb.keys[i])) : []);
+  // El texto de un mensaje para copiarlo, como lo ve el equipo.
+  const textoDe = (m) => String(m.transcripcion || m.caption || (m.archivo && m.de === 'cliente' ? '' : m.texto) || '').trim() || (m.archivo ? '📎 ' + (m.archivo.nombre || 'archivo') : '');
+  function copiarVarios(ms) {
+    const quien = (m) => (m.de === 'cliente' ? nombre(abierta) : QUIEN[m.de] || '');
+    copiar(ms.map((m) => (ms.length > 1 ? '[' + fecha(m.ts) + '] ' + quien(m) + ': ' : '') + textoDe(m)).join('\n'), ms.length > 1 ? '📋 Se copiaron ' + ms.length + ' mensajes.' : '📋 Copiado.');
+  }
+  async function destacar(ms, si) {
+    const c = abierta; if (!c || !ms.length) return;
+    const j = await post(ruta(c.telefono, '/destacar'), { claves: ms.map((m) => m.k), destacado: si });
+    if (abierta && abierta.telefono === c.telefono) { abierta.destacados = j.destacados || []; pintarBurbujas(abierta); if (!$('#waDest').hidden) pintarDestacados(); }
+    $('#wamsg').textContent = si ? '⭐ ' + (ms.length === 1 ? 'Destacado.' : 'Se destacaron ' + ms.length + ' mensajes.') + ' Están en «Mensajes destacados».' : 'Se quitó de destacados.';
+  }
+  $('#waChat').addEventListener('click', async (e) => {
+    if (!eligiendo) return;
+    const b = e.target.closest('#selBar button');
+    if (b) {
+      e.stopPropagation();
+      const ms = elegidos();
+      if (b.id === 'selCerrar') return terminarEleccion();
+      if (b.id === 'selCopiar') { copiarVarios(ms); return terminarEleccion(); }
+      if (b.id === 'selDestacar') { try { await destacar(ms, !ms.every((m) => abierta._dest.has(m.k))); terminarEleccion(); } catch (err) { msg('No se pudo destacar: ' + seRompioRuta(err)); } return; }
+      if (b.id === 'selReenviar') return abrirReenviar(ms);
+      return;
+    }
+    const bu = e.target.closest('#msgs .wa-b');
+    if (!bu) return;
+    e.preventDefault(); e.stopPropagation();
+    if (!elegible(msgDeEl(bu))) return;
+    if (eligiendo.has(bu.dataset.k)) eligiendo.delete(bu.dataset.k); else eligiendo.add(bu.dataset.k);
+    pintarEleccion();
+  }, true);
+
+  // ---------- Mensajes destacados (⭐) y su lista por charla ----------
+  function pintarDestacados() {
+    const aside = $('#waDest'), c = abierta; if (!aside || !c) return;
+    const ms = (c.mensajes || []).map((m, i) => ({ m, k: burb.keys[i] })).filter((x) => x.m.k && c._dest && c._dest.has(x.m.k)).reverse();
+    aside.innerHTML = '<div class="tit"><h2>⭐ Mensajes destacados</h2><button class="btn gris" type="button" id="destCerrar" aria-label="Cerrar">✕</button></div>'
+      + '<div class="lista scroll">' + (ms.length ? ms.map((x) => '<button type="button" class="item" data-ir="' + esc(x.k) + '"><small>' + esc(x.m.de === 'cliente' ? nombre(c) : QUIEN[x.m.de]) + ' · ' + esc(fecha(x.m.ts)) + '</small><span>' + esc(textoDe(x.m)) + '</span></button>').join('')
+        : '<p class="muted" style="margin:6px 2px">Todavía no hay mensajes destacados en esta charla. Abrí el menú de un mensaje (clic derecho o mantenelo apretado) y tocá «Destacar».</p>') + '</div>';
+  }
+  function abrirDestacados() { if (!abierta) return; fichaAbierta = false; $('#waFicha').hidden = true; $('#waDest').hidden = false; pintarDestacados(); const p = $('#waDest .item, #destCerrar'); if (p) p.focus(); }
+  $('#waChat').addEventListener('click', (e) => {
+    if (e.target.closest('#destCerrar')) { $('#waDest').hidden = true; return; }
+    const it = e.target.closest('#waDest [data-ir]'); if (!it) return;
+    if (irAMensaje(it.dataset.ir) && hojaMovil()) $('#waDest').hidden = true;
+  });
+
+  // ---------- Reenviar a otra charla ----------
+  let reenv = null;
+  function abrirReenviar(ms) {
+    if (!abierta || !ms.length) return;
+    reenv = { origen: abierta.telefono, claves: ms.map((m) => m.k), destino: '' };
+    $('#reenvQue').textContent = ms.length === 1 ? 'Elegí a qué charla mandarlo. Sale desde la línea de esa charla.' : 'Elegí a qué charla mandar los ' + ms.length + ' mensajes (salen en orden).';
+    $('#reenvBuscar').value = ''; $('#reenvMsg').textContent = ''; $('#reenvMandar').disabled = true; $('#reenvMandar').textContent = 'Reenviar';
+    pintarReenv(); $('#dlgReenv').showModal(); $('#reenvBuscar').focus();
+  }
+  function pintarReenv() {
+    const q = sinTilde($('#reenvBuscar').value.trim());
+    const lista = charlas.filter((c) => c.telefono !== reenv.origen)
+      .filter((c) => !q || sinTilde([nombre(c), (c.datos || {}).negocio, c.telefono].join(' ')).includes(q)).slice(0, 80);
+    $('#reenvLista').innerHTML = lista.length ? lista.map((c) => {
+      const puede = c.por_puente || c.ventana_abierta;
+      return '<button type="button" role="option" data-tel="' + esc(c.telefono) + '" aria-pressed="' + (reenv.destino === c.telefono) + '"' + (puede ? '' : ' disabled') + '>' + avatar(c, 34)
+        + '<span class="q"><b>' + esc(nombre(c)) + (c.por_puente ? ' · N2' : '') + '</b><small>' + (puede ? esc(telLindo(c.telefono)) + ((c.datos || {}).negocio ? ' · ' + esc(c.datos.negocio) : '') : '🔒 Pasaron más de 24 h: no se le puede escribir') + '</small></span></button>';
+    }).join('') : '<p class="muted">No hay charlas con ese nombre.</p>';
+  }
+  $('#reenvBuscar').addEventListener('input', pintarReenv);
+  $('#reenvLista').addEventListener('click', (e) => { const b = e.target.closest('button[data-tel]'); if (!b || b.disabled) return; reenv.destino = b.dataset.tel; pintarReenv(); $('#reenvMandar').disabled = false; });
+  $('#reenvCerrar').addEventListener('click', () => $('#dlgReenv').close());
+  $('#reenvMandar').addEventListener('click', async () => {
+    if (!reenv || !reenv.destino) return;
+    const dest = charlas.find((c) => c.telefono === reenv.destino), b = $('#reenvMandar');
+    b.disabled = true; b.textContent = 'Reenviando…';
+    try {
+      const j = await post(ruta(reenv.destino, '/reenviar'), { origen: reenv.origen, claves: reenv.claves });
+      $('#dlgReenv').close(); terminarEleccion();
+      const tel = reenv.destino;
+      avisoFlot('↪ Reenviado a ' + (dest ? nombre(dest) : '+' + tel) + (j.fallaron && j.fallaron.length ? ' (' + j.fallaron.length + ' no salió)' : ''), 'Abrir', () => abrir(tel));
+      cargar();
+    } catch (err) { b.disabled = false; b.textContent = 'Reenviar'; $('#reenvMsg').innerHTML = '<span class="err">' + esc(seRompioRuta(err)) + '</span>'; }
+  });
+
+  // ---------- Reaccionar con un emoji ----------
+  async function reaccionar(m, emoji) {
+    const c = abierta; if (!c || !m) return;
+    const antes = (c.reacciones_equipo || {})[m.id] || '';
+    const nuevo = emoji === antes ? '' : emoji;
+    try {
+      await post(ruta(c.telefono, '/reaccionar'), { id: m.id, emoji: nuevo });
+      if (abierta && abierta.telefono === c.telefono) { abierta.reacciones_equipo = { ...(abierta.reacciones_equipo || {}), [m.id]: nuevo }; pintarBurbujas(abierta); }
+    } catch (err) { msg('No se pudo reaccionar: ' + seRompioRuta(err)); }
+  }
+  // Responder citando (el ↩, el menú o deslizar la burbuja en el celular).
+  function citar(m) {
+    const c = abierta; if (!c || !m) return false;
+    if (!(c.ventana_abierta && !c.por_puente && /^wamid\./.test(m.id || '') && !m.error)) {
+      msg(c.por_puente ? 'Por el número 2 no se puede responder citando: escribile normal.' : !c.ventana_abierta ? 'Pasaron más de 24 h: no se le puede escribir.' : 'Ese mensaje no se puede citar.');
+      return false;
+    }
+    respondiendo = { tel: c.telefono, id: m.id, de: m.de, texto: String(m.transcripcion || m.caption || m.texto || (m.archivo ? '📎 ' + m.archivo.nombre : '')).slice(0, 160) };
+    pintarRespBar(); if ($('#texto')) $('#texto').focus();
+    return true;
+  }
 
   // ---------- Agregar a contactos (25/11/2026, Budy) ----------
   // Guarda nombre, negocio y mail en la ficha y baja una tarjeta de contacto (.vcf). El CRM de MyM sólo recibe pedidos
@@ -1621,6 +2130,8 @@
     $('#nuevaDesdeL').hidden = !p;
     evaluarNueva();
     $('#dlgNueva').showModal(); nf.telefono.focus();
+    // El estado del número 2 (cuántos primeros contactos van hoy) se pide fresco al abrir: la lista lo relee cada 30 s.
+    cargarLineas().then(() => { if ($('#dlgNueva').open) evaluarNueva(); });
   }
   // Qué va a pasar con lo que está cargado, antes de tocar «Mandar».
   function evaluarNueva() {
@@ -1691,7 +2202,8 @@
       { ico: '💬', txt: 'Nueva charla', fn: abrirNueva },
       { ico: '📄', txt: 'Mandar propuesta', fn: () => abrirPropuesta(null) },
       !boton('puenteBtn').hidden && { ico: '📱', txt: 'Número 2', fn: () => boton('puenteBtn').click() },
-      !boton('avisos').hidden && { ico: '🔔', txt: 'Activar avisos', fn: () => boton('avisos').click() },
+      { ico: pushActivo ? '🔔' : '🔕', txt: 'Avisos en este celular', fn: abrirAvisos },
+      instalarApp && { ico: '📲', txt: 'Instalar el panel', fn: () => { const p = instalarApp; instalarApp = null; p.prompt(); } },
       { ico: sonidoOn ? '🔇' : '🔊', txt: sonidoOn ? 'Silenciar el sonido' : 'Prender el sonido', fn: () => boton('sonido').click() },
       { ico: pausado ? '▶️' : '⏸️', txt: pausado ? 'Prender el bot' : 'Pausar el bot', fn: () => boton('pausar').click() },
       { ico: '↻', txt: 'Actualizar', fn: () => boton('warecargar').click() },
@@ -1709,7 +2221,7 @@
     $('#entrar').hidden = true; $('#panel').hidden = false; cargarResumen(); cargarRespuestas(); cargarLineas();
     cargar().then(() => { const t = telDelLink(); if (t) { abrir(t); history.replaceState(null, '', location.pathname); } });
   }
-  function filtrar(f, e, et) { filtro = f; etapa = e || ''; etq = et || ''; pintarCharlas(); }
+  function filtrar(f, e, et) { filtro = f; etapa = e || ''; etq = et || ''; pintarCharlas(); if (f === 'archivadas' && !e && !et) cargarArchivadas(); }
   $('#entrar').addEventListener('submit', (e) => { e.preventDefault(); $('#entrarmsg').textContent = 'Abriendo Google…'; ACCESO.entrar(); });
   $('#salir').addEventListener('click', () => salir(''));
   $('#wabuscar').addEventListener('input', pintarCharlas);
@@ -1733,6 +2245,7 @@
     b.dataset.etapa ? filtrar('todas', etapa === b.dataset.etapa ? '' : b.dataset.etapa) : filtrar(b.dataset.filtro);
   });
   $('#waLista').addEventListener('click', (e) => {
+    if (e.target.closest('[data-mas]')) { cargarMas(); return; }
     const mas = e.target.closest('[data-menu]');
     if (mas) { const r = mas.getBoundingClientRect(); menuCharla(mas.dataset.menu, r.left, r.bottom + 4); return; }
     const it = e.target.closest('[data-tel]'); if (it) abrir(it.dataset.tel);
@@ -1743,6 +2256,11 @@
     const b = e.target.closest('button'); if (!b || !abierta) return;
     if (b.id === 'volver') { abierta = null; respondiendo = null; pintarCharlas(); pintarChat(); return; }
     if (b.id === 'cabMas') { const r = b.getBoundingClientRect(); abrirMenu(itemsCharla(abierta, true), r.right - 240, r.bottom + 4, 'cabecera', tituloCharla(abierta)); return; }
+    if (b.id === 'cabBuscar') { if (busqueda) cerrarBusqueda(); else abrirBusqueda(); return; }
+    if (b.id === 'buscarArriba' && busqueda) { irResultado(busqueda.i - 1); return; }
+    if (b.id === 'buscarAbajo' && busqueda) { irResultado(busqueda.i + 1); return; }
+    if (b.id === 'buscarCerrar') { cerrarBusqueda(); return; }
+    if (b.dataset.reac) { const bu = b.closest('.wa-b'), r = b.getBoundingClientRect(); menuBurbuja(bu, r.left, r.bottom + 4); return; }
     if (b.id === 'bajar') { alFinal(true); return; }
     if (b.id === 'avisoMicOk') { $('#avisoMic').hidden = true; return; }
     if (b.id === 'accion') { accionDelCuadro(e); return; }
@@ -1753,11 +2271,7 @@
     if (b.dataset.bajar) { bajar(b.dataset.bajar, b.dataset.nombre); return; }
     if (b.classList.contains('wa-verpdf')) { verPdf(b.dataset.ruta, b.dataset.nombre); return; }
     // La Bandeja (17/11/2026): citar, propuesta por mail y el audio grabado.
-    if (b.dataset.citar) {
-      const m = (abierta.mensajes || []).find((x) => x.id === b.dataset.citar); if (!m) return;
-      respondiendo = { tel: abierta.telefono, id: m.id, de: m.de, texto: String(m.transcripcion || m.caption || m.texto || (m.archivo ? '📎 ' + m.archivo.nombre : '')).slice(0, 160) };
-      pintarRespBar(); if ($('#texto')) $('#texto').focus(); return;
-    }
+    if (b.dataset.citar) { citar((abierta.mensajes || []).find((x) => x.id === b.dataset.citar)); return; }
     if (b.id === 'respCerrar') { respondiendo = null; pintarRespBar(); return; }
     if (b.dataset.mail) { propuestaPorMail(); return; }
     if (b.id === 'verficha' || b.id === 'cerrarficha') { fichaAbierta = b.id === 'verficha' ? !fichaAbierta : false; $('#waFicha').hidden = !fichaAbierta; $('#verficha').setAttribute('aria-expanded', fichaAbierta); return; }
@@ -1788,6 +2302,7 @@
   $('#waChat').addEventListener('submit', async (e) => {
     e.preventDefault();
     if (e.target.id === 'fichaform') return guardarFicha(e.target);
+    if (e.target.id === 'buscarBar') return;
     const texto = $('#texto').value.trim(), boton = $('#accion');
     if (!texto || !abierta) return;
     boton.disabled = true;
@@ -1859,12 +2374,13 @@
   }
   // 📎 en una charla con la ventana abierta: lo escrito al lado va como texto del archivo.
   $('#waChat').addEventListener('change', async (e) => {
-    if (e.target.id !== 'adjunto' || !abierta) return;
-    const file = e.target.files[0]; e.target.value = '';
-    if (!file) return;
-    // 25/11/2026: antes de mandarlo se ve (vista previa como en WhatsApp); lo escrito en el cuadro pasa a ser su texto.
+    if ((e.target.id !== 'adjunto' && e.target.id !== 'camara') || !abierta) return;
+    const files = [...e.target.files]; e.target.value = '';
+    if (!files.length) return;
+    // 25/11/2026: antes de mandarlo se ve (vista previa como en WhatsApp); lo escrito en el cuadro pasa a ser el texto
+    // del primero. Desde la tanda 2 pueden ser varios, y el 📷 del celular saca la foto con la cámara.
     const texto = ($('#texto') || {}).value ? $('#texto').value.trim() : '';
-    abrirVistaPrevia(file, texto, !!texto);
+    abrirVistaPrevia(files, texto, !!texto);
   });
 
   const dlg = $('#dlgProp'), pf = $('#propForm');
@@ -2005,13 +2521,138 @@
   $('#waChat').addEventListener('dragleave', (e) => { if (!e.relatedTarget || !$('#waChat').contains(e.relatedTarget)) $('#waChat').classList.remove('soltando'); });
   $('#waChat').addEventListener('drop', (e) => {
     $('#waChat').classList.remove('soltando');
-    const f = e.dataTransfer.files && e.dataTransfer.files[0]; if (!f) return;
-    e.preventDefault(); abrirVistaPrevia(f, ($('#texto') || {}).value ? $('#texto').value.trim() : '', true);
+    const fs = [...((e.dataTransfer && e.dataTransfer.files) || [])]; if (!fs.length) return;
+    e.preventDefault(); abrirVistaPrevia(fs, ($('#texto') || {}).value ? $('#texto').value.trim() : '', true);
   });
   $('#waChat').addEventListener('paste', (e) => {
     if (e.target.id !== 'texto') return;
-    const f = [...(e.clipboardData && e.clipboardData.files || [])][0]; if (!f) return;
-    e.preventDefault(); abrirVistaPrevia(f, $('#texto').value.trim(), true);
+    const fs = [...(e.clipboardData && e.clipboardData.files || [])]; if (!fs.length) return;
+    e.preventDefault(); abrirVistaPrevia(fs, $('#texto').value.trim(), true);
+  });
+
+  // ---------- Deslizar una burbuja a la derecha para responder citando (celular, 25/11/2026) ----------
+  // Como en WhatsApp: el dedo arrastra la burbuja, aparece ↩ y, pasando los 56 px, al soltar queda citada. Un
+  // movimiento vertical es scroll y no se toca (las burbujas tienen touch-action: pan-y).
+  let desl = null;
+  $('#waChat').addEventListener('pointerdown', (e) => {
+    if (e.pointerType !== 'touch' || eligiendo) return;
+    const b = e.target.closest('#msgs .wa-b'); if (!b || b.hidden || e.target.closest('audio, video, a, button')) return;
+    desl = { b, id: e.pointerId, x0: e.clientX, y0: e.clientY, activo: false, dx: 0 };
+  });
+  document.addEventListener('pointermove', (e) => {
+    if (!desl || e.pointerId !== desl.id) return;
+    const dx = e.clientX - desl.x0, dy = e.clientY - desl.y0;
+    if (!desl.activo) {
+      if (Math.abs(dy) > 14 || dx < -10) { desl = null; return; }
+      if (!(dx > 14 && dx > Math.abs(dy) * 1.4)) return;
+      desl.activo = true; soltarLargo();
+      desl.b.classList.remove('volviendo'); desl.b.classList.add('deslizando');
+      desl.ico = document.createElement('span'); desl.ico.className = 'desliza-ico'; desl.ico.textContent = '↩'; desl.ico.setAttribute('aria-hidden', 'true');
+      desl.b.appendChild(desl.ico);
+    }
+    desl.dx = Math.max(0, Math.min(dx - 14, 84));
+    desl.b.style.transform = 'translateX(' + desl.dx + 'px)';
+    desl.ico.style.opacity = String(Math.min(1, desl.dx / 56));
+    if (desl.dx >= 56 && !desl.vibro) { desl.vibro = true; if (navigator.vibrate) try { navigator.vibrate(10); } catch (x) {} }
+  }, { passive: true });
+  function soltarDesl(e) {
+    if (!desl || (e && e.pointerId !== desl.id)) return;
+    const d = desl; desl = null;
+    if (!d.activo) return;
+    d.b.classList.remove('deslizando'); d.b.classList.add('volviendo'); d.b.style.transform = '';
+    setTimeout(() => { d.b.classList.remove('volviendo'); if (d.ico) d.ico.remove(); }, 200);
+    if (d.dx >= 56 && e && e.type === 'pointerup') citar(msgDeEl(d.b));
+    if (largo) largo.hecho = true;   // que soltar no se convierta en un clic
+  }
+  document.addEventListener('pointerup', soltarDesl); document.addEventListener('pointercancel', soltarDesl);
+
+  // ============================================================
+  //  APP INSTALABLE Y AVISOS CON EL PANEL CERRADO (25/11/2026, Budy)
+  //  El service worker vive en admin/ (sw.js, alcance admin/) y sólo muestra los avisos y abre la charla al
+  //  tocarlos: no guarda nada en caché. Los avisos los manda el server de MyM (Web Push con VAPID).
+  // ============================================================
+  let swReg = null, pushActivo = false, instalarApp = null;
+  const CLAVE_MODO = 'mym-wa-aviso-modo';
+  const b64uABytes = (s) => { const b = atob(String(s).replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((String(s).length + 3) % 4)); return Uint8Array.from(b, (c) => c.charCodeAt(0)); };
+  if ('serviceWorker' in navigator && window.isSecureContext) {
+    navigator.serviceWorker.register('sw.js', { scope: './' }).then((r) => { swReg = r; revisarPush(); }).catch((e) => console.warn('No se pudo registrar el service worker:', e.message));
+    // Tocar un aviso con el panel ya abierto: el service worker pide abrir esa charla.
+    navigator.serviceWorker.addEventListener('message', (e) => { const t = e.data && String(e.data.abrir || '').replace(/\D/g, ''); if (t && !$('#panel').hidden) abrir(t); });
+  }
+  window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); instalarApp = e; });
+  window.addEventListener('appinstalled', () => { instalarApp = null; $('#wamsg').textContent = '📲 Listo: el panel quedó instalado como app.'; });
+  const enIphone = () => /iPhone|iPad|iPod/.test(navigator.userAgent);
+  const instaladaComoApp = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+  async function suscripcionActual() { try { return swReg && swReg.pushManager ? await swReg.pushManager.getSubscription() : null; } catch (e) { return null; } }
+  async function revisarPush() {
+    const s = await suscripcionActual();
+    pushActivo = !!s && window.Notification && Notification.permission === 'granted';
+    const b = $('#avisos'); b.innerHTML = (pushActivo ? '🔔' : '🔕') + '<span class="wa-lbl"> Avisos</span>';
+    b.title = pushActivo ? 'Los avisos están activos en este equipo' : 'Avisos en este celular o compu, aunque el panel esté cerrado';
+  }
+  let infoPush = null;
+  async function abrirAvisos() {
+    cerrarMenu();
+    $('#avisosMsg').textContent = '';
+    let modo = 'humano'; try { modo = localStorage.getItem(CLAVE_MODO) || 'humano'; } catch (e) {}
+    document.querySelectorAll('#dlgAvisos [name=avisoModo]').forEach((r) => { r.checked = r.value === modo; });
+    pintarAvisos('cargando');
+    $('#dlgAvisos').showModal();
+    try { infoPush = await pedir('/api/ventas-sol/push'); } catch (e) { infoPush = { error: seRompioRuta(e) }; }
+    pintarAvisos();
+  }
+  async function pintarAvisos(cargando) {
+    const box = $('#avisosEstado'), act = $('#avisosActivar'), baja = $('#avisosBaja'), probar = $('#avisosProbar');
+    const estado = (cls, html) => { box.className = 'estado-n' + (cls ? ' ' + cls : ''); box.innerHTML = html; };
+    baja.hidden = true; probar.hidden = true; act.hidden = false; act.disabled = false; act.textContent = 'Activar los avisos';
+    if (cargando) { estado('', 'Revisando…'); act.disabled = true; return; }
+    const sinSoporte = !('serviceWorker' in navigator) || !('PushManager' in window) || !window.Notification;
+    if (sinSoporte || !swReg) {
+      act.hidden = true;
+      if (enIphone() && !instaladaComoApp()) return estado('mal', '<b>En el iPhone, los avisos andan con el panel instalado.</b> Tocá Compartir → «Agregar a pantalla de inicio», abrilo desde ese ícono y volvé a esta pantalla.');
+      return estado('no', '<b>Este navegador no puede recibir avisos con el panel cerrado.</b> Abrí el panel en Chrome (en el celular o en la compu).');
+    }
+    if (infoPush && infoPush.error) { act.hidden = true; return estado('no', '<b>No se pudo preguntar al server.</b> ' + esc(infoPush.error)); }
+    if (infoPush && !infoPush.listo) { act.hidden = true; return estado('mal', '<b>Falta configurar los avisos en el server de MyM</b> (las claves VAPID). Está anotado qué hay que crear: avisale a Budy.'); }
+    if (Notification.permission === 'denied') { act.hidden = true; return estado('no', '<b>Las notificaciones están bloqueadas para esta página.</b> Tocá el candado (o la ⓘ) al lado de la dirección → Permisos → Notificaciones → Permitir, y volvé a abrir esta pantalla.'); }
+    const s = await suscripcionActual();
+    if (s && Notification.permission === 'granted') {
+      estado('ok', '<b>Activos en este equipo.</b> Te llegan aunque el panel esté cerrado. Podés cambiar qué avisa y tocar «Guardar».');
+      act.textContent = 'Guardar'; baja.hidden = false; probar.hidden = false;
+    } else estado('', 'Todavía no están activos en este equipo. Elegí qué querés que te avise y tocá «Activar los avisos»: el navegador te va a pedir permiso.'
+      + (instalarApp ? ' <br>Tip: instalá el panel como app (menú ⋮ → «Instalar el panel») para tenerlo a mano.' : ''));
+  }
+  const modoElegido = () => (document.querySelector('#dlgAvisos [name=avisoModo]:checked') || {}).value || 'humano';
+  $('#avisos').addEventListener('click', abrirAvisos);
+  $('#avisosCerrar').addEventListener('click', () => $('#dlgAvisos').close());
+  $('#avisosActivar').addEventListener('click', async () => {
+    const b = $('#avisosActivar'); b.disabled = true; $('#avisosMsg').textContent = '';
+    try {
+      const perm = await Notification.requestPermission();
+      if (perm !== 'granted') { pintarAvisos(); $('#avisosMsg').textContent = 'Sin el permiso del navegador no se pueden mandar avisos.'; return; }
+      const clave = b64uABytes(infoPush.publica);
+      let s = await swReg.pushManager.getSubscription();
+      // Si la suscripción es de otra clave (se cambiaron las claves del server), se rehace.
+      const misma = s && s.options && s.options.applicationServerKey && new Uint8Array(s.options.applicationServerKey).every((x, i) => x === clave[i]);
+      if (s && !misma) { await s.unsubscribe().catch(() => {}); s = null; }
+      if (!s) s = await swReg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: clave });
+      const equipo = (/Mobi|Android|iPhone/.test(navigator.userAgent) ? 'Celular' : 'Compu') + ' · ' + (/Edg\//.test(navigator.userAgent) ? 'Edge' : /Chrome\//.test(navigator.userAgent) ? 'Chrome' : /Firefox\//.test(navigator.userAgent) ? 'Firefox' : /Safari\//.test(navigator.userAgent) ? 'Safari' : 'navegador');
+      await post('/api/ventas-sol/push/suscribir', { sub: s.toJSON(), modo: modoElegido(), equipo });
+      try { localStorage.setItem(CLAVE_MODO, modoElegido()); } catch (e) {}
+      await revisarPush(); await pintarAvisos();
+      $('#avisosMsg').textContent = modoElegido() === 'todas' ? '✅ Listo: te avisa cada mensaje de un cliente.' : '✅ Listo: te avisa cuando una charla pide a una persona.';
+    } catch (err) { b.disabled = false; $('#avisosMsg').innerHTML = '<span class="err">No se pudieron activar: ' + esc(seRompioRuta(err)) + '</span>'; }
+  });
+  $('#avisosBaja').addEventListener('click', async () => {
+    const s = await suscripcionActual();
+    try { if (s) { await post('/api/ventas-sol/push/baja', { endpoint: s.endpoint }).catch(() => {}); await s.unsubscribe(); } } catch (e) {}
+    await revisarPush(); await pintarAvisos(); $('#avisosMsg').textContent = 'Listo: este equipo ya no recibe avisos.';
+  });
+  $('#avisosProbar').addEventListener('click', async () => {
+    const s = await suscripcionActual(); if (!s) return;
+    $('#avisosMsg').textContent = 'Mandando uno de prueba…';
+    try { await post('/api/ventas-sol/push/probar', { endpoint: s.endpoint }); $('#avisosMsg').textContent = '✅ Salió: si el panel está a la vista no aparece; cerralo o minimizalo para verlo.'; }
+    catch (err) { $('#avisosMsg').innerHTML = '<span class="err">' + esc(seRompioRuta(err)) + '</span>'; }
   });
 
   // ---------- La altura de la pantalla, con el teclado del celular (visualViewport) ----------
@@ -2027,22 +2668,46 @@
   window.addEventListener('resize', ajustarAlto);
   ajustarAlto();
 
-  // Cada 20 s y sólo con la pestaña visible: cada vuelta son lecturas pagas de Firestore en MyM.
-  // Mientras se escribe un mensaje no se refresca la charla; la ficha se cuida sola (fichaSucia).
-  function tick() {
-    if (document.hidden || $('#panel').hidden) return;
-    cargar(); cargarResumen(); cargarLineas();
-    // Desde el 25/11/2026 la charla se refresca también mientras se escribe (ya no se redibuja el cuadro de texto);
-    // sólo se espera si el teclado está armando una palabra (acentos, dictado).
+  // ============================================================
+  //  MENSAJES AL INSTANTE (25/11/2026, Budy: «hoy se refresca cada 20 s»)
+  //  Cada 4 s, sólo con la pestaña a la vista, se pregunta la MARCA de novedades del server (1 lectura de
+  //  Firestore, y con su caché casi ninguna). Si cambió (entró o salió un mensaje, cambió una tilde, alguien
+  //  archivó...), se relee la lista y la charla abierta. Si no cambió, no se lee nada más. Antes eran 50 charlas
+  //  + la abierta cada 20 s, pasara algo o no. Cada 2 minutos se relee todo igual, por si una marca se perdió.
+  //  Con la pestaña oculta no se pregunta nada: avisan los push. Si este equipo no tiene los push activos y
+  //  tiene el sonido o las notificaciones prendidos, se mira la marca 1 vez por minuto (1 lectura).
+  //  Con el server viejo (sin /novedades) sigue como antes: todo cada 20 s.
+  // ============================================================
+  const CADA_MS = 4000, COMPLETA_MS = 120000;
+  let marcaVista = null, ultimaCompleta = 0, sinMarca = false, vueltasViejo = 0, ultLineas = 0, preguntando = false;
+  function refrescar() {
+    ultimaCompleta = Date.now();
+    cargar(); cargarResumen();
+    if (Date.now() - ultLineas > 30000) { ultLineas = Date.now(); cargarLineas(); }
+    // La charla se refresca también mientras se escribe (no se redibuja el cuadro de texto); sólo se espera si el
+    // teclado está armando una palabra (acentos, dictado).
     if (abierta && !componiendo) abrir(abierta.telefono);
   }
-  setInterval(tick, 20000);
-  // Con la pestaña en segundo plano (17/11/2026): para que el sonido y el «(n)» del título sirvan cuando no
-  // se está mirando, la lista se relee cada 60 s (sólo la lista: 1 pedido, hasta 50 lecturas de Firestore),
-  // y sólo si el sonido o las notificaciones están prendidos.
-  setInterval(() => {
-    if (!document.hidden || $('#panel').hidden) return;
-    if (sonidoOn || (window.Notification && Notification.permission === 'granted')) cargar();
+  async function marcaDelServer() {
+    try { return (await pedir('/api/ventas-sol/novedades')).marca || ''; }
+    catch (e) { if (e.status === 404) sinMarca = true; return null; }
+  }
+  async function tick() {
+    if (document.hidden || $('#panel').hidden || preguntando) return;
+    if (sinMarca) { if (++vueltasViejo % 5 === 0) refrescar(); return; }
+    preguntando = true;
+    try {
+      const m = await marcaDelServer();
+      if (m === null) return;
+      if (m !== marcaVista || Date.now() - ultimaCompleta > COMPLETA_MS) { marcaVista = m; refrescar(); }
+    } finally { preguntando = false; }
+  }
+  setInterval(tick, CADA_MS);
+  setInterval(async () => {
+    if (!document.hidden || $('#panel').hidden || pushActivo || sinMarca) return;
+    if (!(sonidoOn || (window.Notification && Notification.permission === 'granted'))) return;
+    const m = await marcaDelServer();
+    if (m !== null && m !== marcaVista) { marcaVista = m; cargar(); }
   }, 60000);
   ACCESO.iniciar({ alEntrar: () => { if ($('#panel').hidden) entrar(); }, alSalir: mostrarEntrada });
 })();

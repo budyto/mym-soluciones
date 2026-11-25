@@ -6,6 +6,15 @@
   <FilesMatch "\.(css|js)$">
     Header set Cache-Control "public, max-age=31536000"
   </FilesMatch>
+  # (25/11/2026) El service worker del panel (admin/sw.js) y el manifest no llevan ?v=: si quedaran un año en caché,
+  # un arreglo de los avisos no llegaría nunca a los celulares. Van sin caché, como el HTML.
+  <FilesMatch "^(sw\.js|manifest\.webmanifest)$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+</IfModule>
+# (25/11/2026) El manifest del panel instalable (admin/manifest.webmanifest) tiene que salir con su tipo.
+<IfModule mod_mime.c>
+  AddType application/manifest+json .webmanifest
 </IfModule>
 
 # (4/11/2026) /resenas se dio de baja (Budy no quiere reseñas): Hostinger no borra lo que sale del repo,
@@ -31,6 +40,9 @@
 # - Referrer-Policy: a los sitios de afuera sólo les llega el dominio, nunca la ruta (ej. admin/whatsapp.html#tel=...).
 # - Permissions-Policy: la web no usa cámara, ubicación ni USB. El micrófono sí, sólo en nuestra propia web: lo usa
 #   el panel de WhatsApp para grabar audios (25/11/2026, Budy: en el celular Chrome lo rechazaba sin preguntar).
+#   (25/11/2026, tanda 2) La cámara sigue en camera=(): el 📷 del panel usa <input capture>, que abre la app de cámara
+#   del celular y no pasa por esta política (sólo getUserMedia lo hace). Las notificaciones y el push tampoco dependen
+#   de ella. Si algún día el panel filma o saca fotos dentro de la página, recién ahí pasar a camera=(self).
 # - CSP en dos partes: lo que no puede romper nada se aplica ya; la lista completa de orígenes queda en modo
 #   "sólo informar" (Report-Only): el navegador avisa en la consola lo que bloquearía, sin bloquearlo.
 #   Cuando se sume el registro insertado de Meta hay que agregar connect.facebook.net y www.facebook.com.
