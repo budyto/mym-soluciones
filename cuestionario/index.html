@@ -155,6 +155,40 @@ input:disabled,textarea:disabled{opacity:.45}
 .btn.hecho{background:transparent;color:var(--ok);border-color:var(--ok);cursor:default}
 .numero{font-weight:700;color:var(--tinta);white-space:nowrap}
 
+/* Dos partes (25/11/2026). La parte 1 es el recorrido fuerte, con su encabezado azul; la parte 2 queda plegada y
+   más quieta, para que se lea como «opcional» sin explicarlo de más. */
+.btn-sec{background:var(--papel);color:var(--tinta);border-color:var(--borde);min-height:46px;padding:10px 16px;font-size:.95rem}
+.ayudas{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.qr{display:flex;flex-wrap:wrap;gap:16px;align-items:center;background:var(--papel);border:1px solid var(--borde);border-radius:14px;padding:16px}
+.qr>div:last-child{flex:1 1 240px;display:grid;gap:10px}
+.qr-img{width:152px;height:152px;background:#fff;border-radius:10px;padding:8px}
+.qr-img svg{width:100%;height:100%;display:block}
+.parte{display:grid;gap:18px}
+.parte-cab{display:grid;gap:6px;padding:4px 2px 0}
+.parte-cab h2{font-size:clamp(1.7rem,6vw,2.2rem)}
+.parte-cab p{color:var(--gris)}
+.parte-cab .cuanto{font:800 1.05rem/1.2 var(--f-tit);color:var(--azul)}
+#sec-p1{border:2px solid var(--azul)}
+#sec-p1 .q:first-of-type{border-top:0}
+.parte2-cab{border-top:2px dashed var(--borde);padding-top:22px}
+.abrir2{justify-self:start}
+.sug{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px}
+.sug>span{width:100%;font-size:.82rem;color:var(--gris);font-weight:600}
+.sug button{border:1.5px dashed var(--azul);background:transparent;color:var(--azul);border-radius:999px;padding:7px 12px;min-height:38px;font:600 .9rem/1.2 var(--f-txt);cursor:pointer;text-align:left}
+.sug button[aria-pressed=true]{border-style:solid;background:var(--suave);color:var(--tinta)}
+.sug button[aria-pressed=true]::before{content:"✓ "}
+.nota{font-size:.85rem;color:var(--agua);font-weight:600;margin-top:8px}
+.leer{margin-bottom:4px;display:grid;gap:6px}
+.leer>label{justify-self:start;position:relative}
+.leer input[type=file]{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.leer>label:has(input:focus-visible){outline:3px solid var(--azul);outline-offset:2px}
+.propuesta{border:1.5px solid var(--agua);border-radius:12px;padding:14px;display:grid;gap:10px;background:var(--fondo)}
+.propuesta ul{list-style:none;margin:0;padding:0;display:grid;gap:4px;max-height:320px;overflow:auto}
+.propuesta li label{display:flex;gap:10px;align-items:flex-start;padding:6px 4px;font-size:.95rem;cursor:pointer}
+.propuesta li input{accent-color:var(--agua);width:18px;height:18px;margin-top:2px;flex:none}
+.propuesta li b{font-weight:700;margin-left:auto;white-space:nowrap;font-variant-numeric:tabular-nums}
+.propuesta li small{color:var(--gris)}
+.junto{background:var(--aviso-fondo);color:var(--aviso);border-bottom:2px solid var(--aviso);padding:10px 16px;font-weight:600;text-align:center}
 .cartel{margin-block:14vh 40px;background:var(--papel);border:1px solid var(--borde);border-radius:14px;padding:28px 20px;display:grid;gap:12px}
 .cartel h1{font-size:clamp(1.7rem,6vw,2.3rem)}
 .cartel p{color:var(--gris)}
@@ -163,7 +197,7 @@ input:disabled,textarea:disabled{opacity:.45}
 </head>
 <body>
 
-<div class="arriba" id="arriba" hidden><div class="ancho"><div class="barra" aria-hidden="true"><i id="barra"></i></div><span class="pct" id="pct" aria-live="polite">0 %</span><span class="guardado" id="guardado" aria-live="polite"></span></div></div>
+<div class="arriba" id="arriba" hidden><div class="junto" id="junto" hidden role="status"></div><div class="ancho"><div class="barra" aria-hidden="true"><i id="barra"></i></div><span class="pct" id="pct" aria-live="polite"></span><span class="guardado" id="guardado" aria-live="polite"></span></div></div>
 
 <!-- Mientras carga, y si el link no sirve -->
 <main class="ancho" id="v-cartel">
@@ -175,26 +209,39 @@ input:disabled,textarea:disabled{opacity:.45}
 </main>
 
 <main class="ancho" id="v-form" hidden>
+  <!-- «Lo llenamos juntos» (25/11/2026), el aviso va en la barra de arriba: MyM abre este mismo link desde admin/cuestionarios.html con «&junto=1» y
+       carga las respuestas durante la llamada. Sólo cambia el aviso de arriba y la marca que queda en el servidor. -->
   <header class="inicio">
     <a class="marca" href="../"><b>MyM</b> Soluciones</a>
-    <h1>Enseñale a tu Boti cómo atendés</h1>
     <p class="para" id="para"></p>
-    <p>Con estas respuestas configuramos tu bot de WhatsApp (y tu página, si la contrataste). Lleva unos 15 minutos y no hace falta terminarlo de una vez: se guarda solo y podés volver cuando quieras con este mismo link.</p>
+    <h1>Prendé tu Boti en 10 minutos</h1>
+    <p>Primero lo justo para que tu Boti atienda. Lo demás es opcional y lo completás cuando quieras. Se guarda solo mientras escribís.</p>
     <ul class="consejos">
-      <li>Escribí como le hablás a un cliente. No tiene que quedar perfecto.</li>
-      <li>Lo que el Boti no tenga escrito acá, no lo dice: prefiere pasarte la charla antes que inventar.</li>
-      <li>Si algo no lo sabés o no va con tu negocio, marcá «No sé / no aplica» y seguí.</li>
-      <li>Este link es sólo tuyo: no lo compartas. Y no escribas contraseñas en ningún lado.</li>
+      <li>Escribí como le hablás a un cliente. Te dejamos sugerencias para tu rubro: tocalas y cambiá lo que no va.</li>
+      <li>Este link es sólo tuyo. No escribas contraseñas en ningún lado.</li>
     </ul>
+    <div class="ayudas" id="ayudas">
+      <button type="button" class="btn btn-sec" id="seguirCelu">Seguir en el celular</button>
+      <a class="btn btn-sec" id="juntos" href="https://wa.me/5491133662080?text=Hola%2C%20prefiero%20que%20llenemos%20juntos%20el%20cuestionario%20del%20Boti%20en%20una%20llamada%20corta." target="_blank" rel="noopener">Prefiero llenarlo juntos en una llamada</a>
+    </div>
+    <div class="qr" id="qr" hidden>
+      <div class="qr-img" id="qrImg" aria-hidden="true"></div>
+      <div>
+        <p><b>Escanealo con la cámara del celular</b> y seguí desde ahí: aparece todo lo que ya escribiste.</p>
+        <div class="fila"><button type="button" class="btn btn-sec" id="copiarLink">Copiar el link</button><a class="btn btn-sec" id="linkWa" target="_blank" rel="noopener">Mandármelo por WhatsApp</a></div>
+        <p class="h" id="copiado" role="status"></p>
+      </div>
+    </div>
   </header>
 
   <form id="form" novalidate autocomplete="off"></form>
 
   <!-- Fotos y archivos (21/11/2026, pedido de Matías): se suben desde acá y quedan en el Drive de MyM, en una carpeta
-       compartida con el cliente. Las zonas y los topes los manda el servidor; si la subida no está activada, no se muestra. -->
-  <section class="sec" id="sec-archivos" hidden style="margin-bottom:18px">
-    <h2>Fotos y archivos</h2>
-    <p class="d">Subí tu logo, fotos y listas de precios desde acá. Quedan guardados en una carpeta de Google Drive que compartimos con vos. No cuentan para el porcentaje: mandá lo que tengas.</p>
+       compartida con el cliente. Las zonas y los topes los manda el servidor; si la subida no está activada, no se muestra.
+       25/11/2026: van en la parte 2 y nunca frenan el «Prender mi Boti». -->
+  <section class="sec" id="sec-archivos" hidden>
+    <h2>Logo y fotos</h2>
+    <p class="d">No hacen falta para prender tu Boti. Si ahora no los tenés a mano, los subís después desde tu panel. Quedan en una carpeta de Google Drive que compartimos con vos.</p>
     <div id="zonas"></div>
     <p class="carpeta" id="carpeta" hidden></p>
   </section>
@@ -203,9 +250,9 @@ input:disabled,textarea:disabled{opacity:.45}
     <h2 id="finTitulo">¿Terminaste?</h2>
     <p id="finTexto"></p>
     <ul class="faltan" id="faltan" hidden></ul>
-    <div class="fila"><button class="btn btn-azul" id="listo" type="button">Listo, ya completé</button></div>
+    <div class="fila"><button class="btn btn-azul" id="listo" type="button">Prender mi Boti</button></div>
     <p id="finError" class="aviso" hidden></p>
-    <p id="finArchivos">¿Tenés fotos, el logo o una lista de precios en foto o PDF? Mandalos al WhatsApp de MyM Soluciones: <a class="numero" href="https://wa.me/5491133662080" target="_blank" rel="noopener">11 3366-2080</a>.</p>
+    <p id="finArchivos" class="h">¿Tenés fotos, el logo o una lista de precios? Mandalos al WhatsApp de MyM Soluciones: <a class="numero" href="https://wa.me/5491133662080" target="_blank" rel="noopener">11 3366-2080</a>.</p>
   </section>
 </main>
 
@@ -214,7 +261,10 @@ input:disabled,textarea:disabled{opacity:.45}
 (function () {
   'use strict';
   const API = String((window.SITE || {}).plataformaApi || '').replace(/\/+$/, '');
-  const LLAVE = new URLSearchParams(location.hash.replace(/^#/, '')).get('t') || '';
+  const HASH = new URLSearchParams(location.hash.replace(/^#/, ''));
+  const LLAVE = HASH.get('t') || '';
+  const JUNTO = HASH.get('junto') === '1';   // lo está cargando MyM en la llamada con el cliente
+  const LINK_LIMPIO = location.origin + location.pathname + '#t=' + encodeURIComponent(LLAVE);
   // La copia de este celular se guarda con el id del cliente (la primera parte de la llave), nunca con la llave.
   const LS = 'cuestionario-boti:' + LLAVE.split('.')[0];
   const $ = (id) => document.getElementById(id);
@@ -222,6 +272,9 @@ input:disabled,textarea:disabled{opacity:.45}
   let Q = null;                 // preguntas y reglas (las mismas que usa el servidor)
   let a = {};                   // respuestas
   let listo = false, tipoFijo = false, sucio = false, escribiendo = false, reloj = null, fallas = 0, cortado = false;
+  let verParte2 = false;        // la parte 2 arranca plegada hasta que se termina la parte 1 (o se abre a mano)
+  let rubroVisto = '';
+  let sugeridoDerivar = false;  // «cuándo pasa la charla» vino marcado con lo sugerido para el rubro          // para volver a dibujar las sugerencias sólo cuando cambia el rubro
 
   function cartel(titulo, textoCartel) {
     $('v-form').hidden = true; $('arriba').hidden = true; $('v-cartel').hidden = false;
@@ -254,10 +307,13 @@ input:disabled,textarea:disabled{opacity:.45}
       `<div class="renglon">${['p', 'u', 'v'].map((f, n) => `<input type="text" id="${q.id}-${i}-${f}" data-fila="${q.id}" data-i="${i}" data-f="${f}" maxlength="${Q.LARGO.celda}" value="${esc(r && r[f])}" placeholder="${esc(i === 0 ? q.ej[n] : q.cols[n])}" aria-label="${q.cols[n]}, renglón ${i + 1}">`).join('')}<button type="button" data-quitar="${q.id}" data-i="${i}" aria-label="Quitar el renglón ${i + 1}">×</button></div>`).join('') +
       (v.length < Q.LARGO.renglones ? `<button type="button" class="mas" data-mas="${q.id}">+ Agregar renglón</button>` : '');
   }
+  // Las sugerencias del rubro van entre la ayuda y el campo: se dibujan en refrescar() (cambian con el rubro).
+  const CON_SUG = ['horarios', 'queVende', 'queVende_trabajos', 'nuncaDecir'];
+  // En la parte 1 no hace falta marcar «obligatoria» en cada una: el encabezado ya lo dice.
   function pregunta(q) {
     if (q.type === 'info') return `<div class="q solo-info"><div class="info">${q.html}</div></div>`;
-    const marca = q.temp ? '<small class="temp">De temporada</small>' : (q.req ? '<small class="ob">obligatoria</small>' : '');
-    const h = q.h ? `<span class="h">${q.h}</span>` : '';
+    const marca = q.temp ? '<small class="temp">De temporada</small>' : '';
+    const h = (q.h ? `<span class="h">${q.h}</span>` : '') + (CON_SUG.includes(q.id) ? `<div class="sug" id="sug-${q.id}" hidden></div>` : '');
     const na = q.na ? `<label class="na"><input type="checkbox" id="${q.id}-na" data-na="${q.id}">${q.na}</label>` : '';
     const aviso = q.aviso ? `<div class="aviso" id="${q.id}-aviso" hidden></div>` : '';
     let c = '';
@@ -266,7 +322,10 @@ input:disabled,textarea:disabled{opacity:.45}
     if (q.type === 'tipos') c = `<div class="tipos">${q.o.map((o, j) => `<label><input type="checkbox" id="${q.id}-${j}" data-k="${q.id}" data-modo="una" value="${o[0]}"><b>${o[1]}</b><span>${o[2]}</span></label>`).join('')}</div>`;
     if (q.type === 'una') c = ops(q, q.ns === false ? q.o : q.o.concat(Q.NS), 'una') + (q.otro ? `<div id="${q.id}-otro-caja" hidden style="margin-top:10px"><label class="h" for="${q.id}_otro">${q.otroT || '¿Cuánto?'}</label><input type="text" id="${q.id}_otro" data-k="${q.id}_otro" maxlength="${Q.LARGO.otro}" autocomplete="off"></div>` : '');
     if (q.type === 'varias') c = ops(q, q.o.concat(q.ex || Q.NS), 'varias');
-    if (q.type === 'precios') c = `<div class="renglones" id="${q.id}-renglones">${renglones(q)}</div>`;
+    if (q.type === 'precios') c = `<div class="leer"><label class="btn btn-sec"><input type="file" data-leer="${q.id}" accept="image/*,.heic,.heif,application/pdf,.pdf,.xlsx,.xls,.csv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel">Subir mi lista y que se cargue sola</label>
+      <span class="h">Foto, PDF, Excel o CSV. La leemos y te proponemos los renglones: vos elegís cuáles quedan.</span><div id="${q.id}-propuesta" role="status"></div></div>
+      <p class="h" style="margin:14px 0 8px">O escribilos acá, un renglón por ${q.cols[0].toLowerCase()}:</p><div class="renglones" id="${q.id}-renglones">${renglones(q)}</div>`;
+    if (q.id === 'derivarCuando') c += `<p class="nota" id="derivarCuando-nota" hidden></p>`;
     if (q.type === 'faq') c = `<div class="faq">${Array.from({ length: Q.LARGO.faqs }, (_, n) => `<div class="faq-fila"><span>${n + 1}</span><div><input type="text" id="${q.id}-q${n}" data-faq="${q.id}" data-i="${n}" data-f="q" maxlength="${Q.LARGO.faqPregunta}" placeholder="Pregunta" aria-label="Pregunta ${n + 1}"><textarea id="${q.id}-a${n}" data-faq="${q.id}" data-i="${n}" data-f="a" maxlength="${Q.LARGO.faqRespuesta}" placeholder="Tu respuesta" aria-label="Respuesta ${n + 1}"></textarea></div></div>`).join('')}</div>`;
     return `<fieldset class="q" id="q-${q.id}"><legend class="t">${q.t} ${marca}</legend>${h}${c}${na}${aviso}</fieldset>`;
   }
@@ -282,27 +341,67 @@ input:disabled,textarea:disabled{opacity:.45}
     refrescar();
   }
   /* Muestra u oculta según el tipo de negocio y las respuestas; actualiza la barra, lo que falta y el botón. */
+  const minTexto = (m) => (m === 1 ? '1 minuto' : `${m} minutos`);
   function refrescar() {
     const sinTipo = !a.tipoNegocio;
-    Q.SECCIONES.forEach((s) => { $('sec-' + s.id).hidden = (s.id === 'empezar' && tipoFijo) || (s.id !== 'empezar' && sinTipo) || !Q.seccionVisible(s, a); });
-    Q.PREGUNTAS.forEach((q) => { const caja = $('q-' + q.id); caja.hidden = q.w ? !q.w(a) : false; caja.classList.toggle('listo', Q.respondida(q, a));
+    // Parte 2: cada sección se ve si le queda alguna pregunta que no esté en la parte 1.
+    Q.SECCIONES.forEach((s) => { $('sec-' + s.id).hidden = sinTipo || !Q.seccionVisible(s, a) || !s.q.some((q) => q.id && !q.p1 && (!q.w || q.w(a))); });
+    Q.PREGUNTAS.forEach((q) => { const caja = $('q-' + q.id); caja.hidden = (q.w ? !q.w(a) : false) || !Q.seccionVisible(q.sec, a) || (q.id === 'tipoNegocio' && tipoFijo); caja.classList.toggle('listo', Q.respondida(q, a));
       if (q.aviso) { const m = q.aviso(a), el = $(q.id + '-aviso'); el.hidden = !m; el.textContent = m; }
       if (q.otro) $(q.id + '-otro-caja').hidden = a[q.id] !== 'Otro';
-      if (q.na) { const off = !!a[q.id + '__na']; caja.querySelectorAll('input[type=text],textarea,button').forEach((el) => { el.disabled = off; }); } });
-    $('fin').hidden = sinTipo; $('sec-archivos').hidden = sinTipo || !ARCH;
+      if (q.na) { const off = !!a[q.id + '__na']; caja.querySelectorAll('input[type=text],textarea,button:not(.btn)').forEach((el) => { el.disabled = off; }); } });
+    sugerir();
+    $('sec-archivos').hidden = sinTipo || !ARCH;
     const p = Q.progreso(a), faltan = p.faltan;
-    $('barra').style.width = p.porcentaje + '%'; $('pct').textContent = p.porcentaje + ' %';
+    $('barra').style.width = (faltan.length ? p.porcentaje : 100) + '%';
+    $('pct').textContent = faltan.length || sinTipo ? `Te faltan ${minTexto(p.minutos)}` : 'Listo para prender';
+    $('p1Cuanto').textContent = faltan.length || sinTipo ? `Te faltan unos ${minTexto(p.minutos)}` : 'Está todo lo necesario';
     $('fin').classList.toggle('recibido', listo);
     if (listo) {
-      $('finTitulo').textContent = 'Recibimos tus respuestas';
-      $('finTexto').textContent = faltan.length ? 'Ya le avisamos a MyM. Si podés, completá lo que quedó pendiente: se guarda solo y no hace falta avisar de nuevo.' : 'Ya le avisamos a MyM. Si después cambiás algo, se guarda solo: no hace falta avisar de nuevo.';
+      $('finTitulo').textContent = JUNTO ? 'Listo: ya le avisamos al equipo' : 'Recibimos tus respuestas';
+      $('finTexto').textContent = (faltan.length ? 'Ya le avisamos a MyM. Si podés, completá lo que quedó pendiente arriba.' : 'Ya le avisamos a MyM y empezamos a armar tu Boti.') + ' Lo que cambies se guarda solo: no hace falta avisar de nuevo.';
     } else {
-      $('finTitulo').textContent = faltan.length ? (faltan.length === 1 ? 'Te falta 1 pregunta obligatoria' : `Te faltan ${faltan.length} preguntas obligatorias`) : 'Está todo lo obligatorio';
-      $('finTexto').textContent = faltan.length ? 'Podés avisarnos igual y completar después, pero con estas el Boti queda bien armado:' : 'Tocá el botón y le avisamos a MyM que ya puede armar tu Boti. Después podés seguir cambiando lo que quieras.';
+      $('finTitulo').textContent = faltan.length ? (faltan.length === 1 ? 'Te falta 1 respuesta para prender tu Boti' : `Te faltan ${faltan.length} respuestas para prender tu Boti`) : 'Tu Boti está listo para prender';
+      $('finTexto').textContent = faltan.length ? 'Podés avisarnos igual y completar después, pero con estas el Boti queda bien armado:' : 'Tocá el botón y le avisamos a MyM que ya puede armarlo. Lo de abajo es opcional: lo completás cuando quieras.';
     }
     $('faltan').hidden = !faltan.length;
     $('faltan').innerHTML = faltan.slice(0, 12).map((f) => `<li><a href="#" data-ir="q-${f.id}">${esc(f.t)}</a></li>`).join('') + (faltan.length > 12 ? `<li>y ${faltan.length - 12} más</li>` : '');
-    $('listo').textContent = listo ? '✓ Ya nos llegó' : 'Listo, ya completé'; $('listo').classList.toggle('hecho', listo); $('listo').disabled = listo;
+    $('listo').textContent = listo ? '✓ Ya nos llegó' : (JUNTO ? 'Terminamos: prender el Boti' : 'Prender mi Boti'); $('listo').classList.toggle('hecho', listo); $('listo').disabled = listo;
+    // Parte 2: plegada hasta terminar la parte 1; se puede abrir a mano en cualquier momento.
+    const abierta = verParte2 || listo || JUNTO || (!faltan.length && !sinTipo);
+    $('parte2').hidden = sinTipo;
+    $('parte2-cuerpo').hidden = !abierta; $('abrir2').hidden = abierta;
+    $('p2Cuanto').textContent = p.opcionales ? `Opcional. Son ${p.opcionales} preguntas más, unos ${minTexto(p.minutosOpcionales)}. Podés hacerlo ahora o después desde tu panel.` : 'Ya contestaste todo lo opcional. ¡Gracias!';
+    $('abrir2').textContent = `Ver las preguntas opcionales (${p.opcionales})`;
+  }
+
+  /* Sugerencias del rubro: frases para tocar y sumar. Se vuelven a dibujar cuando cambia el rubro o el tipo de negocio,
+     y se marca cuáles ya están en lo que escribió. */
+  function sugerir() {
+    const s = Q.sugerencias(a), clave = JSON.stringify(s.rubro || '') + a.tipoNegocio;
+    if (clave !== rubroVisto) {
+      rubroVisto = clave;
+      CON_SUG.forEach((k) => { const el = $('sug-' + k); if (!el) return; const chips = (s[k] && s[k].chips) || [];
+        el.hidden = !chips.length;
+        el.innerHTML = chips.length ? `<span>${s.rubro && s.rubro.nombre ? 'Sugerencias para ' + esc(s.rubro.nombre) : 'Sugerencias'} (tocá para sumar):</span>` + chips.map((c) => `<button type="button" data-sug="${k}" data-v="${esc(c)}" aria-pressed="false">${esc(c)}</button>`).join('') : ''; });
+    }
+    document.querySelectorAll('[data-sug]').forEach((b) => b.setAttribute('aria-pressed', String(String(a[b.dataset.sug] || '').toLowerCase().includes(b.dataset.v.toLowerCase()))));
+    const nota = $('derivarCuando-nota');
+    // La nota se ve mientras lo marcado sea justo lo sugerido (lo haya marcado el servidor al armar el link o esta página).
+    const t = (s.derivarCuando || {}).tildes || [], m = Array.isArray(a.derivarCuando) ? a.derivarCuando : [];
+    const igual = t.length && t.length === m.length && t.every((x) => m.includes(x));
+    if (nota) { nota.hidden = !(sugeridoDerivar || igual); nota.textContent = 'Te dejamos marcadas las que suelen elegir los negocios como el tuyo. Cambialas si querés.'; }
+  }
+  // Suma (o saca, si ya estaba) una sugerencia en el campo de texto.
+  const SEPARADOR = { horarios: '. ', nuncaDecir: '. ', queVende: ', ', queVende_trabajos: ', ' };
+  function tocarSugerencia(k, v) {
+    const actual = String(a[k] || '').trim(), sep = SEPARADOR[k] || ', ';
+    const i = actual.toLowerCase().indexOf(v.toLowerCase());
+    let nuevo;
+    if (i >= 0) nuevo = (actual.slice(0, i) + actual.slice(i + v.length)).replace(/^[\s.,]+|[\s,]+$/g, '').replace(/([.,])\s*[.,]\s*/g, '$1 ').replace(/\s{2,}/g, ' ').trim();
+    else nuevo = actual ? actual.replace(/[.,\s]+$/, '') + sep + v : v;
+    a[k] = nuevo; const el = $(k); if (el) el.value = nuevo;
+    cambio();
   }
 
   /* ===================== Guardado: se guarda solo en el servidor, con copia en este dispositivo ===================== */
@@ -313,7 +412,7 @@ input:disabled,textarea:disabled{opacity:.45}
     if (escribiendo || !sucio || cortado) return;
     escribiendo = true; sucio = false;
     try {
-      await pedir('/api/cuestionario/guardar', { t: LLAVE, respuestas: a });
+      await pedir('/api/cuestionario/guardar', { t: LLAVE, respuestas: a, junto: JUNTO });
       fallas = 0;
       if (!sucio) { local(false); estado('✓ Guardado', 'ok'); }
     } catch (e) {
@@ -328,10 +427,20 @@ input:disabled,textarea:disabled{opacity:.45}
   // Al salir de la página o apagar la pantalla, lo último que quedó sin guardar sale igual.
   function alSalir() {
     if (!sucio || cortado || !Q) return;
-    const cuerpo = JSON.stringify({ t: LLAVE, respuestas: a });
+    const cuerpo = JSON.stringify({ t: LLAVE, respuestas: a, junto: JUNTO });
     if (cuerpo.length < 60000) { try { fetch(API + '/api/cuestionario/guardar', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: cuerpo, keepalive: true }); } catch (e) { /* queda la copia local */ } }
   }
-  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') alSalir(); });
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') alSalir(); else traerUltimo(); });
+  // Al volver a la página (por ejemplo, después de seguir en el celular o de que MyM cargara algo en la llamada), si acá
+  // no quedó nada sin guardar, se trae lo último del servidor.
+  let ultimaVuelta = 0;
+  async function traerUltimo() {
+    if (!Q || sucio || escribiendo || cortado || Date.now() - ultimaVuelta < 5000) return;
+    ultimaVuelta = Date.now();
+    try { const d = await pedir('/api/cuestionario/abrir', { t: LLAVE }); if (sucio || escribiendo) return;
+      if (JSON.stringify(d.respuestas || {}) !== JSON.stringify(a)) { a = d.respuestas || {}; listo = !!d.listo; local(false); volcar(); } }
+    catch (e) { /* sin conexión: queda lo de acá */ }
+  }
   window.addEventListener('pagehide', alSalir);
   // Si se pega otro link en la misma pestaña, se abre ese cuestionario.
   window.addEventListener('hashchange', () => location.reload());
@@ -342,6 +451,9 @@ input:disabled,textarea:disabled{opacity:.45}
     const form = $('form');
     form.addEventListener('submit', (e) => e.preventDefault());
     form.addEventListener('change', (e) => { const el = e.target;
+      if (el.dataset.leer) { const f = (el.files || [])[0]; el.value = ''; if (f) leerLista(el.dataset.leer, f); return; }
+      if (el.dataset.propuesta) return;
+      if (el.dataset.k === 'derivarCuando') sugeridoDerivar = false;
       if (el.dataset.na) { if (el.checked) a[el.dataset.na + '__na'] = true; else delete a[el.dataset.na + '__na']; return cambio(); }
       if (el.type !== 'checkbox' || !el.dataset.k) return;
       const k = el.dataset.k, grupo = Array.from(document.querySelectorAll(`[data-k="${k}"]`));
@@ -352,6 +464,12 @@ input:disabled,textarea:disabled{opacity:.45}
       if (d.fila) { const v = Array.isArray(a[d.fila]) && a[d.fila].length ? a[d.fila].map((r) => Object.assign({}, r)) : [{}, {}, {}]; v[d.i] = Object.assign({}, v[d.i], { [d.f]: el.value }); a[d.fila] = v; return cambio(); }
       if (d.faq) { const v = Array.from({ length: Q.LARGO.faqs }, (_, i) => Object.assign({}, (a[d.faq] || [])[i])); v[d.i][d.f] = el.value; a[d.faq] = v; return cambio(); }
       if (d.k && el.type !== 'checkbox') { a[d.k] = el.value; cambio(); } });
+    form.addEventListener('click', (e) => {
+      const b = e.target.closest('button'); if (!b) return;
+      if (b.dataset.sug) return tocarSugerencia(b.dataset.sug, b.dataset.v);
+      if (b.dataset.cargar) return cargarPropuesta(b.dataset.cargar);
+      if (b.dataset.descartar) { propuestas[b.dataset.descartar] = null; $(b.dataset.descartar + '-propuesta').innerHTML = ''; return; }
+      if (b.id === 'abrir2') { verParte2 = true; refrescar(); $('parte2-cuerpo').scrollIntoView({ block: 'start' }); } });
     form.addEventListener('click', (e) => { const d = e.target.dataset; if (!d.mas && !d.quitar) return; const id = d.mas || d.quitar;
       const v = Array.isArray(a[id]) && a[id].length ? a[id].map((r) => Object.assign({}, r)) : [{}, {}, {}];
       if (d.mas) v.push({}); else { v.splice(+d.i, 1); if (!v.length) v.push({}); }
@@ -362,13 +480,69 @@ input:disabled,textarea:disabled{opacity:.45}
       if (listo) return;
       const b = $('listo'); b.disabled = true; b.textContent = 'Avisando…'; $('finError').hidden = true;
       clearTimeout(reloj); sucio = false;
-      try { await pedir('/api/cuestionario/listo', { t: LLAVE, respuestas: a }); listo = true; local(false); estado('✓ Guardado', 'ok'); refrescar(); $('fin').scrollIntoView({ block: 'center' }); }
+      try { await pedir('/api/cuestionario/listo', { t: LLAVE, respuestas: a, junto: JUNTO }); listo = true; verParte2 = true; local(false); estado('✓ Guardado', 'ok'); refrescar(); $('fin').scrollIntoView({ block: 'center' }); }
       catch (err) {
         if (err.codigo === 403) { cortado = true; return cartel(LINK_MALO[0], LINK_MALO[1]); }
-        sucio = true; b.disabled = false; b.textContent = 'Listo, ya completé';
+        sucio = true; b.disabled = false; b.textContent = JUNTO ? 'Terminamos: prender el Boti' : 'Prender mi Boti';
         $('finError').hidden = false; $('finError').textContent = 'No pudimos avisar: revisá tu conexión y tocá el botón de nuevo. Lo que escribiste no se pierde.';
       }
     };
+  }
+
+  /* ===================== La lista de precios que se lee sola (25/11/2026) =====================
+     El archivo va al servidor, que lo lee (Excel y CSV ahí mismo; foto y PDF con la IA) y devuelve renglones
+     propuestos. Acá se muestran con una casilla cada uno: el cliente elige cuáles quedan y recién ahí se suman a su
+     lista. Si la subida de archivos está activa, además se guarda el original en «Lista de precios». */
+  const propuestas = {};
+  async function leerLista(id, f) {
+    const caja = $(id + '-propuesta');
+    if (f.size > 12 * 1048576) { caja.innerHTML = `<p class="aviso">La lista pesa ${peso(f.size)}: el máximo para leerla es 12 MB. Sacale una foto o mandala por WhatsApp al 11 3366-2080.</p>`; return; }
+    caja.innerHTML = `<p class="aviso">Leyendo «${esc(f.name)}»… puede tardar unos segundos.</p>`;
+    if (ARCH && zonaDe('listas') && zonaDe('listas').tipos.includes(tipoDe(f.name, f.type))) sumar('listas', [f]);
+    try {
+      const r = await fetch(`${API}/api/cuestionario/precios/leer?nombre=${encodeURIComponent(f.name)}`, { method: 'POST', headers: { Authorization: 'Llave ' + LLAVE, 'Content-Type': 'application/octet-stream' }, body: f });
+      const d = await r.json().catch(() => ({}));
+      if (r.status === 403) { cortado = true; return cartel(LINK_MALO[0], LINK_MALO[1]); }
+      if (!r.ok) throw new Error(d.error || 'No pudimos leer la lista.');
+      if (!d.renglones || !d.renglones.length) { caja.innerHTML = `<p class="aviso">No encontramos precios en «${esc(f.name)}». Cargalos a mano arriba${ARCH ? ' (el archivo ya quedó subido: si querés, lo cargamos nosotros)' : ''}.</p>`; return; }
+      propuestas[id] = d.renglones;
+      caja.innerHTML = `<div class="propuesta"><b>Encontramos ${d.renglones.length} ${d.renglones.length === 1 ? 'renglón' : 'renglones'} en «${esc(f.name)}». Revisalos y destildá los que no van:</b>
+        <ul>${d.renglones.map((x, i) => `<li><label><input type="checkbox" data-propuesta="${id}" data-i="${i}" checked><span>${esc(x.p)}${x.u ? ` <small>(${esc(x.u)})</small>` : ''}</span><b>${esc(x.v)}</b></label></li>`).join('')}</ul>
+        <div class="fila"><button type="button" class="btn btn-azul" data-cargar="${id}">Cargarlos en mi lista</button><button type="button" class="btn btn-sec" data-descartar="${id}">Descartar</button></div></div>`;
+    } catch (e) {
+      caja.innerHTML = `<p class="aviso">${esc(e.message === 'Failed to fetch' ? 'No hay conexión. Probá de nuevo en un rato.' : e.message)}</p>`;
+    }
+  }
+  function cargarPropuesta(id) {
+    const lista = propuestas[id] || [];
+    const elegidos = lista.filter((_, i) => { const c = document.querySelector(`[data-propuesta="${id}"][data-i="${i}"]`); return c && c.checked; });
+    if (!elegidos.length) return;
+    const ya = Q.filas(a[id]);
+    a[id] = ya.concat(elegidos.map((x) => ({ p: x.p, u: x.u || '', v: x.v }))).slice(0, Q.LARGO.renglones);
+    delete a[id + '__na']; const na = $(id + '-na'); if (na) na.checked = false;
+    $(id + '-renglones').innerHTML = renglones(Q.POR_ID[id]);
+    propuestas[id] = null;
+    $(id + '-propuesta').innerHTML = `<p class="nota">Listo: sumamos ${elegidos.length} ${elegidos.length === 1 ? 'renglón' : 'renglones'} a tu lista. Revisá que los precios estén bien.</p>`;
+    cambio();
+  }
+
+  /* ===================== Seguir en el celular ===================== */
+  function ayudas() {
+    const celu = matchMedia('(hover:none) and (pointer:coarse)').matches;
+    $('linkWa').href = 'https://wa.me/?text=' + encodeURIComponent('Mi cuestionario del Boti: ' + LINK_LIMPIO);
+    // En el celular no hace falta el QR: se manda el link por WhatsApp (a uno mismo) o se copia.
+    $('seguirCelu').textContent = celu ? 'Mandarme el link por WhatsApp' : 'Seguir en el celular';
+    $('seguirCelu').onclick = async () => {
+      if (celu) return window.open($('linkWa').href, '_blank', 'noopener');
+      const caja = $('qr'); caja.hidden = !caja.hidden; if (caja.hidden || $('qrImg').innerHTML) return;
+      try { const d = await pedir('/api/cuestionario/qr', { t: LLAVE }); $('qrImg').innerHTML = d.svg; }
+      catch (e) { $('qrImg').hidden = true; }
+    };
+    $('copiarLink').onclick = async () => {
+      try { await navigator.clipboard.writeText(LINK_LIMPIO); $('copiado').textContent = 'Copiado. Pegalo en el celular.'; }
+      catch (e) { $('copiado').textContent = LINK_LIMPIO; }
+    };
+    if (JUNTO) { $('ayudas').hidden = true; $('junto').hidden = false; }
   }
 
   /* ===================== Fotos y archivos =====================
@@ -378,10 +552,12 @@ input:disabled,textarea:disabled{opacity:.45}
   let ARCH = null;              // reglas y zonas que manda el servidor
   const piezas = {};            // por zona: lo subido, lo que está subiendo y lo que falló
   const cola = []; let subiendo = false, claves = 0;
-  const TIPO_POR_EXT = { jpg: 'jpg', jpeg: 'jpg', png: 'png', webp: 'webp', heic: 'heic', heif: 'heic', pdf: 'pdf' };
-  const TIPO_POR_MIME = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/heic': 'heic', 'image/heif': 'heic', 'application/pdf': 'pdf' };
-  const ACEPTA = { jpg: 'image/jpeg', png: 'image/png', webp: 'image/webp', heic: 'image/heic,image/heif,.heic,.heif', pdf: 'application/pdf' };
-  const NOMBRES = { jpg: 'JPG', png: 'PNG', webp: 'WEBP', heic: 'HEIC', pdf: 'PDF' };
+  // 25/11/2026: la lista de precios también en Excel (.xlsx, .xls) y CSV.
+  const XLSX = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+  const TIPO_POR_EXT = { jpg: 'jpg', jpeg: 'jpg', png: 'png', webp: 'webp', heic: 'heic', heif: 'heic', pdf: 'pdf', xlsx: 'xlsx', xls: 'xls', csv: 'csv' };
+  const TIPO_POR_MIME = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/heic': 'heic', 'image/heif': 'heic', 'application/pdf': 'pdf', [XLSX]: 'xlsx', 'application/vnd.ms-excel': 'xls', 'text/csv': 'csv' };
+  const ACEPTA = { jpg: 'image/jpeg', png: 'image/png', webp: 'image/webp', heic: 'image/heic,image/heif,.heic,.heif', pdf: 'application/pdf', xlsx: XLSX + ',.xlsx', xls: 'application/vnd.ms-excel,.xls', csv: 'text/csv,.csv' };
+  const NOMBRES = { jpg: 'JPG', png: 'PNG', webp: 'WEBP', heic: 'HEIC', pdf: 'PDF', xlsx: 'Excel', xls: 'Excel', csv: 'CSV' };
   const tipoDe = (nombre, mime) => TIPO_POR_EXT[(String(nombre).toLowerCase().match(/\.([a-z0-9]+)$/) || [])[1]] || TIPO_POR_MIME[String(mime || '').toLowerCase()] || null;
   const peso = (b) => (b >= 1048576 ? (b / 1048576).toFixed(1).replace('.', ',') + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB');
   const seVe = (tipo) => ['jpg', 'png', 'webp'].includes(tipo);   // lo que el navegador puede mostrar sin ayuda
@@ -391,7 +567,7 @@ input:disabled,textarea:disabled{opacity:.45}
   function iniciarArchivos(datos) {
     ARCH = datos && datos.activo ? datos : null;
     if (!ARCH) return;   // sin la subida activada queda el texto de siempre: mandarlos por WhatsApp
-    $('finArchivos').innerHTML = '¿Tenés fotos, el logo o una lista de precios? <a href="#sec-archivos" data-ir="sec-archivos" style="color:var(--azul);font-weight:700">Subilos en «Fotos y archivos»</a>.';
+    $('finArchivos').innerHTML = '¿Tenés el logo o fotos? Son opcionales: <a href="#sec-archivos" data-ir="sec-archivos" style="color:var(--azul);font-weight:700">subilos en «Logo y fotos»</a>, ahora o después desde tu panel.';
     ARCH.zonas.forEach((z) => { piezas[z.id] = ARCH.lista.filter((f) => f.zona === z.id).map((f) => ({ clave: 'p' + (++claves), id: f.id, nombre: f.nombre, tipo: tipoDe(f.nombre, f.tipo), tamano: f.tamano, estado: 'listo' })); });
     $('zonas').innerHTML = ARCH.zonas.map((z) => {
       const acepta = z.tipos.map((t) => ACEPTA[t]).join(',');
@@ -403,7 +579,7 @@ input:disabled,textarea:disabled{opacity:.45}
           <label><input type="file" data-elegir="${z.id}" accept="${acepta}" multiple>${z.tipos.includes('pdf') ? 'Elegir archivos' : 'Elegir fotos'}</label>
           <label class="camara"><input type="file" data-elegir="${z.id}" accept="image/*" capture="environment">Sacar foto</label>
         </div>
-        <p class="reglas">Archivos ${z.tipos.map((t) => NOMBRES[t]).join(', ').replace(/, ([^,]+)$/, ' o $1')}, de hasta ${Math.round(ARCH.maxBytes / 1048576)} MB cada uno. Entran ${z.max}.</p>
+        <p class="reglas">Archivos ${[...new Set(z.tipos.map((t) => NOMBRES[t]))].join(', ').replace(/, ([^,]+)$/, ' o $1')}, de hasta ${Math.round(ARCH.maxBytes / 1048576)} MB cada uno. Entran ${z.max}.</p>
         <div class="aviso" id="za-${z.id}" role="status" hidden></div>
       </div>`; }).join('');
     ARCH.zonas.forEach((z) => dibujarZona(z.id));
@@ -418,7 +594,7 @@ input:disabled,textarea:disabled{opacity:.45}
     zonas.addEventListener('dragover', (e) => { const z = e.target.closest('.zona'); if (!z) return; e.preventDefault(); z.classList.add('suelta'); });
     zonas.addEventListener('dragleave', (e) => { const z = e.target.closest('.zona'); if (z && !z.contains(e.relatedTarget)) z.classList.remove('suelta'); });
     zonas.addEventListener('drop', (e) => { const z = e.target.closest('.zona'); if (!z) return; e.preventDefault(); z.classList.remove('suelta'); sumar(z.dataset.zona, Array.from(e.dataTransfer.files || [])); });
-    $('finArchivos').addEventListener('click', (e) => { if (e.target.dataset.ir) { e.preventDefault(); $('sec-archivos').scrollIntoView({ block: 'start' }); } });
+    $('finArchivos').addEventListener('click', (e) => { if (e.target.dataset.ir) { e.preventDefault(); verParte2 = true; refrescar(); $('sec-archivos').scrollIntoView({ block: 'start' }); } });
     cargarMiniaturas();
   }
   function carpeta(link) {
@@ -449,7 +625,7 @@ input:disabled,textarea:disabled{opacity:.45}
     const regla = zonaDe(z), avisos = []; let lugar = regla.max - enZona(z);
     archivos.forEach((f) => {
       const tipo = tipoDe(f.name, f.type);
-      if (!tipo || !regla.tipos.includes(tipo)) return avisos.push(`«${f.name}» no se puede subir acá: van ${regla.tipos.map((t) => NOMBRES[t]).join(', ')}.`);
+      if (!tipo || !regla.tipos.includes(tipo)) return avisos.push(`«${f.name}» no se puede subir acá: van ${[...new Set(regla.tipos.map((t) => NOMBRES[t]))].join(', ')}.`);
       if (!f.size) return avisos.push(`«${f.name}» está vacío.`);
       if (f.size > ARCH.maxBytes) return avisos.push(`«${f.name}» pesa ${peso(f.size)}: el máximo es ${Math.round(ARCH.maxBytes / 1048576)} MB. Achicalo o mandalo por WhatsApp al 11 3366-2080.`);
       if (lugar <= 0) return avisos.push(`«${f.name}» no entró: acá van hasta ${regla.max}. Borrá alguno para subir otro.`);
@@ -543,15 +719,29 @@ input:disabled,textarea:disabled{opacity:.45}
       return cartel('No pudimos abrir tu cuestionario', 'Revisá tu conexión y recargá la página. Lo que ya habías escrito está guardado.');
     }
     a = d.respuestas || {}; listo = !!d.listo; tipoFijo = !!d.tipoFijo;
+    if (JUNTO) $('junto').textContent = `Lo llenamos juntos: estás cargando las respuestas de ${d.negocio || 'este cliente'}. Se guarda en su cuestionario. Pedile que no escriba al mismo tiempo.`;
     // Si en este dispositivo quedó algo escrito que no llegó a guardarse (se cortó la conexión), vale eso.
     let pendiente = false;
     try { const s = JSON.parse(localStorage.getItem(LS) || 'null'); if (s && s.pendiente && s.a && typeof s.a === 'object') { a = s.a; pendiente = true; } } catch (e) { /* copia local rota: vale lo del servidor */ }
-    $('form').innerHTML = Q.SECCIONES.map((s) => `<section class="sec" id="sec-${s.id}"><h2>${s.t}</h2>${s.d ? `<p class="d">${s.d}</p>` : ''}${s.q.map(pregunta).join('')}</section>`).join('');
+    // Lo que ya se sabe del negocio queda escrito en la parte 1 (sin pisar nada): el número del Boti, quién atiende y
+    // las tildes de «cuándo pasa la charla» que suelen elegir los de su rubro. Sólo si todavía no avisó que terminó.
+    let precargado = false;
+    if (!listo) { const pre = Q.precargables(a); if (Object.keys(pre).length) { Object.assign(a, pre); precargado = true; sugeridoDerivar = !!pre.derivarCuando; } }
+    // Parte 1 (lo obligatorio, en su orden), el cierre con «Prender mi Boti» y la parte 2 (las secciones de siempre,
+    // sin las preguntas que ya están arriba) con el logo y las fotos al final.
+    const sec = (s) => `<section class="sec" id="sec-${s.id}"><h2>${s.t}</h2>${s.d ? `<p class="d">${s.d}</p>` : ''}${s.q.filter((q) => !q.p1).map(pregunta).join('')}</section>`;
+    $('form').innerHTML = `<div class="parte"><header class="parte-cab"><h2>Para prender tu Boti</h2><p class="cuanto" id="p1Cuanto"></p><p>Con esto tu Boti ya puede atender. Todo lo demás es opcional.</p></header>
+        <section class="sec" id="sec-p1">${Q.PARTE1.map((id) => pregunta(Q.POR_ID[id])).join('')}</section></div>
+      <div id="hueco-fin"></div>
+      <div class="parte" id="parte2"><header class="parte-cab parte2-cab"><h2>Para mejorarlo</h2><p id="p2Cuanto"></p><button type="button" class="btn btn-sec abrir2" id="abrir2"></button></header>
+        <div class="parte" id="parte2-cuerpo">${Q.SECCIONES.map(sec).join('')}<div id="hueco-archivos"></div></div></div>`;
+    $('hueco-fin').replaceWith($('fin'));
+    $('hueco-archivos').replaceWith($('sec-archivos'));
     $('para').textContent = d.negocio ? 'Cuestionario de ' + d.negocio : '';
     $('para').hidden = !d.negocio;
     $('v-cartel').hidden = true; $('v-form').hidden = false; $('arriba').hidden = false;
-    escuchar(); iniciarArchivos(d.archivos); volcar();
-    if (pendiente) agendar(0); else estado(d.actualizado ? '✓ Guardado' : 'Se guarda solo', d.actualizado ? 'ok' : '');
+    escuchar(); ayudas(); iniciarArchivos(d.archivos); volcar();
+    if (pendiente || precargado) { local(true); agendar(pendiente ? 0 : 1500); } else estado(d.actualizado ? '✓ Guardado' : 'Se guarda solo', d.actualizado ? 'ok' : '');
   })();
 })();
 </script>

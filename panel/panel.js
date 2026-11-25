@@ -549,15 +549,20 @@
   // ---------- Material: la carpeta de Drive compartida y el cuestionario ----------
   function pintarMaterial(d) {
     if (!d) return false;
-    const q = d.cuestionario; const falta = q && !q.listo && q.link;
+    // 25/11/2026: el cuestionario tiene dos partes. Sin terminar la parte 1 se dice cuántos minutos faltan; después,
+    // el mismo link sirve para «mejorar el Boti» (la parte 2, opcional) y para subir el logo y las fotos.
+    const q = d.cuestionario; const falta = q && q.link && (!q.listo || q.faltan > 0 || q.opcionales > 0);
     const archivos = d.archivos || [];
     if (!d.carpeta && !archivos.length && !falta) return false;
     const caja = $('#material'); vaciar(caja);
     caja.append(el('p', { class: 'paso' }, 'El logo, las fotos y las listas de precios que nos mandaste para armar tu Boti, tu web y tus redes.'));
     if (falta) {
-      const cuanto = q.porcentaje > 0 ? `Tu cuestionario va por el ${q.porcentaje} %` : 'Todavía no empezaste tu cuestionario';
-      const faltan = q.faltan > 0 ? `: ${q.faltan === 1 ? 'falta 1 respuesta' : `faltan ${q.faltan} respuestas`}.` : '. Cuando termines, tocá «Listo» al final.';
-      caja.append(el('div', { class: 'aviso' }, cuanto + faltan + ' Con eso armamos lo que dice tu Boti.', el('br'), el('a', { class: 'btn', href: q.link, target: '_blank', rel: 'noopener' }, q.porcentaje > 0 ? 'Seguir el cuestionario' : 'Empezar el cuestionario')));
+      const minutos = (m) => (m === 1 ? '1 minuto' : `unos ${m} minutos`);
+      const texto = q.faltan > 0
+        ? (q.porcentaje > 0 ? `Para prender tu Boti te faltan ${minutos(q.minutos)}.` : `Todavía no empezaste tu cuestionario: son ${minutos(q.minutos)}.`) + ' Con eso armamos lo que dice tu Boti.'
+        : `Tu Boti ya tiene lo necesario. Si querés que atienda todavía mejor, quedan ${q.opcionales} preguntas opcionales (${minutos(q.minutosOpcionales)}). Ahí también subís el logo y las fotos.`;
+      const boton = q.faltan > 0 ? (q.porcentaje > 0 ? 'Seguir el cuestionario' : 'Empezar el cuestionario') : 'Mejorar mi Boti';
+      caja.append(el('div', { class: 'aviso' }, texto, el('br'), el('a', { class: 'btn', href: q.link, target: '_blank', rel: 'noopener' }, boton)));
     }
     if (archivos.length) {
       const ul = el('ul', { class: 'archivos' });
