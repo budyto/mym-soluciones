@@ -2,7 +2,7 @@
 <html lang="es-AR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
 <meta name="robots" content="noindex, nofollow">
 <title>WhatsApp · MyM Soluciones</title>
 <link rel="icon" href="../img/favicon.png" type="image/png">
@@ -41,7 +41,8 @@
   .entrar input { background: var(--fondo); border: 1.5px solid var(--borde); color: var(--ink); border-radius: 12px; padding: 10px 12px; outline: none; }
   .entrar input:focus { border-color: var(--azul); }
 
-  #panel { height: 100dvh; display: flex; flex-direction: column; padding: 10px 12px; gap: 8px; }
+  /* --alto lo pone visualViewport (25/11/2026): con el teclado abierto del celular, la charla ocupa lo que queda a la vista. */
+  #panel { height: var(--alto, 100dvh); display: flex; flex-direction: column; padding: 10px 12px; gap: 8px; }
 
   /* Barra de arriba */
   .wa-barra { position: relative; display: flex; align-items: center; gap: 10px; flex: 0 0 auto; }
@@ -135,10 +136,13 @@
   .wa-nosalio::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--rojo); flex: 0 0 auto; }
   .wa-ulterr { align-self: flex-start; margin: 0; background: #fff1f3; color: #a3202f; border-radius: 999px; padding: 4px 12px; font-size: 12px; font-weight: 600; }
   .cerrada { background: rgba(212,58,74,.07); border: 1px solid rgba(212,58,74,.3); color: #a3202f; border-radius: 12px; padding: 9px 12px; font-size: 13px; flex: 0 0 auto; }
-  .rapidas { display: flex; gap: 5px; flex-wrap: wrap; flex: 0 0 auto; }
+  /* Una sola fila que se desliza (25/11/2026, Budy: en el celular ocupaban tres renglones). */
+  .rapidas { display: flex; gap: 5px; flex-wrap: nowrap; overflow-x: auto; flex: 0 0 auto; scrollbar-width: none; overscroll-behavior-x: contain; }
+  .rapidas::-webkit-scrollbar { display: none; }
+  .rapidas button { flex: 0 0 auto; white-space: nowrap; }
   .rapidas button { background: #fff; border: 1px dashed #b7c8f2; color: var(--ink); border-radius: 999px; padding: 2px 10px; font-size: 12px; cursor: pointer; }
   .rapidas button:hover { border-color: var(--azul); color:var(--azul-t); }
-  .escribir { display: flex; gap: 8px; align-items: flex-end; flex: 0 0 auto; }
+  .escribir { display: flex; gap: 8px; align-items: flex-end; flex: 0 0 auto; position: relative; }
   .escribir textarea { flex: 1; min-height: 42px; max-height: min(320px, 45vh); line-height: 1.45; resize: none; background: var(--fondo); border: 1.5px solid var(--borde); color: var(--ink); border-radius: 14px; padding: 9px 12px; outline: none; }
   .escribir textarea:focus { border-color: var(--azul); }
 
@@ -231,7 +235,8 @@
   .wa-resp { position: absolute; top: 4px; border: 0; background: #fff; color:var(--azul-t); border-radius: 999px; width: 26px; height: 26px; font-size: 14px; cursor: pointer; box-shadow: 0 2px 8px rgba(14,26,51,.18); opacity: 0; transition: opacity .12s; }
   .wa-cliente .wa-resp { right: -32px; } .wa-robot .wa-resp, .wa-humano .wa-resp { left: -32px; }
   .wa-b:hover .wa-resp, .wa-resp:focus-visible { opacity: 1; }
-  @media (hover: none) { .wa-resp { opacity: .85; } }
+  /* En el celular se cita con un toque largo sobre la burbuja (25/11/2026): el ↩ suelto ocupaba lugar al lado de cada una. */
+  @media (hover: none) { .wa-resp { display: none; } }
   #respBar { display: flex; align-items: flex-start; gap: 8px; background: #eef3ff; border-left: 3px solid var(--agua); border-radius: 10px; padding: 6px 10px; font-size: 12.5px; flex: 0 0 auto; }
   #respBar span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--gris); }
   #respBar b { color:var(--azul-t); }
@@ -253,6 +258,136 @@
   #dlgImg::backdrop { background: rgba(14,26,51,.82); }
   #dlgImg img { display: block; max-width: 96vw; max-height: 88vh; border-radius: 10px; }
   #dlgImg .acc { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
+
+  /* ---------- Leer en paz (25/11/2026, Budy: «se mueve la pantalla de la conversación y no me deja leer») ---------- */
+  .wa-caja-msgs { position: relative; flex: 1; min-height: 0; display: flex; }
+  .wa-caja-msgs .wa-burbujas { flex: 1; position: relative; overflow-anchor: auto; }
+  .wa-bajar { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); z-index: 3; border: 0; border-radius: 999px; padding: 7px 14px; background: var(--ink); color: #fff; font: 700 12.5px Archivo, system-ui, sans-serif; cursor: pointer; box-shadow: 0 8px 22px rgba(14,26,51,.28); white-space: nowrap; }
+  .wa-bajar:hover { background: var(--azul-t); }
+  .wa-bajar:focus-visible { outline: 3px solid var(--agua); outline-offset: 2px; }
+
+  /* ---------- Menú propio: clic derecho, «⋯» y toque largo (25/11/2026) ---------- */
+  .wa-item { position: relative; -webkit-touch-callout: none; }
+  .wa-mas { flex: 0 0 auto; align-self: center; border: 0; background: none; color: var(--gris-2); width: 26px; height: 26px; border-radius: 8px; cursor: pointer; font-size: 17px; line-height: 1; opacity: 0; }
+  .wa-item:hover .wa-mas, .wa-mas:focus-visible, .wa-item.menu-on .wa-mas { opacity: 1; }
+  .wa-mas:hover { background: var(--fondo-2); color: var(--ink); }
+  @media (hover: none) { .wa-mas { opacity: .7; } .wa-item, .wa-b { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; } }
+  .wa-item.menu-on { border-color: var(--azul); }
+  .wa-b.menu-on { box-shadow: 0 0 0 2px var(--agua); }
+  #ctxVelo { position: fixed; inset: 0; z-index: 90; }
+  .ctx { position: fixed; z-index: 91; min-width: 220px; max-width: min(300px, calc(100vw - 16px)); max-height: calc(var(--alto, 100dvh) - 16px); overflow-y: auto; background: var(--card); border: 1px solid var(--borde); border-radius: 14px; padding: 6px; box-shadow: 0 18px 48px rgba(14,26,51,.2); font-size: 13.5px; }
+  .ctx-tit { padding: 6px 10px 8px; font-size: 12px; color: var(--gris); border-bottom: 1px solid var(--borde); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ctx-tit b { color: var(--ink); font-size: 13.5px; display: block; overflow: hidden; text-overflow: ellipsis; }
+  .ctx button.ctx-i { display: flex; align-items: center; gap: 10px; width: 100%; border: 0; background: none; text-align: left; padding: 8px 10px; border-radius: 9px; cursor: pointer; color: var(--ink); }
+  .ctx button.ctx-i:hover, .ctx button.ctx-i:focus-visible { background: #eef3ff; outline: none; }
+  .ctx button.ctx-i .ico { width: 20px; text-align: center; flex: 0 0 auto; }
+  .ctx button.ctx-i .txt { flex: 1; min-width: 0; }
+  .ctx button.ctx-i .flecha { color: var(--gris-2); }
+  .ctx button.ctx-i.peligro { color: #b3261e; }
+  .ctx button.ctx-i.peligro:hover, .ctx button.ctx-i.peligro:focus-visible { background: #fff1f3; }
+  .ctx button.ctx-i[aria-checked="true"] .txt { font-weight: 700; color: var(--azul-t); }
+  .ctx hr { border: 0; border-top: 1px solid var(--borde); margin: 4px 6px; }
+  .ctx form { display: flex; gap: 6px; padding: 4px 6px 6px; }
+  .ctx form input { flex: 1; min-width: 0; border: 1.5px solid var(--borde); border-radius: 9px; padding: 7px 9px; background: var(--fondo); outline: none; font-size: 16px; }
+  .ctx form input:focus { border-color: var(--azul); }
+  /* En el celular el menú es una hoja que sube desde abajo: nunca se sale de la pantalla y se toca con el pulgar. */
+  .ctx.hoja { left: 0 !important; right: 0; top: auto !important; bottom: 0; max-width: none; width: 100%; border-radius: 18px 18px 0 0; padding: 8px 8px calc(10px + env(safe-area-inset-bottom)); font-size: 15px; animation: subeHoja .16s ease-out; }
+  .ctx.hoja button.ctx-i { padding: 12px 12px; }
+  #ctxVelo.hoja { background: rgba(14,26,51,.38); }
+  @keyframes subeHoja { from { transform: translateY(30px); opacity: .4; } }
+  @media (prefers-reduced-motion: reduce) { .ctx.hoja { animation: none; } }
+
+  /* ---------- Diálogos nuevos: charla nueva, contacto y preguntas (25/11/2026) ---------- */
+  .dlg { border: 0; border-radius: 16px; padding: 0; width: min(460px, calc(100vw - 24px)); max-height: calc(var(--alto, 100dvh) - 24px); box-shadow: 0 24px 60px rgba(0,0,0,.25); color: var(--ink); }
+  .dlg::backdrop { background: rgba(14,26,51,.45); }
+  .dlg form, .dlg .in { display: grid; gap: 10px; padding: 20px; font-family: Archivo, system-ui, sans-serif; }
+  .dlg h2 { margin: 0 0 2px; font-size: 19px; }
+  .dlg label { display: grid; gap: 4px; font-size: 13px; font-weight: 600; }
+  .dlg label .opc { font-weight: 400; color: var(--gris); }
+  .dlg input, .dlg select, .dlg textarea { font: inherit; font-weight: 400; padding: 9px 10px; border: 1px solid #cfd6e4; border-radius: 9px; background: #fff; width: 100%; }
+  .dlg textarea { resize: vertical; min-height: 84px; line-height: 1.45; }
+  .dlg input:focus, .dlg select:focus, .dlg textarea:focus { outline: none; border-color: var(--azul); box-shadow: 0 0 0 3px rgba(47,107,255,.15); }
+  .dlg .ayuda { margin: 0; font-size: 12.5px; color: #4a5878; line-height: 1.45; }
+  .dlg .acc { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; margin-top: 4px; }
+  .estado-n { font-size: 12.5px; line-height: 1.45; padding: 9px 11px; border-radius: 10px; background: #eef3ff; border-left: 3px solid var(--azul); }
+  .estado-n.ok { background: #e9f8f1; border-left-color: var(--verde); }
+  .estado-n.mal { background: #fff6e6; border-left-color: #c46a00; }
+  .estado-n.no { background: #fff1f3; border-left-color: var(--rojo); }
+  .estado-n b { display: block; margin-bottom: 2px; }
+  #dlgPreg .in p { margin: 0; font-size: 14px; line-height: 1.5; color: var(--gris); }
+  .btn.rojo { background: #c62f3f; box-shadow: 0 6px 16px rgba(198,47,63,.22); }
+  @media (max-width: 760px) { .dlg input, .dlg select, .dlg textarea { font-size: 16px; } }
+
+  /* ---------- Vista previa antes de mandar un archivo (25/11/2026, Budy: «no me deja ver lo que estoy mandando») ---------- */
+  #dlgArch { border: 0; padding: 0; width: min(560px, calc(100vw - 24px)); max-height: calc(var(--alto, 100dvh) - 24px); border-radius: 16px; background: #0f1d36; color: #fff; box-shadow: 0 24px 60px rgba(0,0,0,.4); overflow: hidden; }
+  #dlgArch[open] { display: flex; flex-direction: column; }
+  #dlgArch::backdrop { background: rgba(6,12,24,.75); }
+  .arch-cab { display: flex; align-items: center; gap: 10px; padding: 10px 12px; }
+  .arch-cab b { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 700 14px Archivo, system-ui, sans-serif; }
+  .arch-cab button { border: 0; background: rgba(255,255,255,.12); color: #fff; width: 36px; height: 36px; border-radius: 50%; font-size: 15px; cursor: pointer; }
+  #archVista { flex: 1; min-height: 160px; display: grid; place-items: center; padding: 8px 14px; overflow: auto; }
+  #archVista img, #archVista video { max-width: 100%; max-height: min(58vh, 520px); border-radius: 10px; display: block; }
+  #archVista audio { width: min(360px, 100%); }
+  #archVista canvas { max-width: 100%; max-height: min(58vh, 520px); background: #fff; border-radius: 6px; box-shadow: 0 6px 20px rgba(0,0,0,.4); }
+  .arch-doc { display: grid; justify-items: center; gap: 6px; text-align: center; font-family: Archivo, system-ui, sans-serif; }
+  .arch-doc .ico { font-size: 54px; line-height: 1; }
+  .arch-doc small { color: rgba(255,255,255,.72); }
+  #archForm { display: flex; gap: 8px; align-items: center; padding: 10px 12px calc(12px + env(safe-area-inset-bottom)); background: rgba(255,255,255,.06); }
+  #archTexto { flex: 1; min-width: 0; border: 0; border-radius: 999px; padding: 11px 15px; background: #fff; color: var(--ink); font-size: 16px; outline: none; }
+  #archTexto:focus { box-shadow: 0 0 0 3px rgba(0,194,168,.5); }
+  .redondo { flex: 0 0 auto; width: 44px; height: 44px; border-radius: 50%; border: 0; display: inline-grid; place-items: center; font-size: 18px; cursor: pointer; background: var(--deg); color: #fff; box-shadow: 0 6px 16px rgba(47,107,255,.25); padding: 0; }
+  .redondo:disabled { opacity: .5; cursor: default; }
+  .redondo svg { width: 20px; height: 20px; display: block; }
+  .redondo:focus-visible { outline: 3px solid var(--agua); outline-offset: 2px; }
+  #waChat.soltando::after { content: "Soltá el archivo para mandarlo"; position: absolute; inset: 8px; border: 2.5px dashed var(--azul); border-radius: 14px; background: rgba(238,243,255,.92); display: grid; place-items: center; font: 800 16px Archivo, system-ui, sans-serif; color: var(--azul-t); z-index: 20; }
+
+  /* ---------- Grabar como en WhatsApp: tocar o mantener apretado (25/11/2026) ---------- */
+  .escribir #accion { touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; transition: transform .12s; }
+  .escribir #accion.grabando { background: var(--rojo); transform: scale(1.14); box-shadow: 0 0 0 7px rgba(212,58,74,.18); }
+  @media (prefers-reduced-motion: reduce) { .escribir #accion { transition: none; } }
+  .escribir.grabando textarea, .escribir.grabando .adj, .escribir.escuchando textarea, .escribir.escuchando .adj { display: none; }
+  .escribir #grabBar { flex: 1; min-width: 0; align-self: center; }
+  #grabBar .desliza { color: var(--gris); font-size: 12px; margin-left: auto; white-space: nowrap; }
+  #grabBar .desliza.cancela { color: var(--rojo); font-weight: 700; }
+  #grabBar button.chico { border: 0; background: #fff; border-radius: 999px; min-width: 34px; height: 34px; cursor: pointer; font-size: 15px; box-shadow: 0 1px 4px rgba(14,26,51,.12); flex: 0 0 auto; padding: 0 9px; }
+  #grabBar audio { flex: 1; min-width: 120px; }
+  .aviso-mic { display: grid; gap: 4px; background: #fff1f3; color: #7d1a25; border-radius: 12px; padding: 9px 12px; font-size: 12.5px; line-height: 1.45; flex: 0 0 auto; }
+  .aviso-mic b { font-size: 13px; }
+  .aviso-mic button { justify-self: start; }
+  #accion.mic-bloq { opacity: .75; }
+
+  /* ---------- En el celular: barra con «⋮», botón redondo de charla nueva y la charla a pantalla entera ---------- */
+  #barraMas { display: none; }
+  .fab { display: none; }
+  @media (max-width: 760px) {
+    #panel { padding: 0; gap: 0; }
+    .wa-barra { padding: 8px 10px; background: var(--card); border-bottom: 1px solid var(--borde); }
+    .wa-controles > :not(#barraMas) { display: none !important; }
+    #barraMas { display: inline-flex; }
+    body.charla-abierta .wa-barra { display: none; }
+    #wamsg { padding: 4px 12px; }
+    .wa-col-lista { padding: 8px 10px 0; position: relative; }
+    .fab { display: grid; position: absolute; right: 16px; bottom: calc(18px + env(safe-area-inset-bottom)); width: 56px; height: 56px; border-radius: 18px; font-size: 24px; z-index: 4; place-items: center; border: 0; background: var(--deg); color: #fff; box-shadow: 0 10px 26px rgba(14,26,51,.3); cursor: pointer; }
+    #waLista { padding-bottom: 84px; }
+    /* Los filtros, en una sola fila que se desliza (como los de WhatsApp): antes ocupaban tres renglones. */
+    .wa-tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; overscroll-behavior-x: contain; }
+    .wa-tabs::-webkit-scrollbar { display: none; }
+    .wa-tab { flex: 0 0 auto; font-size: 12.5px; padding: 5px 11px; }
+    #waChat { border: 0; border-radius: 0; box-shadow: none; padding: 0; gap: 0; }
+    .wa-cab { padding: 6px 8px; gap: 8px; flex-wrap: nowrap; border-bottom: 1px solid var(--borde); }
+    .wa-cab .wa-avatar { width: 36px !important; height: 36px !important; font-size: 14px !important; }
+    .wa-cab .quien small.der, .wa-cab .quien .wa-sinwa { display: none; }
+    .wa-cab .wa-acc { display: none; }
+    .wa-burbujas { border: 0; border-radius: 0; padding: 8px; }
+    .wa-b { max-width: 86%; }
+    #waAvisos > * { margin: 6px 8px 0; }
+    .rapidas { padding: 6px 8px 0; }
+    #respBar, .aviso-mic { margin: 6px 8px 0; }
+    .escribir { padding: 6px 8px calc(8px + env(safe-area-inset-bottom)); gap: 6px; }
+    .escribir textarea { font-size: 16px; border-radius: 22px; padding: 10px 14px; }
+    .escribir .adj { padding: 10px; }
+    .cerrada { margin: 8px; }
+  }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Martian+Mono:wght@500&display=swap" rel="stylesheet">
@@ -270,6 +405,7 @@
     <span class="grow"></span>
     <div class="wa-controles">
       <button class="btn gris" id="puenteBtn" type="button" hidden title="El segundo número de WhatsApp (por el puente): estado y QR para vincularlo"><span class="pt"></span>📱<span class="wa-lbl"> Número 2</span></button>
+      <button class="btn" id="nuevaBtn" type="button" title="Escribirle a alguien que no está en la lista">💬<span class="wa-lbl"> Nueva charla</span></button>
       <button class="btn" id="propuestaBtn" type="button" title="Mandarle la propuesta en PDF a un cliente, aunque no haya escrito">📄<span class="wa-lbl"> Mandar propuesta</span></button>
       <button class="btn gris" id="avisos" type="button" hidden title="Que el navegador avise cuando entra un mensaje">🔔<span class="wa-lbl"> Activar avisos</span></button>
       <button class="btn gris" id="sonido" type="button" title="Sonido cuando escribe un cliente">🔊<span class="wa-lbl"> Sonido</span></button>
@@ -277,6 +413,7 @@
       <button class="btn gris" id="warecargar" type="button" title="Actualizar">↻</button>
       <button class="btn" id="verEstado" type="button" aria-expanded="false" title="Ver el estado completo">ⓘ<span class="wa-lbl"> Estado ▾</span></button>
       <button class="btn gris" id="salir" type="button" title="Salir">⎋<span class="wa-lbl"> Salir</span></button>
+      <button class="btn gris" id="barraMas" type="button" aria-haspopup="menu" aria-label="Más opciones" title="Más opciones">⋮</button>
     </div>
     <div class="wa-detalle" id="waDetalle" hidden></div>
   </div>
@@ -286,6 +423,7 @@
       <div class="wa-buscar"><input type="search" id="wabuscar" placeholder="🔍 Buscar por nombre, negocio o teléfono" autocomplete="off"></div>
       <div class="wa-tabs" id="waTabs"></div>
       <div id="waLista" class="scroll"></div>
+      <button class="fab" id="fabNueva" type="button" aria-label="Nueva charla" title="Nueva charla">💬</button>
     </div>
     <div id="waChat"><div class="vacio">Elegí una conversación de la lista.</div></div>
   </div>
@@ -311,6 +449,61 @@
     </div>
   </form>
 </dialog>
+<!-- Nueva charla (25/11/2026, Budy: «no tengo forma de iniciar una conversación desde esta pantalla»). Por el número 2
+     sale texto libre (cuenta como primer contacto del día); por el oficial, sólo si te escribió en las últimas 24 h:
+     si no, WhatsApp sólo deja mandar plantillas aprobadas y se ofrece «Mandar propuesta». -->
+<dialog id="dlgNueva" class="dlg" aria-labelledby="nuevaTit">
+  <form id="nuevaForm" method="dialog" novalidate>
+    <h2 id="nuevaTit">💬 Nueva charla</h2>
+    <label id="nuevaDesdeL">Desde<select name="desde" id="nuevaDesde"></select></label>
+    <label>Celular<input name="telefono" inputmode="tel" placeholder="11 5555-1234" required autocomplete="off"></label>
+    <label>Nombre<input name="nombre" placeholder="Juan" maxlength="60" required autocomplete="off"></label>
+    <label><span>Negocio <span class="opc">(opcional)</span></span><input name="negocio" placeholder="Plomería Mansilla" maxlength="80" autocomplete="off"></label>
+    <label id="nuevaTextoL">Mensaje<textarea name="texto" rows="4" maxlength="4000" placeholder="Hola Juan, ¿cómo estás? Te escribo de MyM Soluciones…"></textarea></label>
+    <div id="nuevaEstado" class="estado-n" aria-live="polite"></div>
+    <p id="nuevaMsg" class="ayuda" aria-live="polite"></p>
+    <div class="acc">
+      <button class="btn gris" type="button" id="nuevaCerrar">Cancelar</button>
+      <button class="btn" type="button" id="nuevaProp" hidden>📄 Mandar propuesta</button>
+      <button class="btn" type="submit" id="nuevaMandar">Mandar</button>
+    </div>
+  </form>
+</dialog>
+<!-- Agregar a contactos (25/11/2026): guarda nombre, negocio y mail en la ficha y baja la tarjeta de contacto (.vcf),
+     que el celular ofrece sumar a la agenda. -->
+<dialog id="dlgContacto" class="dlg" aria-labelledby="contTit">
+  <form id="contForm" method="dialog">
+    <h2 id="contTit">👤 Agregar a contactos</h2>
+    <p class="ayuda" id="contTel"></p>
+    <label>Nombre<input name="nombre" maxlength="60" required autocomplete="off"></label>
+    <label><span>Negocio <span class="opc">(opcional)</span></span><input name="negocio" maxlength="80" autocomplete="off"></label>
+    <label><span>Mail <span class="opc">(opcional)</span></span><input name="email" type="email" maxlength="120" autocomplete="off"></label>
+    <p class="ayuda">Queda guardado en la ficha y se baja la tarjeta de contacto: en el celular, abrila para sumarlo a la agenda.</p>
+    <p id="contMsg" class="ayuda" aria-live="polite"></p>
+    <div class="acc"><button class="btn gris" type="button" id="contCerrar">Cancelar</button><button class="btn" type="submit">Guardar y bajar el contacto</button></div>
+  </form>
+</dialog>
+<!-- Preguntas de sí o no del panel (en vez de confirm(), que en el celular se ve como un cartel del sistema). -->
+<dialog id="dlgPreg" class="dlg" aria-labelledby="pregTit">
+  <div class="in">
+    <h2 id="pregTit"></h2>
+    <p id="pregTxt"></p>
+    <div class="acc"><button class="btn gris" type="button" id="pregNo">Cancelar</button><button class="btn" type="button" id="pregSi">Sí</button></div>
+  </div>
+</dialog>
+<!-- Vista previa antes de mandar un archivo (25/11/2026, Budy), como en WhatsApp: la foto, el video, el audio o la
+     primera hoja del PDF, el texto que lo acompaña y «Enviar». -->
+<dialog id="dlgArch" aria-labelledby="archNombre">
+  <div class="arch-cab"><button type="button" id="archCerrar" aria-label="Cancelar">✕</button><b id="archNombre">Archivo</b></div>
+  <div id="archVista"></div>
+  <form id="archForm">
+    <input id="archTexto" placeholder="Agregá un texto…" maxlength="1000" autocomplete="off" aria-label="Texto que acompaña al archivo">
+    <button class="redondo" type="submit" id="archMandar" aria-label="Enviar" title="Enviar"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.4 20.4 21 12 3.4 3.6v6.6l12.6 1.8-12.6 1.8z"/></svg></button>
+  </form>
+</dialog>
+<div id="ctxVelo" hidden></div>
+<div class="ctx" id="ctxMenu" role="menu" hidden></div>
+<div class="ctx" id="ctxSub" role="menu" hidden></div>
 <!-- El segundo número (puente-sol, en la PC de la oficina): estado y QR para vincularlo (16/11/2026). -->
 <!-- Visor de PDF: muestra el archivo de una burbuja sin salir del panel (16/11/2026). -->
 <dialog id="dlgPdf" aria-label="Ver PDF">
@@ -352,7 +545,7 @@
   let charlas = [], abierta = null, filtro = 'todas', etapa = '', vistos = null, nuevos = 0, fichaSucia = '', fichaAbierta = false;
   // La Bandeja (17/11/2026): filtro por etiqueta, el mensaje que se está citando y la firma de las burbujas
   // (si no cambió nada, el refresco no vuelve a dibujarlas: así no se corta un audio que se está escuchando).
-  let etq = '', respondiendo = null, firmaBurbujas = '';
+  let etq = '', respondiendo = null;
 
   // 12/11/2026: se entra con Google (acceso.js). Cada pedido lleva el token de Google y el server de MyM
   // verifica la cuenta. Antes era una clave compartida guardada en la pestaña.
@@ -360,7 +553,7 @@
     const r = await fetch(API + ruta, { ...(op || {}), headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + await ACCESO.token() } });
     const j = await r.json().catch(() => ({}));
     if (r.status === 401) { salir('El server no aceptó tu cuenta. Volvé a entrar.'); throw new Error('sin acceso'); }
-    if (!r.ok) { const e = new Error(j.error || 'HTTP ' + r.status); e.status = r.status; throw e; }
+    if (!r.ok) { const e = new Error(j.error || 'HTTP ' + r.status); e.status = r.status; e.datos = j; throw e; }
     return j;
   }
   const post = (ruta, cuerpo) => pedir(ruta, { method: 'POST', body: JSON.stringify(cuerpo) });
@@ -425,35 +618,41 @@
     sin_leer: (c) => c.sin_leer > 0,
     resueltas: (c) => !!c.resuelta,
     sin_whatsapp: (c) => !!c.sin_whatsapp,
+    archivadas: (c) => !!c.archivada,
   };
+  // Las archivadas (25/11/2026) no cuentan en la bandeja: sólo en su pestaña. Vuelven solas si el cliente escribe.
+  const enBandeja = () => charlas.filter((c) => !c.archivada);
   function pintarTabs() {
-    const n = (f) => charlas.filter(FILTRO[f]).length;
+    const bandeja = enBandeja();
+    const n = (f) => (f === 'archivadas' ? charlas : bandeja).filter(FILTRO[f]).length;
     const tab = (f, txt, cls) => '<button type="button" class="wa-tab ' + (cls || '') + (filtro === f && !etapa && !etq ? ' on' : '') + '" data-filtro="' + f + '">' + txt + '</button>';
     // Las etiquetas internas (17/11/2026): un chip por etiqueta, con cuántas charlas la tienen.
-    const porEtq = {}; charlas.forEach((c) => (c.etiquetas || []).forEach((e) => { const k = e.toLowerCase(); porEtq[k] = porEtq[k] || { txt: e, n: 0 }; porEtq[k].n++; }));
+    const porEtq = {}; bandeja.forEach((c) => (c.etiquetas || []).forEach((e) => { const k = e.toLowerCase(); porEtq[k] = porEtq[k] || { txt: e, n: 0 }; porEtq[k].n++; }));
     const tabsEtq = Object.keys(porEtq).sort().map((k) => '<button type="button" class="wa-tab etq' + (etq === k ? ' on' : '') + '" data-etq="' + esc(k) + '">🏷 ' + esc(porEtq[k].txt) + ' · ' + porEtq[k].n + '</button>').join('');
-    const porEtapa = {}; charlas.forEach((c) => { const k = c.etapa || 'nuevo'; porEtapa[k] = (porEtapa[k] || 0) + 1; });
+    const porEtapa = {}; bandeja.forEach((c) => { const k = c.etapa || 'nuevo'; porEtapa[k] = (porEtapa[k] || 0) + 1; });
     // Igual que en AppMyM: un chip que diría 0 no se muestra.
-    $('#waTabs').innerHTML = tab('todas', 'Todos · ' + charlas.length)
+    $('#waTabs').innerHTML = tab('todas', 'Todos · ' + bandeja.length)
       + (n('esperando') ? tab('esperando', '🙋 Piden humano · ' + n('esperando'), 'rojo') : '')
       + (n('pausadas') ? tab('pausadas', '✋ Tomadas por el equipo · ' + n('pausadas'), 'naranja') : '')
       + (n('sin_leer') ? tab('sin_leer', 'Sin leer · ' + n('sin_leer')) : '')
       + (n('resueltas') ? tab('resueltas', '✓ Ya atendidas · ' + n('resueltas')) : '')
       + Object.keys(ETAPAS).filter((k) => porEtapa[k]).map((k) => '<button type="button" class="wa-tab' + (etapa === k ? ' on' : '') + '" data-etapa="' + esc(k) + '">' + esc(ETAPAS[k]) + ' · ' + porEtapa[k] + '</button>').join('')
-      + (charlas.some((c) => c.sin_whatsapp) ? tab('sin_whatsapp', 'Sin WhatsApp · ' + n('sin_whatsapp'), 'rojo') : '')
-      + tabsEtq;
+      + (n('sin_whatsapp') ? tab('sin_whatsapp', 'Sin WhatsApp · ' + n('sin_whatsapp'), 'rojo') : '')
+      + tabsEtq
+      + (n('archivadas') || filtro === 'archivadas' ? tab('archivadas', '🗄 Archivadas · ' + n('archivadas')) : '');
   }
   function pintarCharlas() {
     pintarTabs(); pintarBarra();
     const q = $('#wabuscar').value.trim().toLowerCase();
-    let lista = charlas.filter((c) => (etq ? (c.etiquetas || []).some((e) => e.toLowerCase() === etq) : etapa ? (c.etapa || 'nuevo') === etapa : FILTRO[filtro](c)))
+    const base = filtro === 'archivadas' && !etapa && !etq ? charlas : enBandeja();
+    let lista = base.filter((c) => (etq ? (c.etiquetas || []).some((e) => e.toLowerCase() === etq) : etapa ? (c.etapa || 'nuevo') === etapa : FILTRO[filtro](c)))
       .filter((c) => !q || [c.datos.nombre, c.datos.negocio, c.nombre_perfil, c.telefono, (c.etiquetas || []).join(' ')].join(' ').toLowerCase().includes(q));
     // En "Piden humano" manda la espera: primero el que hace más que espera.
     if (filtro === 'esperando' && !etapa) lista = lista.slice().sort((a, b) => String(a.espera_desde).localeCompare(String(b.espera_desde)));
     $('#waLista').innerHTML = lista.length ? lista.map((c) => {
       const d = c.datos || {}, ult = c.ultimo || {}, minUlt = minDesde(ult.ts), minEsp = esperando(c) ? minDesde(c.espera_desde) : null;
       const nueva = (c.etapa || 'nuevo') === 'nuevo' && minDesde(c.creado) != null && minDesde(c.creado) < 1440;
-      return '<div class="wa-item' + (abierta && abierta.telefono === c.telefono ? ' on' : '') + (c.resuelta ? ' resuelta' : '') + '" data-tel="' + esc(c.telefono) + '">'
+      return '<div class="wa-item' + (abierta && abierta.telefono === c.telefono ? ' on' : '') + (c.resuelta ? ' resuelta' : '') + (menuDe === 'charla:' + c.telefono ? ' menu-on' : '') + '" data-tel="' + esc(c.telefono) + '">'
         + avatar(c, 38)
         + '<div class="wa-cuerpo"><div class="wa-l1"><span class="wa-nom">' + esc(nombre(c)) + (c.por_puente ? '<span class="wa-n2" title="Entró por el segundo número">N2</span>' : '') + '</span>'
         + (minUlt != null ? '<span class="wa-hora' + (minUlt > 1440 ? ' viejo' : '') + '">' + hace(minUlt) + '</span>' : '') + '</div>'
@@ -470,60 +669,169 @@
         + (!c.robot_activo ? '<i title="La atiende el equipo; el robot no contesta">👤</i>' : '')
         + (!c.sin_leer && ult.de === 'cliente' ? '<i class="leido" title="Leído">✓✓</i>' : '')
         + (!c.ventana_abierta ? '<i title="Ventana de 24 h cerrada: no se le puede escribir">🔒</i>' : '')
-        + '</div></div></div></div>';
-    }).join('') : '<div class="vacio-lista">No hay conversaciones con este filtro.</div>';
+        + '</div></div></div>'
+        + '<button type="button" class="wa-mas" data-menu="' + esc(c.telefono) + '" aria-haspopup="menu" aria-label="Opciones de la charla con ' + esc(nombre(c)) + '" title="Opciones (también con clic derecho)">⋯</button></div>';
+    }).join('') : '<div class="vacio-lista">' + (filtro === 'archivadas' ? 'No hay charlas archivadas.' : 'No hay conversaciones con este filtro.') + '</div>';
   }
 
   // ---------- Charla y ficha ----------
-  function pintarChat() {
-    $('#waWrap').classList.toggle('abierta', !!abierta);
-    if (!abierta) { $('#waChat').innerHTML = '<div class="vacio">Elegí una conversación de la lista.</div>'; return; }
-    const c = abierta;
-    const borrador = $('#texto') ? $('#texto').value : '';
-    const fichaVieja = fichaSucia === c.telefono ? $('#waFicha') : null;
-    const msgsViejo = $('#msgs');
-    const grabViejo = $('#grabBar') && !$('#grabBar').hidden ? $('#grabBar') : null;
-    $('#waChat').innerHTML = '<div class="wa-cab"><button class="btn gris solo-cel" id="volver" type="button">←</button>' + avatar(c, 40)
-      + '<div class="quien"><b>' + esc(nombre(c)) + (c.por_puente ? '<span class="wa-n2">N2</span>' : '') + '</b><small>+' + esc(c.telefono) + (c.por_puente ? ' · por el número 2' : '') + ((c.datos || {}).negocio ? ' · ' + esc(c.datos.negocio) : '') + '</small>'
+  // LEER EN PAZ (25/11/2026, Budy: «el chat se actualiza y se mueve la pantalla de la conversación y no me deja leer
+  // en paz»). Antes, cada 20 s se redibujaba la charla entera si cambiaba una tilde: las imágenes y los audios se
+  // volvían a cargar y el scroll saltaba al final. Ahora la charla tiene partes fijas (cabecera, burbujas, avisos,
+  // cuadro de texto y ficha) y cada refresco toca sólo lo que cambió:
+  //  · una tilde (entregado, leído): sólo la hora de esa burbuja;
+  //  · mensajes nuevos al final: se agregan, y sólo esos cargan sus archivos;
+  //  · algo distinto en un mensaje viejo (una transcripción, un error): sólo esa burbuja;
+  //  · si cambió la lista entera, se redibuja conservando lo que se estaba leyendo.
+  // Si estabas abajo de todo (a menos de 80 px) seguís pegado abajo, también cuando termina de cargar una foto; si
+  // estabas leyendo más arriba no se mueve nada y aparece «↓ N mensajes nuevos».
+  let chatTel = '', burb = { keys: [], firmas: [], tildes: [] }, pegado = true, nuevosAbajo = 0, bajarAlFinal = false;
+  const borradores = new Map();   // lo escrito sin mandar, por charla (antes pasaba de una charla a otra)
+  const CERCA = 80;
+  const setHtml = (el, h) => { if (el && el._h !== h) { el.innerHTML = h; el._h = h; } };
+  const cercaDelFinal = (el) => el.scrollHeight - el.scrollTop - el.clientHeight < CERCA;
+  const claveMsg = (m, i) => (m.id ? 'w' + m.id : 'n' + i + '|' + (m.ts || '') + '|' + m.de);
+  const firmaMsg = (m, c) => JSON.stringify([m.texto, m.caption, m.error, m.transcripcion, m.transcripcion_fallo, m.archivo && m.archivo.ruta, m.cita && m.cita.texto, m.no_recibido, m.archivo_error, m.tipo,
+    m.estado && m.estado.estado === 'fallido' ? (m.estado.error || 'fallido') : '', c.ventana_abierta, c.por_puente]);
+  const firmaTilde = (m) => JSON.stringify(m.estado || null);
+
+  function cabecera(c) {
+    return '<button class="btn gris solo-cel" id="volver" type="button" aria-label="Volver a la lista">←</button>' + avatar(c, 40)
+      + '<div class="quien"><b>' + esc(nombre(c)) + (c.por_puente ? '<span class="wa-n2">N2</span>' : '') + '</b><small>' + esc(telLindo(c.telefono)) + (c.por_puente ? ' · por el número 2' : '') + ((c.datos || {}).negocio ? ' · ' + esc(c.datos.negocio) : '') + '</small>'
       + (c.derivada ? '<small class="der">El robot la derivó: ' + esc((MOTIVOS[c.derivada.motivo] || c.derivada.motivo).toLowerCase()) + ' · ' + fecha(c.derivada.ts) + '</small>' : '')
       + (c.sin_whatsapp ? '<span class="wa-sinwa" title="WhatsApp dijo que este número no puede recibir mensajes (error 131026)">Sin WhatsApp</span>' : '') + '</div>'
       + '<div class="wa-acc">'
       + (c.robot_activo ? '<button class="btn" id="robot" type="button" title="El robot deja de contestar en esta charla">✋ Tomar la charla</button>' : '<button class="btn gris" id="robot" type="button" title="El robot vuelve a contestar en esta charla">🤖 Devolver al robot</button>')
       + (c.resuelta ? '<button class="btn gris" id="resolver" type="button" title="Vuelve a Esperando">Reabrir</button>' : '<button class="btn gris" id="resolver" type="button" title="Sale de Esperando hasta que vuelva a escribir">✓ Ya la atendí</button>')
-      + '<button class="btn gris" id="verficha" type="button" aria-expanded="' + fichaAbierta + '">📋 Ficha</button></div></div>'
-      + '<div class="wa-burbujas scroll" id="msgs"></div>'
-      + (c.sin_whatsapp ? cajaSinWa(c) : '')
+      + '<button class="btn gris" id="verficha" type="button" aria-expanded="' + fichaAbierta + '">📋 Ficha</button></div>'
+      + '<button class="btn gris" id="cabMas" type="button" aria-haspopup="menu" aria-label="Más opciones de esta charla" title="Más opciones">⋮</button>';
+  }
+  function avisosDe(c) {
+    return (c.sin_whatsapp ? cajaSinWa(c) : '')
       + (c.ultimo_error ? '<p class="wa-ulterr">Último envío que no salió: ' + esc(c.ultimo_error) + '</p>' : '')
-      + (c.propuesta && !c.propuesta.enviada && !c.propuesta.cancelada ? '<p class="wa-prop">📄 La propuesta (' + esc(c.propuesta.archivo) + ') espera que toque «Sí, mandala»' + (c.propuesta.error ? ' · <span class="err">último intento: ' + esc(c.propuesta.error) + '</span>' : '') + '</p>' : '')
-      + (c.ventana_abierta
-        ? (respuestas.length ? '<div class="rapidas">' + respuestas.map((r, i) => '<button type="button" data-rapida="' + i + '" title="' + esc(r.texto) + '">' + esc(r.titulo) + '</button>').join('') + '</div>' : '')
-          + '<div id="respBar" hidden></div><div id="grabBar" hidden></div>'
-          + '<form class="escribir" id="escribir"><label class="btn gris adj" title="Mandar un archivo: foto, video, audio o documento (lo que escribas al lado va como texto del archivo)">📎<input type="file" id="adjunto" accept="' + ACEPTA + '"></label>'
-          + (window.MediaRecorder ? '<button class="btn gris adj mic" type="button" id="grabar" title="Grabar un audio">🎤</button>' : '')
-          + '<textarea id="texto" rows="1" placeholder="' + (c.por_puente ? 'Escribile desde el número 2…' : 'Escribile desde el 11 3366-2080…') + '" required></textarea><button class="btn" type="submit" style="padding:10px 16px">Enviar</button></form>'
-        : '<div class="cerrada"><b>🔒 Ventana de 24 h cerrada.</b> Pasaron más de 24 horas desde su último mensaje: WhatsApp no permite escribirle hasta que el contacto vuelva a escribir. <button class="btn" type="button" id="propDeCharla" style="margin-top:8px">📄 Mandarle la propuesta</button></div>')
-      + '<aside id="waFicha" class="scroll"' + (fichaAbierta ? '' : ' hidden') + '></aside>';
-    if (borrador && $('#texto')) $('#texto').value = borrador;
-    // Las burbujas: si no cambió nada (o se está escuchando un audio o mirando un video), se deja el mismo
-    // contenedor, con sus audios cargados y su scroll; si no, se dibujan de nuevo.
-    const firmaAhora = c.telefono + '|' + JSON.stringify((c.mensajes || []).map((m) => [m.id, m.ts, m.error, m.estado && m.estado.estado, m.transcripcion]));
-    const viejo = msgsViejo && msgsViejo.dataset.tel === c.telefono && (firmaAhora === firmaBurbujas || reproduciendo(msgsViejo)) ? msgsViejo : null;
-    if (viejo) { const top = viejo.scrollTop; $('#msgs').replaceWith(viejo); viejo.scrollTop = top; }
-    else {
-      const msgs = $('#msgs');
-      msgs.dataset.tel = c.telefono;
-      msgs.innerHTML = (c.mensajes || []).map((m) => burbuja(m, c)).join('');
-      firmaBurbujas = firmaAhora;
-      cargarMedios(msgs);
-      msgs.scrollTop = msgs.scrollHeight;
+      + (c.propuesta && !c.propuesta.enviada && !c.propuesta.cancelada ? '<p class="wa-prop">📄 La propuesta (' + esc(c.propuesta.archivo) + ') espera que toque «Sí, mandala»' + (c.propuesta.error ? ' · <span class="err">último intento: ' + esc(c.propuesta.error) + '</span>' : '') + '</p>' : '');
+  }
+  const ICONO_ENVIAR = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.4 20.4 21 12 3.4 3.6v6.6l12.6 1.8-12.6 1.8z"/></svg>';
+  const ICONO_MIC = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 14.5a3.5 3.5 0 0 0 3.5-3.5V5.5a3.5 3.5 0 0 0-7 0V11a3.5 3.5 0 0 0 3.5 3.5Zm6-3.5a.9.9 0 1 0-1.8 0 4.2 4.2 0 0 1-8.4 0 .9.9 0 1 0-1.8 0 6 6 0 0 0 5.1 5.9V20H8.6a.9.9 0 1 0 0 1.8h6.8a.9.9 0 1 0 0-1.8H12.9v-3.1A6 6 0 0 0 18 11Z"/></svg>';
+  // El cuadro de texto se arma una sola vez por charla: sólo se rehace si cambia la ventana, la línea o las
+  // respuestas rápidas, y aun así conserva lo escrito, el foco y el cursor.
+  function pintarPie(c) {
+    const pie = $('#waPie');
+    const f = JSON.stringify([c.ventana_abierta, c.por_puente, respuestas.map((r) => r.titulo), !!window.MediaRecorder]);
+    if (pie._f === f) return;
+    const t = $('#texto');
+    const estado = t ? { v: t.value, a: t.selectionStart, b: t.selectionEnd, foco: document.activeElement === t } : { v: borradores.get(c.telefono) || '', foco: false };
+    const grabViejo = $('#grabBar') && !$('#grabBar').hidden ? $('#grabBar') : null;
+    pie._f = f;
+    pie.innerHTML = c.ventana_abierta
+      ? (respuestas.length ? '<div class="rapidas" role="toolbar" aria-label="Respuestas rápidas">' + respuestas.map((r, i) => '<button type="button" data-rapida="' + i + '" title="' + esc(r.texto) + '">' + esc(r.titulo) + '</button>').join('') + '</div>' : '')
+        + '<div id="respBar" hidden></div><div id="avisoMic" hidden></div>'
+        + '<form class="escribir" id="escribir"><label class="btn gris adj" title="Mandar un archivo: foto, video, audio o documento">📎<input type="file" id="adjunto" accept="' + ACEPTA + '"></label>'
+        + '<div id="grabBar" hidden></div>'
+        + '<textarea id="texto" rows="1" placeholder="' + (c.por_puente ? 'Escribile desde el número 2…' : 'Escribile desde el 11 3366-2080…') + '" aria-label="Mensaje"></textarea>'
+        + '<button class="redondo" type="button" id="accion" aria-label="Enviar">' + ICONO_ENVIAR + '</button></form>'
+      : '<div class="cerrada"><b>🔒 Ventana de 24 h cerrada.</b> Pasaron más de 24 horas desde su último mensaje: WhatsApp no permite escribirle hasta que el contacto vuelva a escribir. <button class="btn" type="button" id="propDeCharla" style="margin-top:8px">📄 Mandarle la propuesta</button></div>';
+    const tn = $('#texto');
+    if (tn) {
+      tn.value = estado.v;
+      if (estado.v) { tn.style.height = 'auto'; tn.style.height = tn.scrollHeight + 'px'; }
+      if (estado.foco) { tn.focus({ preventScroll: true }); if (estado.a != null) tn.setSelectionRange(estado.a, estado.b); }
     }
-    pintarRespBar();
-    if (grabViejo && $('#grabBar')) $('#grabBar').replaceWith(grabViejo);
-    // Con cambios sin guardar se vuelve a poner la misma ficha: el refresco no pisa lo que se está escribiendo.
-    if (fichaVieja) { $('#waFicha').replaceWith(fichaVieja); fichaVieja.hidden = !fichaAbierta; $('#fichamsg').textContent = 'Cambios sin guardar.'; return; }
-    fichaSucia = '';
+    if (grabViejo && $('#grabBar')) { $('#grabBar').replaceWith(grabViejo); $('#escribir').classList.add(grab ? 'grabando' : 'escuchando'); }
+    pintarAccion();
+  }
+  // El botón redondo del cuadro, como en WhatsApp: ➤ si hay texto, 🎤 si está vacío.
+  function pintarAccion() {
+    const b = $('#accion'), t = $('#texto'); if (!b) return;
+    const conTexto = !!(t && t.value.trim());
+    const escuchando = $('#escribir') && $('#escribir').classList.contains('escuchando');
+    const modo = grab && grab.modo === 'mantener' ? 'mic' : grab || escuchando || conTexto || !window.MediaRecorder ? 'enviar' : 'mic';
+    if (b.dataset.modo === modo && !grab) return;
+    b.dataset.modo = modo;
+    b.innerHTML = modo === 'mic' ? ICONO_MIC : ICONO_ENVIAR;
+    b.setAttribute('aria-label', modo === 'mic' ? 'Grabar un audio (tocá, o mantené apretado)' : 'Enviar');
+    b.title = modo === 'mic' ? 'Tocá para grabar, o mantené apretado y soltá para mandar' : 'Enviar';
+    b.classList.toggle('mic-bloq', modo === 'mic' && micBloqueado);
+  }
+
+  function armarEsqueleto(c) {
+    if (chatTel && $('#texto')) borradores.set(chatTel, $('#texto').value);
+    if (grab && grab.tel !== c.telefono) pararGrabacion(true);
+    chatTel = c.telefono; burb = { keys: [], firmas: [], tildes: [] }; pegado = true; nuevosAbajo = 0; fichaSucia = '';
+    $('#waChat').innerHTML = '<div class="wa-cab" id="waCab"></div>'
+      + '<div class="wa-caja-msgs"><div class="wa-burbujas scroll" id="msgs" aria-live="polite"></div><button type="button" class="wa-bajar" id="bajar" hidden></button></div>'
+      + '<div id="waAvisos"></div><div id="waPie"></div><aside id="waFicha" class="scroll" hidden></aside>';
+    const msgs = $('#msgs');
+    msgs.addEventListener('scroll', () => { pegado = cercaDelFinal(msgs); if (pegado && nuevosAbajo) { nuevosAbajo = 0; pintarPastilla(); } }, { passive: true });
+  }
+  function pintarPastilla() {
+    const b = $('#bajar'); if (!b) return;
+    b.hidden = !nuevosAbajo;
+    b.textContent = '↓ ' + nuevosAbajo + (nuevosAbajo === 1 ? ' mensaje nuevo' : ' mensajes nuevos');
+  }
+  function alFinal(suave) {
+    const msgs = $('#msgs'); if (!msgs) return;
+    if (suave && !matchMedia('(prefers-reduced-motion: reduce)').matches) msgs.scrollTo({ top: msgs.scrollHeight, behavior: 'smooth' });
+    else msgs.scrollTop = msgs.scrollHeight;
+    pegado = true; nuevosAbajo = 0; pintarPastilla();
+  }
+  // Lo que se estaba leyendo: la primera burbuja visible y a cuánto del borde de arriba estaba.
+  function anclaDe(msgs) {
+    const top = msgs.scrollTop;
+    for (const el of msgs.children) if (el.offsetTop + el.offsetHeight > top) return { k: el.dataset.k, d: el.offsetTop - top };
+    return null;
+  }
+  function volverAlAncla(msgs, a, topViejo) {
+    const el = a && [...msgs.children].find((x) => x.dataset.k === a.k);
+    msgs.scrollTop = el ? el.offsetTop - a.d : topViejo;
+  }
+  function htmlBurbujas(lista, c, desde) { return lista.map((m, i) => burbuja(m, c, claveMsg(m, desde + i))).join(''); }
+  function pintarBurbujas(c) {
+    const msgs = $('#msgs'), ms = c.mensajes || [];
+    const keys = ms.map(claveMsg), firmas = ms.map((m) => firmaMsg(m, c)), tildes = ms.map(firmaTilde);
+    const n = burb.keys.length;
+    const mismoPrincipio = n > 0 && n <= keys.length && burb.keys.every((k, i) => k === keys[i]);
+    const estabaAbajo = pegado;
+    if (!mismoPrincipio) {
+      // Primera vez, o cambió la lista entera: se dibuja todo (si se está escuchando un audio, se espera).
+      if (n && reproduciendo(msgs)) return;
+      const ancla = n ? anclaDe(msgs) : null, topViejo = msgs.scrollTop;
+      msgs.innerHTML = htmlBurbujas(ms, c, 0);
+      cargarMedios(msgs);
+      if (!n || estabaAbajo || bajarAlFinal) alFinal(); else volverAlAncla(msgs, ancla, topViejo);
+    } else {
+      const ancla = estabaAbajo ? null : anclaDe(msgs), topViejo = msgs.scrollTop;
+      let tocoViejo = false;
+      for (let i = 0; i < n; i++) {
+        const el = msgs.children[i]; if (!el) continue;
+        if (burb.firmas[i] !== firmas[i]) {
+          // Cambió algo de esa burbuja: se rehace sólo ella (salvo que se esté escuchando su audio).
+          if (reproduciendo(el)) { firmas[i] = burb.firmas[i]; continue; }
+          el.insertAdjacentHTML('afterend', burbuja(ms[i], c, keys[i]));
+          const nuevo = el.nextElementSibling; el.remove(); cargarMedios(nuevo); tocoViejo = true;
+        } else if (burb.tildes[i] !== tildes[i]) {
+          const t = el.querySelector(':scope > .wa-t'); if (t) t.innerHTML = pieDeBurbuja(ms[i], c);
+        }
+      }
+      if (keys.length > n) {
+        msgs.insertAdjacentHTML('beforeend', htmlBurbujas(ms.slice(n), c, n));
+        [...msgs.children].slice(n).forEach(cargarMedios);
+        if (estabaAbajo || bajarAlFinal) alFinal();
+        else { nuevosAbajo += keys.length - n; pintarPastilla(); }
+      }
+      if (tocoViejo && ancla) volverAlAncla(msgs, ancla, topViejo);
+      if (estabaAbajo && keys.length === n && tocoViejo) alFinal();
+    }
+    burb = { keys, firmas, tildes };
+    bajarAlFinal = false;
+  }
+  function pintarFicha(c) {
+    const aside = $('#waFicha');
+    aside.hidden = !fichaAbierta;
+    // Con cambios sin guardar no se toca: el refresco no pisa lo que se está escribiendo.
+    if (fichaSucia === c.telefono) { const m = $('#fichamsg'); if (m && !m.textContent) m.textContent = 'Cambios sin guardar.'; return; }
     const d = c.datos || {};
-    $('#waFicha').innerHTML = '<div class="tit"><h2>Ficha</h2><button class="btn gris" id="cerrarficha" type="button" title="Cerrar">✕</button></div>'
+    setHtml(aside, '<div class="tit"><h2>Ficha</h2><button class="btn gris" id="cerrarficha" type="button" title="Cerrar">✕</button></div>'
       + (c.sin_whatsapp ? cajaSinWa(c) : '') + '<form id="fichaform">'
       + '<label>Etapa<select name="etapa">' + Object.keys(ETAPAS).map((k) => '<option value="' + esc(k) + '"' + ((c.etapa || 'nuevo') === k ? ' selected' : '') + '>' + esc(ETAPAS[k]) + '</option>').join('') + '</select></label>'
       + campos.map((k) => '<label>' + esc(CAMPOS[k] || k) + '<input name="d_' + esc(k) + '" value="' + esc(d[k] || '') + '"' + (k === 'email' ? ' type="email"' : '') + '></label>').join('')
@@ -531,7 +839,24 @@
       + '<datalist id="etqLista">' + [...new Set(charlas.flatMap((x) => x.etiquetas || []))].map((e) => '<option value="' + esc(e) + '">').join('') + '</datalist>'
       + '<label>Notas internas (el cliente no las ve)<textarea name="notas">' + esc(c.notas || '') + '</textarea></label>'
       + '<button class="btn" type="submit" style="justify-content:center;padding:9px">Guardar</button><p id="fichamsg"></p></form>'
-      + '<div class="dato"><span>Primer contacto: ' + (fecha(c.creado) || '—') + '</span><span>Último mensaje del cliente: ' + (fecha(c.ultimo_cliente_en) || '—') + '</span></div>';
+      + '<div class="dato"><span>Primer contacto: ' + (fecha(c.creado) || '—') + '</span><span>Último mensaje del cliente: ' + (fecha(c.ultimo_cliente_en) || '—') + '</span></div>');
+  }
+  function pintarChat() {
+    $('#waWrap').classList.toggle('abierta', !!abierta);
+    document.body.classList.toggle('charla-abierta', !!abierta);
+    if (!abierta) {
+      if (chatTel && $('#texto')) borradores.set(chatTel, $('#texto').value);
+      if (grab) pararGrabacion(true);
+      chatTel = ''; $('#waChat').innerHTML = '<div class="vacio">Elegí una conversación de la lista.</div>'; return;
+    }
+    const c = abierta;
+    if (chatTel !== c.telefono || !$('#msgs')) armarEsqueleto(c);
+    setHtml($('#waCab'), cabecera(c));
+    setHtml($('#waAvisos'), avisosDe(c));
+    pintarPie(c);
+    pintarBurbujas(c);
+    pintarRespBar();
+    pintarFicha(c);
   }
 
   // ============================================================
@@ -576,7 +901,9 @@
     return '<span class="wa-norec">⚠️ ' + esc(que) + '<small>' + esc(motivo) + ' Si hace falta, pedile que lo mande como texto o como link.'
       + (nr.codigo ? ' (código de WhatsApp ' + esc(nr.codigo) + ')' : '') + '</small></span>';
   }
-  function burbuja(m, c) {
+  // La hora y las tildes de una burbuja (se cambia sola cuando llega un «entregado» o un «leído»).
+  const pieDeBurbuja = (m, c) => (DE[m.de] ? DE[m.de] + ' · ' : '') + fecha(m.ts) + (m.de !== 'cliente' ? tildeDe(m, c) : '');
+  function burbuja(m, c, k) {
     const a = m.archivo;
     const esPdf = a && (a.mime === 'application/pdf' || /\.pdf$/i.test(a.ruta || ''));
     let medio = '';
@@ -599,11 +926,11 @@
     // lo que no salió en el momento: la burbuja punteada y la pastilla con el motivo.
     const fallo = m.error || (m.estado && m.estado.estado === 'fallido' ? (m.estado.error || 'WhatsApp no lo entregó') : '');
     const sePuedeCitar = c.ventana_abierta && !c.por_puente && /^wamid\./.test(m.id || '') && !fallo;
-    return '<div class="wa-b wa-' + esc(m.de) + (fallo ? ' wa-fallo' : '') + '" data-id="' + esc(m.id || '') + '">'
+    return '<div class="wa-b wa-' + esc(m.de) + (fallo ? ' wa-fallo' : '') + '" data-id="' + esc(m.id || '') + '" data-k="' + esc(k || '') + '">'
       + (sePuedeCitar ? '<button type="button" class="wa-resp" data-citar="' + esc(m.id) + '" title="Responder citando este mensaje" aria-label="Responder citando">↩</button>' : '')
       + cita + medio + (m.tipo === 'no_soportado' ? noRecibido(m) : m.tipo === 'reaccion' ? '<span class="wa-reac">' + esc(texto) + '</span>' : conLinks(esc(texto))) + (boton ? (texto ? '<br>' : '') + boton : '') + transcr
       + (m.archivo_error ? '<span class="wa-arch-err">📎 El archivo no se guardó: ' + esc(m.archivo_error) + '</span>' : '')
-      + '<span class="wa-t">' + (DE[m.de] ? DE[m.de] + ' · ' : '') + fecha(m.ts) + (m.de !== 'cliente' ? tildeDe(m, c) : '') + '</span>'
+      + '<span class="wa-t">' + pieDeBurbuja(m, c) + '</span>'
       + (fallo ? '<span class="wa-nosalio">' + (m.error ? 'No se envió · ' : 'No se entregó · ') + esc(fallo) + '</span>' : '') + '</div>';
   }
   const reproduciendo = (el) => [...el.querySelectorAll('audio, video')].some((x) => !x.paused && !x.ended);
@@ -626,9 +953,14 @@
         if (el.dataset.media === 'audio') el.innerHTML = '<audio controls preload="metadata" src="' + esc(url) + '"></audio>';
         else if (el.dataset.media === 'video') el.innerHTML = '<video controls preload="metadata" playsinline src="' + esc(url) + '"></video>';
         else el.innerHTML = '<img alt="Imagen de la charla" src="' + esc(url) + '" data-grande="' + esc(el.dataset.ruta) + '" data-nombre="' + esc(el.dataset.nombre || 'imagen') + '">';
-      } catch (e) { el.innerHTML = '<span class="cargando">No se pudo cargar: ' + esc(e.message) + '</span>'; }
+        // Si estabas abajo de todo, la foto que termina de cargar no te deja a mitad de camino.
+        const x = el.firstElementChild;
+        if (x) x.addEventListener(x.tagName === 'IMG' ? 'load' : 'loadedmetadata', seguirAbajo, { once: true });
+        seguirAbajo();
+      } catch (e) { el.innerHTML = '<span class="cargando">No se pudo cargar: ' + esc(e.message) + '</span>'; seguirAbajo(); }
     });
   }
+  function seguirAbajo() { const msgs = $('#msgs'); if (msgs && pegado) msgs.scrollTop = msgs.scrollHeight; }
   async function verImagen(ruta, nombreArch) {
     try { const url = await blobDe(ruta); $('#imgGrande').src = url; $('#imgBajar').href = url; $('#imgBajar').download = nombreArch || 'imagen'; $('#dlgImg').showModal(); }
     catch (e) { msg('No se pudo abrir la imagen: ' + e.message); }
@@ -691,9 +1023,9 @@
     try {
       const cita = respondiendo && respondiendo.tel === c.telefono ? respondiendo.id : '';
       const j = await post(ruta(c.telefono, '/archivo'), { archivo: await leerArchivo(file), texto: texto || '', ...(cita ? { responder_a: cita } : {}) });
-      if ($('#texto') && texto) $('#texto').value = '';
       respondiendo = null;
       $('#wamsg').textContent = j.tipo === 'document' && /audio|webm/.test(file.type || '') ? '✅ Salió como archivo (WhatsApp no acepta ese formato como audio).' : '';
+      bajarAlFinal = true;
       await abrir(c.telefono); cargar();
     } catch (err) {
       $('#wamsg').textContent = '';
@@ -701,54 +1033,245 @@
       msg('No se pudo mandar: ' + err.message);
     }
   }
-  // Grabar: WhatsApp acepta como audio ogg/opus (nota de voz), mp4/aac, mpeg y amr, pero NO el webm que graba
-  // Chrome por defecto. Se pide el mejor formato que el navegador sepa grabar: ogg/opus (Firefox) → nota de voz;
-  // mp4/aac (Safari y Chrome nuevos) → audio; si sólo sabe webm, sale como archivo (y se avisa antes).
-  const FORMATOS = ['audio/ogg;codecs=opus', 'audio/mp4;codecs=mp4a.40.2', 'audio/mp4', 'audio/aac', 'audio/webm;codecs=opus', 'audio/webm'];
+  const peso = (n) => (n < 1048576 ? Math.max(1, Math.round(n / 1024)) + ' KB' : (n / 1048576).toFixed(1).replace('.', ',') + ' MB');
+
+  // ---------- Vista previa antes de mandar (25/11/2026, Budy: «no me deja ver lo que estoy mandando») ----------
+  // Como en WhatsApp: la foto, el video, el audio o la primera hoja del PDF, con el texto que lo acompaña. Antes era
+  // un confirm() con el nombre del archivo.
+  let previa = null;
+  function abrirVistaPrevia(file, textoInicial, desdeElCuadro) {
+    if (!abierta || !file) return;
+    if (!abierta.ventana_abierta) { msg('La ventana de 24 h está cerrada: WhatsApp no deja mandarle archivos hasta que vuelva a escribir.'); return; }
+    if (file.size > TOPE(file.type)) { msg('«' + file.name + '» pesa más de ' + Math.round(TOPE(file.type) / 1048576) + ' MB: achicalo antes de mandarlo.'); return; }
+    if (previa && previa.url) URL.revokeObjectURL(previa.url);
+    const url = URL.createObjectURL(file), tipo = file.type || '';
+    previa = { file, url, tel: abierta.telefono, desdeElCuadro };
+    const esPdf = /pdf$/i.test(tipo) || /\.pdf$/i.test(file.name || '');
+    const ficha = (ico, extra) => '<div class="arch-doc"><span class="ico" aria-hidden="true">' + ico + '</span><b>' + esc(file.name || 'archivo') + '</b><small>' + esc(peso(file.size)) + (extra || '') + '</small></div>';
+    $('#archNombre').textContent = (file.name || 'Archivo') + ' · ' + nombre(abierta);
+    const vista = $('#archVista');
+    if (/^image\//.test(tipo)) vista.innerHTML = '<img alt="Vista previa de la imagen" src="' + esc(url) + '">';
+    else if (/^video\//.test(tipo)) vista.innerHTML = '<video controls playsinline src="' + esc(url) + '"></video>';
+    else if (/^audio\//.test(tipo)) vista.innerHTML = ficha('🎧') + '<audio controls src="' + esc(url) + '"></audio>';
+    else if (esPdf) { vista.innerHTML = '<div style="display:grid;gap:10px;justify-items:center"><canvas id="archPdf" width="10" height="10" hidden></canvas>' + ficha('📄', '<span id="archPags"></span>') + '</div>'; primeraHoja(file); }
+    else vista.innerHTML = ficha('📄');
+    const sinTexto = /^audio\//.test(tipo);
+    $('#archTexto').hidden = sinTexto; $('#archTexto').value = sinTexto ? '' : (textoInicial || '');
+    $('#archMandar').disabled = false;
+    $('#dlgArch').showModal();
+    if (matchMedia('(hover: hover)').matches && !sinTexto) $('#archTexto').focus(); else $('#archMandar').focus();
+  }
+  async function primeraHoja(file) {
+    try {
+      const pdfjs = await cargarPdfjs();
+      const doc = await pdfjs.getDocument({ data: await file.arrayBuffer() }).promise;
+      const pag = await doc.getPage(1), base = pag.getViewport({ scale: 1 });
+      const vp = pag.getViewport({ scale: (300 / base.width) * Math.min(window.devicePixelRatio || 1, 2) });
+      const cv = $('#archPdf'); if (!cv || !$('#dlgArch').open) return;
+      cv.width = vp.width; cv.height = vp.height; cv.style.width = '300px'; cv.hidden = false; const ico = $('#archVista .arch-doc .ico'); if (ico) ico.hidden = true;
+      await pag.render({ canvasContext: cv.getContext('2d'), viewport: vp }).promise;
+      const p = $('#archPags'); if (p) p.textContent = ' · ' + doc.numPages + (doc.numPages === 1 ? ' hoja' : ' hojas');
+    } catch (e) { /* sin vista de la hoja: queda el nombre y el peso */ }
+  }
+  $('#archForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const p = previa; if (!p || !abierta || abierta.telefono !== p.tel) { $('#dlgArch').close(); return; }
+    const texto = $('#archTexto').hidden ? '' : $('#archTexto').value.trim();
+    $('#archMandar').disabled = true;
+    $('#dlgArch').close();
+    if (p.desdeElCuadro && $('#texto')) { $('#texto').value = ''; $('#texto').style.height = ''; pintarAccion(); }
+    mandarArchivo(p.file, texto);
+  });
+  $('#archCerrar').addEventListener('click', () => $('#dlgArch').close());
+  $('#dlgArch').addEventListener('close', () => { $('#archVista').innerHTML = ''; if (previa && previa.url) URL.revokeObjectURL(previa.url); previa = null; });
+
+  // ---------- Grabar un audio como en WhatsApp (25/11/2026, Budy: «en mobile no me deja mandar audios») ----------
+  // Tocar 🎤: graba con el tiempo a la vista, 🗑 descarta, ⏹ para escucharlo antes y ➤ lo manda. Mantener apretado:
+  // graba mientras está apretado y al soltar sale; deslizar a la izquierda lo cancela. El permiso del micrófono se
+  // pide en el mismo toque, y si el navegador lo tiene bloqueado se explica cómo habilitarlo.
+  // Formato: WhatsApp acepta como nota de voz sólo ogg/opus. Firefox lo graba directo; Chrome (también en Android)
+  // graba webm/opus, que acá se pasa a ogg sin tocar el sonido (es el mismo opus en otra caja: webmAOgg). Safari
+  // graba mp4/aac y le llega como audio. Si nada de eso se puede, sale como archivo (y se avisa).
+  const FORMATOS = ['audio/ogg;codecs=opus', 'audio/webm;codecs=opus', 'audio/mp4;codecs=mp4a.40.2', 'audio/mp4', 'audio/aac', 'audio/webm'];
   const formatoGrabacion = () => FORMATOS.find((f) => window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(f)) || '';
-  let grab = null;
-  async function empezarGrabacion() {
-    if (grab) return pararGrabacion();
+  let grab = null, escucha = null, micBloqueado = false, presion = null, ignorarClick = false;
+  try { navigator.permissions.query({ name: 'microphone' }).then((p) => { micBloqueado = p.state === 'denied'; pintarAccion(); p.onchange = () => { micBloqueado = p.state === 'denied'; if (!micBloqueado && $('#avisoMic')) $('#avisoMic').hidden = true; pintarAccion(); }; }).catch(() => {}); } catch (e) {}
+
+  async function avisoMic(e) {
+    const caja = $('#avisoMic');
+    let estado = '';
+    try { estado = (await navigator.permissions.query({ name: 'microphone' })).state; } catch (x) {}
+    const n = e && e.name;
+    let txt;
+    if (!window.isSecureContext || !navigator.mediaDevices) txt = '<b>Este navegador no deja grabar en esta página.</b> Abrila con https:// (mymsoluciones.online) o desde Chrome.';
+    else if (n === 'NotAllowedError' || n === 'SecurityError') {
+      micBloqueado = true;
+      txt = estado === 'denied'
+        ? '<b>El micrófono está bloqueado para esta página.</b> Tocá el candado (o la ⓘ) a la izquierda de la dirección → Permisos → Micrófono → Permitir, y volvé a tocar 🎤.'
+        : '<b>El navegador no dejó usar el micrófono.</b> Si en el aviso tocaste «Bloquear», habilitalo desde el candado de la dirección → Permisos → Micrófono. Si ahí ya está permitido, en el celular andá a Ajustes → Aplicaciones → Chrome → Permisos → Micrófono.';
+    } else if (n === 'NotFoundError') txt = '<b>No se encontró ningún micrófono.</b> Conectá uno, o grabá desde el celular.';
+    else if (n === 'NotReadableError') txt = '<b>El micrófono lo está usando otra app.</b> Cortá la llamada o cerrá la otra app y probá de nuevo.';
+    else txt = '<b>No se pudo grabar.</b> ' + esc((e && e.message) || '');
+    if (!caja) { msg(txt.replace(/<[^>]+>/g, '')); return; }
+    caja.className = 'aviso-mic'; caja.hidden = false;
+    caja.innerHTML = '<span>🎤 ' + txt + '</span><button class="btn gris" type="button" id="avisoMicOk">Entendido</button>';
+    pintarAccion();
+  }
+  function pintarGrabando() {
+    const f = $('#escribir'), bar = $('#grabBar'); if (!f || !bar || !grab) return;
+    f.classList.add('grabando'); f.classList.remove('escuchando');
+    bar.hidden = false;
+    bar.innerHTML = '<span class="punto" aria-hidden="true"></span><span id="grabT" aria-live="off">0:00</span>'
+      + (grab.modo === 'mantener' ? '<span class="desliza" id="grabDesliza">◀ Deslizá para cancelar</span>'
+        : '<button class="chico" type="button" id="grabCancelar" aria-label="Descartar el audio" title="Descartar">🗑</button><span class="desliza">Grabando…</span><button class="chico" type="button" id="grabParar" aria-label="Parar y escucharlo antes de mandar" title="Parar y escuchar">⏹</button>');
+    const b = $('#accion'); if (b) b.classList.toggle('grabando', grab.modo === 'mantener');
+    pintarAccion();
+  }
+  function salirDeGrabar() {
+    const f = $('#escribir'), bar = $('#grabBar');
+    if (f) f.classList.remove('grabando', 'escuchando');
+    if (bar) { if (bar._url) URL.revokeObjectURL(bar._url); bar.hidden = true; bar.innerHTML = ''; bar._url = ''; }
+    const b = $('#accion'); if (b) b.classList.remove('grabando');
+    escucha = null; pintarAccion();
+  }
+  async function empezarGrabacion(modo) {
+    if (grab) return;
+    if (!window.MediaRecorder || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { avisoMic(null); return; }
+    const g = grab = { modo, tel: abierta && abierta.telefono, partes: [], desde: 0, rec: null, soltado: false, cancelado: false };
+    if ($('#avisoMic')) $('#avisoMic').hidden = true;
+    pintarGrabando();
     let stream;
+    // getUserMedia va en el mismo toque: si no, Chrome del celular no muestra el pedido de permiso.
     try { stream = await navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1, echoCancellation: true, noiseSuppression: true } }); }
-    catch (e) { msg('El navegador no dejó usar el micrófono: ' + e.message); return; }
+    catch (e) { if (grab === g) grab = null; salirDeGrabar(); avisoMic(e); return; }
+    if (g.cancelado || grab !== g) { stream.getTracks().forEach((t) => t.stop()); return; }
+    micBloqueado = false;
     const mime = formatoGrabacion();
-    const rec = new MediaRecorder(stream, mime ? { mimeType: mime, audioBitsPerSecond: 32000 } : undefined);
-    const partes = [];
-    grab = { rec, stream, desde: Date.now(), reloj: null, tel: abierta && abierta.telefono };
-    rec.ondataavailable = (e) => { if (e.data && e.data.size) partes.push(e.data); };
-    rec.onstop = () => {
-      stream.getTracks().forEach((t) => t.stop());
-      clearInterval(grab.reloj);
-      const tipo = (rec.mimeType || mime || 'audio/webm').split(';')[0];
-      const ext = { 'audio/ogg': 'ogg', 'audio/mp4': 'm4a', 'audio/aac': 'aac', 'audio/webm': 'webm' }[tipo] || 'webm';
-      const file = new File(partes, 'audio-' + new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-') + '.' + ext, { type: tipo });
-      const tel = grab.tel; grab = null;
-      const bar = $('#grabBar'); if (!bar || !abierta || abierta.telefono !== tel) return;
-      const url = URL.createObjectURL(file);
-      bar.hidden = false;
-      bar.innerHTML = '<audio controls src="' + url + '"></audio><button class="btn" type="button" id="grabMandar">Mandar</button><button class="btn gris" type="button" id="grabTirar">Descartar</button>'
-        + (tipo === 'audio/webm' ? '<span class="nota">Este navegador graba en WebM, que WhatsApp no acepta como audio: le llega como archivo. Para que llegue como nota de voz, grabá desde Firefox o Safari.</span>'
-          : tipo === 'audio/ogg' ? '<span class="nota">Le llega como nota de voz.</span>' : '<span class="nota">Le llega como audio.</span>');
-      bar._file = file; bar._url = url;
-      const b = $('#grabar'); if (b) b.classList.remove('grabando');
-    };
-    rec.start(1000);
-    const bar = $('#grabBar'); bar.hidden = false;
-    bar.innerHTML = '<span class="punto"></span><span id="grabT">0:00</span><span>Grabando… tocá 🎤 de nuevo para terminar.</span><button class="btn gris" type="button" id="grabCancelar">Cancelar</button>';
-    $('#grabar').classList.add('grabando');
-    grab.reloj = setInterval(() => {
-      const s = Math.round((Date.now() - grab.desde) / 1000);
+    let rec;
+    try { rec = new MediaRecorder(stream, mime ? { mimeType: mime, audioBitsPerSecond: 32000 } : undefined); }
+    catch (e) { stream.getTracks().forEach((t) => t.stop()); grab = null; salirDeGrabar(); avisoMic(e); return; }
+    Object.assign(g, { rec, stream, mime, desde: Date.now() });
+    // Si soltó mientras el navegador pedía el permiso, queda grabando con los botones a la vista.
+    if (g.soltado && g.modo === 'mantener') { g.modo = 'fijo'; pintarGrabando(); }
+    rec.ondataavailable = (e) => { if (e.data && e.data.size) g.partes.push(e.data); };
+    rec.start(250);
+    g.reloj = setInterval(() => {
+      const s = Math.round((Date.now() - g.desde) / 1000);
       const t = $('#grabT'); if (t) t.textContent = Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
-      if (s >= 300) pararGrabacion();   // 5 minutos como mucho (el tope de 12 MB queda lejos)
-    }, 500);
+      if (s >= 300) terminarGrabacion(g.modo === 'mantener' ? 'mandar' : 'escuchar');   // 5 minutos como mucho
+    }, 250);
   }
-  function pararGrabacion(cancelar) {
-    if (!grab) return;
-    if (cancelar) { grab.rec.onstop = () => { grab.stream.getTracks().forEach((t) => t.stop()); clearInterval(grab.reloj); grab = null; }; }
-    grab.rec.stop();
-    if (cancelar) { const bar = $('#grabBar'); if (bar) { bar.hidden = true; bar.innerHTML = ''; } const b = $('#grabar'); if (b) b.classList.remove('grabando'); }
+  // accion: 'mandar' (sale ya), 'escuchar' (queda para oírlo antes) o 'cancelar'.
+  function terminarGrabacion(accion) {
+    const g = grab; if (!g) return;
+    grab = null;
+    if (!g.rec) { g.cancelado = true; salirDeGrabar(); return; }
+    clearInterval(g.reloj);
+    const corto = Date.now() - g.desde < 800;
+    g.rec.onstop = async () => {
+      g.stream.getTracks().forEach((t) => t.stop());
+      if (accion === 'cancelar' || (corto && accion === 'mandar' && g.modo === 'mantener')) {
+        salirDeGrabar();
+        if (accion !== 'cancelar') $('#wamsg').textContent = 'Mantené apretado 🎤 para grabar, o tocalo una vez y grabá con las manos libres.';
+        return;
+      }
+      const file = await archivoDeGrabacion(g.partes, g.rec.mimeType || g.mime);
+      if (!abierta || abierta.telefono !== g.tel) { salirDeGrabar(); return; }
+      if (accion === 'mandar') { salirDeGrabar(); mandarArchivo(file, ''); }
+      else mostrarEscucha(file);
+    };
+    try { g.rec.stop(); } catch (e) { g.rec.onstop(); }
   }
+  const pararGrabacion = () => terminarGrabacion('cancelar');
+  async function archivoDeGrabacion(partes, mimeRec) {
+    const tipo = String(mimeRec || 'audio/webm').split(';')[0];
+    const base = 'audio-' + new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
+    const blob = new Blob(partes, { type: tipo });
+    if (tipo === 'audio/webm') {
+      try { const ogg = webmAOgg(await blob.arrayBuffer()); if (ogg) return new File([ogg], base + '.ogg', { type: 'audio/ogg' }); } catch (e) { console.warn('No se pudo pasar el audio a ogg:', e); }
+    }
+    const ext = { 'audio/ogg': 'ogg', 'audio/mp4': 'm4a', 'audio/aac': 'aac', 'audio/webm': 'webm' }[tipo] || 'webm';
+    return new File([blob], base + '.' + ext, { type: tipo });
+  }
+  function mostrarEscucha(file) {
+    const f = $('#escribir'), bar = $('#grabBar'); if (!f || !bar) return;
+    const url = URL.createObjectURL(file);
+    escucha = { file };
+    f.classList.remove('grabando'); f.classList.add('escuchando');
+    bar.hidden = false; bar._url = url;
+    bar.innerHTML = '<button class="chico" type="button" id="grabTirar" aria-label="Descartar el audio" title="Descartar">🗑</button><audio controls src="' + esc(url) + '"></audio>'
+      + (file.type === 'audio/webm' ? '<span class="nota">Este navegador grabó en un formato que WhatsApp no toma como audio: le llega como archivo.</span>' : '');
+    const b = $('#accion'); if (b) b.classList.remove('grabando');
+    pintarAccion();
+  }
+
+  // webm/opus (lo que graba Chrome) → ogg/opus (la nota de voz de WhatsApp), sin volver a codificar: se sacan los
+  // paquetes opus de la caja webm y se meten en páginas ogg (RFC 7845). Devuelve null si el webm no es el esperado.
+  const CRC_OGG = (() => { const t = new Uint32Array(256); for (let i = 0; i < 256; i++) { let r = i << 24; for (let j = 0; j < 8; j++) r = (r & 0x80000000) ? ((r << 1) ^ 0x04C11DB7) : (r << 1); t[i] = r >>> 0; } return t; })();
+  function webmAOgg(buf) {
+    const b = new Uint8Array(buf);
+    let p = 0;
+    const largo = (x) => { let n = 1, m = 0x80; while (n <= 8 && !(x & m)) { n++; m >>= 1; } return [n, m]; };
+    const leerId = () => { const [n] = largo(b[p]); let v = 0; for (let i = 0; i < n; i++) v = v * 256 + b[p + i]; p += n; return v; };
+    const leerTam = () => { const [n, m] = largo(b[p]); if (n > 8) throw new Error('tamaño inválido'); let v = b[p] & (m - 1), todos = v === m - 1; for (let i = 1; i < n; i++) { v = v * 256 + b[p + i]; if (b[p + i] !== 0xFF) todos = false; } p += n; return todos ? -1 : v; };
+    const CONTENEDORES = new Set([0x18538067, 0x1F43B675, 0x1654AE6B, 0xAE, 0xA0]);   // Segment, Cluster, Tracks, TrackEntry, BlockGroup
+    let cabeza = null, codec = '';
+    const paquetes = [];
+    while (p < b.length - 2) {
+      const id = leerId(), tam = leerTam();
+      if (CONTENEDORES.has(id)) continue;
+      if (tam < 0) return null;
+      const fin = p + tam; if (fin > b.length) break;
+      if (id === 0x86) codec = String.fromCharCode(...b.slice(p, fin));
+      else if (id === 0x63A2) cabeza = b.slice(p, fin);
+      else if (id === 0xA3 || id === 0xA1) {
+        let q = p; const [n] = largo(b[q]); q += n + 2;
+        if (b[q] & 0x06) return null;   // con «lacing»: Chrome no lo usa; si aparece, mejor no inventar
+        q += 1;
+        if (fin > q) paquetes.push(b.slice(q, fin));
+      }
+      p = fin;
+    }
+    if (!paquetes.length || (codec && codec !== 'A_OPUS')) return null;
+    const enAscii = (s) => Uint8Array.from(s, (ch) => ch.charCodeAt(0));
+    if (!cabeza || String.fromCharCode(...cabeza.slice(0, 8)) !== 'OpusHead') {
+      cabeza = new Uint8Array(19); cabeza.set(enAscii('OpusHead')); cabeza[8] = 1; cabeza[9] = 1;
+      new DataView(cabeza.buffer).setUint16(10, 312, true); new DataView(cabeza.buffer).setUint32(12, 48000, true);
+    }
+    const vendor = enAscii('MyM Soluciones');
+    const tags = new Uint8Array(8 + 4 + vendor.length + 4); tags.set(enAscii('OpusTags')); new DataView(tags.buffer).setUint32(8, vendor.length, true); tags.set(vendor, 12);
+    const muestras = (pk) => {
+      const toc = pk[0], cfg = toc >> 3, c = toc & 3;
+      const ms = cfg < 12 ? [10, 20, 40, 60][cfg & 3] : cfg < 16 ? [10, 20][cfg & 1] : [2.5, 5, 10, 20][cfg & 3];
+      return ms * 48 * (c === 0 ? 1 : c < 3 ? 2 : (pk[1] & 0x3F));
+    };
+    const serie = (Math.random() * 0xFFFFFFFF) >>> 0, paginas = [];
+    let nro = 0;
+    const pagina = (pks, granulo, tipo) => {
+      const segs = []; pks.forEach((pk) => { let n = pk.length; while (n >= 255) { segs.push(255); n -= 255; } segs.push(n); });
+      const total = pks.reduce((s, x) => s + x.length, 0);
+      const pg = new Uint8Array(27 + segs.length + total), dv = new DataView(pg.buffer);
+      pg.set([0x4F, 0x67, 0x67, 0x53]); pg[5] = tipo;
+      dv.setUint32(6, granulo % 0x100000000, true); dv.setUint32(10, Math.floor(granulo / 0x100000000), true);
+      dv.setUint32(14, serie, true); dv.setUint32(18, nro++, true);
+      pg[26] = segs.length; pg.set(segs, 27);
+      let o = 27 + segs.length; pks.forEach((pk) => { pg.set(pk, o); o += pk.length; });
+      let crc = 0; for (let i = 0; i < pg.length; i++) crc = ((crc << 8) ^ CRC_OGG[((crc >>> 24) ^ pg[i]) & 0xFF]) >>> 0;
+      dv.setUint32(22, crc, true); paginas.push(pg);
+    };
+    pagina([cabeza], 0, 2); pagina([tags], 0, 0);
+    let granulo = 0, grupo = [], nsegs = 0;
+    paquetes.forEach((pk) => {
+      const s = Math.floor(pk.length / 255) + 1;
+      if (grupo.length && (nsegs + s > 255 || grupo.length >= 50)) { pagina(grupo, granulo, 0); grupo = []; nsegs = 0; }
+      grupo.push(pk); nsegs += s; granulo += muestras(pk);
+    });
+    pagina(grupo, granulo, 4);
+    const out = new Uint8Array(paginas.reduce((s, x) => s + x.length, 0));
+    let o = 0; paginas.forEach((pg) => { out.set(pg, o); o += pg.length; });
+    return out;
+  }
+  window.__webmAOgg = webmAOgg;   // para probarlo desde la consola (y desde las pruebas del panel)
 
   // ---------- Aviso con sonido (sólo en el navegador) ----------
   // El navegador no deja sonar nada hasta que la persona toque la página: el contexto de audio se crea (o se
@@ -813,6 +1336,372 @@
   if (window.Notification && Notification.permission === 'default') $('#avisos').hidden = false;
   $('#avisos').addEventListener('click', () => Notification.requestPermission().then(() => { $('#avisos').hidden = Notification.permission !== 'default'; }));
 
+  // ============================================================
+  //  MENÚ PROPIO (25/11/2026, Budy: «que me aparezcan opciones en cada chat apretando clic derecho»)
+  //  Clic derecho, el botón «⋯» o un toque largo en el celular. En la compu es un menú junto al puntero que nunca se
+  //  sale de la pantalla; en el celular, una hoja que sube desde abajo. Se cierra con Esc, tocando afuera o al
+  //  desplazar la lista. Las flechas recorren las opciones.
+  // ============================================================
+  let menuDe = '', ultimoMenu = 0;
+  const hojaMovil = () => matchMedia('(max-width: 760px)').matches;
+  const seRompioRuta = (e) => e && (e.status === 404 && !/No existe/.test(e.message || '')) ? 'Falta publicar la versión nueva del server de MyM para esto.' : (e && e.message) || 'sin detalle';
+  // item: { ico, txt, fn, peligro, marcado, sub: [items], form: { placeholder, lista, fn } } · '-' es una línea.
+  function abrirMenu(items, x, y, de, titulo) {
+    cerrarMenu();
+    const m = $('#ctxMenu'), hoja = hojaMovil();
+    menuDe = de || '';
+    marcarDueno(true);
+    m.classList.toggle('hoja', hoja); $('#ctxVelo').classList.toggle('hoja', hoja);
+    m.innerHTML = (titulo ? '<div class="ctx-tit">' + titulo + '</div>' : '') + itemsHtml(items);
+    m._items = items;
+    $('#ctxVelo').hidden = false; m.hidden = false;
+    if (!hoja) ubicar(m, x, y);
+    ultimoMenu = Date.now();
+    const primero = m.querySelector('button.ctx-i'); if (primero) primero.focus({ preventScroll: true });
+  }
+  function itemsHtml(items) {
+    return items.filter(Boolean).map((it, i) => it === '-' ? '<hr>'
+      : it.form ? '<form data-i="' + i + '"><input placeholder="' + esc(it.form.placeholder) + '" maxlength="24" aria-label="' + esc(it.form.placeholder) + '"' + (it.form.lista ? ' list="ctxLista"' : '') + '><button class="btn" type="submit">' + esc(it.form.boton || 'Listo') + '</button></form>'
+        + (it.form.lista ? '<datalist id="ctxLista">' + it.form.lista.map((e) => '<option value="' + esc(e) + '">').join('') + '</datalist>' : '')
+      : '<button type="button" class="ctx-i' + (it.peligro ? ' peligro' : '') + '" role="' + (it.marcado != null ? 'menuitemradio' : 'menuitem') + '" data-i="' + i + '"'
+        + (it.marcado != null ? ' aria-checked="' + !!it.marcado + '"' : '') + (it.sub ? ' aria-haspopup="menu"' : '') + '>'
+        + '<span class="ico" aria-hidden="true">' + (it.ico || '') + '</span><span class="txt">' + esc(it.txt) + '</span>' + (it.sub ? '<span class="flecha" aria-hidden="true">›</span>' : it.marcado ? '<span aria-hidden="true">✓</span>' : '') + '</button>').join('');
+  }
+  function ubicar(m, x, y) {
+    m.style.left = '0px'; m.style.top = '0px';
+    const w = m.offsetWidth, h = m.offsetHeight, W = innerWidth, H = (window.visualViewport ? visualViewport.height : innerHeight);
+    m.style.left = Math.max(8, Math.min(x, W - w - 8)) + 'px';
+    m.style.top = Math.max(8, y + h > H - 8 ? Math.max(8, y - h) : y) + 'px';
+  }
+  function marcarDueno(si) {
+    const [tipo, id] = menuDe.split(/:(.*)/);
+    if (tipo === 'charla') { const el = [...document.querySelectorAll('#waLista .wa-item')].find((x) => x.dataset.tel === id); if (el) el.classList.toggle('menu-on', si); }
+    if (tipo === 'burbuja') { const el = [...document.querySelectorAll('#msgs .wa-b')].find((x) => x.dataset.k === id); if (el) el.classList.toggle('menu-on', si); }
+  }
+  function cerrarMenu() {
+    if ($('#ctxMenu').hidden) return;
+    marcarDueno(false); menuDe = '';
+    $('#ctxMenu').hidden = true; $('#ctxSub').hidden = true; $('#ctxVelo').hidden = true;
+  }
+  function abrirSub(it, boton) {
+    const m = $('#ctxMenu'), s = $('#ctxSub');
+    if (hojaMovil()) {
+      // En el celular el submenú reemplaza a la hoja, con «‹ Volver» arriba.
+      m.innerHTML = '<button type="button" class="ctx-i" data-volver="1"><span class="ico">‹</span><span class="txt">' + esc(it.txt) + '</span></button><hr>' + itemsHtml(it.sub);
+      m._padre = m._items; m._items = it.sub;
+      const p = m.querySelector('button.ctx-i[data-i]'); if (p) p.focus();
+      return;
+    }
+    s.classList.remove('hoja'); s.innerHTML = itemsHtml(it.sub); s._items = it.sub; s.hidden = false;
+    const r = boton.getBoundingClientRect(), w = s.offsetWidth;
+    const x = r.right + w + 4 > innerWidth ? r.left - w - 4 : r.right + 4;
+    ubicar(s, x, r.top - 6);
+    const p = s.querySelector('button.ctx-i'); if (p) p.focus();
+  }
+  async function elegir(cont, el) {
+    if (el.dataset.volver) { cont._items = cont._padre; cont.innerHTML = itemsHtml(cont._items); const p = cont.querySelector('button.ctx-i'); if (p) p.focus(); return; }
+    const it = (cont._items || [])[+el.dataset.i]; if (!it) return;
+    if (it.sub) { abrirSub(it, el); return; }
+    cerrarMenu();
+    try { await it.fn(); } catch (e) { msg('No se pudo: ' + seRompioRuta(e)); }
+  }
+  ['#ctxMenu', '#ctxSub'].forEach((sel) => {
+    const cont = $(sel);
+    cont.addEventListener('click', (e) => { const b = e.target.closest('button.ctx-i'); if (b) elegir(cont, b); });
+    cont.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const it = cont._items[+e.target.dataset.i], v = e.target.querySelector('input').value.trim();
+      if (!v) return;
+      cerrarMenu();
+      try { await it.form.fn(v); } catch (err) { msg('No se pudo: ' + seRompioRuta(err)); }
+    });
+    cont.addEventListener('mouseover', (e) => {
+      if (sel !== '#ctxMenu' || hojaMovil()) return;
+      const b = e.target.closest('button.ctx-i'); if (!b) return;
+      const it = (cont._items || [])[+b.dataset.i];
+      if (it && it.sub) abrirSub(it, b); else if (!$('#ctxSub').contains(e.target)) $('#ctxSub').hidden = true;
+    });
+  });
+  // Tocar afuera sólo cierra el menú (el toque no le llega a lo que hay abajo).
+  $('#ctxVelo').addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); cerrarMenu(); });
+  $('#ctxVelo').addEventListener('contextmenu', (e) => { e.preventDefault(); cerrarMenu(); });
+  document.addEventListener('keydown', (e) => {
+    if ($('#ctxMenu').hidden) return;
+    const enSub = !$('#ctxSub').hidden && $('#ctxSub').contains(document.activeElement);
+    const cont = enSub ? $('#ctxSub') : $('#ctxMenu');
+    if (e.key === 'Escape') { e.preventDefault(); if (enSub) { $('#ctxSub').hidden = true; const b = $('#ctxMenu').querySelector('[aria-haspopup="menu"]'); if (b) b.focus(); } else cerrarMenu(); return; }
+    if (document.activeElement && document.activeElement.tagName === 'INPUT') return;
+    const bs = [...cont.querySelectorAll('button.ctx-i')], i = bs.indexOf(document.activeElement);
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') { e.preventDefault(); const k = e.key === 'ArrowDown' ? (i + 1) % bs.length : (i - 1 + bs.length) % bs.length; bs[k].focus(); }
+    else if (e.key === 'ArrowRight' && !enSub && i >= 0) { const it = cont._items[+bs[i].dataset.i]; if (it && it.sub) { e.preventDefault(); abrirSub(it, bs[i]); } }
+    else if (e.key === 'ArrowLeft' && enSub) { e.preventDefault(); $('#ctxSub').hidden = true; const b = $('#ctxMenu').querySelector('[aria-haspopup="menu"]'); if (b) b.focus(); }
+    else if (e.key === 'Tab') { e.preventDefault(); if (bs.length) bs[(i + (e.shiftKey ? -1 : 1) + bs.length) % bs.length].focus(); }
+  });
+  window.addEventListener('resize', cerrarMenu);
+  window.addEventListener('blur', cerrarMenu);
+  // Desplazar la lista lo cierra (salvo el scroll que puede llegar justo después de abrirlo).
+  $('#waLista').addEventListener('scroll', () => { if (Date.now() - ultimoMenu > 250) cerrarMenu(); }, { passive: true });
+
+  // Una pregunta de sí o no con el estilo del panel. Devuelve una promesa con true o false.
+  function preguntar(titulo, texto, boton, peligro) {
+    return new Promise((ok) => {
+      const d = $('#dlgPreg');
+      $('#pregTit').textContent = titulo; $('#pregTxt').textContent = texto;
+      const si = $('#pregSi'); si.textContent = boton || 'Sí'; si.className = 'btn' + (peligro ? ' rojo' : '');
+      const fin = (v) => { d.close(); si.onclick = null; $('#pregNo').onclick = null; ok(v); };
+      si.onclick = () => fin(true); $('#pregNo').onclick = () => fin(false);
+      d.onclose = () => ok(false);
+      d.showModal(); $('#pregNo').focus();
+    });
+  }
+  async function copiar(texto, aviso) {
+    try { await navigator.clipboard.writeText(texto); }
+    catch (e) { const t = document.createElement('textarea'); t.value = texto; t.style.position = 'fixed'; t.style.opacity = '0'; document.body.appendChild(t); t.select(); try { document.execCommand('copy'); } catch (x) {} t.remove(); }
+    $('#wamsg').textContent = aviso || '📋 Copiado.';
+  }
+  // Después de tocar algo desde el menú: se relee la lista y, si es la charla abierta, también ella.
+  async function despues(tel, ch) {
+    if (ch) { const i = charlas.findIndex((x) => x.telefono === tel); if (i >= 0) charlas[i] = { ...charlas[i], ...ch, mensajes: undefined }; if (abierta && abierta.telefono === tel) abierta = { ...abierta, ...ch }; }
+    pintarCharlas(); if (abierta && abierta.telefono === tel) pintarChat();
+    cargar(); cargarResumen();
+  }
+  function itemsCharla(c, enLaCharla) {
+    const tel = c.telefono;
+    return [
+      !enLaCharla && { ico: '💬', txt: 'Abrir', fn: () => abrir(tel) },
+      { ico: c.robot_activo ? '✋' : '🤖', txt: c.robot_activo ? 'Tomar la charla' : 'Devolver al robot', fn: async () => { await post(ruta(tel, '/robot'), { activo: !c.robot_activo }); await despues(tel, { robot_activo: !c.robot_activo }); if (abierta && abierta.telefono === tel) abrir(tel); } },
+      { ico: c.resuelta ? '↩' : '✓', txt: c.resuelta ? 'Reabrir' : 'Ya la atendí', fn: async () => despues(tel, (await post(ruta(tel, '/resolver'), { resuelta: !c.resuelta })).charla) },
+      !enLaCharla && (c.sin_leer
+        ? { ico: '👁', txt: 'Marcar como leída', fn: async () => { await pedir(ruta(tel)); await despues(tel, { sin_leer: 0 }); } }
+        : { ico: '●', txt: 'Marcar como no leída', fn: async () => {
+          const ch = (await post(ruta(tel, '/leida'), { leida: false })).charla;
+          // Si es la que está abierta, se cierra: abrirla la vuelve a marcar leída.
+          if (abierta && abierta.telefono === tel) { abierta = null; pintarChat(); }
+          await despues(tel, ch);
+        } }),
+      { ico: '📊', txt: 'Cambiar etapa', sub: Object.keys(ETAPAS).map((k) => ({ txt: ETAPAS[k], marcado: (c.etapa || 'nuevo') === k, fn: async () => despues(tel, (await post(ruta(tel, '/ficha'), { etapa: k })).charla) })) },
+      { ico: '🏷', txt: 'Agregar etiqueta', sub: [{ form: { placeholder: 'Nueva etiqueta', boton: 'Agregar', lista: [...new Set(charlas.flatMap((x) => x.etiquetas || []))].filter((e) => !(c.etiquetas || []).includes(e)),
+        fn: async (v) => despues(tel, (await post(ruta(tel, '/ficha'), { etiquetas: [...(c.etiquetas || []), v] })).charla) } },
+        ...(c.etiquetas || []).map((e) => ({ ico: '✕', txt: 'Sacar «' + e + '»', fn: async () => despues(tel, (await post(ruta(tel, '/ficha'), { etiquetas: (c.etiquetas || []).filter((x) => x !== e) })).charla) }))] },
+      { ico: '🗄', txt: c.archivada ? 'Desarchivar' : 'Archivar', fn: async () => {
+        const ch = (await post(ruta(tel, '/archivar'), { archivada: !c.archivada })).charla;
+        if (!c.archivada && abierta && abierta.telefono === tel) { abierta = null; pintarChat(); }
+        await despues(tel, ch);
+        $('#wamsg').textContent = c.archivada ? 'Volvió a la bandeja.' : '🗄 Archivada. Está en la pestaña «Archivadas» y vuelve sola si te escribe.';
+      } },
+      '-',
+      { ico: '👤', txt: 'Agregar a contactos', fn: () => abrirContacto(c) },
+      { ico: '📋', txt: 'Copiar teléfono', fn: () => copiar('+' + tel, '📋 Copiado: +' + tel) },
+      { ico: '📄', txt: 'Mandar propuesta', fn: () => abrirPropuesta(c) },
+      { ico: '🗂', txt: enLaCharla ? (fichaAbierta ? 'Cerrar la ficha' : 'Abrir la ficha') : 'Abrir la ficha', fn: async () => { fichaAbierta = enLaCharla ? !fichaAbierta : true; if (!enLaCharla || !abierta) await abrir(tel); else pintarChat(); } },
+      '-',
+      { ico: '🗑', txt: 'Eliminar la charla', peligro: true, fn: async () => {
+        const si = await preguntar('¿Eliminar la charla con ' + nombre(c) + '?', 'Sale del panel, nada más: no se borra del WhatsApp del cliente ni se pierde lo que hablaron. Si vuelve a escribir, aparece de nuevo.', 'Eliminar del panel', true);
+        if (!si) return;
+        await post(ruta(tel, '/eliminar'), { eliminada: true });
+        charlas = charlas.filter((x) => x.telefono !== tel);
+        if (abierta && abierta.telefono === tel) { abierta = null; pintarChat(); }
+        pintarCharlas(); cargar(); cargarResumen();
+        $('#wamsg').textContent = '🗑 Se sacó del panel la charla con ' + nombre(c) + '.';
+      } }
+    ];
+  }
+  const tituloCharla = (c) => '<b>' + esc(nombre(c)) + '</b>' + esc(telLindo(c.telefono));
+  function menuCharla(tel, x, y) {
+    const c = charlas.find((k) => k.telefono === tel) || (abierta && abierta.telefono === tel ? abierta : null); if (!c) return;
+    abrirMenu(itemsCharla(c, false), x, y, 'charla:' + tel, tituloCharla(c));
+  }
+  // Las burbujas (en la compu con clic derecho; en el celular con toque largo): citar, copiar y bajar el archivo.
+  function menuBurbuja(el, x, y) {
+    const c = abierta; if (!c) return;
+    const i = burb.keys.indexOf(el.dataset.k), m = (c.mensajes || [])[i]; if (!m) return;
+    const texto = String(m.transcripcion || m.caption || (m.archivo && m.de === 'cliente' ? '' : m.texto) || '').trim();
+    const a = m.archivo, esPdf = a && (a.mime === 'application/pdf' || /\.pdf$/i.test(a.ruta || ''));
+    const citar = el.querySelector('[data-citar]');
+    const items = [
+      citar && { ico: '↩', txt: 'Responder citando', fn: () => citar.click() },
+      texto && { ico: '📋', txt: m.transcripcion ? 'Copiar la transcripción' : 'Copiar texto', fn: () => copiar(texto) },
+      a && a.ruta && (a.tipo === 'imagen' || a.tipo === 'sticker') && { ico: '🖼', txt: 'Ver la imagen', fn: () => verImagen(a.ruta, a.nombre) },
+      a && a.ruta && esPdf && { ico: '👁', txt: 'Ver el PDF', fn: () => verPdf(a.ruta, a.nombre) },
+      a && a.ruta && { ico: '⬇', txt: 'Descargar el archivo', fn: () => bajar(a.ruta, a.nombre || 'archivo') }
+    ].filter(Boolean);
+    if (!items.length) return;
+    abrirMenu(items, x, y, 'burbuja:' + el.dataset.k, '<b>' + esc(QUIEN[m.de] || 'Mensaje') + '</b>' + esc(fecha(m.ts)));
+  }
+  // Toque largo (celular): medio segundo sin mover el dedo. Android además manda «contextmenu»: se usa el primero.
+  let largo = null;
+  function tocarLargo(e, abrirFn) {
+    if (e.pointerType !== 'touch') return;
+    const x0 = e.clientX, y0 = e.clientY, el = e.target;
+    clearTimeout(largo && largo.t);
+    largo = { x0, y0, t: setTimeout(() => { largo.hecho = true; if (navigator.vibrate) try { navigator.vibrate(12); } catch (x) {} abrirFn(el, x0, y0); }, 480) };
+  }
+  const soltarLargo = () => { if (largo) clearTimeout(largo.t); };
+  document.addEventListener('pointermove', (e) => { if (largo && !largo.hecho && Math.hypot(e.clientX - largo.x0, e.clientY - largo.y0) > 10) soltarLargo(); }, { passive: true });
+  document.addEventListener('pointerdown', () => { if (largo && largo.hecho) largo = null; }, true);
+  document.addEventListener('pointerup', soltarLargo); document.addEventListener('pointercancel', soltarLargo);
+  // Lo que un toque largo dejó abierto no se convierte en un clic al soltar.
+  document.addEventListener('click', (e) => { if (largo && largo.hecho) { largo = null; e.preventDefault(); e.stopPropagation(); } }, true);
+  const abrirMenuCharlaDe = (el, x, y) => { const it = el.closest('.wa-item'); if (it) menuCharla(it.dataset.tel, x, y); };
+  const abrirMenuBurbujaDe = (el, x, y) => { const b = el.closest('.wa-b'); if (b) menuBurbuja(b, x, y); };
+  $('#waLista').addEventListener('pointerdown', (e) => { if (e.target.closest('.wa-item') && !e.target.closest('.wa-mas')) tocarLargo(e, abrirMenuCharlaDe); });
+  $('#waLista').addEventListener('contextmenu', (e) => {
+    const it = e.target.closest('.wa-item'); if (!it || e.shiftKey) return;
+    e.preventDefault();
+    // En Android el toque largo también manda «contextmenu»: si el menú ya lo abrió el toque, no se abre dos veces.
+    if (largo && largo.hecho) return;
+    soltarLargo(); if (largo) largo.hecho = true;
+    menuCharla(it.dataset.tel, e.clientX, e.clientY);
+  });
+  $('#waChat').addEventListener('pointerdown', (e) => { if (e.target.closest('#msgs .wa-b') && !e.target.closest('audio, video, a, button')) tocarLargo(e, abrirMenuBurbujaDe); });
+  $('#waChat').addEventListener('contextmenu', (e) => {
+    const b = e.target.closest('#msgs .wa-b'); if (!b || e.shiftKey || e.target.closest('audio, video')) return;
+    e.preventDefault();
+    // En Android el toque largo también manda «contextmenu»: si el menú ya lo abrió el toque, no se abre dos veces.
+    if (largo && largo.hecho) return;
+    soltarLargo(); if (largo) largo.hecho = true;
+    menuBurbuja(b, e.clientX, e.clientY);
+  });
+
+  // ---------- Agregar a contactos (25/11/2026, Budy) ----------
+  // Guarda nombre, negocio y mail en la ficha y baja una tarjeta de contacto (.vcf). El CRM de MyM sólo recibe pedidos
+  // de venta (no contactos), así que no se manda nada allá: abrir un pedido por cada contacto ensuciaría el embudo.
+  let contDe = null;
+  function abrirContacto(c) {
+    contDe = c; const f = $('#contForm'), d = c.datos || {};
+    f.nombre.value = d.nombre || c.nombre_perfil || ''; f.negocio.value = d.negocio || ''; f.email.value = d.email || '';
+    $('#contTel').textContent = telLindo(c.telefono) + (c.por_puente ? ' · por el número 2' : '');
+    $('#contMsg').textContent = '';
+    $('#dlgContacto').showModal(); f.nombre.focus();
+  }
+  const vcard = (tel, nom, neg, mail) => {
+    const e = (s) => String(s || '').replace(/([\\,;])/g, '\\$1').replace(/\n/g, ' ');
+    return ['BEGIN:VCARD', 'VERSION:3.0', 'FN:' + e(nom), 'N:' + e(nom) + ';;;;', neg ? 'ORG:' + e(neg) : '', 'TEL;TYPE=CELL:+' + tel, mail ? 'EMAIL:' + e(mail) : '', 'NOTE:Contacto de MyM Soluciones (WhatsApp)', 'END:VCARD'].filter(Boolean).join('\r\n') + '\r\n';
+  };
+  $('#contCerrar').addEventListener('click', () => $('#dlgContacto').close());
+  $('#contForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const c = contDe, f = e.target; if (!c) return;
+    const nom = f.nombre.value.trim(), neg = f.negocio.value.trim(), mail = f.email.value.trim();
+    if (!nom) { $('#contMsg').innerHTML = '<span class="err">Poné el nombre.</span>'; return; }
+    const d = c.datos || {}, datos = {};
+    if (nom !== (d.nombre || '')) datos.nombre = nom;
+    if (neg !== (d.negocio || '')) datos.negocio = neg;
+    if (mail !== (d.email || '')) datos.email = mail;
+    try {
+      if (Object.keys(datos).length) await despues(c.telefono, (await post(ruta(c.telefono, '/ficha'), { datos })).charla);
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([vcard(c.telefono, nom, neg, mail)], { type: 'text/vcard' }));
+      a.download = nom.replace(/[^\p{L}\p{N} ]+/gu, '').trim().replace(/\s+/g, '-') + '.vcf';
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+      $('#dlgContacto').close();
+      $('#wamsg').textContent = '👤 ' + nom + ' quedó en la ficha y se bajó su tarjeta de contacto: abrila para sumarlo a la agenda.';
+    } catch (err) { $('#contMsg').innerHTML = '<span class="err">No se pudo guardar: ' + esc(seRompioRuta(err)) + '</span>'; }
+  });
+
+  // ---------- Nueva charla (25/11/2026, Budy: «no tengo forma de iniciar una conversación desde esta pantalla») ----------
+  // El mismo formato de celular que usa el server (V.telParaCharla): 11 5555-1234, 011 15…, +54 9 11…
+  function telParaCharla(entrada) {
+    let d = String(entrada || '').replace(/\D/g, '');
+    if (d.startsWith('00')) d = d.slice(2);
+    if (d.startsWith('54')) d = d.slice(2);
+    if (d.startsWith('9')) d = d.slice(1);
+    if (d.startsWith('0')) d = d.slice(1);
+    const m = d.match(/^(\d{2,4})15(\d{6,8})$/);
+    if (d.length === 12 && m && (m[1] + m[2]).length === 10) d = m[1] + m[2];
+    return d.length === 10 ? '549' + d : '';
+  }
+  const nf = $('#nuevaForm');
+  function abrirNueva() {
+    cerrarMenu(); nf.reset(); $('#nuevaMsg').textContent = '';
+    const p = puenteDe();
+    $('#nuevaDesde').innerHTML = (p ? '<option value="' + esc(p.id) + '">' + esc(p.nombre) + ' (número 2)</option>' : '') + '<option value="">Oficial · 11 3366-2080</option>';
+    // Con el número 2 conectado, arranca por ahí: es el único que deja escribir primero con texto libre.
+    $('#nuevaDesde').value = p && p.estado && p.estado.vivo && p.estado.conectado ? p.id : '';
+    $('#nuevaDesdeL').hidden = !p;
+    evaluarNueva();
+    $('#dlgNueva').showModal(); nf.telefono.focus();
+  }
+  // Qué va a pasar con lo que está cargado, antes de tocar «Mandar».
+  function evaluarNueva() {
+    const tel = telParaCharla(nf.telefono.value), desde = $('#nuevaDesde').value, p = puenteDe();
+    const ex = tel ? charlas.find((c) => c.telefono === tel) : null;
+    const box = $('#nuevaEstado');
+    let cls = '', html = '', puede = true, prop = false;
+    if (nf.telefono.value.trim() && !tel) { cls = 'mal'; html = '<b>Revisá el celular.</b> Tiene que tener el código de área, por ejemplo 11 5555-1234.'; puede = false; }
+    else if (desde) {
+      const e = (p && p.estado) || {};
+      const escribioHace = ex && ex.ultimo_cliente_en ? Date.now() - Date.parse(ex.ultimo_cliente_en) : Infinity;
+      const esPrimero = escribioHace > 48 * 3600e3;
+      if (esPrimero && e.tope_inicios && (e.inicios_dia || 0) >= e.tope_inicios) {
+        cls = 'no'; html = '<b>Hoy ya se usaron los ' + e.tope_inicios + ' primeros contactos del número 2.</b> Es el tope para que WhatsApp no lo bloquee: mandáselo mañana, o desde el oficial con la propuesta.'; puede = false; prop = true;
+      } else {
+        cls = e.vivo && e.conectado ? 'ok' : 'mal';
+        html = '<b>Sale por el número 2, tal cual lo escribas.</b> '
+          + (esPrimero ? 'Cuenta como primer contacto' + (e.tope_inicios ? ': hoy van ' + (e.inicios_dia || 0) + ' de ' + e.tope_inicios + '.' : '.') : 'Te escribió hace poco: no cuenta como primer contacto.')
+          + (e.vivo && e.conectado ? ' Tarda menos de un minuto (el puente hace una pausa natural).' : ' El número 2 no está conectado ahora: queda en la cola y sale cuando se conecte.');
+      }
+    } else if (ex && ex.por_puente) { cls = 'mal'; html = '<b>Esa charla va por el número 2.</b> Elegí «Número 2» en «Desde» para seguirla por ahí.'; puede = false; }
+    else if (ex && ex.ventana_abierta) { cls = 'ok'; html = '<b>Te escribió en las últimas 24 h.</b> Le llega tu mensaje tal cual, desde el 11 3366-2080.'; }
+    else if (tel) {
+      cls = 'no'; puede = false; prop = true;
+      html = '<b>Desde el oficial no se le puede escribir primero con texto libre.</b> ' + (ex ? 'Pasaron más de 24 h desde su último mensaje' : 'Nunca nos escribió a este número') + ': WhatsApp sólo deja mandar plantillas aprobadas por Meta. Mandale la propuesta (sale con la plantilla y él elige si la recibe)' + (p ? ', o escribile desde el número 2' : '') + '.';
+    } else { html = 'Por el oficial sólo se le puede escribir con texto libre a quien escribió en las últimas 24 h' + (p ? '; por el número 2, a cualquiera (con un tope de primeros contactos por día).' : '.'); }
+    box.className = 'estado-n' + (cls ? ' ' + cls : ''); box.innerHTML = html;
+    $('#nuevaMandar').disabled = !puede; $('#nuevaProp').hidden = !prop;
+    $('#nuevaTextoL').hidden = !puede && prop;
+  }
+  nf.addEventListener('input', evaluarNueva);
+  $('#nuevaDesde').addEventListener('change', evaluarNueva);
+  $('#nuevaCerrar').addEventListener('click', () => $('#dlgNueva').close());
+  $('#nuevaProp').addEventListener('click', () => {
+    const tel = telParaCharla(nf.telefono.value);
+    const ex = tel && charlas.find((c) => c.telefono === tel);
+    $('#dlgNueva').close();
+    abrirPropuesta(ex || { telefono: tel || nf.telefono.value.replace(/^\+/, ''), datos: { nombre: nf.nombre.value.trim(), negocio: nf.negocio.value.trim() } });
+    $('#propDesde').value = ''; $('#propEstado').hidden = false;
+  });
+  nf.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const b = $('#nuevaMandar');
+    if (!telParaCharla(nf.telefono.value)) { $('#nuevaMsg').innerHTML = '<span class="err">Revisá el celular: tiene que tener código de área.</span>'; nf.telefono.focus(); return; }
+    if (!nf.nombre.value.trim()) { $('#nuevaMsg').innerHTML = '<span class="err">Poné el nombre: así aparece la charla en la lista.</span>'; nf.nombre.focus(); return; }
+    if (!nf.texto.value.trim()) { $('#nuevaMsg').innerHTML = '<span class="err">Escribí el mensaje.</span>'; nf.texto.focus(); return; }
+    b.disabled = true; $('#nuevaMsg').textContent = 'Mandando…';
+    try {
+      const j = await post('/api/ventas-sol/nueva', { telefono: nf.telefono.value, nombre: nf.nombre.value, negocio: nf.negocio.value, texto: nf.texto.value, linea: $('#nuevaDesde').value || '' });
+      $('#dlgNueva').close();
+      $('#wamsg').textContent = j.modo === 'puente' ? '✅ Listo: quedó en la cola del número 2 (sale en menos de un minuto, con una pausa natural).' : '✅ Listo: le llegó el mensaje.';
+      bajarAlFinal = true;
+      await cargar(); if (j.telefono) abrir(j.telefono);
+    } catch (err) {
+      b.disabled = false;
+      if (err.datos && err.datos.plantilla) { evaluarNueva(); $('#nuevaEstado').className = 'estado-n no'; $('#nuevaEstado').innerHTML = '<b>' + esc(err.message) + '</b>'; $('#nuevaProp').hidden = false; $('#nuevaMandar').disabled = true; $('#nuevaMsg').textContent = ''; return; }
+      $('#nuevaMsg').innerHTML = '<span class="err">' + esc(seRompioRuta(err)) + '</span>';
+    }
+  });
+  $('#nuevaBtn').addEventListener('click', abrirNueva);
+  $('#fabNueva').addEventListener('click', abrirNueva);
+
+  // ---------- La barra en el celular: todo en «⋮», con nombres ----------
+  $('#barraMas').addEventListener('click', (e) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    const boton = (id) => $('#' + id);
+    const items = [
+      { ico: '💬', txt: 'Nueva charla', fn: abrirNueva },
+      { ico: '📄', txt: 'Mandar propuesta', fn: () => abrirPropuesta(null) },
+      !boton('puenteBtn').hidden && { ico: '📱', txt: 'Número 2', fn: () => boton('puenteBtn').click() },
+      !boton('avisos').hidden && { ico: '🔔', txt: 'Activar avisos', fn: () => boton('avisos').click() },
+      { ico: sonidoOn ? '🔇' : '🔊', txt: sonidoOn ? 'Silenciar el sonido' : 'Prender el sonido', fn: () => boton('sonido').click() },
+      { ico: pausado ? '▶️' : '⏸️', txt: pausado ? 'Prender el bot' : 'Pausar el bot', fn: () => boton('pausar').click() },
+      { ico: '↻', txt: 'Actualizar', fn: () => boton('warecargar').click() },
+      { ico: 'ⓘ', txt: 'Ver el estado', fn: () => { $('#waDetalle').hidden = false; } },
+      '-',
+      { ico: '⎋', txt: 'Salir', fn: () => boton('salir').click() }
+    ];
+    abrirMenu(items.filter(Boolean), r.right - 230, r.bottom + 6, 'barra', '<b>WhatsApp · MyM Soluciones</b>');
+  });
+
   // ---------- Eventos ----------
   // whatsapp.html#tel=549... abre esa charla directo (lo usan los links del inicio).
   const telDelLink = () => (String(location.hash).match(/tel=(\d{6,15})/) || [])[1] || '';
@@ -835,7 +1724,7 @@
     b.disabled = false;
   });
   $('#verEstado').addEventListener('click', (e) => { const d = $('#waDetalle'); d.hidden = !d.hidden; e.currentTarget.setAttribute('aria-expanded', String(!d.hidden)); });
-  document.addEventListener('click', (e) => { if (!e.target.closest('#waDetalle, #verEstado')) $('#waDetalle').hidden = true; });
+  document.addEventListener('click', (e) => { if (!e.target.closest('#waDetalle, #verEstado, #ctxMenu, #barraMas')) $('#waDetalle').hidden = true; });
   $('#waDetalle').addEventListener('click', (e) => { const f = e.target.closest('[data-etapa]'); if (f) { filtrar('todas', f.dataset.etapa); $('#waDetalle').hidden = true; } });
   $('#waSems').addEventListener('click', (e) => { if (e.target.closest('#semEsp')) filtrar('esperando'); });
   $('#waTabs').addEventListener('click', (e) => {
@@ -843,12 +1732,23 @@
     if (b.dataset.etq) return filtrar('todas', '', etq === b.dataset.etq ? '' : b.dataset.etq);
     b.dataset.etapa ? filtrar('todas', etapa === b.dataset.etapa ? '' : b.dataset.etapa) : filtrar(b.dataset.filtro);
   });
-  $('#waLista').addEventListener('click', (e) => { const it = e.target.closest('[data-tel]'); if (it) abrir(it.dataset.tel); });
+  $('#waLista').addEventListener('click', (e) => {
+    const mas = e.target.closest('[data-menu]');
+    if (mas) { const r = mas.getBoundingClientRect(); menuCharla(mas.dataset.menu, r.left, r.bottom + 4); return; }
+    const it = e.target.closest('[data-tel]'); if (it) abrir(it.dataset.tel);
+  });
 
   $('#waChat').addEventListener('click', async (e) => {
     const img = e.target.closest('img[data-grande]'); if (img) { verImagen(img.dataset.grande, img.dataset.nombre); return; }
     const b = e.target.closest('button'); if (!b || !abierta) return;
     if (b.id === 'volver') { abierta = null; respondiendo = null; pintarCharlas(); pintarChat(); return; }
+    if (b.id === 'cabMas') { const r = b.getBoundingClientRect(); abrirMenu(itemsCharla(abierta, true), r.right - 240, r.bottom + 4, 'cabecera', tituloCharla(abierta)); return; }
+    if (b.id === 'bajar') { alFinal(true); return; }
+    if (b.id === 'avisoMicOk') { $('#avisoMic').hidden = true; return; }
+    if (b.id === 'accion') { accionDelCuadro(e); return; }
+    if (b.id === 'grabCancelar') { terminarGrabacion('cancelar'); return; }
+    if (b.id === 'grabParar') { terminarGrabacion('escuchar'); return; }
+    if (b.id === 'grabTirar') { salirDeGrabar(); return; }
     if (b.id === 'propDeCharla') { abrirPropuesta(abierta); return; }
     if (b.dataset.bajar) { bajar(b.dataset.bajar, b.dataset.nombre); return; }
     if (b.classList.contains('wa-verpdf')) { verPdf(b.dataset.ruta, b.dataset.nombre); return; }
@@ -860,15 +1760,6 @@
     }
     if (b.id === 'respCerrar') { respondiendo = null; pintarRespBar(); return; }
     if (b.dataset.mail) { propuestaPorMail(); return; }
-    if (b.id === 'grabar') { empezarGrabacion(); return; }
-    if (b.id === 'grabCancelar') { pararGrabacion(true); return; }
-    if (b.id === 'grabTirar' || b.id === 'grabMandar') {
-      const bar = $('#grabBar'), file = bar._file;
-      if (bar._url) URL.revokeObjectURL(bar._url);
-      bar.hidden = true; bar.innerHTML = ''; bar._file = null;
-      if (b.id === 'grabMandar' && file) mandarArchivo(file, '');
-      return;
-    }
     if (b.id === 'verficha' || b.id === 'cerrarficha') { fichaAbierta = b.id === 'verficha' ? !fichaAbierta : false; $('#waFicha').hidden = !fichaAbierta; $('#verficha').setAttribute('aria-expanded', fichaAbierta); return; }
     if (b.dataset.rapida != null) {
       const t = $('#texto'), r = respuestas[+b.dataset.rapida]; if (!t || !r) return;
@@ -879,7 +1770,7 @@
       const nuevo = (antes ? antes + '\n\n' : '') + r.texto;
       t.value = nuevo + (despues ? '\n\n' + despues : '');
       t.focus(); t.setSelectionRange(nuevo.length, nuevo.length);
-      t.dispatchEvent(new Event('input', { bubbles: true })); return;
+      t.dispatchEvent(new Event('input', { bubbles: true })); pintarAccion(); return;
     }
     if (b.id !== 'robot' && b.id !== 'resolver') return;
     b.disabled = true;
@@ -890,19 +1781,24 @@
     } catch (err) { b.disabled = false; msg('No se pudo cambiar: ' + err.message); }
   });
   $('#waChat').addEventListener('input', (e) => {
-    if (e.target.id === 'texto') { e.target.style.height = 'auto'; e.target.style.height = e.target.scrollHeight + 'px'; return; }
+    if (e.target.id === 'texto') { e.target.style.height = 'auto'; e.target.style.height = e.target.scrollHeight + 'px'; pintarAccion(); return; }
     if (abierta && e.target.closest('#waFicha')) { fichaSucia = abierta.telefono; $('#fichamsg').textContent = 'Cambios sin guardar.'; }
   });
   $('#waChat').addEventListener('keydown', (e) => { if (e.target.id === 'texto' && e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); $('#escribir').requestSubmit(); } });
   $('#waChat').addEventListener('submit', async (e) => {
     e.preventDefault();
     if (e.target.id === 'fichaform') return guardarFicha(e.target);
-    const texto = $('#texto').value.trim(), boton = e.target.querySelector('button');
+    const texto = $('#texto').value.trim(), boton = $('#accion');
     if (!texto || !abierta) return;
     boton.disabled = true;
     const cita = respondiendo && respondiendo.tel === abierta.telefono ? respondiendo.id : '';
-    try { await post(ruta(abierta.telefono, '/responder'), { texto, ...(cita ? { responder_a: cita } : {}) }); $('#texto').value = ''; respondiendo = null; await abrir(abierta.telefono); cargar(); }
-    catch (err) {
+    try {
+      await post(ruta(abierta.telefono, '/responder'), { texto, ...(cita ? { responder_a: cita } : {}) });
+      borradores.delete(abierta.telefono);
+      if ($('#texto')) { $('#texto').value = ''; $('#texto').style.height = ''; }
+      respondiendo = null; bajarAlFinal = true; boton.disabled = false; pintarAccion();
+      await abrir(abierta.telefono); cargar();
+    } catch (err) {
       boton.disabled = false;
       if (err.status === 409) { abierta.ventana_abierta = false; pintarChat(); msg('La ventana de 24 h está cerrada: no se puede escribirle hasta que vuelva a escribir.'); }
       else msg('No se pudo mandar: ' + err.message);
@@ -966,10 +1862,9 @@
     if (e.target.id !== 'adjunto' || !abierta) return;
     const file = e.target.files[0]; e.target.value = '';
     if (!file) return;
+    // 25/11/2026: antes de mandarlo se ve (vista previa como en WhatsApp); lo escrito en el cuadro pasa a ser su texto.
     const texto = ($('#texto') || {}).value ? $('#texto').value.trim() : '';
-    if (!confirm('¿Mandarle «' + file.name + '» a ' + nombre(abierta) + '?' + (texto ? '\n\nCon el texto: ' + texto : ''))) return;
-    // 17/11/2026: cualquier archivo (foto, video, audio, documento) por /archivo; el PDF también.
-    mandarArchivo(file, texto);
+    abrirVistaPrevia(file, texto, !!texto);
   });
 
   const dlg = $('#dlgProp'), pf = $('#propForm');
@@ -1067,13 +1962,79 @@
     catch (err) { b.disabled = false; $('#fichamsg').innerHTML = '<span class="err">No se pudo guardar: ' + esc(err.message) + '</span>'; }
   }
 
+
+  // ---------- El botón redondo del cuadro: ➤ manda el texto; 🎤 graba (tocar o mantener apretado) ----------
+  let componiendo = false;
+  $('#waChat').addEventListener('compositionstart', () => { componiendo = true; });
+  $('#waChat').addEventListener('compositionend', () => { componiendo = false; });
+  function accionDelCuadro(e) {
+    if (ignorarClick) { ignorarClick = false; return; }
+    if (grab) { terminarGrabacion('mandar'); return; }
+    if (escucha) { const f = escucha.file; salirDeGrabar(); mandarArchivo(f, ''); return; }
+    if ($('#accion').dataset.modo === 'mic') { empezarGrabacion('fijo'); return; }   // con el teclado (Enter o espacio)
+    $('#escribir').requestSubmit();
+  }
+  $('#waChat').addEventListener('mousedown', (e) => { if (e.target.closest('#accion')) e.preventDefault(); });   // no le saca el foco al cuadro
+  $('#waChat').addEventListener('pointerdown', (e) => {
+    const b = e.target.closest('#accion'); if (!b || e.button !== 0 || b.dataset.modo !== 'mic' || grab) return;
+    e.preventDefault();
+    try { b.setPointerCapture(e.pointerId); } catch (x) {}
+    presion = { id: e.pointerId, t0: Date.now(), x0: e.clientX };
+    empezarGrabacion('mantener');
+  });
+  $('#waChat').addEventListener('pointermove', (e) => {
+    if (!presion || e.pointerId !== presion.id || !grab || grab.modo !== 'mantener') return;
+    const dx = e.clientX - presion.x0, d = $('#grabDesliza');
+    if (d) d.classList.toggle('cancela', dx < -45);
+    if (dx < -90) { presion = null; ignorarClick = true; terminarGrabacion('cancelar'); }
+  });
+  const soltarMic = (e, cancelado) => {
+    if (!presion || e.pointerId !== presion.id) return;
+    const dur = Date.now() - presion.t0; presion = null; ignorarClick = true;
+    setTimeout(() => { ignorarClick = false; }, 400);
+    if (!grab) return;
+    // Un toque corto (o soltar mientras el navegador pide permiso): queda grabando con 🗑, ⏹ y ➤ a la vista.
+    if (cancelado || dur < 350 || !grab.rec) { if (!grab.rec) grab.soltado = true; grab.modo = 'fijo'; pintarGrabando(); return; }
+    terminarGrabacion('mandar');
+  };
+  $('#waChat').addEventListener('pointerup', (e) => soltarMic(e, false));
+  $('#waChat').addEventListener('pointercancel', (e) => soltarMic(e, true));
+
+  // Arrastrar un archivo a la charla, o pegar una imagen en el cuadro: vista previa y «Enviar».
+  $('#waChat').addEventListener('dragover', (e) => { if (abierta && abierta.ventana_abierta && [...(e.dataTransfer.types || [])].includes('Files')) { e.preventDefault(); $('#waChat').classList.add('soltando'); } });
+  $('#waChat').addEventListener('dragleave', (e) => { if (!e.relatedTarget || !$('#waChat').contains(e.relatedTarget)) $('#waChat').classList.remove('soltando'); });
+  $('#waChat').addEventListener('drop', (e) => {
+    $('#waChat').classList.remove('soltando');
+    const f = e.dataTransfer.files && e.dataTransfer.files[0]; if (!f) return;
+    e.preventDefault(); abrirVistaPrevia(f, ($('#texto') || {}).value ? $('#texto').value.trim() : '', true);
+  });
+  $('#waChat').addEventListener('paste', (e) => {
+    if (e.target.id !== 'texto') return;
+    const f = [...(e.clipboardData && e.clipboardData.files || [])][0]; if (!f) return;
+    e.preventDefault(); abrirVistaPrevia(f, $('#texto').value.trim(), true);
+  });
+
+  // ---------- La altura de la pantalla, con el teclado del celular (visualViewport) ----------
+  // 25/11/2026 (Budy: «fijate que tiene scroll vertical»): la página no se mueve nunca; sólo se desplazan la lista y
+  // los mensajes. El panel mide lo que se ve (100dvh, y con el teclado abierto, lo que queda arriba del teclado).
+  function ajustarAlto() {
+    const vv = window.visualViewport, alto = Math.round(vv ? vv.height : innerHeight);
+    document.documentElement.style.setProperty('--alto', alto + 'px');
+    if (document.scrollingElement && (document.scrollingElement.scrollTop || window.scrollY)) window.scrollTo(0, 0);
+    if (pegado) seguirAbajo();
+  }
+  if (window.visualViewport) { visualViewport.addEventListener('resize', ajustarAlto); visualViewport.addEventListener('scroll', ajustarAlto); }
+  window.addEventListener('resize', ajustarAlto);
+  ajustarAlto();
+
   // Cada 20 s y sólo con la pestaña visible: cada vuelta son lecturas pagas de Firestore en MyM.
   // Mientras se escribe un mensaje no se refresca la charla; la ficha se cuida sola (fichaSucia).
   function tick() {
     if (document.hidden || $('#panel').hidden) return;
     cargar(); cargarResumen(); cargarLineas();
-    const foco = document.activeElement;
-    if (abierta && !(foco && foco.id === 'texto')) abrir(abierta.telefono);
+    // Desde el 25/11/2026 la charla se refresca también mientras se escribe (ya no se redibuja el cuadro de texto);
+    // sólo se espera si el teclado está armando una palabra (acentos, dictado).
+    if (abierta && !componiendo) abrir(abierta.telefono);
   }
   setInterval(tick, 20000);
   // Con la pestaña en segundo plano (17/11/2026): para que el sonido y el «(n)» del título sirvan cuando no
