@@ -61,6 +61,8 @@ header a{color:var(--gris);text-decoration:none;font-weight:600}
 .cab{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
 .cab h2{font:900 24px/1.15 Archivo;margin:0;letter-spacing:-.02em}
 .acciones{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 4px;align-items:center}
+.juntos{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-top:12px;padding:12px 14px;border:1.5px dashed var(--azul-t);border-radius:12px}
+.juntos>div{flex:1 1 260px}.juntos p{margin:4px 0 0}
 .link-caja{word-break:break-all;background:#f6f8fe;border-radius:10px;padding:10px;font:12.5px "Martian Mono",monospace;margin:8px 0;user-select:all}
 select{font:400 15px Archivo;padding:9px 11px;min-height:42px;border:1.5px solid var(--borde);border-radius:10px;background:#f6f8fe;max-width:100%}
 h3{font:900 19px Archivo;margin:0 0 4px}
@@ -165,7 +167,7 @@ h3{font:900 19px Archivo;margin:0 0 4px}
     if (q.listo && !q.pasado) return { grupo: 'pasar', texto: 'Listo: para pasar a la ficha', clase: 'e-aviso' };
     if (q.pasado && !q.cambioDespues) return { grupo: 'hecho', texto: 'Pasado a la ficha', clase: 'e-listo' };
     if (q.pasado) return { grupo: 'pasar', texto: 'Cambió después de pasarlo', clase: 'e-aviso' };
-    if (q.empezado) return { grupo: 'curso', texto: 'Completando', clase: 'e-otro' };
+    if (q.empezado) return { grupo: 'curso', texto: q.junto ? 'Completando (lo cargamos juntos)' : 'Completando', clase: 'e-otro' };
     return { grupo: 'curso', texto: q.abierto ? 'Lo abrió, sin completar' : 'Mandado, sin abrir', clase: 'e-otro' };
   }
   async function cargar() {
@@ -176,7 +178,7 @@ h3{font:900 19px Archivo;margin:0 0 4px}
     const lista = clientes.filter((c) => filtro === 'todos' || situacion(c.cuestionario).grupo === filtro);
     $('#lista').innerHTML = lista.map((c) => { const q = c.cuestionario; const s = situacion(q);
       return `<li class="cli"><div><b>${esc(c.negocio)}</b><div class="gris chica">${esc(c.contacto || '')}${q && q.actualizado ? ` · último cambio ${fecha(q.actualizado)}` : ''}</div></div>
-        <div>${q ? `<div class="avance"><div class="barra" aria-hidden="true"><i style="width:${q.porcentaje}%"></i></div><span class="pct">${q.porcentaje} %</span></div>` : ''}<span class="estado ${s.clase}">${s.texto}</span></div>
+        <div>${q ? `<div class="avance"><div class="barra" aria-hidden="true"><i style="width:${q.faltan ? q.porcentaje : 100}%"></i></div><span class="pct">${q.faltan ? `faltan ${q.minutos} min` : 'parte 1 lista'}</span></div>` : ''}<span class="estado ${s.clase}">${s.texto}</span></div>
         <button class="btn${q ? '' : ' principal'}" data-ver="${esc(c.id)}">${q ? 'Ver respuestas' : 'Mandar cuestionario'}</button></li>`; }).join('')
       || `<li class="gris">${filtro === 'pasar' ? 'No hay cuestionarios esperando que los pases a la ficha.' : filtro === 'sin' ? 'Todos los clientes ya tienen su cuestionario.' : 'No hay clientes en este grupo.'}</li>`;
   }
@@ -201,7 +203,7 @@ h3{font:900 19px Archivo;margin:0 0 4px}
       catch (err) { $('#drive-error').textContent = err.message; b.disabled = false; } };
   }
   const peso = (b) => (b >= 1048576 ? (b / 1048576).toFixed(1).replace('.', ',') + ' MB' : Math.max(1, Math.round(b / 1024)) + ' KB');
-  const SIGLA = { 'image/jpeg': 'JPG', 'image/png': 'PNG', 'image/webp': 'WEBP', 'image/heic': 'HEIC', 'application/pdf': 'PDF' };
+  const SIGLA = { 'image/jpeg': 'JPG', 'image/png': 'PNG', 'image/webp': 'WEBP', 'image/heic': 'HEIC', 'application/pdf': 'PDF', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'XLSX', 'application/vnd.ms-excel': 'XLS', 'text/csv': 'CSV' };
   // La caja «Fotos y archivos» de un cliente: su carpeta, con quién está compartida y lo que subió, por carpeta.
   function cajaArchivos(d) {
     const A = d.archivos; if (!A) return '';
@@ -238,7 +240,9 @@ h3{font:900 19px Archivo;margin:0 0 4px}
     // WhatsApp necesita el número con 54 9: si el celular está cargado sin eso (11…), se le agrega.
     const wa = cel ? 'https://wa.me/' + (cel.startsWith('54') ? cel : '549' + cel.replace(/^0/, '').replace(/^(\d{2,4})15/, '$1')) + '?text=' + encodeURIComponent(`Hola${cliente.contacto ? ' ' + String(cliente.contacto).split(' ')[0] : ''}! Te paso el cuestionario para armar tu Boti. Se completa desde el celu, se guarda solo y podés hacerlo de a poco:\n${link}`) : '';
     return `<div class="link-caja" id="link-texto">${esc(link)}</div>
-      <div class="acciones"><button class="btn principal" id="link-copiar">Copiar link</button>${wa ? `<a class="btn" href="${esc(wa)}" target="_blank" rel="noopener">Abrir WhatsApp con el link</a>` : ''}<a class="btn" href="${esc(link)}" target="_blank" rel="noopener">Abrirlo como el cliente</a><button class="btn" id="link-nuevo">Cambiar el link</button></div>`;
+      <div class="acciones"><button class="btn principal" id="link-copiar">Copiar link</button>${wa ? `<a class="btn" href="${esc(wa)}" target="_blank" rel="noopener">Abrir WhatsApp con el link</a>` : ''}<a class="btn" href="${esc(link)}" target="_blank" rel="noopener">Abrirlo como el cliente</a><button class="btn" id="link-nuevo">Cambiar el link</button></div>
+      <div class="juntos"><div><b>Lo llenamos juntos</b><p class="gris chica">Para la llamada corta del alta: abrís su cuestionario y cargás vos lo que te va diciendo. Se guarda en el suyo y queda anotado que lo cargó MyM. Si el cliente lo tiene abierto, al volver a su pantalla ve lo que cargaste.</p></div>
+        <a class="btn principal" href="${esc(link)}&junto=1" target="_blank" rel="noopener">Cargar con el cliente en la llamada</a></div>`;
   }
   async function ver(subir) {
     const caja = $('#detalle');
@@ -272,14 +276,15 @@ h3{font:900 19px Archivo;margin:0 0 4px}
     caja.innerHTML = `<div class="tarjeta" id="det">
       <div class="cab"><div style="flex:1;min-width:220px"><h2>${esc(c.negocio)}</h2><p class="gris chica" style="margin:4px 0 0">${esc(c.contacto || '')} · armado el ${fecha(q.creado)}${q.listoCuando ? ` · avisó que terminó el ${fecha(q.listoCuando)}` : ''}${q.pasado ? ` · pasado a la ficha el ${fecha(q.pasado)}` : ''}</p></div>
         <span class="estado ${s.clase}">${s.texto}</span></div>
-      <div class="avance" style="margin-top:14px"><div class="barra" style="height:12px" aria-hidden="true"><i style="width:${d.porcentaje}%"></i></div><span class="pct">${d.porcentaje} % de lo obligatorio</span></div>
+      <div class="avance" style="margin-top:14px"><div class="barra" style="height:12px" aria-hidden="true"><i style="width:${d.faltan.length ? d.porcentaje : 100}%"></i></div><span class="pct" style="white-space:normal">${d.faltan.length ? `Para prender el Boti le faltan ${d.faltan.length} respuestas (unos ${d.minutos} min)` : 'Tiene todo lo necesario para prender el Boti'}${d.opcionales ? ` · ${d.opcionales} opcionales sin contestar` : ''}</span></div>
+      ${q.junto ? `<p class="gris chica" style="margin:6px 0 0">MyM cargó respuestas con el cliente en la llamada (último: ${fecha(q.junto)}).</p>` : ''}
       <div class="caja"><h3>Link del cliente</h3>
         ${d.link ? cajaLink(d.link, c) : '<p class="gris chica">El link no se puede volver a mostrar. Armá uno nuevo (el anterior deja de andar; las respuestas quedan).</p><div class="acciones"><button class="btn principal" id="link-nuevo">Armar link nuevo</button></div>'}
         <p class="error" id="link-error"></p></div>
 
       ${cajaArchivos(d)}
 
-      ${d.faltan.length ? `<div class="caja"><h3>Falta contestar (${d.faltan.length})</h3><ul class="faltan">${d.faltan.map((f) => `<li>${esc(f.t)} <span class="gris chica">· ${esc(f.seccion)}</span></li>`).join('')}</ul></div>` : ''}
+      ${d.faltan.length ? `<div class="caja"><h3>Le falta para prender el Boti (${d.faltan.length})</h3><ul class="faltan">${d.faltan.map((f) => `<li>${esc(f.t)} <span class="gris chica">· ${esc(f.seccion)}</span></li>`).join('')}</ul></div>` : ''}
 
       <div class="caja" id="caja-pasar"><h3>Pasar a la ficha del Boti</h3>
         ${cambian.length ? `<p class="gris chica">Lo tildado se copia tal cual. A la izquierda, lo que el cliente tiene cargado hoy; a la derecha, lo que sale del cuestionario.${d.tieneBot ? ' El bot ya está armado: al pasar la ficha se rearma y se prueba solo, y sólo cambia si pasa todas las pruebas.' : ' Como el bot todavía no está armado, la ficha queda precargada en su alta.'}</p>` : '<p class="ok">Todo lo del cuestionario ya está pasado: no hay nada distinto.</p>'}
