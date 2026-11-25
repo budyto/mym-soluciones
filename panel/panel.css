@@ -166,6 +166,31 @@ input,select,textarea{font-size:17px}
 .interruptor-texto b{font-size:17px}
 .interruptor-texto small{font-size:14.5px}
 
+/* ---------- Avisos: por dónde llega el WhatsApp (25/11/2026) ---------- */
+.canales{border:0;padding:0;margin:22px 0 6px;display:grid;gap:10px}
+.canales legend{padding:0;margin-bottom:10px}
+.canal{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;align-items:start;cursor:pointer;background:#f6f8fe;border:1.5px solid var(--borde);border-radius:16px;padding:13px 16px;margin:0}
+.canal input{width:22px;height:22px;margin:3px 0 0;accent-color:#0a8a60}
+.canal span{display:grid;gap:1px}
+.canal b{font-size:17px}
+.canal small{font-size:14.5px}
+.canal:has(input:checked){border-color:#0a8a60;background:#eefaf5}
+.canal:has(input:disabled){cursor:default;opacity:.6}
+.ayuda:empty{display:none}
+.muestra-wa{background:var(--fondo-chat);border-radius:18px;padding:12px 12px 10px;margin:4px 0 18px}
+.muestra-de{display:flex;align-items:center;gap:10px;margin:0 0 10px}
+.muestra-de span:last-child{display:grid;line-height:1.25}
+.muestra-de b{font-size:15.5px}
+.muestra-de small{font:400 12.5px "Martian Mono",monospace;color:var(--gris)}
+.muestra-avatar{width:38px;height:38px;border-radius:50%;background:var(--deg);color:#fff;display:grid;place-items:center;font:800 16px Archivo,sans-serif;flex:none}
+.muestra-globo{background:#fff;border-radius:4px 16px 16px 16px;max-width:min(100%,400px);box-shadow:0 1px 1px rgba(0,0,0,.09);overflow:hidden}
+.muestra-globo p{margin:0;padding:8px 12px 0;font-size:15.5px;line-height:1.45}
+.muestra-globo .muestra-pie{font-size:12.5px;color:var(--gris);padding-bottom:8px}
+.muestra-boton{display:block;text-align:center;border-top:1px solid #e3e7ef;color:#027eb5;font-weight:600;font-size:15.5px;padding:9px 12px}
+.muestra-a{margin:8px 2px 0;font-size:14px;color:var(--gris)}
+.muestra-a:empty{display:none}
+.muestra-wa.apagada{opacity:.45}
+
 /* ---------- Confirmación y avisos flotantes ---------- */
 dialog{border:0;border-radius:24px;padding:24px;max-width:min(440px,calc(100vw - 32px));color:var(--ink);box-shadow:0 30px 70px -20px rgba(14,26,51,.5)}
 dialog::backdrop{background:rgba(14,26,51,.5)}
