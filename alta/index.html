@@ -59,6 +59,9 @@
 .control{font-size:13px;color:var(--gris);margin-top:4px}
 .chat{background:#efeae2;border-radius:16px;padding:12px;min-height:120px;max-height:340px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
 .chat .b-cli,.chat .b-bot{margin-top:0}
+/* Reiniciar la charla de prueba (pedido de Budy, 25/11/2026): un link chico debajo del chat, no otro botón grande. */
+.reiniciar-ensayo{background:none;border:0;padding:6px 0 0;color:var(--azul);font-family:inherit;font-weight:600;font-size:14.5px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.reiniciar-ensayo:hover{opacity:.8}
 @media (max-width:600px){.fila-ia{flex-direction:column}.pasos-alta{gap:5px}.planes{grid-template-columns:1fr}}
 </style>
 </head>
@@ -247,6 +250,7 @@
         <p class="paso">Escribile como si fueras un cliente. Todavía no les contesta a tus clientes de verdad.</p>
         <div class="chat" id="chat" aria-live="polite"></div>
         <form class="fila-ia" id="form-ensayo"><input id="txt-ensayo" placeholder="Escribí un mensaje" autocomplete="off" aria-label="Mensaje de prueba"><button class="btn sec" type="submit">Enviar</button></form>
+        <button class="reiniciar-ensayo" id="reiniciar-ensayo" type="button">↺ Empezar una charla nueva</button>
       </div>
       <div class="tarjeta" id="caja-aprobar">
         <p class="error" id="error4" role="alert"></p>

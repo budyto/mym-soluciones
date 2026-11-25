@@ -203,17 +203,30 @@
     $('#chat').innerHTML = '<div class="b-bot">Escribime como si fueras un cliente.</div>';
   }
   let historial = [];
+  // Cada charla nueva cambia de ronda: si llega tarde la respuesta de la charla anterior, no se mezcla con la nueva.
+  let ronda = 0;
+  // Empezar una charla nueva sin recargar la página (pedido de Budy, 25/11/2026: para probar otro caso desde cero,
+  // por ejemplo después de que el bot pasó la charla a una persona). La charla de prueba vive sólo en esta página.
+  $('#reiniciar-ensayo').addEventListener('click', () => {
+    ronda++;
+    historial = [];
+    $('#chat').innerHTML = '<div class="b-bot">Escribime como si fueras un cliente.</div>';
+    $('#txt-ensayo').value = '';
+    $('#txt-ensayo').focus();
+  });
   $('#form-ensayo').addEventListener('submit', async (e) => {
     e.preventDefault();
     const t = $('#txt-ensayo').value.trim(); if (!t) return;
     $('#txt-ensayo').value = '';
     const chat = $('#chat');
     chat.insertAdjacentHTML('beforeend', `<div class="b-cli">${esc(t)}</div>`); chat.scrollTop = chat.scrollHeight;
+    const miRonda = ronda;
     try {
       const r = await api('/api/ensayo', conLlave({ historial, texto: t }));
+      if (miRonda !== ronda) return;
       historial.push({ de: 'cliente', texto: t }, { de: 'bot', texto: r.respuesta });
       chat.insertAdjacentHTML('beforeend', `<div class="b-bot">${esc(r.respuesta)}</div>`);
-    } catch (err) { chat.insertAdjacentHTML('beforeend', `<div class="b-bot">${esc(err.message)}</div>`); }
+    } catch (err) { if (miRonda !== ronda) return; chat.insertAdjacentHTML('beforeend', `<div class="b-bot">${esc(err.message)}</div>`); }
     chat.scrollTop = chat.scrollHeight;
   });
   $('#aprobar').addEventListener('click', async () => {
