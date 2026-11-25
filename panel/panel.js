@@ -171,7 +171,7 @@
     for (const c of S.clientes) sel.append(el('option', { value: c.id }, c.negocio || 'Mi negocio'));
     sel.value = cliente(); $('#caja-negocios').hidden = S.clientes.length < 2;
     $('#r-negocio').textContent = (S.clientes.find((c) => c.id === cliente()) || {}).negocio || 'Tu negocio';
-    verSeccion(charlaInicial ? 'charlas' : 'inicio');
+    verSeccion(charlaInicial ? 'charlas' : seccionDelLink || 'inicio'); seccionDelLink = null;
     refrescarResumen(); refrescarLista(); refrescarCuenta(); refrescarExtras();
     if (charlaInicial) abrirDesdeLink(charlaInicial);
   }
@@ -211,7 +211,7 @@
     $('#r-pausa-pago').hidden = !porPago;
     if (!charlas.length) pintarEspera(r.esperando || 0);
     // Avisos: se llenan con lo guardado, salvo que el dueño ya esté cambiando algo.
-    if (!avisosTocado && r.avisos) { $('#avisos-email').value = r.avisos.email || ''; $('#avisos-si').checked = r.avisos.mailPersona !== false; pintarInterruptor(); }
+    if (!avisosTocado && r.avisos) llenarAvisos(r.avisos);
   }
   function pintarEspera(n) {
     const p = $('#r-espera');
@@ -1073,20 +1073,60 @@
   // =====================================================================================
   // Avisos
   // =====================================================================================
-  let avisosTocado = false;
+  let avisosTocado = false; let avisosWA = {};
   function pintarInterruptor() { $('#avisos-estado').textContent = $('#avisos-si').checked ? 'Prendido: te avisamos al instante.' : 'Apagado: no te mandamos mails.'; }
+  const canalElegido = () => (document.querySelector('#avisos-canal input:checked') || {}).value || 'mym';
+  // WhatsApp (25/11/2026): por dónde llegan los avisos. La muestra copia la plantilla real (boti_te_buscan) y dice desde
+  // qué número y a cuál le llega. El del negocio sólo con un celular personal distinto al del Boti.
+  function pintarWA() {
+    const canal = canalElegido(); const w = avisosWA;
+    const negocio = (resumen && resumen.negocio) || 'tu negocio';
+    const conectado = !!w.numeroNegocio;
+    const radioNeg = document.querySelector('#avisos-canal input[value="negocio"]');
+    radioNeg.disabled = !conectado;
+    $('#canal-negocio-texto').textContent = conectado ? `A tu celular personal, desde ${w.numeroNegocio}. Necesita tu celular personal.` : 'Se habilita cuando tu WhatsApp quede conectado.';
+    $('#avisos-cel-caja').hidden = canal === 'no';
+    const cel = $('#avisos-cel').value.trim();
+    const digitos = (x) => String(x || '').replace(/\D/g, '');
+    const altaEsNegocio = !!w.celularAlta && digitos(w.celularAlta) === digitos(w.numeroNegocio);
+    $('#avisos-cel-ayuda').textContent = canal === 'negocio' ? 'Tiene que ser otro número, no el de tu negocio.' : altaEsNegocio ? `Si lo dejás vacío, te avisamos al ${w.celularAlta}, que es el de tu negocio: el aviso se te puede perder entre las charlas. Mejor poné tu celular personal.` : w.celularAlta ? `Si lo dejás vacío, te avisamos al ${w.celularAlta}.` : '';
+    const delNegocio = canal === 'negocio';
+    $('#muestra-quien').textContent = delNegocio ? negocio : 'MyM Soluciones';
+    $('#muestra-numero').textContent = delNegocio ? w.numeroNegocio || '' : '+54 9 11 3366-2080';
+    $('#muestra-inicial').textContent = (delNegocio ? negocio : 'M').trim().charAt(0).toUpperCase() || 'M';
+    $('#muestra-negocio').textContent = negocio;
+    $('#avisos-muestra').classList.toggle('apagada', canal === 'no');
+    const destino = cel || (canal === 'mym' ? w.celularAlta : '');
+    $('#muestra-a').textContent = canal === 'no' ? 'Apagado: no te escribimos por WhatsApp.' : destino ? `Te llega a ${cel && destino === cel ? 'tu celular ' + cel : destino}.` : 'Poné tu celular personal.';
+    const rev = $('#avisos-revision'); const n = w.negocioListo || {};
+    rev.hidden = !(delNegocio && w.whatsappCanal === 'negocio' && n.total && n.aprobadas < n.total);
+    rev.textContent = `Meta está revisando los mensajes de aviso de tu número (${n.aprobadas || 0} de ${n.total || 0} aprobados). Mientras tanto te escribimos desde MyM Soluciones, así no te perdés nada.`;
+  }
+  function llenarAvisos(a) {
+    $('#avisos-email').value = a.email || ''; $('#avisos-si').checked = a.mailPersona !== false; pintarInterruptor();
+    avisosWA = a; $('#avisos-cel').value = a.whatsapp || '';
+    const r = document.querySelector(`#avisos-canal input[value="${a.whatsappCanal || 'mym'}"]`); if (r) r.checked = true;
+    pintarWA();
+  }
   $('#avisos-si').addEventListener('change', () => { avisosTocado = true; pintarInterruptor(); $('#avisos-ok').textContent = ''; });
   $('#avisos-email').addEventListener('input', () => { avisosTocado = true; $('#avisos-ok').textContent = ''; });
+  $('#avisos-cel').addEventListener('input', () => { avisosTocado = true; $('#avisos-ok').textContent = ''; pintarWA(); });
+  $('#avisos-canal').addEventListener('change', () => { avisosTocado = true; $('#avisos-ok').textContent = ''; $('#avisos-error').textContent = ''; pintarWA(); });
   $('#form-avisos').addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = $('#avisos-email').value.trim(); const err = $('#avisos-error'); const b = $('#avisos-guardar'); const si = $('#avisos-si').checked;
+    const whatsappCanal = canalElegido(); const whatsapp = whatsappCanal === 'no' ? (avisosWA.whatsapp || '') : $('#avisos-cel').value.trim();
     $('#avisos-ok').textContent = '';
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { err.textContent = 'Revisá el mail: parece que le falta algo.'; $('#avisos-email').focus(); return; }
+    if (whatsappCanal === 'negocio' && !whatsapp) { err.textContent = 'Para que te llegue desde el número de tu negocio, poné tu celular personal.'; $('#avisos-cel').focus(); return; }
     b.disabled = true; b.textContent = 'Guardando…'; err.textContent = '';
     try {
-      await api('/api/panel/avisos', con({ email, mailPersona: si }));
+      const r = await api('/api/panel/avisos', con({ email, mailPersona: si, whatsappCanal, whatsapp }));
       avisosTocado = false;
-      $('#avisos-ok').textContent = si ? `Listo: te avisamos a ${email}.` : 'Listo: no te vamos a mandar avisos por mail.';
+      llenarAvisos({ email, mailPersona: si, ...r });
+      const mail = si ? `por mail a ${email}` : 'sin mail';
+      const wa = whatsappCanal === 'no' ? 'sin WhatsApp' : `por WhatsApp a ${r.llegaA || whatsapp}${r.llegaDesde === 'negocio' ? ', desde el número de tu negocio' : ', desde MyM Soluciones'}`;
+      $('#avisos-ok').textContent = `Listo: te avisamos ${mail} y ${wa}.`;
       refrescarResumen();
     } catch (e2) { if (S) err.textContent = e2.message; }
     b.disabled = false; b.textContent = 'Guardar';
@@ -1102,6 +1142,17 @@
   document.addEventListener('visibilitychange', () => { if (S && aLaVista()) { refrescarLista(); refrescarResumen(); if (abierta) refrescarCharla(); } });
 
   if (!API) { mostrarEntrada('El panel se está terminando de preparar. Mientras tanto, escribinos por WhatsApp al 11 3366-2080.'); $('#form-entrar').hidden = true; return; }
+  // Botones de los avisos por WhatsApp (25/11/2026): Meta arma el link con «?charla=…&c=…» (la variable va al final
+  // de la dirección); acá se pasa a «#», que es lo que ya abría el botón del mail. «?cuenta=1» y «?aprender=1» abren
+  // esa sección después de entrar.
+  const q0 = new URLSearchParams(location.search);
+  if (q0.get('charla') && !location.hash) {
+    const h = new URLSearchParams({ charla: q0.get('charla'), ...(q0.get('c') ? { c: q0.get('c') } : {}) });
+    q0.delete('charla'); q0.delete('c');
+    history.replaceState(null, '', location.pathname + (q0.toString() ? '?' + q0 : '') + '#' + h);
+  }
+  let seccionDelLink = q0.get('cuenta') ? 'pagos' : q0.get('aprender') ? 'bot' : null;
+  if (seccionDelLink) { q0.delete('cuenta'); q0.delete('aprender'); history.replaceState(null, '', location.pathname + (q0.toString() ? '?' + q0 : '') + location.hash); }
   const h0 = new URLSearchParams(location.hash.slice(1));
   if (h0.get('charla') && !S && !h0.get('t')) guardar(CLAVE_CHARLA, h0.get('charla')); // se abre después de entrar
   if (h0.get('t')) canjear(h0.get('t'));

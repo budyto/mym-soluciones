@@ -24,6 +24,7 @@
     { g: 'Clientes', items: [
       { href: 'bots.html', ic: '🤖', t: 'Clientes', d: 'Bots, servicios y cobros' },
       { href: 'cuestionarios.html', ic: '📝', t: 'Cuestionarios del Boti', d: 'Respuestas de cada cliente' },
+      { href: 'avisos-whatsapp.html', ic: '💬', t: 'Avisos por WhatsApp', d: 'Plantillas y lo que salió a los dueños' },
       { href: 'aprendido.html', ic: '🧠', t: 'Lo que aprendió el Boti', d: 'Aprobar, corregir y deshacer', cuenta: '/api/admin/aprendido/pendientes' },
       { href: 'facturacion.html', ic: '🧾', t: 'Facturación', d: 'Comprobantes ARCA' },
       { href: '../panel/', ext: true, ic: '📱', t: 'Portal de clientes', d: 'La vista de cada cliente' },

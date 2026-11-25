@@ -20,6 +20,9 @@
   const guardarSesion = (v) => { try { localStorage.setItem('alta-mym', JSON.stringify(v)); } catch (e) { /* sin almacenamiento */ } };
   const leerSesion = () => { try { return JSON.parse(localStorage.getItem('alta-mym') || 'null'); } catch (e) { return null; } };
   const h = new URLSearchParams(location.hash.slice(1));
+  // Botón «Seguir» del WhatsApp (25/11/2026): llega con «?c=…&k=…» porque Meta no deja «#» en la variable del botón.
+  const qAlta = new URLSearchParams(location.search);
+  if (!h.get('c') && qAlta.get('c') && qAlta.get('k')) { h.set('c', qAlta.get('c')); h.set('k', qAlta.get('k')); qAlta.delete('c'); qAlta.delete('k'); history.replaceState(null, '', location.pathname + (qAlta.toString() ? '?' + qAlta : '')); }
   if (h.get('c') && h.get('k')) { guardarSesion({ id: h.get('c'), llave: h.get('k') }); history.replaceState(null, '', location.pathname + location.search); }
   let sesion = leerSesion();
 

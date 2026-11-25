@@ -262,7 +262,8 @@ input:disabled,textarea:disabled{opacity:.45}
   'use strict';
   const API = String((window.SITE || {}).plataformaApi || '').replace(/\/+$/, '');
   const HASH = new URLSearchParams(location.hash.replace(/^#/, ''));
-  const LLAVE = HASH.get('t') || '';
+  // El botón «Seguir» del WhatsApp trae la llave con «?t=…» (Meta no deja «#» en la variable del botón): se acepta igual.
+  const LLAVE = HASH.get('t') || new URLSearchParams(location.search).get('t') || '';
   const JUNTO = HASH.get('junto') === '1';   // lo está cargando MyM en la llamada con el cliente
   const LINK_LIMPIO = location.origin + location.pathname + '#t=' + encodeURIComponent(LLAVE);
   // La copia de este celular se guarda con el id del cliente (la primera parte de la llave), nunca con la llave.

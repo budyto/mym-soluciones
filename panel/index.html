@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;900&family=Instrument+Serif:ital@1&family=Michroma&family=Martian+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../tramites/tramite.css?v=202611192000">
-<link rel="stylesheet" href="panel.css?v=202611212330">
+<link rel="stylesheet" href="panel.css?v=202611251200">
 </head>
 <body>
 
@@ -252,13 +252,36 @@
   <section id="s-avisos" class="seccion angosta" hidden>
     <form class="tarjeta" id="form-avisos" novalidate>
       <h2 class="titulo">Avisos</h2>
-      <p class="paso">Te mandamos un mail al instante cuando alguien pide hablar con una persona o el bot no puede contestar.</p>
+      <p class="paso">Te avisamos al instante cuando alguien pide hablar con vos. También del consumo de IA, del fin de la prueba gratis, de los pagos y, cada lunes, cómo fue tu semana.</p>
+
+      <h3 class="subtitulo">Por mail</h3>
       <label class="interruptor"><input type="checkbox" role="switch" id="avisos-si"><span class="pista" aria-hidden="true"></span><span class="interruptor-texto"><b>Avisarme por mail</b><small id="avisos-estado"></small></span></label>
       <label><span class="rot">¿A qué mail te avisamos?</span><input type="email" id="avisos-email" autocomplete="email" inputmode="email"></label>
+
+      <fieldset class="canales" id="avisos-canal">
+        <legend class="subtitulo">Por WhatsApp, ¿desde dónde te escribimos?</legend>
+        <label class="canal"><input type="radio" name="canal" value="mym"><span><b>Desde MyM Soluciones</b><small>Te llega del 11 3366-2080, aparte de las charlas de tu negocio.</small></span></label>
+        <label class="canal"><input type="radio" name="canal" value="negocio"><span><b>Desde el número de tu negocio</b><small id="canal-negocio-texto">A tu celular personal, desde el WhatsApp de tu Boti.</small></span></label>
+        <label class="canal"><input type="radio" name="canal" value="no"><span><b>No quiero avisos por WhatsApp</b><small>Te seguimos avisando por mail.</small></span></label>
+      </fieldset>
+      <label id="avisos-cel-caja"><span class="rot">Tu celular personal</span><input type="tel" id="avisos-cel" autocomplete="tel" inputmode="tel" placeholder="11 3163-8945"><small class="ayuda" id="avisos-cel-ayuda"></small></label>
+
+      <div class="muestra-wa" id="avisos-muestra" aria-label="Así te llega el aviso por WhatsApp">
+        <p class="muestra-de"><span class="muestra-avatar" aria-hidden="true" id="muestra-inicial">M</span><span><b id="muestra-quien">MyM Soluciones</b><small id="muestra-numero">+54 9 11 3366-2080</small></span></p>
+        <div class="muestra-globo">
+          <p>Aviso de tu Boti: <b>Marta</b> pide hablar con una persona en el WhatsApp de <b id="muestra-negocio">tu negocio</b>.</p>
+          <p>Tocá «Abrir la charla» para verla y contestarle.</p>
+          <p class="muestra-pie">MyM Soluciones · Lo cambiás en tu panel, en «Avisos»</p>
+          <span class="muestra-boton">Abrir la charla</span>
+        </div>
+        <p class="muestra-a" id="muestra-a"></p>
+      </div>
+      <p class="aviso" id="avisos-revision" hidden></p>
+
       <p class="error" id="avisos-error" role="alert"></p>
       <p class="ok-linea" id="avisos-ok" aria-live="polite"></p>
       <button class="btn grande" type="submit" id="avisos-guardar">Guardar</button>
-      <p class="nota">El mail trae un botón que te abre esa charla directamente acá, en tu panel.</p>
+      <p class="nota">El mail y el WhatsApp traen un botón que te abre esa charla directamente acá, en tu panel.</p>
     </form>
   </section>
 
@@ -279,9 +302,9 @@
 <script>try{var h=new URLSearchParams(location.hash.slice(1)),ir=h.get('ir');if(ir==='preguntas'||ir==='revisar')sessionStorage.setItem('panel-ir',ir)}catch(e){}</script>
 <script src="../config.js?v=202611142100"></script>
 <script src="pieza.js?v=202611212200"></script>
-<script src="panel.js?v=202611241700"></script>
+<script src="panel.js?v=202611251900"></script>
 <!-- «Lo que aprendió tu Boti» (21/11/2026; aprobar desde el panel y preguntas sin respuesta, 25/11/2026): archivo aparte, se cuelga de lo que dibuja panel.js. -->
-<script src="aprendido.js?v=202611251800"></script>
+<script src="aprendido.js?v=202611251900"></script>
 <script src="../whatsapp-link.js?v=202611211930" defer></script>
 </body>
 </html>
