@@ -1,0 +1,26 @@
+# (25/11/2026) Control de versiones de los js y css: el .htaccess los guarda un año en la caché, así que si un
+# js o css cambia y la página lo sigue pidiendo con el mismo ?v=, la gente sigue viendo el viejo.
+# En cada PR a main revisa que cada js/css cambiado tenga el ?v= nuevo en todas las páginas que lo cargan,
+# y que ninguna página cargue un js/css local sin ?v=. Detalle en herramientas/versiones.js.
+name: Versiones de js y css
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  versiones:
+    name: Cada js/css cambiado tiene su ?v= nuevo
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Revisar las versiones
+        run: node herramientas/versiones.js --base "origin/${{ github.base_ref }}"
