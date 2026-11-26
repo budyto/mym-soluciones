@@ -1,0 +1,663 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex">
+  <title>Pedidos online | Distribuidora del Centro</title>
+  <meta name="description" content="Catálogo online de una distribuidora de alimentos: precios por lista, stock real y pedido directo. Datos de ejemplo.">
+  <meta name="theme-color" content="#17202A">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2317202A'/%3E%3Cpath d='M7 12l9-5 9 5-9 5z M7 12v8l9 5 9-5v-8' fill='none' stroke='%23B98B4E' stroke-width='2.2' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap">
+  <link rel="stylesheet" href="css/app.css">
+  <style>
+    /* Catálogo público: celular primero. Lo memorable es el bulto dibujado (cartón corrugado con su rótulo);
+       todo lo demás usa los componentes de app.css. Clases propias con prefijo cat-. */
+    :root {
+      --cat-almacen: #8A3B12; --cat-bebidas: #1F5F8B; --cat-lacteos: #2E7D6B;
+      --cat-limpieza: #4B5FA8; --cat-perfumeria: #8E3E6E; --cat-golosinas: #B4460F;
+      --cat-ancho: 1240px;
+    }
+    body { min-height: 100vh; display: flex; flex-direction: column; }
+    .cat-barra { position: sticky; top: 0; z-index: 40; background: var(--tinta); color: #DCE2E8; }
+    .cat-barra-in { max-width: var(--cat-ancho); margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; gap: 10px; min-height: 58px; }
+    .cat-marca { display: flex; align-items: center; gap: 10px; color: #fff; text-decoration: none; min-width: 0; margin-right: auto; }
+    .cat-marca svg { width: 30px; height: 30px; color: var(--carton); flex: none; }
+    .cat-marca strong { display: block; font-stretch: 118%; font-weight: 800; font-size: 15px; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cat-marca span { display: block; font-size: 12px; color: #9AA6B2; }
+    .cat-barra .sello { flex: none; }
+    .cat-barra .btn { height: 38px; }
+    .cat-btn-osc { background: var(--tinta-2); border-color: var(--tinta-3); color: #E8ECF0; }
+    .cat-btn-osc:hover { background: var(--tinta-3); border-color: #44546A; }
+    .cat-btn-carrito { gap: 8px; }
+    .cat-btn-carrito .cat-cuenta { background: var(--tinta); color: var(--senal); border-radius: 10px; min-width: 22px; height: 20px; padding: 0 6px; display: inline-grid; place-items: center; font-size: 12px; font-weight: 700; }
+    .cat-main { flex: 1; width: 100%; max-width: var(--cat-ancho); margin: 0 auto; padding: 0 16px 120px; }
+
+    /* bienvenida */
+    .cat-hola { padding: 26px 0 18px; display: grid; gap: 18px; grid-template-columns: minmax(0, 1fr); }
+    .cat-hola h1 { font-stretch: 125%; font-weight: 800; font-size: 30px; line-height: 1.02; letter-spacing: -.02em; max-width: 16ch; }
+    .cat-hola p { color: var(--texto-2); max-width: 52ch; margin: 10px 0 0; font-size: 15px; }
+    .cat-entrar { background: var(--hoja); border: 1px solid var(--linea); border-radius: var(--r-panel); padding: 16px; display: grid; gap: 10px; align-self: start; }
+    .cat-entrar label { font-weight: 600; font-size: 13px; }
+    .cat-entrar-fila { display: flex; gap: 8px; }
+    .cat-entrar-fila input { flex: 1; min-width: 0; height: 44px; font-size: 16px; }
+    .cat-entrar .btn { height: 44px; }
+    .cat-entrar .nota-discreta button { border: 0; background: none; padding: 0; color: var(--info); text-decoration: underline; cursor: pointer; font-size: inherit; }
+    .cat-cliente { padding: 18px 0 14px; display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; }
+    .cat-cliente h1 { font-stretch: 118%; font-weight: 800; font-size: 22px; line-height: 1.1; width: 100%; }
+    .cat-cliente-dato { font-size: 13px; color: var(--texto-2); }
+    .cat-cliente-dato strong { color: var(--tinta); font-weight: 600; }
+    .cat-cliente .acciones { margin-left: auto; }
+
+    /* filtros pegados arriba */
+    .cat-filtros { position: sticky; top: 58px; z-index: 30; background: var(--papel); padding: 10px 0 8px; margin: 0 -16px; padding-left: 16px; padding-right: 16px; border-bottom: 1px solid var(--linea); }
+    .cat-buscar { position: relative; }
+    .cat-buscar svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: var(--texto-2); pointer-events: none; }
+    .cat-buscar input[type="search"] { height: 44px; padding-left: 38px; font-size: 16px; }
+    .cat-rubros { display: flex; gap: 6px; overflow-x: auto; padding: 10px 0 2px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+    .cat-rubros::-webkit-scrollbar { display: none; }
+    .cat-rubro { flex: none; height: 34px; padding: 0 13px; border-radius: 17px; border: 1px solid var(--linea); background: var(--hoja); font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; white-space: nowrap; }
+    .cat-rubro i { width: 9px; height: 9px; border-radius: 2px; background: var(--c, var(--tinta)); }
+    .cat-rubro[aria-pressed="true"] { background: var(--tinta); border-color: var(--tinta); color: #fff; }
+    .cat-rubro[aria-pressed="true"] i { box-shadow: 0 0 0 1.5px #fff; }
+    .cat-nota-lista { font-size: 12px; color: var(--texto-2); padding-top: 6px; }
+
+    /* grilla de productos */
+    .cat-seccion { margin-top: 22px; }
+    .cat-seccion h2 { font-stretch: 118%; font-weight: 800; font-size: 18px; margin-bottom: 10px; display: flex; align-items: baseline; gap: 10px; }
+    .cat-seccion h2 small { font-stretch: 100%; font-weight: 400; font-size: 13px; color: var(--texto-2); }
+    .cat-grilla { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .cat-prod { background: var(--hoja); border: 1px solid var(--linea); border-radius: var(--r-panel); overflow: hidden; display: flex; flex-direction: column; min-width: 0; }
+    .cat-prod.sin-stock { opacity: .72; }
+    .cat-prod-info { padding: 10px 10px 12px; display: flex; flex-direction: column; gap: 3px; flex: 1; }
+    .cat-prod-desc { font-weight: 600; font-size: 14px; line-height: 1.25; }
+    .cat-prod-marca { font-size: 12px; color: var(--texto-2); }
+    .cat-prod-precio { font-stretch: 118%; font-weight: 800; font-size: 19px; line-height: 1.1; margin-top: 6px; letter-spacing: -.01em; }
+    .cat-prod-unit { font-size: 12px; color: var(--texto-2); }
+    .cat-prod-bonif { font-size: 12px; color: var(--ok); font-weight: 600; }
+    .cat-prod-stock { font-size: 12px; margin-top: 2px; display: flex; align-items: center; gap: 6px; }
+    .cat-prod-stock::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--ok); flex: none; }
+    .cat-prod-stock.poco::before { background: var(--alerta); }
+    .cat-prod-stock.nada::before { background: var(--peligro); }
+    .cat-prod-pie { margin-top: auto; padding-top: 10px; }
+    .cat-prod-pie .btn { width: 100%; height: 40px; }
+
+    /* el bulto dibujado */
+    .cat-bulto {
+      --c: var(--cat-almacen);
+      position: relative; aspect-ratio: 4 / 3; overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.10), rgba(0,0,0,.08)),
+        repeating-linear-gradient(90deg, rgba(90,60,20,.07) 0 2px, transparent 2px 6px),
+        #C69A5E;
+      border-bottom: 1px solid #A57A42;
+    }
+    .cat-bulto::before { /* cinta de embalar */
+      content: ''; position: absolute; left: 0; right: 0; top: 0; height: 14%;
+      background: rgba(232, 214, 170, .55); border-bottom: 1px solid rgba(140, 100, 50, .25);
+    }
+    .cat-bulto-flechas { position: absolute; right: 7%; top: 3%; width: 13%; height: 9%; color: #6E4E22; opacity: .75; }
+    .cat-rotulo {
+      position: absolute; left: 8%; right: 8%; top: 22%; bottom: 20%;
+      background: #FBFAF6; border-radius: 3px; box-shadow: 0 1px 0 rgba(0,0,0,.18);
+      border-left: 7px solid var(--c); padding: 6% 7% 5% 8%;
+      display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; color: var(--tinta);
+    }
+    .cat-rotulo-rubro { font-size: 10px; font-weight: 600; color: var(--c); line-height: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cat-rotulo-nombre { font-stretch: 125%; font-weight: 800; font-size: clamp(11px, 3.4vw, 15px); line-height: 1.02; letter-spacing: -.02em;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .cat-rotulo-medida { font-stretch: 112%; font-weight: 700; font-size: 11px; color: #4A545D; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cat-bulto-sello { position: absolute; left: 8%; bottom: 5%; font-stretch: 112%; font-weight: 800; font-size: 11px; color: #5E4219;
+      border: 1.5px solid #5E4219; border-radius: 2px; padding: 1px 5px; opacity: .8; transform: rotate(-1.5deg); white-space: nowrap; }
+    .cat-bulto-codigo { position: absolute; right: 8%; bottom: 6%; font-size: 10px; color: #5E4219; opacity: .8; }
+    .cat-bulto[data-r="Bebidas"] { --c: var(--cat-bebidas); }
+    .cat-bulto[data-r="Lácteos y frescos"] { --c: var(--cat-lacteos); }
+    .cat-bulto[data-r="Limpieza"] { --c: var(--cat-limpieza); }
+    .cat-bulto[data-r="Perfumería"] { --c: var(--cat-perfumeria); }
+    .cat-bulto[data-r="Golosinas"] { --c: var(--cat-golosinas); }
+
+    /* cantidad */
+    .cat-paso { display: grid; grid-template-columns: 40px minmax(0, 1fr) 40px; border: 1px solid var(--tinta); border-radius: var(--r-control); overflow: hidden; height: 40px; background: var(--hoja); }
+    .cat-paso button { border: 0; background: var(--tinta); color: #fff; font-size: 20px; font-weight: 600; cursor: pointer; line-height: 1; }
+    .cat-paso button:disabled { background: #6B7580; cursor: not-allowed; }
+    .cat-paso input { border: 0; border-radius: 0; text-align: center; font-weight: 700; height: 100%; padding: 0; font-size: 16px; min-width: 0; -moz-appearance: textfield; }
+    .cat-paso input::-webkit-inner-spin-button, .cat-paso input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+
+    /* barra inferior del celular */
+    .cat-abajo { position: fixed; left: 0; right: 0; bottom: 0; z-index: 45; padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); background: var(--tinta); display: none; }
+    .cat-abajo .btn { width: 100%; height: 48px; justify-content: space-between; font-size: 16px; }
+    body.con-carrito .cat-abajo { display: block; }
+
+    /* carrito */
+    .cat-fondo { position: fixed; inset: 0; z-index: 80; background: rgba(23, 32, 42, .45); display: none; }
+    .cat-carrito { position: fixed; z-index: 81; left: 0; right: 0; bottom: 0; max-height: 92vh; background: var(--hoja); border-radius: 14px 14px 0 0;
+      box-shadow: var(--sombra-modal); display: none; flex-direction: column; }
+    body.carrito-abierto .cat-fondo { display: block; }
+    body.carrito-abierto .cat-carrito { display: flex; animation: cat-subir .22s ease-out; }
+    body.carrito-abierto { overflow: hidden; }
+    @keyframes cat-subir { from { transform: translateY(24px); opacity: .6; } to { transform: none; opacity: 1; } }
+    .cat-carrito-cabeza { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 14px 16px 12px; border-bottom: 1px solid var(--linea); }
+    .cat-carrito-cabeza h2 { font-stretch: 118%; font-weight: 800; font-size: 20px; }
+    .cat-carrito-cuerpo { overflow-y: auto; padding: 4px 16px 12px; flex: 1; }
+    .cat-carrito-pie { border-top: 1px solid var(--linea); padding: 12px 16px calc(14px + env(safe-area-inset-bottom)); display: grid; gap: 8px; }
+    .cat-linea { display: grid; grid-template-columns: minmax(0, 1fr) 118px; gap: 4px 12px; padding: 12px 0; border-bottom: 1px solid var(--linea-suave); align-items: center; }
+    .cat-linea-desc { font-weight: 600; line-height: 1.25; }
+    .cat-linea-sub { font-size: 12px; color: var(--texto-2); }
+    .cat-linea-importe { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+    .cat-linea-importe strong { font-size: 14px; }
+    .cat-linea .cat-paso { height: 36px; grid-template-columns: 34px minmax(0, 1fr) 34px; }
+    .cat-linea .aviso { grid-column: 1 / -1; padding: 6px 10px; }
+    .cat-quitar { border: 0; background: none; color: var(--peligro); font-size: 12px; cursor: pointer; padding: 2px 0; text-decoration: underline; }
+    .cat-totales { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; font-size: 13px; color: var(--texto-2); }
+    .cat-totales .cat-total { color: var(--tinta); font-weight: 700; font-size: 15px; }
+    .cat-totales .cat-total + .cat-total { font-stretch: 118%; font-weight: 800; font-size: 22px; }
+    .cat-minimo { display: grid; gap: 5px; font-size: 13px; }
+    .cat-minimo .barra-h > span { background: var(--alerta); }
+    .cat-minimo.listo .barra-h > span { background: var(--ok); }
+    .cat-carrito textarea { min-height: 64px; resize: vertical; }
+    .cat-carrito-pie .btn { width: 100%; height: 48px; font-size: 16px; }
+    .cat-carrito-pie .btn-wa { background: #fff; border-color: #1E7A4E; color: #155B39; gap: 8px; text-decoration: none; }
+    .cat-carrito-pie .btn-wa:hover { background: var(--ok-suave); }
+
+    /* pedido recibido: un remito chiquito */
+    .cat-listo { padding: 18px 0 8px; }
+    .cat-listo-sello { display: inline-block; font-stretch: 125%; font-weight: 800; font-size: 13px; color: var(--ok); border: 2px solid var(--ok); border-radius: 4px; padding: 3px 9px; transform: rotate(-2deg); margin-bottom: 12px; }
+    .cat-listo h3 { font-stretch: 122%; font-weight: 800; font-size: 26px; line-height: 1.05; letter-spacing: -.01em; }
+    .cat-listo p { margin: 8px 0 0; color: var(--texto-2); }
+    .cat-listo .tabla td, .cat-listo .tabla th { height: 34px; }
+    .cat-listo .aviso { margin-top: 12px; }
+
+    /* cuenta del cliente y listado de ejemplo */
+    .cat-ejemplos { display: grid; gap: 6px; max-height: 50vh; overflow-y: auto; margin-top: 8px; }
+    .cat-ejemplo { text-align: left; border: 1px solid var(--linea); background: var(--hoja); border-radius: var(--r-control); padding: 9px 12px; cursor: pointer; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 1px 10px; }
+    .cat-ejemplo:hover { border-color: var(--tinta); background: var(--fila-hover); }
+    .cat-ejemplo strong { font-weight: 600; }
+    .cat-ejemplo span { font-size: 12px; color: var(--texto-2); }
+    .cat-ejemplo em { font-style: normal; font-size: 12px; color: var(--texto-2); grid-row: 1 / 3; grid-column: 2; align-self: center; text-align: right; }
+    .cat-pie { border-top: 1px solid var(--linea); }
+    .cat-pie-in { max-width: var(--cat-ancho); margin: 0 auto; padding: 16px; font-size: 12px; color: var(--texto-2); display: flex; flex-wrap: wrap; gap: 6px 18px; justify-content: space-between; }
+    .cat-vacio { padding: 40px 10px; text-align: center; color: var(--texto-2); }
+    .cat-vacio strong { display: block; color: var(--tinta); font-size: 16px; margin-bottom: 4px; }
+
+    .cat-totales > span:nth-child(even) { text-align: right; }
+    /* que una tabla dentro del modal no lo ensanche más que la pantalla (scroll propio de la tabla) */
+    .modal-fondo { grid-template-columns: minmax(0, 1fr); justify-items: center; }
+    .modal { min-width: 0; }
+    body.con-carrito .toasts { bottom: 84px; }
+    body.carrito-abierto .toasts { top: 70px; bottom: auto; }
+    @media (max-width: 619px) {
+      .cat-bulto { aspect-ratio: auto; height: 92px; }
+      .cat-rotulo { top: 18%; bottom: 28%; padding: 3% 6% 2% 7%; }
+      .cat-rotulo-nombre { font-size: 16px; }
+    }
+    @media (max-width: 420px) {
+      .cat-barra .sello { display: none; }
+      .cat-btn-cuenta span { display: none; }
+    }
+    @media (min-width: 620px) {
+      .cat-grilla { grid-template-columns: repeat(auto-fill, minmax(196px, 1fr)); gap: 14px; }
+      .cat-rotulo-nombre { font-size: 15px; }
+      .cat-hola h1 { font-size: 40px; }
+    }
+    @media (min-width: 900px) {
+      .cat-hola { grid-template-columns: minmax(0, 1fr) 380px; align-items: end; padding: 40px 0 26px; }
+      .cat-abajo { display: none !important; }
+      .cat-main { padding-bottom: 48px; }
+      .cat-carrito { left: auto; top: 0; width: 440px; max-height: none; border-radius: 0; }
+      body.carrito-abierto .cat-carrito { animation-name: cat-entrar; }
+      body.carrito-abierto .toasts { top: auto; bottom: 20px; right: 460px; }
+      @keyframes cat-entrar { from { transform: translateX(30px); opacity: .6; } to { transform: none; opacity: 1; } }
+    }
+    @media (max-width: 899px) { .cat-btn-carrito-barra { display: none; } }
+  </style>
+</head>
+<body>
+  <header class="cat-barra">
+    <div class="cat-barra-in">
+      <a class="cat-marca" href="catalogo.html" aria-label="Inicio del catálogo">
+        <svg viewBox="0 0 34 34" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l12-6.5L29 12 17 18.5z"/><path d="M5 12v10.5L17 29l12-6.5V12"/><path d="M17 18.5V29"/></svg>
+        <div><strong data-negocio>Distribuidora del Centro</strong><span>Pedidos online</span></div>
+      </a>
+      <span class="sello" title="Toda la información es ficticia">Datos de ejemplo</span>
+      <button class="btn cat-btn-osc cat-btn-cuenta" id="btn-cuenta" type="button">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="7" r="3.2"/><path d="M3.8 17c.8-3.2 3.3-5 6.2-5s5.4 1.8 6.2 5"/></svg>
+        <span id="btn-cuenta-texto">Ingresar</span>
+      </button>
+      <button class="btn btn-senal cat-btn-carrito cat-btn-carrito-barra" id="btn-carrito" type="button" aria-controls="carrito">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 3.5h2l1.8 9h9l1.7-6.5H5.4"/><circle cx="8" cy="16" r="1.2"/><circle cx="14.5" cy="16" r="1.2"/></svg>
+        <span id="btn-carrito-texto">Pedido</span><span class="cat-cuenta" id="btn-carrito-cuenta">0</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="cat-main" id="principal">
+    <section id="cabecera" aria-live="polite"></section>
+    <div class="cat-filtros" id="filtros">
+      <div class="cat-buscar" role="search">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="M12.6 12.6L17 17"/></svg>
+        <label for="buscar" class="solo-lector">Buscar productos</label>
+        <input id="buscar" type="search" autocomplete="off" placeholder="Buscar yerba, gaseosa, lavandina…">
+      </div>
+      <div class="cat-rubros" id="rubros" aria-label="Rubros"></div>
+      <div class="cat-nota-lista" id="nota-lista"></div>
+    </div>
+    <div id="productos"></div>
+  </main>
+
+  <div class="cat-abajo" id="abajo">
+    <button class="btn btn-senal" type="button" id="btn-abajo" aria-controls="carrito"><span id="abajo-cant">Ver pedido</span><strong id="abajo-total"></strong></button>
+  </div>
+
+  <div class="cat-fondo" id="fondo"></div>
+  <aside class="cat-carrito" id="carrito" role="dialog" aria-modal="true" aria-labelledby="carrito-titulo" hidden>
+    <div class="cat-carrito-cabeza"><h2 id="carrito-titulo">Pedido</h2><button class="modal-cerrar" id="carrito-cerrar" type="button" aria-label="Cerrar el pedido">×</button></div>
+    <div class="cat-carrito-cuerpo" id="carrito-cuerpo"></div>
+    <div class="cat-carrito-pie" id="carrito-pie"></div>
+  </aside>
+
+  <footer class="cat-pie"><div class="cat-pie-in"><span data-pie>Demo hecha por MyM Soluciones para Leandro · noviembre 2026</span><span id="pie-contacto"></span></div></footer>
+
+  <script src="js/datos.js"></script>
+  <script src="js/nucleo.js"></script>
+  <script>
+  (function () {
+    'use strict';
+    App.prepararDatos();
+    const ui = App.ui, h = ui.h, q = App.q, CFG = App.config;
+    const CLAVE_SESION = 'dda-catalogo-sesion-v1';     // cliente que entró y carrito (sólo en este navegador)
+    const RUBROS = ['Almacén', 'Bebidas', 'Lácteos y frescos', 'Limpieza', 'Perfumería', 'Golosinas'];
+    const COLOR = { 'Almacén': '--cat-almacen', 'Bebidas': '--cat-bebidas', 'Lácteos y frescos': '--cat-lacteos', 'Limpieza': '--cat-limpieza', 'Perfumería': '--cat-perfumeria', 'Golosinas': '--cat-golosinas' };
+    const DIAS = ['dom', 'lun', 'mar', 'mie', 'jue', 'vie', 'sab'];
+
+    // ---------- configuración y sesión ----------
+    function leerConfig() {
+      const base = { rubros: RUBROS.slice(), minimo: 120000, listaId: 'L2', whatsapp: '353 456-1200', mostrarStock: true };
+      // la guarda el módulo Catálogo del sistema con App.acciones.guardarConfig('catalogo', …)
+      const x = App.configModulo('catalogo');
+      return x && typeof x === 'object' ? Object.assign(base, x) : base;
+    }
+    function leerSesion() {
+      try { const x = JSON.parse(localStorage.getItem(CLAVE_SESION) || 'null'); if (x && typeof x === 'object') return { clienteId: x.clienteId || null, carrito: x.carrito || {} }; } catch (e) { /* nada */ }
+      return { clienteId: null, carrito: {} };
+    }
+    function guardarSesion() { try { localStorage.setItem(CLAVE_SESION, JSON.stringify({ clienteId: E.clienteId, carrito: E.carrito })); } catch (e) { /* nada */ } }
+
+    const ses = leerSesion();
+    const E = { cfg: leerConfig(), clienteId: ses.clienteId, carrito: ses.carrito, rubro: 'todos', texto: '', listo: null, obs: '' };
+    if (E.clienteId && !clienteValido(App.get('clientes', E.clienteId))) E.clienteId = null;
+
+    function clienteValido(c) { return !!(c && c.activo !== false && c.tipo !== 'Mostrador'); }
+    const cliente = () => E.clienteId ? App.get('clientes', E.clienteId) : null;
+    const listaId = () => (cliente() || {}).listaId || E.cfg.listaId;
+    const depositoId = () => (cliente() || {}).depositoId || 'D1';
+    const lista = () => App.get('listasPrecio', listaId()) || { nombre: listaId() };
+    const visibles = () => App.db.productos.filter(p => p.activo !== false && E.cfg.rubros.includes(p.rubro));
+    const disponible = p => Math.max(0, Math.floor(q.stock(p.id, depositoId()).disponible));
+    const precioFinal = p => q.precioConIVA(p.id, listaId());
+    const soloDigitos = s => String(s || '').replace(/\D/g, '');
+
+    // nombre corto y medida para el rótulo: «Yerba mate con palo 1 kg» → «Yerba mate con palo» + «1 kg»
+    function partirNombre(desc) {
+      const par = /^(.*?)\s*\(([^)]*)\)$/.exec(desc);
+      if (par) return { nombre: par[1], medida: par[2] };
+      const m = /^(.*?)\s+(x\s\d.*)$/.exec(desc) || /^(.*)\s+(\d[^\s]*(?:\s\D.*)?)$/.exec(desc);
+      return m ? { nombre: m[1], medida: m[2] } : { nombre: desc, medida: '' };
+    }
+    function proximaEntrega(c) {
+      const hoy = App.hoy();
+      for (let i = 1; i <= 7; i++) { const d = App.f.sumar(hoy, i); if ((c.diasVisita || []).includes(DIAS[App.f.diaSemana(d)])) return d; }
+      return App.f.sumar(hoy, 1);
+    }
+    function habituales(c) {
+      const cuenta = {};
+      App.db.pedidos.forEach(p => { if (p.clienteId === c.id && p.estado !== 'cancelado') p.items.forEach(it => { cuenta[it.productoId] = (cuenta[it.productoId] || 0) + 1; }); });
+      return Object.keys(cuenta).sort((a, b) => cuenta[b] - cuenta[a]).slice(0, 12);
+    }
+
+    // ---------- carrito ----------
+    function lineas() {
+      return Object.keys(E.carrito).map(id => {
+        const p = App.get('productos', id);
+        if (!p) return null;
+        const cantidad = E.carrito[id];
+        // la bonificación por cantidad del producto (si la tiene) se aplica sola, igual que en el pedido
+        const bonif = App.bonifEscala(p, cantidad);
+        const neto = App.r2(cantidad * App.precioNeto({ precio: q.precio(id, listaId()), bonif }));
+        const iva = App.r2(neto * p.iva / 100);
+        const disp = disponible(p);
+        const oculto = !E.cfg.rubros.includes(p.rubro) || p.activo === false;
+        return { p, cantidad, neto, iva, total: App.r2(neto + iva), disp, problema: oculto ? 'Producto fuera de catálogo: debe quitarse del pedido.' : disp <= 0 ? 'Producto sin stock: debe quitarse del pedido.' : cantidad > disp ? 'Stock disponible: ' + disp + '. Se debe reducir la cantidad.' : '' };
+      }).filter(Boolean);
+    }
+    function totales(ls) {
+      const neto = App.r2(ls.reduce((s, l) => s + l.neto, 0)), iva = App.r2(ls.reduce((s, l) => s + l.iva, 0));
+      return { neto, iva, total: App.r2(neto + iva), bultos: ls.reduce((s, l) => s + l.cantidad, 0) };
+    }
+    function fijarCantidad(id, n) {
+      const p = App.get('productos', id);
+      if (!p) return;
+      const max = disponible(p);
+      let c = Math.floor(Number(n) || 0);
+      if (c > max) { c = max; ui.toast('Stock disponible de «' + p.descripcion + '»: ' + max + '.', 'alerta'); }
+      if (c <= 0) delete E.carrito[id]; else E.carrito[id] = c;
+      E.listo = null;
+      guardarSesion();
+      pintarProducto(id); pintarResumen();
+      if (document.body.classList.contains('carrito-abierto')) pintarCarrito();
+    }
+
+    // ---------- piezas de interfaz ----------
+    const FLECHAS = '<svg class="cat-bulto-flechas" viewBox="0 0 26 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 15V3M2.5 7.5L7 3l4.5 4.5M19 15V3M14.5 7.5L19 3l4.5 4.5"/></svg>';
+    function bulto(p) {
+      const n = partirNombre(p.descripcion);
+      return h`<div class="cat-bulto" data-r="${p.rubro}" role="img" aria-label="${p.descripcion}, ${p.unidad}">${ui.seguro(FLECHAS)}
+        <div class="cat-rotulo"><span class="cat-rotulo-rubro">${p.rubro}</span><span class="cat-rotulo-nombre">${n.medida || p.unidad}</span><span class="cat-rotulo-medida">${p.marca}</span></div>
+        <span class="cat-bulto-sello">${p.unidad}</span><span class="cat-bulto-codigo">${p.codigo}</span></div>`;
+    }
+    function control(p) {
+      const disp = disponible(p), enCarrito = E.carrito[p.id] || 0;
+      if (disp <= 0 && !enCarrito) return h`<button class="btn btn-secundario" type="button" disabled>Sin stock</button>`;
+      if (!enCarrito) return h`<button class="btn btn-primario" type="button" data-agregar="${p.id}">Agregar</button>`;
+      return h`<div class="cat-paso"><button type="button" data-menos="${p.id}" aria-label="Uno menos de ${p.descripcion}">−</button>
+        <input type="number" inputmode="numeric" min="0" max="${disp}" value="${enCarrito}" data-cant="${p.id}" aria-label="Cantidad de ${p.descripcion}">
+        <button type="button" data-mas="${p.id}" aria-label="Uno más de ${p.descripcion}"${enCarrito >= disp ? ' disabled' : ''}>+</button></div>`;
+    }
+    function textoStock(p) {
+      const d = disponible(p);
+      if (d <= 0) return h`<span class="cat-prod-stock nada">Sin stock</span>`;
+      if (d <= 10) return h`<span class="cat-prod-stock poco">${d === 1 ? 'Queda 1' : 'Quedan ' + d}</span>`;
+      return h`<span class="cat-prod-stock">${E.cfg.mostrarStock ? ui.num(d) + ' disponibles' : 'Hay stock'}</span>`;
+    }
+    function tarjeta(p) {
+      const pf = precioFinal(p);
+      return h`<article class="cat-prod${disponible(p) <= 0 ? ' sin-stock' : ''}" data-prod="${p.id}">${bulto(p)}
+        <div class="cat-prod-info"><span class="cat-prod-desc">${p.descripcion}</span><span class="cat-prod-marca">${p.marca}, ${p.unidad.toLowerCase()}</span>
+        <span class="cat-prod-precio">${ui.pesos(pf)}</span>${p.contenido > 1 ? h`<span class="cat-prod-unit">${ui.pesos(pf / p.contenido)} la unidad</span>` : ''}
+        ${(p.escalaBonif || [])[0] ? h`<span class="cat-prod-bonif">Bonificación del ${ui.num(p.escalaBonif[0].pct, 0)} % desde ${p.escalaBonif[0].desde} bultos</span>` : ''}
+        ${textoStock(p)}<div class="cat-prod-pie" data-control="${p.id}">${control(p)}</div></div></article>`;
+    }
+    function pintarProducto(id) {
+      const p = App.get('productos', id);
+      document.querySelectorAll('[data-control="' + id + '"]').forEach(el => { el.innerHTML = String(control(p)); });
+    }
+
+    function pintarCabecera() {
+      const c = cliente(), el = document.getElementById('cabecera');
+      document.getElementById('btn-cuenta-texto').textContent = c ? 'Cuenta' : 'Ingresar';
+      if (!c) {
+        const ej = App.db.clientes.find(x => x.tipo === 'Almacén' && x.cuit);
+        el.innerHTML = String(h`<div class="cat-hola"><div><h1>Pedidos online, sin esperar la visita del preventista</h1>
+          <p>Precios según la lista asignada y stock real del depósito. El pedido ingresa directamente al sistema y se entrega con el reparto de la zona.</p></div>
+          <form class="cat-entrar" id="form-entrar" novalidate><label for="cuit">Ingreso con el CUIT del comercio</label>
+          <div class="cat-entrar-fila"><input id="cuit" name="cuit" type="text" inputmode="numeric" autocomplete="off" placeholder="20-12345678-9"><button class="btn btn-primario" type="submit">Ingresar</button></div>
+          <span class="nota-discreta">Para la demostración: ${ej ? h`el CUIT ${ej.cuit} corresponde a ${ej.fantasia}; también se puede ` : ''}<button type="button" id="ver-ejemplos">seleccionar un cliente de ejemplo</button>.</span></form></div>`);
+        document.getElementById('form-entrar').addEventListener('submit', e => { e.preventDefault(); entrarConCuit(document.getElementById('cuit').value); });
+        document.getElementById('ver-ejemplos').addEventListener('click', elegirEjemplo);
+      } else {
+        const ent = proximaEntrega(c), saldo = q.saldoCliente(c.id);
+        el.innerHTML = String(h`<div class="cat-cliente"><h1>${c.fantasia}</h1>
+          <span class="cat-cliente-dato">Precios: <strong>lista ${lista().nombre}</strong></span>
+          <span class="cat-cliente-dato">Próxima entrega: <strong>${ui.fechaLarga(ent)}</strong></span>
+          <span class="cat-cliente-dato">Saldo en cuenta: <strong>${ui.pesos(saldo)}</strong></span>
+          <div class="acciones"><button class="btn btn-secundario btn-chico" type="button" id="btn-mis-pedidos">Historial de pedidos</button><button class="btn btn-fantasma btn-chico" type="button" id="btn-salir">Cerrar sesión</button></div></div>`);
+        document.getElementById('btn-mis-pedidos').addEventListener('click', verCuenta);
+        document.getElementById('btn-salir').addEventListener('click', salir);
+      }
+    }
+
+    function rubrosDisponibles() {
+      const r = [];
+      if (cliente()) r.push({ id: 'habituales', titulo: 'Productos habituales' });
+      r.push({ id: 'todos', titulo: 'Todos los rubros' });
+      RUBROS.filter(x => E.cfg.rubros.includes(x)).forEach(x => r.push({ id: x, titulo: x, color: COLOR[x] }));
+      return r;
+    }
+    function pintarRubros() {
+      const rs = rubrosDisponibles();
+      if (!rs.find(r => r.id === E.rubro)) E.rubro = 'todos';
+      document.getElementById('rubros').innerHTML = rs.map(r => '<button class="cat-rubro" type="button" data-rubro="' + ui.escapar(r.id) + '" aria-pressed="' + (r.id === E.rubro) + '"' +
+        (r.color ? ' style="--c: var(' + r.color + ')"' : '') + '>' + (r.color ? '<i></i>' : '') + ui.escapar(r.titulo) + '</button>').join('');
+      const c = cliente();
+      document.getElementById('nota-lista').textContent = 'Precios por bulto con IVA incluido, lista ' + lista().nombre + (c ? '.' : ' (al ingresar se muestran los de la lista asignada).') +
+        ' Compra mínima ' + ui.pesos(E.cfg.minimo) + '.';
+    }
+
+    function pintarProductos() {
+      const cont = document.getElementById('productos');
+      let ps = visibles().filter(p => ui.coincide(E.texto, p.descripcion, p.marca, p.rubro, p.codigo, p.ean));
+      if (E.rubro === 'habituales' && cliente()) { const ids = habituales(cliente()); ps = ids.map(id => ps.find(p => p.id === id)).filter(Boolean); }
+      else if (E.rubro !== 'todos') ps = ps.filter(p => p.rubro === E.rubro);
+      if (!ps.length) {
+        cont.innerHTML = String(h`<div class="cat-vacio"><strong>${E.texto ? 'Sin resultados para «' + E.texto + '»' : 'No hay productos en este rubro'}</strong>Se puede buscar con otra palabra o consultar el catálogo completo.</div>`);
+        return;
+      }
+      const grupos = E.rubro === 'todos' ? RUBROS.filter(r => E.cfg.rubros.includes(r)).map(r => ({ titulo: r, ps: ps.filter(p => p.rubro === r) })).filter(g => g.ps.length)
+        : [{ titulo: E.rubro === 'habituales' ? 'Productos habituales' : E.rubro, ps }];
+      cont.innerHTML = grupos.map(g => String(h`<section class="cat-seccion"><h2>${g.titulo} <small>${g.ps.length} ${g.ps.length === 1 ? 'producto' : 'productos'}</small></h2>
+        <div class="cat-grilla">${g.ps.map(tarjeta)}</div></section>`)).join('');
+    }
+
+    function pintarResumen() {
+      const ls = lineas(), t = totales(ls), n = ls.length;
+      document.getElementById('btn-carrito-cuenta').textContent = n;
+      document.getElementById('btn-carrito-texto').textContent = n ? ui.pesos(t.total) : 'Pedido';
+      document.body.classList.toggle('con-carrito', n > 0);
+      document.getElementById('abajo-cant').textContent = 'Ver pedido (' + n + (n === 1 ? ' producto)' : ' productos)');
+      document.getElementById('abajo-total').textContent = ui.pesos(t.total);
+    }
+
+    // ---------- carrito abierto ----------
+    const aside = document.getElementById('carrito');
+    let focoAntes = null;
+    function abrirCarrito() {
+      focoAntes = document.activeElement;
+      aside.hidden = false;
+      document.body.classList.add('carrito-abierto');
+      pintarCarrito();
+      setTimeout(() => document.getElementById('carrito-cerrar').focus(), 0);
+    }
+    function cerrarCarrito() {
+      document.body.classList.remove('carrito-abierto');
+      aside.hidden = true;
+      if (E.listo) { E.listo = null; }
+      if (focoAntes && focoAntes.isConnected) focoAntes.focus();
+    }
+    function mensajeWhatsApp(c, ls, t) {
+      const r = ['Pedido de ' + (c ? c.fantasia + ' (cliente ' + c.codigo + ', CUIT ' + c.cuit + ')' : 'cliente') + ':'];
+      ls.forEach(l => r.push('- ' + l.cantidad + ' x ' + l.p.descripcion + ' (' + l.p.unidad + ', ' + l.p.codigo + '): ' + ui.pesos(l.total)));
+      r.push('Total con IVA: ' + ui.pesos(t.total));
+      if (E.obs.trim()) r.push('Observaciones: ' + E.obs.trim());
+      return r.join('\n');
+    }
+    function linkWhatsApp(texto) {
+      let d = soloDigitos(E.cfg.whatsapp);
+      if (d.startsWith('0')) d = d.slice(1);
+      if (!d.startsWith('54')) d = '549' + d;
+      return 'https://wa.me/' + d + '?text=' + encodeURIComponent(texto);
+    }
+
+    function pintarCarrito() {
+      const cuerpo = document.getElementById('carrito-cuerpo'), pie = document.getElementById('carrito-pie');
+      const c = cliente();
+      document.getElementById('carrito-titulo').textContent = E.listo ? 'Pedido recibido' : 'Pedido';
+      if (E.listo) { pintarListo(cuerpo, pie); return; }
+      const ls = lineas(), t = totales(ls);
+      if (!ls.length) {
+        cuerpo.innerHTML = '<div class="cat-vacio"><strong>El pedido no tiene productos</strong>Los productos se suman con el botón «Agregar» y el pedido se confirma desde este panel.</div>';
+        pie.innerHTML = '<button class="btn btn-secundario" type="button" data-cerrar>Ver catálogo</button>';
+        return;
+      }
+      const falta = Math.max(0, App.r2(E.cfg.minimo - t.total));
+      const hayProblema = ls.some(l => l.problema);
+      cuerpo.innerHTML = String(h`${ls.map(l => h`<div class="cat-linea" data-linea="${l.p.id}">
+          <div><div class="cat-linea-desc">${l.p.descripcion}</div><div class="cat-linea-sub">${l.p.unidad}, ${ui.pesos(l.total / l.cantidad)} cada uno</div>
+          <button class="cat-quitar" type="button" data-quitar="${l.p.id}">Quitar del pedido</button></div>
+          <div class="cat-paso"><button type="button" data-menos="${l.p.id}" aria-label="Uno menos de ${l.p.descripcion}">−</button>
+          <input type="number" inputmode="numeric" min="0" value="${l.cantidad}" data-cant="${l.p.id}" aria-label="Cantidad de ${l.p.descripcion}">
+          <button type="button" data-mas="${l.p.id}" aria-label="Uno más de ${l.p.descripcion}"${l.cantidad >= l.disp ? ' disabled' : ''}>+</button></div>
+          ${l.problema ? h`<div class="aviso aviso-peligro">${l.problema}</div>` : ''}
+          <div class="cat-linea-importe"><span class="texto-2">Neto ${ui.pesos(l.neto)} más IVA ${ui.num(l.p.iva, 1)} %</span><strong>${ui.pesos(l.total)}</strong></div></div>`)}
+        <div class="campo" style="margin-top:14px"><label for="obs">Observaciones</label>
+          <textarea id="obs" maxlength="240" placeholder="Ejemplo: entregar por la puerta trasera, avisar antes de llegar">${E.obs}</textarea></div>`);
+      const cuerpoObs = cuerpo.querySelector('#obs');
+      cuerpoObs.addEventListener('input', () => { E.obs = cuerpoObs.value; });
+      const puede = c && !falta && !hayProblema;
+      const motivo = !c ? 'Para confirmar el pedido se debe ingresar con el CUIT.' : hayProblema ? 'Hay productos marcados en rojo que requieren revisión.' : falta ? 'Faltan ' + ui.pesos(falta) + ' para alcanzar la compra mínima.' : '';
+      pie.innerHTML = String(h`<div class="cat-totales"><span>${ls.length} ${ls.length === 1 ? 'producto' : 'productos'}, ${t.bultos} ${t.bultos === 1 ? 'bulto' : 'bultos'}</span><span></span>
+          <span>Neto</span><span>${ui.pesos(t.neto)}</span><span>IVA</span><span>${ui.pesos(t.iva)}</span>
+          <span class="cat-total">Total</span><span class="cat-total">${ui.pesos(t.total)}</span></div>
+        <div class="cat-minimo${falta ? '' : ' listo'}"><div class="barra-h" role="progressbar" aria-label="Compra mínima" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(Math.min(1, t.total / E.cfg.minimo) * 100)}"><span style="width:${Math.min(100, t.total / E.cfg.minimo * 100).toFixed(1)}%"></span></div>
+          <span>${falta ? 'Faltan ' + ui.pesos(falta) + ' para alcanzar la compra mínima de ' + ui.pesos(E.cfg.minimo) + '.' : 'Compra mínima de ' + ui.pesos(E.cfg.minimo) + ' alcanzada.'}</span></div>
+        ${!c ? h`<button class="btn btn-primario" type="button" data-entrar>Ingresar para confirmar</button>`
+          : h`<button class="btn btn-senal" type="button" id="btn-confirmar"${puede ? '' : ' disabled'}>Confirmar pedido</button>`}
+        ${puede ? h`<a class="btn btn-wa" id="btn-wa" target="_blank" rel="noopener" href="${linkWhatsApp(mensajeWhatsApp(c, ls, t))}">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><path d="M3.2 16.8l1-3.4A7 7 0 1 1 6.7 16z"/><path d="M7.6 6.8c.2 2.6 2.6 5 5.4 5.4l.9-1.3-1.7-.9-.8.8c-1-.4-1.9-1.3-2.3-2.3l.8-.8-.9-1.7z"/></svg>Enviar pedido por WhatsApp</a>
+          <span class="nota-discreta">Por WhatsApp el pedido llega como mensaje y lo carga un vendedor. Al confirmarlo desde aquí, ingresa directamente al sistema.</span>`
+          : motivo ? h`<span class="nota-discreta">${motivo}</span>` : ''}`);
+      const bc = document.getElementById('btn-confirmar');
+      if (bc) bc.addEventListener('click', confirmar);
+      const wa = document.getElementById('btn-wa');
+      if (wa) wa.addEventListener('click', () => { ui.toast('Se abrió WhatsApp con el detalle del pedido, listo para enviar.', 'info'); });
+    }
+
+    function confirmar() {
+      const c = cliente();
+      const ls = lineas();
+      const obs = ['Pedido ingresado desde el catálogo online', E.obs.trim()].filter(Boolean).join('. ');
+      const ped = App.intentar(() => App.acciones.crearPedido({ clienteId: c.id, items: ls.map(l => ({ productoId: l.p.id, cantidad: l.cantidad })), origen: 'catalogo', obs }),
+        p => 'Pedido confirmado: n.º ' + p.nro);
+      if (!ped) return;
+      E.carrito = {}; E.obs = ''; E.listo = ped.id;
+      guardarSesion();
+      pintarCarrito(); pintarResumen();
+      document.getElementById('carrito-cuerpo').scrollTop = 0;
+    }
+    function pintarListo(cuerpo, pie) {
+      const p = App.get('pedidos', E.listo), c = App.get('clientes', p.clienteId);
+      cuerpo.innerHTML = String(h`<div class="cat-listo"><span class="cat-listo-sello">Recibido</span>
+        <h3>Pedido n.º ${p.nro}</h3>
+        <p>El pedido se prepara en el depósito y se entrega el <strong>${ui.fechaLarga(proximaEntrega(c))}</strong> con el reparto de la zona. La factura acompaña la mercadería.</p>
+        ${p.alertas && p.alertas.length ? h`<div class="aviso aviso-alerta">Sujeto a revisión de Administración antes de su preparación: ${p.alertas.join(' ')}</div>` : ''}</div>`);
+      const t = ui.tabla({ columnas: [
+        { titulo: 'Producto', valor: it => App.get('productos', it.productoId).descripcion },
+        { titulo: 'Cant.', alinear: 'der', valor: it => ui.num(it.cantidad) },
+        { titulo: 'Importe', alinear: 'der', valor: it => ui.pesos(it.cantidad * it.precio * (1 + it.iva / 100)) }
+      ], filas: p.items, pie: ['Total con IVA', '', ui.pesos(p.total)] });
+      cuerpo.appendChild(t);
+      pie.innerHTML = '<button class="btn btn-primario" type="button" data-cerrar>Continuar con la compra</button><button class="btn btn-secundario" type="button" data-cuenta>Ver historial de pedidos</button>';
+    }
+
+    // ---------- entrar, cuenta y salir ----------
+    function entrar(id) {
+      const c = App.get('clientes', id);
+      if (!clienteValido(c)) { ui.toast('El cliente no está habilitado para operar por el catálogo.', 'peligro'); return false; }
+      E.clienteId = c.id; E.listo = null;
+      Object.keys(E.carrito).forEach(pid => { const p = App.get('productos', pid); if (!p) delete E.carrito[pid]; });
+      guardarSesion();
+      E.rubro = 'habituales';
+      todo();
+      ui.toast('Sesión iniciada: ' + c.fantasia + '. Se muestran los precios de la lista asignada.', 'ok');
+      return true;
+    }
+    function entrarConCuit(texto) {
+      const d = soloDigitos(texto);
+      const campo = document.getElementById('cuit');
+      if (d.length !== 11) { if (campo) campo.setAttribute('aria-invalid', 'true'); ui.toast('El CUIT debe tener 11 dígitos.', 'peligro'); return false; }
+      const c = App.db.clientes.find(x => soloDigitos(x.cuit) === d);
+      if (!c) { if (campo) campo.setAttribute('aria-invalid', 'true'); ui.toast('No hay un cliente registrado con ese CUIT. El alta se solicita al preventista de la zona.', 'peligro'); return false; }
+      return entrar(c.id);
+    }
+    function elegirEjemplo() {
+      const lista = App.db.clientes.filter(clienteValido);
+      const cuerpo = ui.nodo(String(h`<div><p class="texto-2">Al seleccionar un comercio, el catálogo se muestra con sus precios, su depósito y su próxima entrega.</p>
+        <div class="cat-ejemplos">${lista.map(c => h`<button class="cat-ejemplo" type="button" data-cliente="${c.id}"><strong>${c.fantasia}</strong><span>${c.tipo}, ${c.localidad}. CUIT ${c.cuit}</span><em>Lista ${(App.get('listasPrecio', c.listaId) || {}).nombre || c.listaId}</em></button>`)}</div></div>`));
+      const m = ui.modal({ titulo: 'Clientes de ejemplo', cuerpo, ancho: 520, acciones: [{ texto: 'Volver', tipo: 'secundario' }] });
+      cuerpo.addEventListener('click', e => { const b = e.target.closest('[data-cliente]'); if (b && entrar(b.dataset.cliente)) m.cerrar(); });
+    }
+    function verCuenta() {
+      const c = cliente();
+      if (!c) { elegirEjemplo(); return; }
+      const peds = App.db.pedidos.filter(p => p.clienteId === c.id).sort((a, b) => b.numero - a.numero).slice(0, 8);
+      const vencida = q.deudaVencida ? q.deudaVencida(c.id) : 0;
+      const cuerpo = ui.nodo(String(h`<div><dl class="datos"><dt>Razón social</dt><dd>${c.razonSocial}</dd><dt>CUIT</dt><dd>${c.cuit}</dd>
+        <dt>Saldo en cuenta</dt><dd><strong>${ui.pesos(q.saldoCliente(c.id))}</strong>${vencida > 0 ? h` <span class="peligro">(${ui.pesos(vencida)} vencido)</span>` : ''}</dd>
+        <dt>Pago</dt><dd>${c.plazo ? 'Cuenta corriente a ' + c.plazo + ' días' : 'Contado contra entrega'}</dd><dt>Días de reparto</dt><dd>${(c.diasVisita || []).map(d => ({ lun: 'lunes', mar: 'martes', mie: 'miércoles', jue: 'jueves', vie: 'viernes', sab: 'sábado' })[d] || d).join(', ')}</dd></dl>
+        <h3 class="seccion-titulo" style="margin-top:18px">Últimos pedidos</h3></div>`));
+      let modal = null;
+      cuerpo.appendChild(ui.tabla({ columnas: [
+        { titulo: 'Pedido', valor: p => h`<div class="celda-principal">${p.nro}</div><div class="celda-sub">${ui.fecha(p.fecha)}, ${p.origen === 'catalogo' ? 'por el catálogo' : p.origen === 'preventa' ? 'con el preventista' : 'en el mostrador'}</div>` },
+        { titulo: 'Estado', valor: p => ui.estado(p.estado) },
+        { titulo: 'Total', alinear: 'der', valor: p => ui.pesos(p.total) },
+        { titulo: '', alinear: 'der', valor: p => { const b = document.createElement('button'); b.className = 'btn btn-secundario btn-chico'; b.type = 'button'; b.textContent = 'Repetir pedido'; b.addEventListener('click', () => { repetir(p); if (modal) modal.cerrar(); }); return b; } }
+      ], filas: peds, vacio: 'Sin pedidos registrados.' }));
+      modal = ui.modal({ titulo: c.fantasia, cuerpo, ancho: 620, acciones: [{ texto: 'Cerrar', tipo: 'secundario' }] });
+    }
+    function repetir(p) {
+      let sumados = 0, faltan = 0;
+      p.items.forEach(it => {
+        const prod = App.get('productos', it.productoId);
+        if (!prod || !E.cfg.rubros.includes(prod.rubro)) { faltan++; return; }
+        const cant = Math.min(it.cantidad, disponible(prod));
+        if (cant <= 0) { faltan++; return; }
+        E.carrito[prod.id] = Math.max(E.carrito[prod.id] || 0, Math.floor(cant)); sumados++;
+      });
+      E.listo = null; guardarSesion(); todo();
+      ui.toast(sumados ? 'Se sumaron ' + sumados + ' productos del pedido ' + p.nro + ' al pedido actual' + (faltan ? '; ' + faltan + ' sin stock disponible.' : '.') : 'Ninguno de esos productos tiene stock disponible.', sumados ? 'ok' : 'alerta');
+      if (sumados) abrirCarrito();
+    }
+    function salir() { E.clienteId = null; E.listo = null; E.rubro = 'todos'; guardarSesion(); todo(); ui.toast('Sesión cerrada. El pedido en curso queda guardado en este dispositivo.', 'info'); }
+
+    // ---------- todo junto ----------
+    function todo() {
+      pintarCabecera(); pintarRubros(); pintarProductos(); pintarResumen();
+      if (document.body.classList.contains('carrito-abierto')) pintarCarrito();
+    }
+    document.querySelectorAll('[data-negocio]').forEach(e => { e.textContent = CFG.negocio; });
+    document.querySelectorAll('[data-pie]').forEach(e => { e.innerHTML = ui.escapar(CFG.pie).replace('MyM Soluciones', '<span class="mym-logo">MyM Soluciones</span>'); });
+    document.getElementById('pie-contacto').textContent = CFG.razonSocial + ', ' + CFG.domicilio + '. Tel. ' + CFG.telefono;
+    document.title = 'Pedidos online | ' + CFG.negocio;
+
+    ui.buscador(document.getElementById('buscar'), t => { E.texto = t; if (t && E.rubro === 'habituales') { E.rubro = 'todos'; pintarRubros(); } pintarProductos(); });
+    document.getElementById('rubros').addEventListener('click', e => {
+      const b = e.target.closest('[data-rubro]'); if (!b) return;
+      E.rubro = b.dataset.rubro; pintarRubros(); pintarProductos();
+      const f = document.getElementById('filtros'); if (f.getBoundingClientRect().top < 60) window.scrollTo({ top: f.offsetTop - 58 + 1 });
+    });
+    // clics de cantidad: en la grilla y en el carrito
+    function manejarCantidad(e) {
+      const t = e.target.closest('[data-agregar], [data-mas], [data-menos], [data-quitar], [data-cerrar], [data-entrar], [data-cuenta]');
+      if (!t) return;
+      if (t.dataset.agregar) fijarCantidad(t.dataset.agregar, 1);
+      else if (t.dataset.mas) fijarCantidad(t.dataset.mas, (E.carrito[t.dataset.mas] || 0) + 1);
+      else if (t.dataset.menos) fijarCantidad(t.dataset.menos, (E.carrito[t.dataset.menos] || 0) - 1);
+      else if (t.dataset.quitar) fijarCantidad(t.dataset.quitar, 0);
+      else if (t.hasAttribute('data-cerrar')) cerrarCarrito();
+      else if (t.hasAttribute('data-entrar')) elegirEjemplo();
+      else if (t.hasAttribute('data-cuenta')) { cerrarCarrito(); verCuenta(); }
+      // que el foco no se pierda cuando el control se redibuja
+      const id = t.dataset.agregar || t.dataset.mas || t.dataset.menos;
+      if (id) { const zona = t.closest('[data-control], .cat-linea') ? (t.closest('.cat-carrito') ? aside : document.getElementById('productos')) : null; const n = zona && zona.querySelector('[data-cant="' + id + '"]'); if (n) n.focus({ preventScroll: true }); }
+    }
+    function manejarCampo(e) { const i = e.target.closest('[data-cant]'); if (i) fijarCantidad(i.dataset.cant, i.value); }
+    [document.getElementById('productos'), aside].forEach(z => { z.addEventListener('click', manejarCantidad); z.addEventListener('change', manejarCampo); });
+    document.getElementById('btn-carrito').addEventListener('click', abrirCarrito);
+    document.getElementById('btn-abajo').addEventListener('click', abrirCarrito);
+    document.getElementById('carrito-cerrar').addEventListener('click', cerrarCarrito);
+    document.getElementById('fondo').addEventListener('click', cerrarCarrito);
+    document.getElementById('btn-cuenta').addEventListener('click', () => { if (cliente()) verCuenta(); else { const i = document.getElementById('cuit'); if (i) { i.focus(); i.scrollIntoView({ block: 'center' }); } else elegirEjemplo(); } });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && document.body.classList.contains('carrito-abierto') && !document.querySelector('.modal-fondo')) cerrarCarrito(); });
+    // lo que cambia el store (un pedido nuevo reserva stock) se ve enseguida
+    // también lo que se hizo en otra pestaña (el sistema): el núcleo relee el registro y avisa con 'cambio'
+    App.on('cambio', () => {
+      const antes = JSON.stringify(E.cfg);
+      E.cfg = leerConfig();
+      if (E.clienteId && !clienteValido(App.get('clientes', E.clienteId))) E.clienteId = null;
+      if (JSON.stringify(E.cfg) !== antes) todo(); else { pintarProductos(); pintarResumen(); pintarCabecera(); }
+    });
+    todo();
+  })();
+  </script>
+</body>
+</html>
