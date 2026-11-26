@@ -774,6 +774,44 @@ fieldset.campo{border:0;margin:0;padding:0;min-width:0}
   .comunidad{grid-template-columns:minmax(0, 560px) 1fr;gap:72px;align-items:start}
 }
 
+/* ============ CÓMO LLEGAR: el plano pegado en la pared y los carteles de las líneas ============ */
+.llegar__grid{display:grid;gap:40px}
+.llegar__dir{margin-top:18px;display:grid;gap:2px}
+.llegar__dir strong{font-family:var(--f-afiche);font-weight:400;font-size:clamp(1.9rem, 7vw, 2.6rem);line-height:1;text-transform:uppercase;color:var(--papel)}
+.llegar__dir span{color:var(--gris-muro);font-weight:520}
+.llegar__sub{font-family:var(--f-afiche);font-weight:400;font-size:1.9rem;line-height:1;text-transform:uppercase;margin-top:34px;color:var(--amarillo)}
+.paradas-c{display:grid;gap:0;margin-top:12px}
+.parada-c{display:grid;gap:10px;padding-block:16px;border-top:2px solid #3a3342}
+.parada-c:last-child{border-bottom:2px solid #3a3342}
+.parada-c__donde{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 12px}
+.parada-c__donde strong{font-weight:760;font-stretch:88%;font-size:1.06rem;line-height:1.25;color:var(--papel);min-width:0}
+.parada-c__donde span{font-stretch:75%;font-weight:800;font-size:.9rem;color:var(--amarillo)}
+.parada-c__donde .parada-c__extra{color:var(--gris-muro);font-weight:700}
+.lineas{display:flex;flex-wrap:wrap;gap:8px}
+.linea{display:block}
+.linea b{display:grid;place-items:center;min-width:58px;height:46px;padding:4px 10px 2px;background:var(--amarillo);color:#000;border:3px solid #000;box-shadow:3px 3px 0 var(--lavanda);font-family:var(--f-afiche);font-weight:400;font-size:1.9rem;line-height:1;font-variant-numeric:tabular-nums}
+.subtes{display:grid;gap:10px;margin-top:14px}
+.subte{display:flex;align-items:center;gap:12px}
+.subte i.subte--mb{border-radius:4px;font-size:1.15rem;background:#000}
+.subte i{flex:none;display:grid;place-items:center;width:44px;height:44px;border-radius:50%;font-style:normal;font-family:var(--f-afiche);font-size:1.5rem;color:#fff;background:var(--sub, #555);box-shadow:0 0 0 3px var(--papel)}
+.subte span{font-weight:560;line-height:1.3}
+.subte span b{display:block;font-family:var(--f-afiche);font-weight:400;font-size:1.35rem;text-transform:uppercase;line-height:1.05;color:var(--papel)}
+.llegar__acciones{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.llegar__nota{margin-top:16px;font-size:.88rem;color:var(--gris-muro);max-width:46ch}
+.llegar__mapa{position:relative;margin:0;background:var(--papel);padding:8px 8px 10px;transform:rotate(.7deg);box-shadow:0 22px 40px -18px rgba(0,0,0,.9);align-self:start}
+.llegar__mapa .cinta-mapa{position:absolute;top:-13px;left:50%;width:110px;height:28px;translate:-50% 0;rotate:-3deg;background:rgba(129,105,177,.75);z-index:2}
+.mapa{position:relative;aspect-ratio:4/3;max-width:100%;background:#d9d3e4;overflow:hidden}
+.mapa img,.mapa iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.mapa img{object-fit:cover}
+.llegar__mapa figcaption{color:#000;font-stretch:78%;font-weight:700;font-size:.9rem;padding:8px 4px 0}
+.llegar__sub--primero{margin-top:0}
+@media (min-width:900px){
+  .llegar__grid{grid-template-columns:minmax(0, 1fr) minmax(0, 1.15fr);grid-template-areas:"cabeza mapa" "texto mapa";grid-template-rows:auto 1fr;gap:0 64px;align-items:start}
+  .llegar__cabeza{grid-area:cabeza}
+  .llegar__texto{grid-area:texto;padding-top:34px}
+  .llegar__mapa{grid-area:mapa;position:sticky;top:96px}
+}
+
 /* ============ PIE ============ */
 .pie{padding-block:36px 32px;color:var(--gris-muro)}
 .pie__fila{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px 18px}
@@ -824,6 +862,7 @@ fieldset.campo{border:0;margin:0;padding:0;min-width:0}
     <a href="#merch">Merch</a>
     <a href="#firmar">Firmá la pared</a>
     <a href="#tocar">Tocá en la Mansión</a>
+    <a href="#llegar">Cómo llegar</a>
   </nav>
   <a class="cabecera__ig" href="https://www.instagram.com/mansion.247/" target="_blank" rel="noopener">@mansion.247</a>
   <a class="btn btn--amarillo cabecera__cta" href="https://chat.whatsapp.com/HjwulDZLSRPKOBoz8bjjVs" target="_blank" rel="noopener">Sacá tu ticket</a>
@@ -1587,7 +1626,7 @@ fieldset.campo{border:0;margin:0;padding:0;min-width:0}
         <div class="dato">
           <dt>Dónde</dt>
           <dd><span class="dato__valor">Antezana 247</span><span class="dato__texto">Villa Crespo, límite con Caballito, CABA</span>
-            <a class="link" href="https://www.google.com/maps/search/?api=1&amp;query=Antezana+247,+Villa+Crespo,+CABA" target="_blank" rel="noopener">Cómo llegar en Google Maps</a></dd>
+            <a class="link" href="#llegar">Colectivos, subte y mapa</a></dd>
         </div>
         <div class="dato">
           <dt>WhatsApp de la organización</dt>
@@ -1603,6 +1642,62 @@ fieldset.campo{border:0;margin:0;padding:0;min-width:0}
       </dl>
     </div>
   </section>
+  <section class="seccion llegar" id="llegar" aria-labelledby="llegar-titulo">
+    <div class="envoltura llegar__grid">
+      <div class="llegar__cabeza">
+        <h2 class="titulo" id="llegar-titulo">Cómo llegar</h2>
+        <p class="llegar__dir"><strong>Antezana 247</strong><span>Entre Hidalgo y Olaya, a media cuadra de la Plaza Nazar. Villa Crespo, límite con Caballito.</span></p>
+      </div>
+
+      <figure class="llegar__mapa">
+        <span class="cinta-mapa" aria-hidden="true"></span>
+        <div class="mapa">
+          <img src="img/mapa-antezana.jpg" alt="Mapa de la zona: Antezana 247, entre Hidalgo y Olaya, cerca del Parque Centenario y de la estación Malabia de la línea B" width="1000" height="750" loading="lazy">
+          <iframe title="Mapa de Google: Antezana 247, Villa Crespo" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=Antezana+247,+Villa+Crespo,+Buenos+Aires&amp;z=16&amp;output=embed"></iframe>
+        </div>
+        <figcaption>Antezana 247, Villa Crespo. <a class="link" href="https://www.google.com/maps/search/?api=1&amp;query=Antezana+247,+Villa+Crespo,+CABA" target="_blank" rel="noopener">Ver en Google Maps</a></figcaption>
+      </figure>
+
+      <div class="llegar__texto">
+        <h3 class="llegar__sub llegar__sub--primero">Colectivos</h3>
+        <ol class="paradas-c">
+          <li class="parada-c">
+            <p class="parada-c__donde"><strong>Olaya y Antezana</strong><span>1 cuadra</span><span class="parada-c__extra">hacia Pompeya</span></p>
+            <ul class="lineas" aria-label="Líneas que paran en Olaya y Antezana"><li class="linea"><b>76</b></li></ul>
+          </li>
+          <li class="parada-c">
+            <p class="parada-c__donde"><strong>Cnel. Apolinario Figueroa, frente a la Plaza Nazar</strong><span>2 cuadras</span></p>
+            <ul class="lineas" aria-label="Líneas que paran en Cnel. Apolinario Figueroa, frente a la Plaza Nazar"><li class="linea"><b>24</b></li><li class="linea"><b>76</b></li><li class="linea"><b>106</b></li><li class="linea"><b>110</b></li></ul>
+          </li>
+          <li class="parada-c">
+            <p class="parada-c__donde"><strong>Av. Acoyte y Cnel. Apolinario Figueroa</strong><span>3 cuadras</span></p>
+            <ul class="lineas" aria-label="Líneas que paran en Av. Acoyte y Cnel. Apolinario Figueroa"><li class="linea"><b>42</b></li><li class="linea"><b>145</b></li></ul>
+          </li>
+          <li class="parada-c">
+            <p class="parada-c__donde"><strong>Av. Ángel Gallardo, entre Hidalgo y Virasoro</strong><span>4 cuadras</span></p>
+            <ul class="lineas" aria-label="Líneas que paran en Av. Ángel Gallardo, entre Hidalgo y Virasoro"><li class="linea"><b>92</b></li><li class="linea"><b>105</b></li><li class="linea"><b>124</b></li><li class="linea"><b>135</b></li><li class="linea"><b>146</b></li></ul>
+          </li>
+          <li class="parada-c">
+            <p class="parada-c__donde"><strong>Av. Warnes y Av. Scalabrini Ortiz</strong><span>4 cuadras</span></p>
+            <ul class="lineas" aria-label="Líneas que paran en Av. Warnes y Av. Scalabrini Ortiz"><li class="linea"><b>15</b></li><li class="linea"><b>55</b></li><li class="linea"><b>119</b></li></ul>
+          </li>
+        </ol>
+
+        <h3 class="llegar__sub">Subte y Metrobus</h3>
+        <ul class="subtes">
+          <li class="subte"><i style="--sub:#e5202f" aria-hidden="true">B</i><span><b>Malabia - Osvaldo Pugliese</b>Línea B, en Av. Corrientes y Malabia: 9 cuadras, unos 11 minutos caminando.</span></li>
+          <li class="subte"><i style="--sub:#e5202f" aria-hidden="true">B</i><span><b>Ángel Gallardo</b>Línea B, en Av. Corrientes y Av. Ángel Gallardo: unos 17 minutos caminando.</span></li>
+          <li class="subte"><i class="subte--mb" aria-hidden="true">MB</i><span><b>Metrobus Juan B. Justo</b>Estación Honorio Pueyrredón: unos 12 minutos caminando.</span></li>
+        </ul>
+
+        <div class="llegar__acciones">
+          <a class="btn btn--amarillo" href="https://www.google.com/maps/dir/?api=1&amp;destination=Antezana+247,+Villa+Crespo,+CABA" target="_blank" rel="noopener">Cómo llegar desde donde estás<small>Abre Google Maps</small></a>
+        </div>
+        <p class="llegar__nota">Líneas y paradas revisadas el 26/11/2026 en el mapa de la Ciudad y en Google Maps. Con las obras del Trambus en Av. Ángel Gallardo, alguna parada puede correrse unos metros.</p>
+      </div>
+
+    </div>
+  </section>
 </main>
 
 <footer class="pie">
@@ -1616,7 +1711,7 @@ fieldset.campo{border:0;margin:0;padding:0;min-width:0}
         <a href="#fechas">Fechas</a>
         <a href="https://chat.whatsapp.com/HjwulDZLSRPKOBoz8bjjVs" target="_blank" rel="noopener">Comunidad</a>
         <a href="https://www.instagram.com/mansion.247/" target="_blank" rel="noopener">Instagram</a>
-        <a href="https://www.google.com/maps/search/?api=1&amp;query=Antezana+247,+Villa+Crespo,+CABA" target="_blank" rel="noopener">Cómo llegar</a>
+        <a href="#llegar">Cómo llegar</a>
       </nav>
     </div>
     <p class="pie__demo">Demo de MyM Soluciones</p>
