@@ -774,6 +774,30 @@ fieldset.campo{border:0;margin:0;padding:0;min-width:0}
   .comunidad{grid-template-columns:minmax(0, 560px) 1fr;gap:72px;align-items:start}
 }
 
+/* ============ CÓMO LLEGAR: el plano pegado en la pared y los carteles de las líneas ============ */
+.llegar__grid{display:grid;gap:40px}
+.llegar__dir{margin-top:18px;display:grid;gap:2px}
+.llegar__dir strong{font-family:var(--f-afiche);font-weight:400;font-size:clamp(1.9rem, 7vw, 2.6rem);line-height:1;text-transform:uppercase;color:var(--papel)}
+.llegar__dir span{color:var(--gris-muro);font-weight:520}
+.llegar__linea{font-size:1.05rem;line-height:1.5;max-width:46ch;padding-block:14px;border-top:2px solid #3a3342;color:#e9e6ee}
+.llegar__linea:last-of-type{border-bottom:2px solid #3a3342}
+.llegar__linea strong{font-family:var(--f-afiche);font-weight:400;font-size:1.35rem;text-transform:uppercase;color:var(--amarillo);margin-right:6px}
+.llegar__acciones{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+.llegar__mapa{position:relative;margin:0;background:var(--papel);padding:8px 8px 10px;transform:rotate(.7deg);box-shadow:0 22px 40px -18px rgba(0,0,0,.9);align-self:start}
+.llegar__mapa .cinta-mapa{position:absolute;top:-13px;left:50%;width:110px;height:28px;translate:-50% 0;rotate:-3deg;background:rgba(129,105,177,.75);z-index:2}
+.mapa{position:relative;aspect-ratio:1/1;max-width:100%;background:#d9d3e4;overflow:hidden}
+.mapa__abrir{position:absolute;inset:0;display:block}
+.mapa img,.mapa iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.mapa img{object-fit:cover}
+.llegar__mapa figcaption{color:#000;font-stretch:78%;font-weight:700;font-size:.9rem;padding:8px 4px 0}
+@media (min-width:900px){
+  .llegar__grid{grid-template-columns:minmax(0, 1fr) minmax(0, 1.15fr);grid-template-areas:"cabeza mapa" "texto mapa";grid-template-rows:auto 1fr;gap:0 64px;align-items:start}
+  .llegar__cabeza{grid-area:cabeza}
+  .llegar__texto{grid-area:texto;padding-top:34px}
+  .llegar__mapa{grid-area:mapa;position:sticky;top:96px}
+  .mapa{aspect-ratio:4/3}
+}
+
 /* ============ PIE ============ */
 .pie{padding-block:36px 32px;color:var(--gris-muro)}
 .pie__fila{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px 18px}
@@ -824,6 +848,7 @@ fieldset.campo{border:0;margin:0;padding:0;min-width:0}
     <a href="#merch">Merch</a>
     <a href="#firmar">Firmá la pared</a>
     <a href="#tocar">Tocá en la Mansión</a>
+    <a href="#llegar">Cómo llegar</a>
   </nav>
   <a class="cabecera__ig" href="https://www.instagram.com/mansion.247/" target="_blank" rel="noopener">@mansion.247</a>
   <a class="btn btn--amarillo cabecera__cta" href="https://chat.whatsapp.com/HjwulDZLSRPKOBoz8bjjVs" target="_blank" rel="noopener">Sacá tu ticket</a>
@@ -1587,7 +1612,7 @@ fieldset.campo{border:0;margin:0;padding:0;min-width:0}
         <div class="dato">
           <dt>Dónde</dt>
           <dd><span class="dato__valor">Antezana 247</span><span class="dato__texto">Villa Crespo, límite con Caballito, CABA</span>
-            <a class="link" href="https://www.google.com/maps/search/?api=1&amp;query=Antezana+247,+Villa+Crespo,+CABA" target="_blank" rel="noopener">Cómo llegar en Google Maps</a></dd>
+            <a class="link" href="#llegar">Colectivos, subte y mapa</a></dd>
         </div>
         <div class="dato">
           <dt>WhatsApp de la organización</dt>
@@ -1603,6 +1628,32 @@ fieldset.campo{border:0;margin:0;padding:0;min-width:0}
       </dl>
     </div>
   </section>
+  <section class="seccion llegar" id="llegar" aria-labelledby="llegar-titulo">
+    <div class="envoltura llegar__grid">
+      <div class="llegar__cabeza">
+        <h2 class="titulo" id="llegar-titulo">Cómo llegar</h2>
+        <p class="llegar__dir"><strong>Antezana 247</strong><span>Entre Hidalgo y Olaya, a media cuadra de la Plaza Nazar. Villa Crespo, límite con Caballito.</span></p>
+      </div>
+
+      <figure class="llegar__mapa">
+        <span class="cinta-mapa" aria-hidden="true"></span>
+        <div class="mapa">
+          <a class="mapa__abrir" tabindex="-1" aria-hidden="true" href="https://www.google.com/maps/search/?api=1&amp;query=Antezana+247,+Villa+Crespo,+CABA" target="_blank" rel="noopener" aria-label="Abrir el mapa de Antezana 247 en Google Maps"><img src="img/mapa-antezana.jpg" alt="Mapa de la zona: Antezana 247, entre Hidalgo y Olaya, cerca del Parque Centenario" width="1000" height="750" loading="lazy"></a>
+          <iframe title="Mapa de Google: Antezana 247, Villa Crespo" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=Antezana+247,+Villa+Crespo,+Buenos+Aires&amp;z=16&amp;output=embed"></iframe>
+        </div>
+        <figcaption>Antezana 247, Villa Crespo.</figcaption>
+      </figure>
+
+      <div class="llegar__texto">
+        <p class="llegar__linea"><strong>Colectivos</strong> a 1 a 4 cuadras: 15, 24, 42, 55, 76, 92, 105, 106, 110, 119, 124, 135, 145 y 146.</p>
+        <p class="llegar__linea"><strong>Subte</strong> línea B, estación Malabia: a 9 cuadras.</p>
+        <div class="llegar__acciones">
+          <a class="btn btn--amarillo" href="https://www.google.com/maps/dir/?api=1&amp;destination=Antezana+247,+Villa+Crespo,+CABA" target="_blank" rel="noopener">Cómo llegar desde donde estás<small>Abre Google Maps</small></a>
+        </div>
+      </div>
+
+    </div>
+  </section>
 </main>
 
 <footer class="pie">
@@ -1616,7 +1667,7 @@ fieldset.campo{border:0;margin:0;padding:0;min-width:0}
         <a href="#fechas">Fechas</a>
         <a href="https://chat.whatsapp.com/HjwulDZLSRPKOBoz8bjjVs" target="_blank" rel="noopener">Comunidad</a>
         <a href="https://www.instagram.com/mansion.247/" target="_blank" rel="noopener">Instagram</a>
-        <a href="https://www.google.com/maps/search/?api=1&amp;query=Antezana+247,+Villa+Crespo,+CABA" target="_blank" rel="noopener">Cómo llegar</a>
+        <a href="#llegar">Cómo llegar</a>
       </nav>
     </div>
     <p class="pie__demo">Demo de MyM Soluciones</p>
