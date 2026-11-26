@@ -91,8 +91,10 @@
         // Sin bot no hay alta que seguir: se muestra lo pedido y MyM le escribe.
         const p = r.precio || {}; const $p = (n) => '$ ' + Number(n || 0).toLocaleString('es-AR');
         // Pago anual (24/11/2026): el abono del año es 10 abonos y cubre 12 meses.
-        const abonoTxt = p.pagoAnual ? `${$p(p.abonoAnual)} + IVA por año (12 meses por el precio de 10)` : `${$p(p.abono)} + IVA por mes`;
-        $('#resumen-servicios').textContent = `Pediste ${p.nombre}: ${p.instalacion ? 'instalación ' + $p(p.instalacion) + ' + IVA y ' : ''}${abonoTxt}${(p.aCotizar || []).length ? `. ${p.aCotizar.join(', ')}: te pasamos el precio después del diagnóstico` : ''}.`;
+        // El servidor manda el neto y, desde el 26/11/2026, el precio final (*Final): se muestra el final, con IVA.
+        const fin = (f, n) => (f != null ? f : Math.round((Number(n) || 0) * 121) / 100);
+        const abonoTxt = p.pagoAnual ? `${$p(fin(p.abonoAnualFinal, p.abonoAnual))} por año (12 meses por el precio de 10)` : `${$p(fin(p.abonoFinal, p.abono))} por mes`;
+        $('#resumen-servicios').textContent = `Pediste ${p.nombre}: ${p.instalacion ? 'instalación ' + $p(fin(p.instalacionFinal, p.instalacion)) + ' y ' : ''}${abonoTxt}${(p.aCotizar || []).length ? `. ${p.aCotizar.join(', ')}: te pasamos el precio después del diagnóstico` : ''}. Precios finales, con IVA incluido.`;
         return verPaso('servicios');
       }
       sesion = { id: r.cliente, llave: r.llave }; guardarSesion(sesion);

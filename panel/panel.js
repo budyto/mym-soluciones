@@ -433,7 +433,8 @@
     if (!d || !d.tieneBot) return false;
     const caja = $('#consumo'); vaciar(caja);
     const p = d.periodo || {};
-    const iva = ' + IVA';
+    // Desde el 26/11/2026 los montos de la IA son finales, con el IVA adentro (al costo, sin IVA encima: así se cobra).
+    const iva = d.precioFinal ? (d.regla === 'alCosto' ? '' : ', con IVA incluido') : ' + IVA';
     caja.append(el('p', { class: 'paso' }, (p.desde ? `Desde el ${diaMes(p.desde)}` : 'En este período') + (p.vence ? `. El período cierra con tu próximo abono, el ${diaMes(p.vence)}.` : '.')));
     if (d.limite && d.limite.frenado) caja.append(el('p', { class: 'aviso mal' }, `Tu Boti llegó al límite de seguridad y dejó de contestar. Escribinos por WhatsApp al ${WA} y lo subimos.`));
 
