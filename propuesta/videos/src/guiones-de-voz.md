@@ -26,7 +26,7 @@ de la animación el tiempo que necesita la voz y deja la pista en `voz/<plan>.m4
 3. **Chat: califica y agenda.** Califica al cliente y agenda turnos o visitas.
 4. **Chat: pasa a una persona.** Y pasa la charla a una persona cuando hace falta.
 5. **Qué incluye.** Todo, con la conexión oficial de WhatsApp Business.
-6. **Precio.** La instalación sale noventa y nueve mil novecientos pesos. Después, treinta y nueve mil novecientos por mes, sin permanencia.
+6. **Precio.** La instalación sale noventa y nueve mil novecientos pesos. Después, veintinueve mil novecientos por mes, sin permanencia.
 7. **Contacto.** Escribinos por WhatsApp.
 
 ## seguimiento-de-clientes · Seguimiento de clientes
