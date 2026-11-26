@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Distribuidora del Centro | Gestión</title>
+  <meta name="description" content="Demo de sistema de gestión integral para una distribuidora de alimentos, con datos de ejemplo.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2317202A'/%3E%3Cpath d='M7 12l9-5 9 5-9 5z M7 12v8l9 5 9-5v-8' fill='none' stroke='%23B98B4E' stroke-width='2.2' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="lateral" id="lateral" aria-label="Menú principal">
+      <div class="marca">
+        <svg class="marca-icono" viewBox="0 0 34 34" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 12l12-6.5L29 12 17 18.5z"/><path d="M5 12v10.5L17 29l12-6.5V12"/><path d="M17 18.5V29"/><path d="M11 9l12 6.5" stroke-dasharray="2.5 2"/>
+        </svg>
+        <div><strong class="marca-nombre" data-negocio>Distribuidora del Centro</strong><span class="marca-bajada">Gestión integral</span></div>
+      </div>
+      <nav id="nav"></nav>
+      <div class="lateral-pie">
+        <button class="btn btn-chico" id="btn-reiniciar" type="button">Reiniciar demo</button>
+        <span>Los cambios se conservan en este navegador.</span>
+      </div>
+    </aside>
+
+    <div class="principal">
+      <header class="barra-superior">
+        <button class="btn btn-icono btn-menu" id="btn-menu" type="button" aria-controls="lateral" aria-expanded="false" aria-label="Abrir el menú">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3 5.5h14M3 10h14M3 14.5h14"/></svg>
+        </button>
+        <div class="buscador-global" role="search">
+          <svg class="lupa" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="M12.6 12.6L17 17"/></svg>
+          <label for="buscar-global" class="solo-lector">Buscar productos, clientes o comprobantes</label>
+          <input id="buscar-global" type="search" autocomplete="off" placeholder="Buscar productos, clientes o comprobantes" role="combobox" aria-expanded="false" aria-controls="resultados-global" aria-autocomplete="list">
+          <kbd>/</kbd>
+          <div class="resultados" id="resultados-global" role="listbox" hidden></div>
+        </div>
+        <div class="hoy">Hoy <strong data-hoy>jueves 26/11/2026</strong></div>
+        <span class="sello" title="Toda la información es ficticia">Datos de ejemplo</span>
+      </header>
+
+      <main id="vista" tabindex="-1"></main>
+
+      <footer class="pie"><span data-pie>Demo hecha por MyM Soluciones para Leandro · noviembre 2026</span></footer>
+    </div>
+  </div>
+
+  <script src="js/datos.js"></script>
+  <script src="js/nucleo.js"></script>
+  <script src="js/modulos/inicio.js"></script>
+  <script src="js/modulos/resultados.js"></script>
+  <script src="js/modulos/contabilidad.js"></script>
+  <script src="js/modulos/preventa.js"></script>
+  <script src="js/modulos/ventas.js"></script>
+  <script src="js/modulos/facturacion.js"></script>
+  <script src="js/modulos/entregas.js"></script>
+  <script src="js/modulos/cobranzas.js"></script>
+  <script src="js/modulos/clientes.js"></script>
+  <script src="js/modulos/compras.js"></script>
+  <script src="js/modulos/proveedores.js"></script>
+  <script src="js/modulos/stock.js"></script>
+  <script src="js/modulos/etiquetas.js"></script>
+  <script src="js/modulos/catalogo.js"></script>
+  <script src="js/modulos/listas.js"></script>
+  <script>App.iniciar();</script>
+</body>
+</html>
