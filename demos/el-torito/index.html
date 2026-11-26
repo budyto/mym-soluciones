@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>El Torito Rotisería</title>
+<meta name="description" content="Rotisería con pizzas, hamburguesas, milanesas y empanadas. Envíos a La Tablada, Lomas del Mirador y San Justo. Pedidos por WhatsApp, todos los días de 11 a 15 y de 20 a 0.">
+<meta property="og:title" content="El Torito · Rotisería con envíos">
+<meta property="og:description" content="Pizzas, hamburguesas y milanesas a tu puerta. Armá tu pedido y mandalo por WhatsApp.">
+<meta property="og:image" content="img/milanesa-cheddar.jpg">
+<meta name="theme-color" content="#0b4f28">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Restaurant","name":"El Torito Rotisería","servesCuisine":["Pizzas","Hamburguesas","Milanesas","Empanadas"],
+"telephone":"+54 9 11 5640-9691","areaServed":["La Tablada","Lomas del Mirador","San Justo"],
+"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],"opens":"11:00","closes":"15:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],"opens":"20:00","closes":"23:59"}],
+"sameAs":["https://www.instagram.com/eltorito.1911/"]}
+</script>
+<style>
+/* Layout: franja verde de portada, promos en fila, carta con pedido al costado (pegado al scroll en compu), envíos con mapa. */
+:root {
+  --fondo: #f3f5ef;
+  --papel: #ffffff;
+  --tinta: #121611;
+  --gris: #5b6458;
+  --linea: #dde3d6;
+  --verde: #0b4f28;
+  --verde-2: #0f6b37;
+  --vivo: #5fd12b;
+  --whatsapp: #1fa855;
+  --cartel: "Anton", "Impact", "Arial Narrow", sans-serif;
+  --sans: "Barlow", "Segoe UI", system-ui, sans-serif;
+  --ancho: 1180px;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 76px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
+body { margin: 0; background: var(--fondo); color: var(--tinta); font: 400 17px/1.5 var(--sans); -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; height: auto; display: block; }
+a { color: inherit; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--vivo); outline-offset: 3px; border-radius: 4px; }
+.envase { max-width: var(--ancho); margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { margin: 0; font-family: var(--cartel); font-weight: 400; line-height: 1; letter-spacing: .005em; text-wrap: balance; }
+h2 { font-size: clamp(36px, 5.4vw, 58px); }
+p { margin: 0; }
+.bajada { color: var(--gris); font-size: 18px; max-width: 56ch; }
+.precio { font-family: var(--cartel); font-size: 22px; letter-spacing: .01em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+.boton { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 0 24px; border-radius: 12px; font: 700 16px var(--sans); text-decoration: none; border: 2px solid transparent; cursor: pointer; transition: background .2s, color .2s; }
+.boton svg { width: 20px; height: 20px; flex: none; }
+.boton.wa { background: var(--whatsapp); color: #fff; }
+.boton.wa:hover { background: #178a45; }
+.boton.vivo { background: var(--vivo); color: var(--tinta); }
+.boton.vivo:hover { background: #4fbd1e; }
+.boton.borde { border-color: currentColor; background: transparent; }
+
+/* Encabezado */
+.cabecera { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--tinta); color: #fff; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 21; background: var(--tinta); }
+.cabecera .envase { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 66px; }
+.marca { text-decoration: none; display: flex; align-items: baseline; gap: 10px; }
+.marca b { font-family: var(--cartel); font-weight: 400; font-size: 30px; color: var(--vivo); line-height: 1; }
+.marca span { font-size: 13px; color: #b7c2b3; }
+.menu { display: flex; gap: 26px; font-weight: 600; font-size: 15px; }
+.menu a { text-decoration: none; color: #d8e0d4; }
+.menu a:hover { color: #fff; }
+.cabecera .boton { min-height: 42px; padding: 0 16px; font-size: 15px; }
+@media (max-width: 900px) { .menu { display: none; } }
+@media (max-width: 420px) { .marca span { display: none; } }
+
+/* Portada */
+.portada { background: var(--verde); color: #fff; padding-block: 52px 60px; }
+.portada .envase { display: grid; grid-template-columns: 1.25fr .75fr; gap: 48px; align-items: center; }
+.estado { display: inline-flex; align-items: center; gap: 10px; background: rgba(0,0,0,.25); border-radius: 999px; padding: 7px 14px 7px 12px; font-size: 15px; font-weight: 600; }
+.estado i { width: 10px; height: 10px; border-radius: 50%; background: #b7c2b3; }
+.estado.abierto i { background: var(--vivo); box-shadow: 0 0 0 4px rgba(95,209,43,.25); }
+.estado.cerrado i { background: #ff8a7a; }
+.portada h1 { font-size: clamp(46px, 7.4vw, 96px); margin-top: 20px; text-transform: uppercase; line-height: .95; }
+.portada h1 span { color: var(--vivo); }
+.portada .bajada { color: #d4e4d6; margin: 20px 0 28px; font-size: 19px; }
+.acciones { display: flex; flex-wrap: wrap; gap: 12px; }
+.portada .boton.borde { color: #fff; }
+.portada .boton.borde:hover { background: #fff; color: var(--verde); border-color: #fff; }
+.zonas-cortas { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 8px; }
+.zonas-cortas span { border: 1px solid rgba(255,255,255,.35); border-radius: 999px; padding: 5px 12px; font-size: 14px; font-weight: 600; }
+.foto-real { margin: 0; justify-self: center; width: min(100%, 330px); transform: rotate(2deg); background: #fff; padding: 10px 10px 14px; border-radius: 14px; box-shadow: 0 24px 50px -20px rgba(0,0,0,.55); }
+.foto-real img { border-radius: 8px; width: 100%; aspect-ratio: 361 / 560; object-fit: cover; object-position: center 70%; }
+.foto-real figcaption { color: var(--tinta); font-weight: 600; font-size: 15px; margin-top: 10px; text-align: center; }
+@media (max-width: 860px) {
+  .portada { padding-block: 34px 48px; }
+  .portada .envase { grid-template-columns: 1fr; gap: 40px; }
+  .foto-real { width: min(78%, 300px); }
+}
+
+/* Promos */
+.promos { padding-block: 72px 24px; }
+.fila-promos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 32px; }
+.promo { background: var(--papel); border: 1px solid var(--linea); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; }
+.promo img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
+.promo .txt { padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.promo h3 { font-size: 28px; }
+.promo p { color: var(--gris); font-size: 16px; }
+.promo .pie-promo { margin-top: auto; padding-top: 10px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.promo .precio { font-size: 30px; color: var(--verde-2); }
+.sumar { min-height: 42px; padding: 0 16px; border-radius: 10px; border: 0; background: var(--tinta); color: #fff; font-weight: 700; cursor: pointer; }
+.sumar:hover { background: var(--verde); }
+.promo.jueves { background: var(--tinta); color: #fff; border-color: var(--tinta); }
+.promo.jueves p { color: #c3ccbf; }
+.promo.jueves .precio { color: var(--vivo); }
+.promo.jueves .sumar { background: var(--vivo); color: var(--tinta); }
+.etiqueta-dia { align-self: flex-start; background: var(--vivo); color: var(--tinta); font-weight: 700; font-size: 13px; border-radius: 6px; padding: 3px 8px; }
+@media (max-width: 900px) { .fila-promos { grid-template-columns: 1fr 1fr; } .promo.jueves { grid-column: span 2; } }
+@media (max-width: 560px) { .promos { padding-block: 56px 16px; } .fila-promos { grid-template-columns: 1fr; } .promo.jueves { grid-column: auto; } }
+
+/* Carta y pedido */
+.carta { padding-block: 56px 80px; }
+.carta-grilla { display: grid; grid-template-columns: 1fr 380px; gap: 36px; align-items: start; margin-top: 32px; }
+.cat { background: var(--papel); border: 1px solid var(--linea); border-radius: 16px; overflow: hidden; }
+.cat + .cat { margin-top: 18px; }
+.cat-cab { display: grid; grid-template-columns: 150px 1fr; align-items: stretch; border-bottom: 1px solid var(--linea); }
+.cat-cab img { width: 100%; height: 100%; min-height: 110px; object-fit: cover; }
+.cat-cab div { padding: 18px 20px; align-self: center; }
+.cat-cab h3 { font-size: 30px; }
+.cat-cab p { color: var(--gris); font-size: 15px; margin-top: 4px; }
+.items { list-style: none; margin: 0; padding: 4px 20px; }
+.item { display: grid; grid-template-columns: 1fr auto auto; gap: 6px 16px; align-items: center; padding: 14px 0; border-bottom: 1px dashed var(--linea); }
+.item:last-child { border-bottom: 0; }
+.item b { font-weight: 700; font-size: 17px; }
+.item small { display: block; color: var(--gris); font-size: 14px; line-height: 1.4; }
+.item .precio { font-size: 20px; }
+.item .precio.consultar { font-family: var(--sans); font-size: 14px; font-weight: 600; color: var(--gris); }
+.paso { display: inline-flex; align-items: center; border: 1.5px solid var(--linea); border-radius: 10px; overflow: hidden; }
+.paso button { width: 38px; height: 38px; border: 0; background: var(--fondo); cursor: pointer; font-size: 20px; font-weight: 700; line-height: 1; }
+.paso button:hover { background: var(--linea); }
+.paso output { min-width: 30px; text-align: center; font-weight: 700; font-variant-numeric: tabular-nums; }
+.item.lleno .paso { border-color: var(--verde-2); }
+@media (max-width: 560px) {
+  .cat-cab { grid-template-columns: 1fr; }
+  .cat-cab img { aspect-ratio: 16 / 8; min-height: 0; }
+  .item { grid-template-columns: 1fr auto; }
+  .item .precio { grid-column: 1; grid-row: 2; }
+  .item .paso { grid-column: 2; grid-row: 1 / span 2; }
+  .items { padding: 4px 16px; }
+}
+
+.pedido { position: sticky; top: 86px; background: var(--tinta); color: #fff; border-radius: 18px; padding: 24px; display: grid; gap: 18px; }
+.pedido h3 { font-size: 32px; color: var(--vivo); }
+.lista-pedido { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: 15px; }
+.lista-pedido li { display: flex; justify-content: space-between; gap: 12px; }
+.lista-pedido .vacio { color: #9aa696; }
+.total { display: flex; justify-content: space-between; align-items: baseline; border-top: 1px solid #2c342a; padding-top: 14px; }
+.total .precio { font-size: 34px; color: var(--vivo); }
+.total small { display: block; color: #9aa696; font-size: 13px; }
+.campo label, .campo .etq { display: block; font-weight: 600; font-size: 14px; color: #c3ccbf; margin-bottom: 6px; }
+.campo input, .campo select { width: 100%; min-height: 46px; border-radius: 10px; border: 1.5px solid #333d31; background: #1b2119; color: #fff; padding: 0 12px; font: 400 16px var(--sans); }
+.opciones { display: flex; flex-wrap: wrap; gap: 8px; position: relative; }
+.opciones input { position: absolute; left: 0; top: 0; width: 1px; height: 1px; margin: 0; opacity: 0; pointer-events: none; }
+.opciones label { margin: 0; display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; border-radius: 999px; border: 1.5px solid #333d31; cursor: pointer; color: #e3e9e0; font-weight: 600; font-size: 14px; }
+.opciones input:checked + label { background: var(--vivo); border-color: var(--vivo); color: var(--tinta); }
+.opciones input:focus-visible + label { outline: 3px solid var(--vivo); outline-offset: 2px; }
+.oculto { display: none !important; }
+.pedido .boton.wa { width: 100%; }
+.pedido .boton.wa[aria-disabled="true"] { background: #2c342a; color: #8f9a8c; pointer-events: none; }
+.aviso { font-size: 13px; color: #9aa696; text-align: center; }
+@media (max-width: 960px) { .carta-grilla { grid-template-columns: 1fr; } .pedido { position: static; } }
+
+/* Envíos */
+.envios { background: var(--papel); border-block: 1px solid var(--linea); padding-block: 80px; }
+.envios .envase { display: grid; grid-template-columns: .9fr 1.1fr; gap: 48px; align-items: center; }
+.zonas { list-style: none; margin: 24px 0 0; padding: 0; display: grid; gap: 10px; }
+.zonas li { display: flex; align-items: center; gap: 12px; font-size: 20px; font-weight: 700; }
+.zonas li::before { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--vivo); box-shadow: 0 0 0 4px rgba(95,209,43,.2); }
+.zonas li.alr { font-weight: 500; color: var(--gris); font-size: 17px; }
+.horario { margin-top: 28px; display: grid; grid-template-columns: auto 1fr; gap: 8px 20px; font-variant-numeric: tabular-nums; }
+.horario dt { color: var(--gris); }
+.horario dd { margin: 0; font-weight: 700; }
+.mapa { position: relative; border-radius: 16px; overflow: hidden; aspect-ratio: 4 / 3; max-width: 100%; border: 1px solid var(--linea); background: var(--linea); }
+.mapa img, .mapa iframe { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border: 0; }
+.mapa-nota { font-size: 14px; color: var(--gris); margin-top: 10px; }
+@media (max-width: 860px) { .envios { padding-block: 60px; } .envios .envase { grid-template-columns: 1fr; gap: 32px; } }
+
+/* Historia */
+.historia { padding-block: 80px; }
+.historia .envase { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+.historia img { border-radius: 16px; aspect-ratio: 3 / 2; object-fit: cover; width: 100%; }
+.historia p { color: var(--gris); margin-top: 16px; max-width: 54ch; font-size: 18px; }
+.historia p strong { color: var(--tinta); }
+@media (max-width: 860px) { .historia { padding-block: 60px; } .historia .envase { grid-template-columns: 1fr; gap: 28px; } }
+
+/* Pie */
+.pie { background: var(--tinta); color: #fff; padding-block: 60px calc(30px + env(safe-area-inset-bottom, 0px)); }
+.pie-grilla { display: grid; grid-template-columns: 1.3fr 1fr 1fr 1fr; gap: 36px; }
+.pie .marca b { font-size: 46px; }
+.pie p { color: #b7c2b3; margin-top: 12px; max-width: 32ch; }
+.pie h3 { font-family: var(--sans); font-size: 14px; font-weight: 600; color: #8f9a8c; margin-bottom: 14px; }
+.pie ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.pie ul a { text-decoration: none; font-weight: 600; }
+.pie ul a:hover { text-decoration: underline; }
+.pie ul small { display: block; color: #8f9a8c; font-weight: 400; font-size: 13px; }
+.pie .boton { margin-top: 22px; }
+.pie-final { border-top: 1px solid #2c342a; margin-top: 44px; padding-top: 20px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 24px; font-size: 13px; color: #8f9a8c; }
+.pie-final a { color: #d8e0d4; }
+@media (max-width: 960px) { .pie-grilla { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 520px) { .pie-grilla { grid-template-columns: 1fr; } }
+
+/* Barra de pedido en el celu */
+.barra-pedido { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; background: var(--tinta); color: #fff; padding: 12px max(16px, env(safe-area-inset-right, 0px)) calc(12px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); display: none; align-items: center; justify-content: space-between; gap: 12px; box-shadow: 0 -10px 30px -12px rgba(0,0,0,.5); }
+.barra-pedido .precio { color: var(--vivo); font-size: 26px; }
+.barra-pedido small { display: block; color: #9aa696; font-size: 13px; }
+.barra-pedido .boton { min-height: 46px; }
+@media (max-width: 960px) { .barra-pedido.ver { display: flex; } }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-wa" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.3-.4.8-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.4.8 3.2.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></symbol>
+</svg>
+
+<header class="cabecera">
+  <div class="envase">
+    <a class="marca" href="#inicio"><b>El Torito</b><span>Rotisería con envíos</span></a>
+    <nav class="menu" aria-label="Secciones">
+      <a href="#promos">Promos</a>
+      <a href="#carta">Carta</a>
+      <a href="#envios">Envíos y horario</a>
+      <a href="#historia">El Torito</a>
+    </nav>
+    <a class="boton wa" data-wa="Hola, les escribo desde la web. Quería hacer un pedido." href="#"><svg><use href="#i-wa"/></svg>Pedir</a>
+  </div>
+</header>
+
+<main id="inicio">
+  <section class="portada">
+    <div class="envase">
+      <div>
+        <span class="estado" id="estado"><i></i><span>Todos los días de 11 a 15 y de 20 a 0</span></span>
+        <h1>Pizzas, hamburguesas y milanesas <span>a tu puerta</span></h1>
+        <p class="bajada">Comida casera, porciones grandes y precios de barrio. Armá tu pedido acá y te llega por WhatsApp en un toque.</p>
+        <div class="acciones">
+          <a class="boton vivo" href="#carta">Armá tu pedido</a>
+          <a class="boton wa" data-wa="Hola, les escribo desde la web. Quería hacer un pedido." href="#"><svg><use href="#i-wa"/></svg>11 5640-9691</a>
+        </div>
+        <div class="zonas-cortas" aria-label="Zonas de envío"><span>La Tablada</span><span>Lomas del Mirador</span><span>San Justo</span><span>y alrededores</span></div>
+      </div>
+      <figure class="foto-real">
+        <img src="img/milanesa-cheddar.jpg" width="361" height="640" alt="Milanesa con cheddar, verdeo y papas fritas en la bandeja de El Torito">
+        <figcaption>Milanesa de cheddar para dos</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="promos" id="promos" aria-labelledby="t-promos">
+    <div class="envase">
+      <h2 id="t-promos">Las promos de El Torito</h2>
+      <div class="fila-promos">
+        <article class="promo">
+          <img src="img/pizza.jpg" width="800" height="1200" loading="lazy" alt="Pizza de muzzarella cortada en porciones">
+          <div class="txt"><h3>3 pizzas grandes de muzza</h3><p>Para la familia o para juntarse con amigos.</p>
+            <div class="pie-promo"><span class="precio">$25.000</span><button class="sumar" data-id="pz3muzza">Sumar</button></div></div>
+        </article>
+        <article class="promo">
+          <img src="img/hamburguesa.jpg" width="800" height="534" loading="lazy" alt="Hamburguesa con cheddar y papas fritas">
+          <div class="txt"><h3>Combo Familia</h3><p>2 simples con cheddar, 2 completas y papas.</p>
+            <div class="pie-promo"><span class="precio">$24.000</span><button class="sumar" data-id="cfamilia">Sumar</button></div></div>
+        </article>
+        <article class="promo jueves">
+          <img src="img/hamburjueves.jpg" width="800" height="534" loading="lazy" alt="Hamburguesa con huevo frito, panceta y queso">
+          <div class="txt"><span class="etiqueta-dia">Sólo los jueves</span><h3>Hamburjueves</h3><p>Hamburguesa con huevo frito, queso, lechuga y tomate, con papas.</p>
+            <div class="pie-promo"><span class="precio">$7.000</span><button class="sumar" data-id="hjueves">Sumar</button></div></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="carta" id="carta" aria-labelledby="t-carta">
+    <div class="envase">
+      <h2 id="t-carta">Armá tu pedido</h2>
+      <p class="bajada" style="margin-top:12px">Sumá lo que quieras con el +. Al final elegís cómo pagar y nos llega todo por WhatsApp.</p>
+      <div class="carta-grilla">
+        <div id="carta-lista"></div>
+        <aside class="pedido" id="pedido" aria-labelledby="t-pedido">
+          <h3 id="t-pedido">Tu pedido</h3>
+          <ul class="lista-pedido" id="lista-pedido"><li class="vacio">Todavía no sumaste nada.</li></ul>
+          <div class="total"><div>Total<small>Sin el envío</small></div><span class="precio" id="total">$0</span></div>
+          <div class="campo">
+            <span class="etq" id="e-entrega">¿Cómo lo querés?</span>
+            <div class="opciones" role="radiogroup" aria-labelledby="e-entrega">
+              <input type="radio" name="entrega" id="en1" value="envio" checked><label for="en1">Con envío</label>
+              <input type="radio" name="entrega" id="en2" value="retiro"><label for="en2">Lo retiro</label>
+            </div>
+          </div>
+          <div class="campo" id="c-zona">
+            <label for="zona">Zona</label>
+            <select id="zona"><option>La Tablada</option><option>Lomas del Mirador</option><option>San Justo</option><option>Otra zona cercana</option></select>
+          </div>
+          <div class="campo" id="c-dir">
+            <label for="direccion">Dirección</label>
+            <input type="text" id="direccion" autocomplete="street-address" placeholder="Calle, número y entre calles">
+          </div>
+          <div class="campo">
+            <span class="etq" id="e-pago">¿Cómo pagás?</span>
+            <div class="opciones" role="radiogroup" aria-labelledby="e-pago">
+              <input type="radio" name="pago" id="pg1" value="efectivo" checked><label for="pg1">Efectivo</label>
+              <input type="radio" name="pago" id="pg2" value="transferencia"><label for="pg2">Transferencia</label>
+            </div>
+          </div>
+          <div class="campo">
+            <label for="nombre">Tu nombre</label>
+            <input type="text" id="nombre" autocomplete="given-name" placeholder="Para saber a quién le llevamos">
+          </div>
+          <a class="boton wa" id="enviar" href="#" target="_blank" rel="noopener" aria-disabled="true"><svg><use href="#i-wa"/></svg>Mandar pedido por WhatsApp</a>
+          <p class="aviso">Te confirmamos el pedido, el costo del envío y la demora por WhatsApp.</p>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="envios" id="envios" aria-labelledby="t-envios">
+    <div class="envase">
+      <div>
+        <h2 id="t-envios">Envíos y horario</h2>
+        <ul class="zonas">
+          <li>La Tablada</li>
+          <li>Lomas del Mirador</li>
+          <li>San Justo</li>
+          <li class="alr">y alrededores: preguntá si llegamos a tu casa</li>
+        </ul>
+        <dl class="horario">
+          <dt>Mediodía</dt><dd>Todos los días de 11 a 15</dd>
+          <dt>Noche</dt><dd>Todos los días de 20 a 0</dd>
+        </dl>
+        <div class="acciones" style="margin-top:28px">
+          <a class="boton wa" data-wa="Hola, ¿llegan con el envío a mi zona? Estoy en " href="#"><svg><use href="#i-wa"/></svg>Preguntar por mi zona</a>
+        </div>
+      </div>
+      <div>
+        <div class="mapa">
+          <img src="img/mapa.jpg" width="1000" height="750" loading="lazy" alt="Mapa de La Tablada, Lomas del Mirador y San Justo">
+          <iframe title="Mapa de la zona de envíos de El Torito" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=Lomas%20del%20Mirador%2C%20Buenos%20Aires&amp;z=13&amp;hl=es&amp;output=embed"></iframe>
+        </div>
+        <p class="mapa-nota">La zona donde llegamos con el envío. Los pedidos se toman sólo por WhatsApp.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="historia" id="historia" aria-labelledby="t-historia">
+    <div class="envase">
+      <img src="img/envio.jpg" width="800" height="534" loading="lazy" alt="Repartidor en moto con la caja de envíos">
+      <div>
+        <h2 id="t-historia">El Torito vuelve</h2>
+        <p>Tuvimos que cerrar la rotisería, pero no bajamos los brazos. <strong>Hoy cocinamos desde casa y te lo llevamos</strong>, mientras buscamos de nuevo nuestro propio local.</p>
+        <p>Cada pedido, cada recomendación y cada vez que compartís una publicación nos ayuda a volver. Gracias por bancarnos.</p>
+        <div class="acciones" style="margin-top:24px">
+          <a class="boton borde" href="https://www.instagram.com/eltorito.1911/" target="_blank" rel="noopener">Seguinos en Instagram</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="pie">
+  <div class="envase">
+    <div class="pie-grilla">
+      <div>
+        <a class="marca" href="#inicio"><b>El Torito</b></a>
+        <p>Rotisería con pizzas, hamburguesas, milanesas y empanadas, con envíos en La Matanza.</p>
+        <a class="boton wa" data-wa="Hola, les escribo desde la web. Quería hacer un pedido." href="#"><svg><use href="#i-wa"/></svg>Pedir por WhatsApp</a>
+      </div>
+      <div>
+        <h3>Pedidos</h3>
+        <ul>
+          <li><a data-wa="Hola, les escribo desde la web. Quería hacer un pedido." href="#">WhatsApp<small>11 5640-9691</small></a></li>
+          <li><a href="#carta">Armá tu pedido<small>Con la carta y el total</small></a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Redes</h3>
+        <ul>
+          <li><a href="https://www.instagram.com/eltorito.1911/" target="_blank" rel="noopener">Instagram<small>@eltorito.1911</small></a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Horario y envíos</h3>
+        <ul>
+          <li><span style="font-weight:600">Todos los días<small>11 a 15 y 20 a 0</small></span></li>
+          <li><a href="#envios">Zonas de envío<small>La Tablada, Lomas del Mirador, San Justo</small></a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="pie-final">
+      <span>Fotos de comida y reparto en Unsplash: <a href="https://unsplash.com/photos/7wM-Ad3p56E" target="_blank" rel="noopener">Artem Mihailov</a>, <a href="https://unsplash.com/photos/8l8Yl2ruUsg" target="_blank" rel="noopener">Jonathan Borba</a>, <a href="https://unsplash.com/photos/bIqYQWqBZbo" target="_blank" rel="noopener">Stefan Vibes</a>, <a href="https://unsplash.com/photos/MyfbM2QYF4o" target="_blank" rel="noopener">Mark König</a>, <a href="https://unsplash.com/photos/zPU61huC8Gc" target="_blank" rel="noopener">fellipe teixeira</a>, <a href="https://unsplash.com/photos/bG8sQGD8Bi8" target="_blank" rel="noopener">Lee Milo</a>, <a href="https://unsplash.com/photos/7ntwSjz8HZE" target="_blank" rel="noopener">Ana Beatriz</a> y <a href="https://unsplash.com/photos/4_Ha_neGOEY" target="_blank" rel="noopener">Nurulloh A.A</a>. La milanesa de cheddar es de El Torito. Precios de sus últimas publicaciones.</span>
+      <span>Demo de <a href="https://mymsoluciones.online" target="_blank" rel="noopener">MyM Soluciones</a></span>
+    </div>
+  </div>
+</footer>
+
+<div class="barra-pedido" id="barra-pedido">
+  <div><small id="barra-cant">0 productos</small><span class="precio" id="barra-total">$0</span></div>
+  <a class="boton vivo" href="#pedido">Ver pedido</a>
+</div>
+
+<script>
+(function () {
+  var WA = '5491156409691';
+  var CARTA = [
+    { cat: 'Pizzas', img: 'img/pizza.jpg', alt: 'Pizza de muzzarella', desc: 'Grandes, para compartir.', items: [
+      { id: 'pz3muzza', n: 'Promo 3 grandes de muzza', p: 25000 },
+      { id: 'pz3elec', n: 'Promo 3 pizzas a elección', d: '1 muzza y 2 a elección: jamón, fugazza con muzza, tomate o huevo duro.', p: 30000 }
+    ]},
+    { cat: 'Hamburguesas y combos', img: 'img/hamburguesa.jpg', alt: 'Hamburguesa con papas fritas', desc: 'Todos los combos vienen con papas.', items: [
+      { id: 'hsimple', n: 'Hamburguesa simple con papas', d: 'Cheddar, panceta, cebolla, barbacoa y salsa especial.', p: 7000 },
+      { id: 'hdoble', n: 'Hamburguesa doble con papas', d: 'Cheddar, panceta, cebolla, barbacoa y salsa especial.', p: 13000 },
+      { id: 'ctranqui', n: 'Combo Tranqui', d: '2 simples con cheddar y papas.', p: 12000 },
+      { id: 'cpareja', n: 'Combo Pareja', d: '2 simples con cheddar y panceta, y papas.', p: 14000 },
+      { id: 'cmix', n: 'Combo Mix', d: '1 simple con cheddar, 1 completa y papas.', p: 15000 },
+      { id: 'cfamilia', n: 'Combo Familia', d: '2 simples con cheddar, 2 completas y papas.', p: 24000 },
+      { id: 'camigos', n: 'Combo Amigos', d: '4 hamburguesas simples a elección y papas.', p: 30000 }
+    ]},
+    { cat: 'Milanesas', img: 'img/milanesa.jpg', alt: 'Milanesa con papas', desc: 'Con papas fritas.', items: [
+      { id: 'milind', n: 'Milanesa individual a gusto con papas', p: 12000 },
+      { id: 'milbox', n: 'Box de 3 milanesas con papas', d: 'Napolitana, cheddar y fugazza con muzza.', p: null },
+      { id: 'milched', n: 'Milanesa de cheddar para dos', d: 'Con verdeo y papas fritas.', p: null }
+    ]},
+    { cat: 'Papas y para picar', img: 'img/papas-cheddar.jpg', alt: 'Papas fritas con cheddar y panceta', desc: 'Salsas: Big Mac, cheddar o barbacoa.', items: [
+      { id: 'papas', n: 'Papas simples', p: 5000 },
+      { id: 'papasched', n: 'Papas con cheddar, panceta y verdeo', p: 7500 },
+      { id: 'nuggets', n: 'Nuggets con dos salsas', p: 7000 }
+    ]},
+    { cat: 'Los jueves', img: 'img/hamburjueves.jpg', alt: 'Hamburguesa con huevo frito', desc: 'Promos que salen sólo los jueves.', items: [
+      { id: 'hjueves', n: 'Hamburjueves', d: 'Pan, medallón, lechuga, tomate, huevo frito, queso y papas redondas.', p: 7000 },
+      { id: 'pancho', n: 'Pancho Torito', d: 'Con cheddar, panceta crocante y verdeo.', p: 4000 }
+    ]},
+    { cat: 'Empanadas', img: 'img/empanadas.jpg', alt: 'Empanadas doradas en un plato', desc: 'Por unidad o por docena.', items: [
+      { id: 'empanadas', n: 'Empanadas', d: 'Preguntá los sabores del día.', p: null }
+    ]}
+  ];
+
+  var porId = {}, cant = {};
+  var fmt = function (n) { return '$' + n.toLocaleString('es-AR'); };
+  var cont = document.getElementById('carta-lista');
+  CARTA.forEach(function (c) {
+    var sec = document.createElement('section'); sec.className = 'cat';
+    sec.innerHTML = '<div class="cat-cab"><img src="' + c.img + '" alt="' + c.alt + '" loading="lazy"><div><h3>' + c.cat + '</h3><p>' + c.desc + '</p></div></div><ul class="items"></ul>';
+    var ul = sec.querySelector('ul');
+    c.items.forEach(function (it) {
+      porId[it.id] = it; cant[it.id] = 0;
+      var li = document.createElement('li'); li.className = 'item'; li.dataset.id = it.id;
+      li.innerHTML = '<div><b>' + it.n + '</b>' + (it.d ? '<small>' + it.d + '</small>' : '') + '</div>' +
+        (it.p ? '<span class="precio">' + fmt(it.p) + '</span>' : '<span class="precio consultar">A consultar</span>') +
+        '<span class="paso"><button type="button" data-menos aria-label="Sacar uno de ' + it.n + '">−</button><output aria-live="polite">0</output><button type="button" data-mas aria-label="Sumar uno de ' + it.n + '">+</button></span>';
+      ul.appendChild(li);
+    });
+    cont.appendChild(sec);
+  });
+
+  function cambiar(id, d) { cant[id] = Math.max(0, (cant[id] || 0) + d); pintar(); }
+  cont.addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    var id = b.closest('.item').dataset.id;
+    cambiar(id, b.hasAttribute('data-mas') ? 1 : -1);
+  });
+  document.querySelectorAll('.sumar').forEach(function (b) {
+    b.addEventListener('click', function () { cambiar(b.dataset.id, 1); b.textContent = 'Sumado'; setTimeout(function () { b.textContent = 'Sumar'; }, 1200); });
+  });
+
+  var f = document.getElementById('pedido');
+  function val(n) { var x = f.querySelector('input[name="' + n + '"]:checked'); return x ? x.value : ''; }
+
+  function pintar() {
+    var lista = document.getElementById('lista-pedido'), total = 0, unidades = 0, consultar = false, lineas = [];
+    lista.innerHTML = '';
+    Object.keys(cant).forEach(function (id) {
+      var q = cant[id], it = porId[id];
+      document.querySelector('.item[data-id="' + id + '"] output').textContent = q;
+      document.querySelector('.item[data-id="' + id + '"]').classList.toggle('lleno', q > 0);
+      if (!q) return;
+      unidades += q;
+      if (it.p) total += it.p * q; else consultar = true;
+      var li = document.createElement('li');
+      li.innerHTML = '<span>' + q + ' × ' + it.n + '</span><span>' + (it.p ? fmt(it.p * q) : 'a consultar') + '</span>';
+      lista.appendChild(li);
+      lineas.push('• ' + q + ' × ' + it.n + (it.p ? ' (' + fmt(it.p * q) + ')' : ''));
+    });
+    if (!unidades) lista.innerHTML = '<li class="vacio">Todavía no sumaste nada.</li>';
+    var envio = val('entrega') === 'envio';
+    document.getElementById('c-zona').classList.toggle('oculto', !envio);
+    document.getElementById('c-dir').classList.toggle('oculto', !envio);
+    document.getElementById('total').textContent = fmt(total) + (consultar ? ' + a consultar' : '');
+    document.getElementById('barra-total').textContent = fmt(total);
+    document.getElementById('barra-cant').textContent = unidades + (unidades === 1 ? ' producto' : ' productos');
+    document.getElementById('barra-pedido').classList.toggle('ver', unidades > 0);
+
+    var nom = document.getElementById('nombre').value.trim();
+    var dir = document.getElementById('direccion').value.trim();
+    var msg = ['Hola El Torito' + (nom ? ', soy ' + nom : '') + '. Quiero hacer este pedido:'].concat(lineas);
+    msg.push('Total: ' + fmt(total) + (consultar ? ' más lo que tengo que consultar' : '') + '.');
+    msg.push(envio ? 'Con envío a ' + document.getElementById('zona').value + (dir ? ', ' + dir : '') + '.' : 'Lo paso a retirar.');
+    msg.push('Pago con ' + val('pago') + '.');
+    var a = document.getElementById('enviar');
+    a.href = 'https://wa.me/' + WA + '?text=' + encodeURIComponent(msg.join('\n'));
+    a.setAttribute('aria-disabled', unidades ? 'false' : 'true');
+  }
+  f.addEventListener('input', pintar); f.addEventListener('change', pintar);
+
+  document.querySelectorAll('[data-wa]').forEach(function (a) {
+    a.href = 'https://wa.me/' + WA + '?text=' + encodeURIComponent(a.dataset.wa);
+    a.target = '_blank'; a.rel = 'noopener';
+  });
+
+  // Abierto o cerrado según la hora de Buenos Aires: 11 a 15 y 20 a 0, todos los días.
+  try {
+    var v = {}; new Intl.DateTimeFormat('en-US', { timeZone: 'America/Argentina/Buenos_Aires', hour: 'numeric', minute: 'numeric', hourCycle: 'h23' }).formatToParts(new Date()).forEach(function (p) { v[p.type] = p.value; });
+    var m = parseInt(v.hour, 10) * 60 + parseInt(v.minute, 10), est = document.getElementById('estado'), t = est.querySelector('span');
+    if ((m >= 660 && m < 900) || m >= 1200) { est.classList.add('abierto'); t.textContent = 'Abierto ahora · tomamos pedidos hasta las ' + (m >= 1200 ? '0' : '15'); }
+    else { est.classList.add('cerrado'); t.textContent = 'Cerrado ahora · abrimos ' + (m < 660 ? 'a las 11' : 'a las 20'); }
+  } catch (e) {}
+
+  pintar();
+})();
+</script>
+</body>
+</html>
