@@ -20,6 +20,7 @@
      Nunca se piden contraseñas: si el cliente quiere que MyM maneje una cuenta, los accesos van por WhatsApp a Matías. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="../videos/tutorial.css?v=202611252300">
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* Una sola columna para completar con el pulgar. Arriba se elige el tipo de negocio y eso arma el recorrido;
@@ -323,7 +324,8 @@ input:disabled,textarea:disabled{opacity:.45}
     if (q.type === 'tipos') c = `<div class="tipos">${q.o.map((o, j) => `<label><input type="checkbox" id="${q.id}-${j}" data-k="${q.id}" data-modo="una" value="${o[0]}"><b>${o[1]}</b><span>${o[2]}</span></label>`).join('')}</div>`;
     if (q.type === 'una') c = ops(q, q.ns === false ? q.o : q.o.concat(Q.NS), 'una') + (q.otro ? `<div id="${q.id}-otro-caja" hidden style="margin-top:10px"><label class="h" for="${q.id}_otro">${q.otroT || '¿Cuánto?'}</label><input type="text" id="${q.id}_otro" data-k="${q.id}_otro" maxlength="${Q.LARGO.otro}" autocomplete="off"></div>` : '');
     if (q.type === 'varias') c = ops(q, q.o.concat(q.ex || Q.NS), 'varias');
-    if (q.type === 'precios') c = `<div class="leer"><label class="btn btn-sec"><input type="file" data-leer="${q.id}" accept="image/*,.heic,.heif,application/pdf,.pdf,.xlsx,.xls,.csv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel">Subir mi lista y que se cargue sola</label>
+    // Video tutorial de la lista de precios (25/11/2026, pedido de Budy): arranca sólo si lo tocan (videos/tutorial.js).
+    if (q.type === 'precios') c = `<div class="tuto"><button type="button" class="tuto-btn" aria-label="Ver el video de 20 segundos: cómo cargar tu lista de precios"><span class="tuto-mini"><img src="../videos/20-corto-precios.jpg" alt="" width="54" height="96" loading="lazy"></span><span class="tuto-txt"><b>Mirá cómo se carga la lista</b><span>En 20 segundos: subirla y cargar a mano</span></span></button><div class="tuto-ver" hidden><video controls playsinline preload="none" poster="../videos/20-corto-precios.jpg" width="300" height="533"><source src="../videos/20-corto-precios.mp4" type="video/mp4"></video><button type="button" class="tuto-cerrar">Cerrar el video</button></div></div><div class="leer"><label class="btn btn-sec"><input type="file" data-leer="${q.id}" accept="image/*,.heic,.heif,application/pdf,.pdf,.xlsx,.xls,.csv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel">Subir mi lista y que se cargue sola</label>
       <span class="h">Foto, PDF, Excel o CSV. La leemos y te proponemos los renglones: vos elegís cuáles quedan.</span><div id="${q.id}-propuesta" role="status"></div></div>
       <p class="h" style="margin:14px 0 8px">O escribilos acá, un renglón por ${q.cols[0].toLowerCase()}:</p><div class="renglones" id="${q.id}-renglones">${renglones(q)}</div>`;
     if (q.id === 'derivarCuando') c += `<p class="nota" id="derivarCuando-nota" hidden></p>`;
@@ -747,5 +749,6 @@ input:disabled,textarea:disabled{opacity:.45}
 })();
 </script>
 <script src="../whatsapp-link.js?v=202611211930" defer></script>
+<script src="../videos/tutorial.js?v=202611252300" defer></script>
 </body>
 </html>

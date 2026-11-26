@@ -17,6 +17,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;900&family=Instrument+Serif:ital@1&family=Michroma&family=Martian+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../tramites/tramite.css?v=202611192000">
+<link rel="stylesheet" href="../videos/tutorial.css?v=202611252300">
 <style>
 .pasos-alta{display:flex;gap:8px;margin:0 0 22px;padding:0;list-style:none}
 .pasos-alta li{flex:1;height:7px;border-radius:99px;background:#dbe4f7}
@@ -75,6 +76,8 @@
     <p class="rotulo">Contratá en unos minutos</p>
     <h1>Sumá tu negocio<em>a MyM Soluciones.</em></h1>
     <p class="bajada">Elegí lo que querés contratar y cargá tus datos. Si sumás el bot, después conectás tu WhatsApp con la ventana oficial de Meta: el número sigue siendo tuyo.</p>
+    <!-- Video tutorial del alta (25/11/2026, pedido de Budy): del alta al Boti prendido. Arranca sólo si lo tocan. -->
+    <div class="tuto"><button type="button" class="tuto-btn" aria-label="Ver el video de un minuto: cómo armar y prender tu Boti"><span class="tuto-mini"><img src="../videos/19-tutorial-alta.jpg" alt="" width="54" height="96" loading="lazy"></span><span class="tuto-txt"><b>Mirá cómo se hace</b><span>Del alta al Boti prendido, en un minuto</span></span></button><div class="tuto-ver" hidden><video controls playsinline preload="none" poster="../videos/19-tutorial-alta.jpg" width="300" height="533"><source src="../videos/19-tutorial-alta.mp4" type="video/mp4"></video><button type="button" class="tuto-cerrar">Cerrar el video</button></div></div>
     <ol class="pasos-alta" aria-label="Pasos del alta"><li class="si"></li><li></li><li></li><li></li><li></li></ol>
     <div id="estado"></div>
 
@@ -163,6 +166,7 @@
     <section class="tarjeta paso-alta" id="paso2">
       <h2 style="font:900 24px/1.15 Archivo,sans-serif;margin:0 0 10px">Conectá el WhatsApp de tu negocio</h2>
       <p class="aviso" id="aviso2" hidden><b>¡Ya aprobaste tu Boti!</b> Falta sólo esto: apenas conectes tu WhatsApp, empieza a contestar.</p>
+      <div class="tuto"><button type="button" class="tuto-btn" aria-label="Ver el video de 20 segundos: cómo conectar tu WhatsApp"><span class="tuto-mini"><img src="../videos/21-corto-conectar-whatsapp.jpg" alt="" width="54" height="96" loading="lazy"></span><span class="tuto-txt"><b>Mirá cómo se conecta</b><span>Los dos caminos, en 20 segundos</span></span></button><div class="tuto-ver" hidden><video controls playsinline preload="none" poster="../videos/21-corto-conectar-whatsapp.jpg" width="300" height="533"><source src="../videos/21-corto-conectar-whatsapp.mp4" type="video/mp4"></video><button type="button" class="tuto-cerrar">Cerrar el video</button></div></div>
       <p class="leyenda" id="ley-num">¿Qué número vas a conectar?</p>
       <div class="planes" role="radiogroup" aria-labelledby="ley-num" style="margin-bottom:16px">
         <label class="opcion"><input type="radio" name="tipoNumero" value="app" checked><b>El que ya uso en WhatsApp Business</b><span>Lo seguís usando en tu celular como siempre y el bot contesta a la par. Cuando vos respondés desde el celular, el bot deja de contestar en esa charla.</span></label>
@@ -292,5 +296,6 @@
 <script src="../config.js?v=202611260020"></script>
 <script src="alta.js?v=202611252140"></script>
 <script src="../whatsapp-link.js?v=202611211930" defer></script>
+<script src="../videos/tutorial.js?v=202611252300" defer></script>
 </body>
 </html>

@@ -1,0 +1,15 @@
+/* Videos tutoriales del alta y del cuestionario (25/11/2026, pedido de Budy). Una tarjeta chica con la portada; recién al
+   tocarla se abre el video y empieza a sonar (nunca arranca solo). El video no se baja hasta que se toca: preload="none". */
+.tuto{margin:0 0 18px}
+.tuto [hidden]{display:none!important}
+.tuto-btn{display:flex;align-items:center;gap:14px;width:100%;max-width:440px;padding:10px 16px 10px 10px;border:1.5px solid var(--borde,#dbe4f7);border-radius:16px;background:transparent;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.tuto-btn:hover{border-color:var(--azul,#2f6bff)}
+.tuto-mini{position:relative;flex:none;width:54px;height:96px;border-radius:10px;overflow:hidden;background:#0e1a33}
+.tuto-mini img{width:100%;height:100%;object-fit:cover;display:block}
+.tuto-mini::after{content:"";position:absolute;left:50%;top:50%;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;background:rgba(255,255,255,.92) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 7l9 5-9 5z' fill='%232458e6'/%3E%3C/svg%3E") center/20px no-repeat;box-shadow:0 4px 12px rgba(0,0,0,.35)}
+.tuto-txt{display:grid;gap:2px;line-height:1.3}
+.tuto-txt b{font-weight:700}
+.tuto-txt span{font-size:14.5px;color:var(--gris,#4a5878)}
+.tuto-ver{display:grid;gap:8px;justify-items:start}
+.tuto-ver video{width:100%;max-width:300px;aspect-ratio:9/16;border-radius:16px;background:#0e1a33;display:block}
+.tuto-cerrar{background:none;border:0;padding:2px 0;color:var(--azul,#2f6bff);font:inherit;font-size:14.5px;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
