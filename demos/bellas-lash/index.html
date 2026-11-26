@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Bellas Lash by Ludmi</title>
+<meta name="description" content="Extensiones de pestañas, lifting, cejas, uñas, reflexología, podología y cosmetología en Bernal Oeste. Pedí tu turno con Ludmi.">
+<meta property="og:title" content="Bellas Lash by Ludmi · Bernal Oeste">
+<meta property="og:description" content="Extensiones de pestañas, cejas, uñas y cosmetología. Pedí tu turno.">
+<meta property="og:image" content="img/clasicas.jpg">
+<meta name="theme-color" content="#b3122b">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=Sacramento&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BeautySalon","name":"Bellas Lash by Ludmi",
+"address":{"@type":"PostalAddress","streetAddress":"Calle 172 Bis 1446","addressLocality":"Bernal Oeste","addressRegion":"Buenos Aires","postalCode":"B1876","addressCountry":"AR"},
+"geo":{"@type":"GeoCoordinates","latitude":-34.727644,"longitude":-58.3174879},
+"image":"img/local.jpg","sameAs":["https://www.instagram.com/bellass_lash_ludmi/"]}
+</script>
+<style>
+:root {
+  --papel: #fff8f6;
+  --rubor: #f7e1df;
+  --rubor-2: #efcdca;
+  --rojo: #b3122b;
+  --rojo-osc: #8d0d21;
+  --tinta: #1d1416;
+  --gris: #6e5c5f;
+  --linea: #ead4d1;
+  --blanco: #fff;
+  --sans: "Familjen Grotesk", "Segoe UI", system-ui, sans-serif;
+  --firma: "Sacramento", "Brush Script MT", cursive;
+  --ancho: 1160px;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; animation: none !important; } }
+body { margin: 0; background: var(--papel); color: var(--tinta); font: 400 17px/1.55 var(--sans); -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; height: auto; display: block; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--rojo); outline-offset: 3px; border-radius: 4px; }
+.envase { max-width: var(--ancho); margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { margin: 0; line-height: 1.05; letter-spacing: -0.025em; font-weight: 700; }
+h2 { font-size: clamp(32px, 5vw, 52px); }
+p { margin: 0; }
+.bajada { color: var(--gris); font-size: 18px; max-width: 52ch; }
+
+/* Botones */
+.boton { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 50px; padding: 0 24px; border-radius: 999px; font: 600 16px var(--sans); text-decoration: none; border: 2px solid var(--tinta); cursor: pointer; transition: background .2s, color .2s, border-color .2s; }
+.boton.lleno { background: var(--rojo); border-color: var(--rojo); color: #fff; }
+.boton.lleno:hover { background: var(--rojo-osc); border-color: var(--rojo-osc); }
+.boton.borde { background: transparent; color: var(--tinta); }
+.boton.borde:hover { background: var(--tinta); color: var(--papel); }
+
+/* Encabezado */
+.cabecera { position: sticky; top: env(safe-area-inset-top, 0); z-index: 20; background: rgba(255,248,246,.92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--linea); }
+.cabecera .envase { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 68px; }
+.marca { display: flex; align-items: baseline; gap: 8px; text-decoration: none; }
+.marca b { font: 400 40px/1 var(--firma); color: var(--rojo); letter-spacing: 0; }
+.marca span { font-size: 13px; color: var(--gris); }
+.menu { display: flex; gap: 26px; font-weight: 500; font-size: 15px; }
+.menu a { text-decoration: none; }
+.menu a:hover { color: var(--rojo); }
+.cabecera .boton { min-height: 42px; padding: 0 18px; font-size: 15px; }
+.marca b { white-space: nowrap; }
+@media (max-width: 860px) { .menu { display: none; } }
+@media (max-width: 420px) { .cabecera .marca b { font-size: 34px; } .cabecera .marca span { display: none; } }
+
+/* Portada */
+.portada { padding: 56px 0 72px; }
+.portada .envase { display: grid; grid-template-columns: 1.05fr .95fr; gap: 56px; align-items: center; }
+.portada h1 { font-size: clamp(42px, 6.4vw, 78px); }
+.portada h1 small { display: block; font: 400 clamp(44px, 6vw, 72px)/1 var(--firma); color: var(--rojo); letter-spacing: 0; margin-bottom: 6px; }
+.portada .bajada { margin: 22px 0 30px; }
+.acciones { display: flex; flex-wrap: wrap; gap: 12px; }
+.datos { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 30px; font-size: 15px; color: var(--gris); }
+.datos span { display: inline-flex; align-items: center; gap: 7px; }
+.datos span::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--rojo); }
+.fotos-portada { position: relative; }
+.fotos-portada .grande { border-radius: 220px 220px 28px 28px; overflow: hidden; aspect-ratio: 4 / 5; box-shadow: 0 30px 60px -30px rgba(80, 10, 20, .45); }
+.fotos-portada .grande img { width: 100%; height: 100%; object-fit: cover; }
+.fotos-portada figcaption { position: absolute; right: 14px; bottom: 14px; background: var(--papel); border-radius: 999px; padding: 6px 14px; font-size: 13px; font-weight: 500; }
+@media (max-width: 860px) {
+  .portada { padding: 34px 0 56px; }
+  .portada .envase { grid-template-columns: 1fr; gap: 40px; }
+  .fotos-portada { max-width: 420px; margin: 0 auto; }
+}
+
+/* Sets de pestañas */
+.sets { background: var(--tinta); color: var(--papel); padding: 88px 0; }
+.sets .bajada { color: #cdb9bb; margin-top: 14px; }
+.sets-grilla { display: grid; grid-template-columns: 1.2fr .8fr; gap: 48px; margin-top: 46px; align-items: start; }
+.escala { list-style: none; margin: 0; padding: 0; border-top: 1px solid #3d2c2f; }
+.escala li { display: grid; grid-template-columns: 1fr auto; gap: 6px 20px; align-items: center; padding: 20px 0; border-bottom: 1px solid #3d2c2f; }
+.escala h3 { font-size: 24px; }
+.escala p { grid-column: 1; color: #cdb9bb; font-size: 15px; }
+.puntos { grid-row: 1 / span 2; grid-column: 2; display: flex; gap: 5px; justify-content: flex-end; min-width: 130px; }
+.puntos i { width: 11px; height: 11px; border-radius: 50%; background: var(--rojo); }
+.puntos i.claro { background: transparent; border: 2px solid #6d5559; }
+.escala .nota-escala { display: block; border: 0; padding: 14px 0 0; font-size: 13px; color: #a8939a; }
+.reales { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.reales figure { margin: 0; }
+.reales img { border-radius: 18px; aspect-ratio: 3 / 4; object-fit: cover; width: 100%; }
+.reales figcaption { font-size: 14px; color: #cdb9bb; margin-top: 8px; }
+.sets .boton.lleno { margin-top: 30px; }
+@media (max-width: 860px) { .sets { padding: 64px 0; } .sets-grilla { grid-template-columns: 1fr; } }
+@media (max-width: 420px) { .puntos { min-width: 0; } .puntos i { width: 9px; height: 9px; } }
+
+/* Servicios */
+.servicios { padding: 92px 0; }
+.servicios-cab { display: flex; justify-content: space-between; align-items: end; gap: 24px; flex-wrap: wrap; }
+.lista-serv { display: grid; grid-template-columns: repeat(12, 1fr); gap: 18px; margin-top: 42px; }
+.serv { background: var(--blanco); border: 1px solid var(--linea); border-radius: 22px; overflow: hidden; display: flex; flex-direction: column; }
+.serv img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.serv .txt { padding: 20px 22px 24px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.serv h3 { font-size: 23px; }
+.serv p { color: var(--gris); font-size: 16px; }
+.serv .pedir { margin-top: auto; padding-top: 8px; font-weight: 600; color: var(--rojo); text-decoration: none; }
+.serv .pedir:hover { text-decoration: underline; }
+.s-cejas { grid-column: span 12; background: var(--rubor); border-color: var(--rubor-2); }
+.s-cejas .txt { flex-direction: row; align-items: center; gap: 28px; padding: 30px 32px; }
+.s-cejas h3 { font-size: 30px; flex: none; }
+.s-cejas .pedir { margin: 0 0 0 auto; padding: 0; flex: none; }
+.s-unas, .s-cosme { grid-column: span 6; }
+.s-pies, .s-reflexo { grid-column: span 6; flex-direction: row; }
+.s-pies img, .s-reflexo img { width: 44%; aspect-ratio: auto; min-height: 260px; }
+@media (max-width: 960px) {
+  .s-cejas .txt { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .s-cejas .pedir { margin: 8px 0 0; }
+  .s-pies, .s-reflexo { grid-column: span 6; flex-direction: column; }
+  .s-pies img, .s-reflexo img { width: 100%; aspect-ratio: 4 / 3; min-height: 0; }
+}
+@media (max-width: 600px) {
+  .servicios { padding: 64px 0; }
+  .lista-serv > * { grid-column: span 12 !important; }
+  .s-pies, .s-reflexo { flex-direction: column; }
+  .s-pies img, .s-reflexo img { width: 100%; aspect-ratio: 4 / 3; min-height: 0; }
+}
+
+/* Ludmi */
+.ludmi { padding: 0 0 92px; }
+.ludmi .envase { display: grid; grid-template-columns: .8fr 1.2fr; gap: 56px; align-items: center; }
+.ludmi img { border-radius: 28px; aspect-ratio: 4 / 5; object-fit: cover; width: 100%; }
+.ludmi .firma { font: 400 64px/1 var(--firma); color: var(--rojo); margin-bottom: 6px; }
+.ludmi p { color: var(--gris); margin-top: 16px; max-width: 54ch; }
+.ludmi ul { margin: 22px 0 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+.ludmi li { padding-left: 22px; position: relative; }
+.ludmi li::before { content: ""; position: absolute; left: 0; top: .62em; width: 10px; height: 2px; background: var(--rojo); }
+@media (max-width: 860px) { .ludmi .envase { grid-template-columns: 1fr; gap: 30px; } .ludmi img { max-width: 420px; } }
+
+/* Turno */
+.turno { background: var(--rubor); padding: 92px 0; }
+.turno .envase { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+.form { background: var(--blanco); border-radius: 26px; padding: 30px; border: 1px solid var(--rubor-2); display: grid; gap: 24px; }
+.campo > .etq { display: block; font-weight: 600; margin-bottom: 10px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chips input { position: absolute; opacity: 0; pointer-events: none; }
+.chips label { display: inline-flex; align-items: center; min-height: 42px; padding: 0 16px; border-radius: 999px; border: 1.5px solid var(--linea); background: var(--papel); cursor: pointer; font-size: 15px; transition: background .15s, border-color .15s, color .15s; }
+.chips input:checked + label { background: var(--tinta); border-color: var(--tinta); color: #fff; }
+.chips input:focus-visible + label { outline: 3px solid var(--rojo); outline-offset: 2px; }
+.form input[type="text"], .form select { width: 100%; min-height: 48px; border-radius: 14px; border: 1.5px solid var(--linea); background: var(--papel); padding: 0 14px; font: 400 16px var(--sans); color: var(--tinta); }
+.oculto { display: none; }
+.vista { background: var(--papel); border: 1.5px dashed var(--rubor-2); border-radius: 18px; padding: 18px; font-size: 15px; white-space: pre-line; min-height: 120px; }
+.vista-etq { font-size: 14px; color: var(--gris); margin-bottom: 8px; }
+.turno .boton.lleno { width: 100%; }
+.aviso { font-size: 14px; color: var(--gris); text-align: center; }
+.turno .pasos { list-style: none; margin: 30px 0 0; padding: 0; display: grid; gap: 18px; counter-reset: p; }
+.turno .pasos li { display: grid; grid-template-columns: 40px 1fr; gap: 14px; align-items: start; counter-increment: p; }
+.turno .pasos li::before { content: counter(p); width: 40px; height: 40px; border-radius: 50%; background: var(--rojo); color: #fff; font-weight: 700; display: grid; place-items: center; }
+.turno .pasos b { display: block; }
+.turno .pasos span { color: var(--gris); font-size: 16px; }
+@media (max-width: 860px) { .turno { padding: 64px 0; } .turno .envase { grid-template-columns: 1fr; } .form { padding: 22px; } }
+
+/* Ubicación */
+.donde { padding: 92px 0; }
+.donde .envase { display: grid; grid-template-columns: .9fr 1.1fr; gap: 48px; align-items: center; }
+.donde address { font-style: normal; font-size: 22px; font-weight: 600; margin: 22px 0 6px; line-height: 1.3; }
+.donde .zona { color: var(--gris); }
+.donde .acciones { margin-top: 26px; }
+.mapa { position: relative; border-radius: 26px; overflow: hidden; aspect-ratio: 4 / 3; border: 1px solid var(--linea); background: var(--rubor); }
+.mapa img, .mapa iframe { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border: 0; }
+@media (max-width: 860px) { .donde { padding: 64px 0; } .donde .envase { grid-template-columns: 1fr; gap: 30px; } }
+
+/* Pie */
+.pie { background: var(--rojo); color: #fff; padding: 72px 0 calc(34px + env(safe-area-inset-bottom, 0)); }
+.pie-grilla { display: grid; grid-template-columns: 1.3fr 1fr 1fr 1fr; gap: 36px; }
+.pie .marca { flex-wrap: wrap; }
+.pie .marca b { color: #fff; font-size: 56px; white-space: nowrap; }
+.pie .marca span { color: #ffd9de; }
+.pie p { color: #ffdfe3; margin-top: 12px; max-width: 32ch; }
+.pie h3 { font-size: 15px; font-weight: 600; color: #ffd0d6; margin-bottom: 14px; letter-spacing: 0; }
+.pie ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.pie ul a { text-decoration: none; font-weight: 500; }
+.pie ul a:hover { text-decoration: underline; }
+.pie ul small { display: block; color: #ffc9d0; font-size: 13px; font-weight: 400; }
+.pie .boton { margin-top: 22px; background: #fff; color: var(--rojo); border-color: #fff; }
+.pie .boton:hover { background: var(--tinta); border-color: var(--tinta); color: #fff; }
+.pie-final { border-top: 1px solid rgba(255,255,255,.25); margin-top: 52px; padding-top: 22px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 24px; font-size: 13px; color: #ffc9d0; }
+.pie-final a { color: #fff; }
+@media (max-width: 960px) { .pie-grilla { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 520px) { .pie-grilla { grid-template-columns: 1fr; } }
+
+/* Botón flotante */
+.flotante { position: fixed; right: calc(16px + env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0)); z-index: 30; box-shadow: 0 12px 30px -10px rgba(80,10,20,.6); opacity: 0; transform: translateY(16px); pointer-events: none; transition: opacity .25s, transform .25s; }
+.flotante.ver { opacity: 1; transform: none; pointer-events: auto; }
+</style>
+</head>
+<body>
+
+<header class="cabecera">
+  <div class="envase">
+    <a class="marca" href="#inicio" aria-label="Bellas Lash by Ludmi, inicio"><b>Bellas Lash</b><span>by Ludmi</span></a>
+    <nav class="menu" aria-label="Secciones">
+      <a href="#pestanas">Pestañas</a>
+      <a href="#servicios">Servicios</a>
+      <a href="#ludmi">Ludmi</a>
+      <a href="#donde">Dónde estamos</a>
+    </nav>
+    <a class="boton lleno" href="#turno">Pedir turno</a>
+  </div>
+</header>
+
+<main id="inicio">
+  <section class="portada">
+    <div class="envase">
+      <div>
+        <h1><small>Bellas Lash</small>Pestañas que se notan, hechas una por una.</h1>
+        <p class="bajada">Extensiones de pestañas, lifting, cejas, uñas, reflexología, podología y cosmetología en Bernal Oeste. Ludmi te atiende con turno, en su local.</p>
+        <div class="acciones">
+          <a class="boton lleno" href="#turno">Pedir turno</a>
+          <a class="boton borde" href="#pestanas">Ver los sets de pestañas</a>
+        </div>
+        <div class="datos"><span>Bernal Oeste</span><span>Atención con turno</span><span>Pelo a pelo y volumen</span></div>
+      </div>
+      <figure class="fotos-portada" style="margin:0">
+        <div class="grande"><img src="img/local.jpg" width="900" height="1200" alt="El local de Bellas Lash: mostrador blanco con pestañas pintadas, camilla y cortinas rojas"></div>
+        <figcaption>El local, en Bernal Oeste</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="sets" id="pestanas" aria-labelledby="t-sets">
+    <div class="envase">
+      <h2 id="t-sets">Elegí tu set de pestañas</h2>
+      <p class="bajada">Van del más natural al más intenso. Si no sabés cuál te queda mejor, Ludmi te asesora antes de empezar.</p>
+      <div class="sets-grilla">
+        <ul class="escala">
+          <li><h3>Clásicas</h3><p>Una extensión por cada pestaña natural. Se ve como tus pestañas, pero más largas.</p><span class="puntos" aria-hidden="true"><i></i><i class="claro"></i><i class="claro"></i><i class="claro"></i><i class="claro"></i><i class="claro"></i></span></li>
+          <li><h3>Efecto húmedo</h3><p>Pestañas en puntas definidas, como recién salida del agua.</p><span class="puntos" aria-hidden="true"><i></i><i></i><i class="claro"></i><i class="claro"></i><i class="claro"></i><i class="claro"></i></span></li>
+          <li><h3>2D volumen light</h3><p>Dos extensiones por pestaña: más cuerpo sin perder lo natural.</p><span class="puntos" aria-hidden="true"><i></i><i></i><i class="claro"></i><i class="claro"></i><i class="claro"></i><i class="claro"></i></span></li>
+          <li><h3>4D volumen light</h3><p>Cuatro extensiones livianas por pestaña. Mirada llena y suave.</p><span class="puntos" aria-hidden="true"><i></i><i></i><i></i><i></i><i class="claro"></i><i class="claro"></i></span></li>
+          <li><h3>Megavolumen</h3><p>El set más intenso, para una mirada bien marcada.</p><span class="puntos" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span></li>
+          <li class="nota-escala">Los puntos muestran cuánto volumen tiene cada set.</li>
+        </ul>
+        <div>
+          <div class="reales">
+            <figure><img src="img/clasicas.jpg" width="900" height="1200" loading="lazy" alt="Ojo con extensiones clásicas"><figcaption>Clásicas</figcaption></figure>
+            <figure><img src="img/volumen-4d.jpg" width="900" height="1200" loading="lazy" alt="Ojo con extensiones 4D volumen light"><figcaption>4D volumen light</figcaption></figure>
+          </div>
+          <a class="boton lleno" href="#turno" data-servicio="Extensiones de pestañas">Pedir turno para pestañas</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="servicios" id="servicios" aria-labelledby="t-serv">
+    <div class="envase">
+      <div class="servicios-cab">
+        <div>
+          <h2 id="t-serv">Además de pestañas</h2>
+          <p class="bajada" style="margin-top:14px">Todo en el mismo lugar y con la misma persona.</p>
+        </div>
+      </div>
+      <div class="lista-serv">
+        <article class="serv s-unas"><img src="img/unas.jpg" width="800" height="534" loading="lazy" alt="Manicura en un salón de uñas"><div class="txt"><h3>Uñas</h3><p>Manos prolijas y con el color que elijas.</p><a class="pedir" href="#turno" data-servicio="Uñas">Pedir turno</a></div></article>
+        <article class="serv s-cosme"><img src="img/cosmetologia.jpg" width="800" height="534" loading="lazy" alt="Mascarilla facial aplicada con pincel"><div class="txt"><h3>Cosmetología</h3><p>Limpieza y tratamientos para la piel de la cara.</p><a class="pedir" href="#turno" data-servicio="Cosmetología">Pedir turno</a></div></article>
+        <article class="serv s-pies"><img src="img/pies.jpg" width="800" height="1206" loading="lazy" alt="Pies con las uñas pintadas de rojo"><div class="txt"><h3>Podología</h3><p>Cuidado de pies y uñas, para caminar cómoda y lucirlos.</p><a class="pedir" href="#turno" data-servicio="Podología">Pedir turno</a></div></article>
+        <article class="serv s-reflexo"><img src="img/reflexologia.jpg" width="800" height="1200" loading="lazy" alt="Masaje en la planta del pie"><div class="txt"><h3>Reflexología</h3><p>Masaje en los pies para aflojar tensiones y descansar.</p><a class="pedir" href="#turno" data-servicio="Reflexología">Pedir turno</a></div></article>
+        <article class="serv s-cejas"><div class="txt"><h3>Lifting y cejas</h3><p>Lifting de pestañas para curvarlas sin extensiones, y diseño de cejas para enmarcar la mirada.</p><a class="pedir" href="#turno" data-servicio="Lifting y cejas">Pedir turno</a></div></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="ludmi" id="ludmi" aria-labelledby="t-ludmi">
+    <div class="envase">
+      <img src="img/ludmi-trabajando.jpg" width="900" height="1200" loading="lazy" alt="Ludmi colocando extensiones de pestañas a una clienta en la camilla">
+      <div>
+        <div class="firma" aria-hidden="true">Ludmi</div>
+        <h2 id="t-ludmi">La que te atiende, de principio a fin</h2>
+        <p>En Bellas Lash te atiende Ludmi, en su local de Bernal Oeste, armado para que estés cómoda mientras dura el trabajo.</p>
+        <ul>
+          <li>Te asesora sobre el set que mejor va con tus ojos.</li>
+          <li>Trabaja pelo por pelo, sin pegar tiras.</li>
+          <li>Te explica cómo cuidarlas para que duren.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="turno" id="turno" aria-labelledby="t-turno">
+    <div class="envase">
+      <div>
+        <h2 id="t-turno">Pedí tu turno</h2>
+        <p class="bajada" style="margin-top:14px">Elegí lo que querés hacerte y cuándo te queda bien. Se arma el mensaje y se lo mandás a Ludmi.</p>
+        <ol class="pasos">
+          <li><div><b>Elegí el servicio</b><span>Si son pestañas, también el set.</span></div></li>
+          <li><div><b>Contá cuándo podés</b><span>Día y horario que te quedan mejor.</span></div></li>
+          <li><div><b>Mandá el mensaje</b><span>Ludmi te confirma el turno y el precio.</span></div></li>
+        </ol>
+      </div>
+      <form class="form" id="form-turno" onsubmit="return false">
+        <div class="campo">
+          <span class="etq" id="e-serv">¿Qué te querés hacer?</span>
+          <div class="chips" role="radiogroup" aria-labelledby="e-serv">
+            <input type="radio" name="servicio" id="sv1" value="Extensiones de pestañas" checked><label for="sv1">Pestañas</label>
+            <input type="radio" name="servicio" id="sv2" value="Lifting y cejas"><label for="sv2">Lifting y cejas</label>
+            <input type="radio" name="servicio" id="sv3" value="Uñas"><label for="sv3">Uñas</label>
+            <input type="radio" name="servicio" id="sv4" value="Podología"><label for="sv4">Podología</label>
+            <input type="radio" name="servicio" id="sv5" value="Reflexología"><label for="sv5">Reflexología</label>
+            <input type="radio" name="servicio" id="sv6" value="Cosmetología"><label for="sv6">Cosmetología</label>
+          </div>
+        </div>
+        <div class="campo" id="c-set">
+          <span class="etq" id="e-set">¿Qué set?</span>
+          <div class="chips" role="radiogroup" aria-labelledby="e-set">
+            <input type="radio" name="set" id="st0" value="" checked><label for="st0">Quiero que me asesores</label>
+            <input type="radio" name="set" id="st1" value="Clásicas"><label for="st1">Clásicas</label>
+            <input type="radio" name="set" id="st2" value="Efecto húmedo"><label for="st2">Efecto húmedo</label>
+            <input type="radio" name="set" id="st3" value="2D volumen light"><label for="st3">2D</label>
+            <input type="radio" name="set" id="st4" value="4D volumen light"><label for="st4">4D</label>
+            <input type="radio" name="set" id="st5" value="Megavolumen"><label for="st5">Megavolumen</label>
+          </div>
+        </div>
+        <div class="campo" id="c-vez">
+          <span class="etq" id="e-vez">¿Es colocación o retoque?</span>
+          <div class="chips" role="radiogroup" aria-labelledby="e-vez">
+            <input type="radio" name="vez" id="vz1" value="Colocación" checked><label for="vz1">Colocación</label>
+            <input type="radio" name="vez" id="vz2" value="Retoque"><label for="vz2">Retoque</label>
+          </div>
+        </div>
+        <div class="campo">
+          <label class="etq" for="dia">¿Qué día te queda bien?</label>
+          <select id="dia"></select>
+        </div>
+        <div class="campo">
+          <span class="etq" id="e-hora">¿En qué horario?</span>
+          <div class="chips" role="radiogroup" aria-labelledby="e-hora">
+            <input type="radio" name="hora" id="hr1" value="a la mañana" checked><label for="hr1">Mañana</label>
+            <input type="radio" name="hora" id="hr2" value="a la tarde"><label for="hr2">Tarde</label>
+            <input type="radio" name="hora" id="hr3" value="cuando tengas lugar"><label for="hr3">Cuando tengas</label>
+          </div>
+        </div>
+        <div class="campo">
+          <label class="etq" for="nombre">Tu nombre</label>
+          <input type="text" id="nombre" autocomplete="given-name" placeholder="Por ejemplo, Sofía">
+        </div>
+        <div>
+          <div class="vista-etq">Así le llega el mensaje a Ludmi</div>
+          <div class="vista" id="vista" aria-live="polite"></div>
+        </div>
+        <a class="boton lleno" id="enviar" href="#" target="_blank" rel="noopener">Mandar por Instagram</a>
+        <p class="aviso" id="aviso">Se copia el mensaje y se abre el chat de Instagram: pegalo y mandalo.</p>
+      </form>
+    </div>
+  </section>
+
+  <section class="donde" id="donde" aria-labelledby="t-donde">
+    <div class="envase">
+      <div>
+        <h2 id="t-donde">Dónde estamos</h2>
+        <address>Calle 172 Bis 1446<br>Bernal Oeste</address>
+        <p class="zona">Cerca de Montevideo y la calle 172. Atención con turno.</p>
+        <div class="acciones">
+          <a class="boton lleno" href="https://www.google.com/maps/dir/?api=1&amp;destination=Bellas%20Lash%2C%20Calle%20172%20Bis%201446%2C%20Bernal%20Oeste&amp;destination_place_id=ChIJjzSgWQAto5URBUcwXbgLyic" target="_blank" rel="noopener">Cómo llegar</a>
+          <a class="boton borde" href="https://www.google.com/maps/search/?api=1&amp;query=Bellas%20Lash%20Bernal%20Oeste&amp;query_place_id=ChIJjzSgWQAto5URBUcwXbgLyic" target="_blank" rel="noopener">Ver en Google Maps</a>
+        </div>
+      </div>
+      <div class="mapa">
+        <img src="img/mapa.jpg" width="1000" height="750" loading="lazy" alt="Mapa de Bernal Oeste con la ubicación de Bellas Lash">
+        <iframe title="Mapa de Bellas Lash en Google Maps" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=Bellas%20Lash%2C%20Calle%20172%20Bis%201446%2C%20Bernal%20Oeste&amp;z=16&amp;hl=es&amp;output=embed"></iframe>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="pie">
+  <div class="envase">
+    <div class="pie-grilla">
+      <div>
+        <a class="marca" href="#inicio"><b>Bellas Lash</b><span>by Ludmi</span></a>
+        <p>Pestañas, cejas, uñas, pies y piel, con turno, en Bernal Oeste.</p>
+        <a class="boton" href="#turno">Pedir turno</a>
+      </div>
+      <div>
+        <h3>Redes</h3>
+        <ul>
+          <li><a href="https://www.instagram.com/bellass_lash_ludmi/" target="_blank" rel="noopener">Instagram de Bellas Lash<small>@bellass_lash_ludmi</small></a></li>
+          <li><a href="https://ig.me/m/bellass_lash_ludmi" target="_blank" rel="noopener">Mensaje por Instagram<small>Para pedir turno o consultar</small></a></li>
+          <li><a href="https://www.instagram.com/_ludmila_01__/" target="_blank" rel="noopener">Instagram de Ludmi<small>@_ludmila_01__</small></a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Servicios</h3>
+        <ul>
+          <li><a href="#pestanas">Extensiones de pestañas</a></li>
+          <li><a href="#servicios">Lifting y cejas</a></li>
+          <li><a href="#servicios">Uñas y podología</a></li>
+          <li><a href="#servicios">Reflexología y cosmetología</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Dónde estamos</h3>
+        <ul>
+          <li><a href="https://www.google.com/maps/search/?api=1&amp;query=Bellas%20Lash%20Bernal%20Oeste&amp;query_place_id=ChIJjzSgWQAto5URBUcwXbgLyic" target="_blank" rel="noopener">Calle 172 Bis 1446<small>Bernal Oeste, Buenos Aires</small></a></li>
+          <li><a href="https://www.google.com/maps/dir/?api=1&amp;destination=Bellas%20Lash%2C%20Calle%20172%20Bis%201446%2C%20Bernal%20Oeste&amp;destination_place_id=ChIJjzSgWQAto5URBUcwXbgLyic" target="_blank" rel="noopener">Cómo llegar<small>Con Google Maps</small></a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="pie-final">
+      <span>Fotos de uñas, pies, reflexología y cosmetología: <a href="https://unsplash.com/photos/gb6gtiTZKB8" target="_blank" rel="noopener">Giorgio Trovato</a>, <a href="https://unsplash.com/photos/3sBC5KuClWE" target="_blank" rel="noopener">Konstantin Shmatov</a>, <a href="https://unsplash.com/photos/QMgwloa7nQs" target="_blank" rel="noopener">Anna Keibalo</a> y <a href="https://unsplash.com/photos/Pe9IXUuC6QU" target="_blank" rel="noopener">Rosa Rafael</a> en Unsplash. Las demás fotos son de Bellas Lash.</span>
+      <span>Demo de <a href="https://mymsoluciones.online" target="_blank" rel="noopener">MyM Soluciones</a></span>
+    </div>
+  </div>
+</footer>
+
+<a class="boton lleno flotante" id="flotante" href="#turno">Pedir turno</a>
+
+<script>
+(function () {
+  // Número de WhatsApp del local, con 549 adelante. Vacío: el turno se pide por Instagram.
+  var WA = '';
+  var IG = 'https://ig.me/m/bellass_lash_ludmi';
+  var f = document.getElementById('form-turno');
+  var dia = document.getElementById('dia');
+  var vista = document.getElementById('vista');
+  var enviar = document.getElementById('enviar');
+  var aviso = document.getElementById('aviso');
+
+  // Próximos 14 días, sin domingos.
+  var fmt = new Intl.DateTimeFormat('es-AR', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'America/Argentina/Buenos_Aires' });
+  var op = document.createElement('option'); op.value = 'el día que tengas lugar'; op.textContent = 'El que tengas lugar'; dia.appendChild(op);
+  var hoy = new Date();
+  for (var i = 1, n = 0; n < 12 && i < 20; i++) {
+    var d = new Date(hoy.getTime() + i * 864e5);
+    if (d.getDay() === 0) continue;
+    var t = fmt.format(d); t = t.charAt(0).toUpperCase() + t.slice(1);
+    var o = document.createElement('option'); o.value = 'el ' + fmt.format(d).replace(',', ''); o.textContent = t; dia.appendChild(o); n++;
+  }
+
+  function val(nombre) { var x = f.querySelector('input[name="' + nombre + '"]:checked'); return x ? x.value : ''; }
+
+  function armar() {
+    var serv = val('servicio');
+    var esPest = serv === 'Extensiones de pestañas';
+    document.getElementById('c-set').classList.toggle('oculto', !esPest);
+    document.getElementById('c-vez').classList.toggle('oculto', !esPest);
+    var nom = document.getElementById('nombre').value.trim();
+    var l = ['Hola Ludmi' + (nom ? ', soy ' + nom : '') + '. Quiero pedir un turno en Bellas Lash.'];
+    if (esPest) {
+      var set = val('set');
+      l.push('Servicio: ' + val('vez').toLowerCase() + ' de extensiones de pestañas' + (set ? ', set ' + set : ', quiero que me asesores con el set') + '.');
+    } else {
+      l.push('Servicio: ' + serv.toLowerCase() + '.');
+    }
+    l.push('Me queda bien ' + dia.value + ', ' + val('hora') + '.');
+    l.push('¿Qué disponibilidad y precio tenés?');
+    var txt = l.join('\n');
+    vista.textContent = txt;
+    if (WA) {
+      enviar.href = 'https://wa.me/' + WA + '?text=' + encodeURIComponent(txt);
+      enviar.textContent = 'Mandar por WhatsApp';
+      aviso.textContent = 'Se abre WhatsApp con el mensaje listo.';
+    } else {
+      enviar.href = IG;
+    }
+    return txt;
+  }
+
+  f.addEventListener('input', armar);
+  f.addEventListener('change', armar);
+  enviar.addEventListener('click', function () {
+    var txt = armar();
+    if (!WA && navigator.clipboard) {
+      navigator.clipboard.writeText(txt).then(function () { aviso.textContent = 'Mensaje copiado. Pegalo en el chat de Instagram y mandalo.'; }, function () {});
+    }
+  });
+
+  // Los botones "Pedir turno" de cada servicio dejan elegido ese servicio.
+  document.querySelectorAll('[data-servicio]').forEach(function (a) {
+    a.addEventListener('click', function () {
+      var r = f.querySelector('input[name="servicio"][value="' + a.dataset.servicio + '"]');
+      if (r) { r.checked = true; armar(); }
+    });
+  });
+
+  // Botón flotante: aparece después de la portada y se esconde en la sección del turno.
+  var flot = document.getElementById('flotante');
+  var portada = document.querySelector('.portada');
+  var turno = document.getElementById('turno');
+  var pasada = false, enTurno = false;
+  function mostrar() { flot.classList.toggle('ver', pasada && !enTurno); }
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (e) { pasada = !e[0].isIntersecting; mostrar(); }).observe(portada);
+    new IntersectionObserver(function (e) { enTurno = e[0].isIntersecting; mostrar(); }).observe(turno);
+  }
+
+  armar();
+})();
+</script>
+</body>
+</html>
