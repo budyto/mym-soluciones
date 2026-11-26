@@ -1,0 +1,167 @@
+/* Tres bloques nuevos de la portada (26/11/2026, idea que Budy vio en otra web; acá con nuestros pasos y contenido real):
+   1) «Paso a paso», dentro de #proceso: la tira de pasos de cada servicio con un selector.
+   2) #aprende: lo que el Boti aprende cuando el dueño le corrige algo (ejemplo marcado como ejemplo).
+   3) «Vitrina» de reels, dentro de #redes: celulares inclinados con reels reales de clientes en loop.
+   Usa los tokens de styles.css (colores, letras, radios y sombras). */
+
+/* ---------- Tildes compartidas por los tres bloques ---------- */
+.tildes { list-style: none; padding: 0; margin: 22px 0 0; display: grid; gap: 10px; color: var(--ink-2); font-size: 15.5px; }
+.tildes li { display: flex; gap: 11px; align-items: flex-start; }
+/* Tilde en tinta sobre agua clara (blanco sobre --agua daba 2,26:1); el «/ ""» evita que el lector de pantalla lo lea. */
+.tildes li::before { content: "✓" / ""; flex: none; width: 22px; height: 22px; border-radius: 7px; background: rgba(0, 194, 168, .2); color: var(--ink); font-size: 13px; font-weight: 900; display: grid; place-items: center; margin-top: 2px; }
+.tildes b { color: var(--ink); }
+
+/* Las tres tarjetas son grandes y tienen cosas para tocar adentro: no suben al pasar el mouse (styles.css: .rv.in.card:hover). */
+.pasos-srv.card:hover, .vitrina.card:hover, .apr-panel.card:hover { transform: none; }
+
+/* ============ 1) Paso a paso ============ */
+.pasos-srv { margin-top: 28px; padding: 36px; }
+.pasos-srv-cab { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: end; }
+.pasos-srv h3 { font-size: clamp(28px, 3.2vw, 40px); font-weight: 900; letter-spacing: -0.03em; line-height: 1.04; }
+.pasos-srv h3 .em { font-size: 1.08em; line-height: 1; }
+.pasos-srv-cab p { margin: 14px 0 0; color: var(--ink-2); max-width: 48ch; }
+.pasos-srv-cab .tildes { margin: 0; }
+
+/* Selector de servicio: una píldora con tres opciones */
+.srv-tabs { display: inline-flex; flex-wrap: wrap; gap: 4px; margin: 30px 0 18px; padding: 5px; border-radius: 999px; background: var(--fondo); border: 1px solid var(--line); }
+.srv-tabs button { border: 0; background: transparent; cursor: pointer; padding: 9px 18px; border-radius: 999px; font-weight: 700; font-size: 15px; color: var(--ink-2); transition: background .2s, color .2s, box-shadow .2s; }
+.srv-tabs button:hover { color: var(--ink); }
+.srv-tabs button[aria-selected="true"] { background: var(--deg-fuerte); color: #fff; box-shadow: 0 8px 20px rgba(47, 107, 255, .25); }
+.srv-tabs button:focus-visible, .reel-pp:focus-visible { outline: 3px solid var(--azul); outline-offset: 3px; }
+
+/* La tira: una cajita por paso, unidas por una línea; el paso en que sale se resalta */
+.tira { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(var(--n, 6), minmax(0, 1fr)); gap: 10px; position: relative; counter-reset: paso; }
+.tira::before { content: ""; position: absolute; left: 4%; right: 4%; top: 31px; height: 2px; background: repeating-linear-gradient(90deg, var(--line) 0 8px, transparent 8px 14px); }
+.tira li { counter-increment: paso; position: relative; background: var(--fondo); border: 1px solid var(--line); border-radius: var(--r-s); padding: 14px 14px 16px; min-height: 150px; display: flex; flex-direction: column; }
+.tira li::before { content: counter(paso); width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center; background: #fff; border: 1px solid var(--line); color: var(--azul-t); font: 500 13px var(--mono); margin-bottom: 14px; position: relative; }
+.tira b { font-size: 17px; font-weight: 800; letter-spacing: -0.015em; line-height: 1.15; }
+.tira span { display: block; margin-top: 6px; font-size: 13.5px; line-height: 1.4; color: var(--ink-2); }
+.tira li.sale { background: #fff; border: 2px solid transparent; background: linear-gradient(#fff, #fff) padding-box, var(--deg) border-box; box-shadow: 0 16px 36px -14px rgba(47, 107, 255, .45); }
+.tira li.sale::before { background: var(--deg-fuerte); color: #fff; border-color: transparent; }
+.tira li.sale b { background: var(--deg-fuerte); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.tira li.despues { background: var(--blanco); border-style: dashed; } /* opaca: tapa la línea punteada que pasa por detrás */
+.tira-nota { margin: 16px 0 0; font-size: 14px; color: var(--ink-3); }
+.tira-nota b { color: var(--ink-2); font-weight: 700; }
+
+/* Al cambiar de servicio, los pasos entran uno detrás de otro (sólo si la persona tocó el selector) */
+.srv-panel.entra .tira li { animation: pasoEntra .45s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(var(--i, 0) * 45ms); }
+@keyframes pasoEntra { from { opacity: 0; transform: translateY(10px); } }
+
+/* Sin JavaScript, el selector no sirve: se muestran los tres servicios uno abajo del otro */
+.no-js .srv-tabs { display: none; }
+.no-js .srv-panel[hidden] { display: block; }
+.no-js .srv-panel + .srv-panel { margin-top: 28px; }
+.srv-panel-tit { display: none; }
+.no-js .srv-panel-tit { display: block; margin: 24px 0 12px; font-size: 18px; }
+
+/* ============ 2) Lo que aprende el Boti ============ */
+.aprende { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+.aprende-txt h2 { margin-top: 18px; font-size: clamp(34px, 3.9vw, 50px); }
+.aprende-txt .lead { margin-top: 20px; }
+.aprende-nota { margin: 22px 0 0; padding: 14px 16px; border-radius: 14px; background: #fff; border: 1px solid var(--line); font-size: 14.5px; color: var(--ink-2); max-width: 52ch; }
+.aprende-nota b { color: var(--ink); }
+
+.apr-panel { padding: 26px; }
+.apr-cab { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+.apr-cab strong { font-size: 19px; font-weight: 800; letter-spacing: -0.015em; }
+.apr-ej { font: 500 10.5px var(--mono); letter-spacing: .06em; color: var(--ink-3); border: 1px dashed #b9c6e4; border-radius: 999px; padding: 5px 10px; }
+.apr-lista { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.apr-fila { display: grid; grid-template-columns: 1fr auto; gap: 6px 14px; align-items: center; padding: 14px 16px; border-radius: 16px; background: var(--fondo); border: 1px solid var(--line); }
+.apr-de { grid-column: 1 / -1; font-size: 12.5px; color: var(--ink-3); }
+.apr-de b { color: var(--azul-t); font-weight: 700; }
+.apr-cambio { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; font-size: 15.5px; line-height: 1.35; }
+.apr-cambio s { color: var(--ink-3); text-decoration-thickness: 1.5px; text-decoration-color: #c2492e; }
+.apr-cambio .fle { color: var(--ink-3); }
+.apr-cambio .par { white-space: nowrap; } /* el antes y el después, siempre juntos */
+.apr-cambio strong { font-weight: 800; }
+.apr-ok { font-size: 12.5px; font-weight: 700; padding: 5px 10px; border-radius: 999px; background: rgba(0, 194, 168, .14); color: #00695c; white-space: nowrap; }
+.apr-ok.nuevo { background: rgba(47, 107, 255, .12); color: var(--azul-t); }
+.apr-fila.falta { background: #fff; border-style: dashed; }
+/* Parte del dibujo del panel, no un botón de esta página: mismo formato que las etiquetas de «Aprobado» */
+.apr-btn { font-size: 12.5px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: var(--blanco); border: 1px solid var(--azul-t); color: var(--azul-t); white-space: nowrap; }
+
+/* ============ 3) Vitrina de reels ============ */
+.vitrina { margin-top: 30px; padding: 40px; display: grid; grid-template-columns: 1fr 1.15fr; gap: 36px; align-items: center; overflow: hidden; }
+.vitrina h3 { margin: 0; font-size: clamp(30px, 3.6vw, 46px); font-weight: 900; letter-spacing: -0.035em; line-height: 1.02; }
+.vitrina-txt > p { margin: 16px 0 0; color: var(--ink-2); max-width: 46ch; }
+.vitrina .btn { margin-top: 26px; }
+.btn-ig svg { color: var(--azul-t); flex: none; }
+.vitrina-txt small { display: block; margin-top: 14px; font-size: 13px; color: var(--ink-3); }
+
+.reels { position: relative; display: flex; justify-content: center; align-items: flex-end; min-height: 470px; padding-top: 40px; }
+/* Se inclina sólo el celular; el pie queda derecho y los tres pies a la misma altura (figuras alineadas abajo). */
+.reel { position: relative; margin: 0; width: 198px; flex: none; }
+.reel-marco { transform: translateY(var(--y, 0)) rotate(var(--rot, 0deg)); }
+.reel:nth-child(1) { --rot: -7deg; margin-right: -26px; z-index: 1; }
+.reel:nth-child(2) { --y: -34px; z-index: 2; width: 214px; }
+.reel:nth-child(3) { --rot: 6deg; margin-left: -26px; z-index: 1; }
+.reel-marco { position: relative; aspect-ratio: 9 / 16; border-radius: 30px; padding: 7px; background: var(--ink); box-shadow: 0 30px 60px -24px rgba(14, 26, 51, .55), 0 0 0 1px rgba(255, 255, 255, .06) inset; }
+.reel-marco::before { content: ""; position: absolute; top: 14px; left: 50%; width: 54px; height: 14px; margin-left: -27px; border-radius: 99px; background: var(--ink); z-index: 2; }
+.reel video { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 24px; background: var(--fondo-2); }
+.reel figcaption { margin-top: 24px; text-align: center; font-size: 13px; font-weight: 700; color: var(--ink-2); line-height: 1.3; }
+/* Botón de pausa y reproducción de cada reel (siempre visible: el movimiento se puede frenar) */
+/* Arriba, para no tapar el cierre del reel (WhatsApp y @); el área de toque es de 44 px aunque el círculo se vea más chico. */
+.reel-pp { position: absolute; right: 14px; top: 14px; z-index: 3; width: 38px; height: 38px; padding: 0; border-radius: 50%; border: 0; cursor: pointer; display: grid; place-items: center; background: rgba(255, 255, 255, .92); color: var(--ink); box-shadow: 0 6px 16px rgba(14, 26, 51, .25); }
+.reel:nth-child(1) .reel-pp { right: auto; left: 14px; }
+.reel-pp::after { content: ""; position: absolute; inset: -6px; border-radius: 50%; }
+.reel-pp svg { width: 16px; height: 16px; }
+.reel-pp .i-play { display: none; }
+.reel-pp[data-anda="false"] .i-play { display: block; }
+.reel-pp[data-anda="false"] .i-pausa { display: none; }
+.no-js .reel-pp { display: none; }
+
+/* ============ Responsive ============ */
+@media (max-width: 1080px) {
+  /* Vitrina en una columna: el texto centrado arriba y los celulares un poco más chicos */
+  .vitrina { grid-template-columns: 1fr; gap: 28px; }
+  .vitrina-txt { text-align: center; max-width: 60ch; margin-inline: auto; }
+  .vitrina-txt > p { margin-inline: auto; }
+  .reels { min-height: 0; padding-top: 40px; }
+  .reel { width: 170px; }
+  .reel:nth-child(2) { width: 184px; }
+}
+@media (max-width: 1000px) {
+  .pasos-srv-cab { grid-template-columns: 1fr; gap: 20px; align-items: start; }
+  .tira { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .tira::before { display: none; }
+  .aprende { grid-template-columns: 1fr; gap: 36px; }
+  .aprende-txt { order: -1; }
+}
+@media (max-width: 640px) {
+  .pasos-srv { padding: 22px 18px; }
+  .srv-tabs { display: flex; flex-wrap: nowrap; width: 100%; }
+  .srv-tabs button { flex: 1 1 auto; min-width: 0; min-height: 44px; padding: 6px 5px; font-size: 13px; line-height: 1.15; white-space: nowrap; }
+  /* En el celular la tira pasa a línea de tiempo vertical */
+  .tira { grid-template-columns: 1fr; gap: 8px; }
+  .tira::before { display: block; left: 30px; right: auto; top: 20px; bottom: 20px; width: 2px; height: auto; background: repeating-linear-gradient(180deg, var(--line) 0 8px, transparent 8px 14px); }
+  .tira li { min-height: 0; display: grid; grid-template-columns: 34px 1fr; column-gap: 14px; padding: 12px 14px; }
+  .tira li::before { grid-row: 1 / span 2; margin: 0; }
+  .tira span { margin-top: 2px; }
+  .apr-panel { padding: 18px 14px; }
+  .apr-fila { padding: 12px; }
+  .apr-cambio { font-size: 14.5px; }
+  .vitrina { padding: 24px 18px 28px; }
+  .vitrina-txt { text-align: left; }
+  .reels { min-height: 0; padding: 26px 0 4px; }
+  .reel { width: 31%; }
+  .reel:nth-child(2) { width: 35%; }
+  .reels { justify-content: space-between; }
+  .reel:nth-child(1), .reel:nth-child(3) { margin: 0; --rot: -4deg; }
+  .reel:nth-child(3) { --rot: 4deg; }
+  .reel-marco { border-radius: 20px; padding: 4px; }
+  .reel-marco::before { top: 8px; width: 30px; height: 8px; margin-left: -15px; }
+  .reel video { border-radius: 16px; }
+  .reel-pp { width: 32px; height: 32px; right: 7px; top: 7px; }
+  .reel-pp svg { width: 13px; height: 13px; }
+  .reel:nth-child(1) .reel-pp { right: auto; left: 7px; }
+  .reel figcaption { font-size: 12.5px; margin-top: 14px; }
+  .reel:nth-child(2) { --y: -14px; }
+}
+@media (max-width: 370px) {
+  /* Celulares angostos: los nombres de los servicios pueden pasar a dos renglones */
+  .srv-tabs button { flex-basis: 0; white-space: normal; font-size: 12.5px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .srv-panel.entra .tira li { animation: none; }
+}
+.reduced .srv-panel.entra .tira li { animation: none; }

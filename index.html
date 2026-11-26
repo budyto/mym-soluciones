@@ -16,6 +16,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Instrument+Serif:ital@1&family=Michroma&family=Martian+Mono:wght@500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css?v=202611260020">
+<link rel="stylesheet" href="secciones.css?v=202611261630">
 <script>document.documentElement.classList.remove('no-js')</script>
 </head>
 <body>
@@ -587,6 +588,40 @@
         <!-- 16/11/2026: diagnóstico de redes gratis (formulario en diagnostico-redes/, se trabaja en el CRM de Soluciones). -->
         <p style="margin:22px 0 0"><a href="diagnostico-redes/" class="btn btn-primary">¿No sabés por dónde empezar? Pedí tu diagnóstico de redes gratis <span class="arr">→</span></a></p>
       </div>
+      <!-- Vitrina de reels (26/11/2026): tres reels de Plomería Mansilla aprobados por Franco (su web y sus obras se pueden
+           mostrar; su panel y sus charlas no), sin audio. Dos tamaños: 540x960 en compu y 360x640 en celular (secciones.js
+           elige). En el celular se mueve sólo el del medio; los otros quedan con su portada hasta que se toque su botón. -->
+      <div class="vitrina card rv">
+        <div class="vitrina-txt">
+          <h3>Hechos con lo que nos mandás.<br><span class="em">Así quedan.</span></h3>
+          <p>Tres reels reales de Plomería Mansilla, editados con las fotos y los videos de sus obras que sacaron con el celular. Texto en pantalla desde el primer segundo, ritmo y un cierre que lleva a escribir.</p>
+          <a href="https://www.instagram.com/mymsoluciones369/" class="btn btn-ig" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 2.2c3.2 0 3.6 0 4.8.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-1.2-.1-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.8c.1-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2Zm0 4.7a5.1 5.1 0 1 0 0 10.2 5.1 5.1 0 0 0 0-10.2Zm0 8.4a3.3 3.3 0 1 1 0-6.6 3.3 3.3 0 0 1 0 6.6Zm5.3-9.8a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4Z"/></svg>Ver más en Instagram<span class="sr"> (se abre en una pestaña nueva)</span></a>
+          <small>Se ven sin sonido. Cada uno tiene su botón para pausarlo o reproducirlo.</small>
+        </div>
+        <div class="reels">
+          <figure class="reel">
+            <div class="reel-marco">
+              <video poster="img/reels/mansilla-bano.jpg" data-src="img/reels/mansilla-bano.mp4" data-src-cel="img/reels/mansilla-bano-cel.mp4" muted loop playsinline preload="none" disablepictureinpicture data-nombre="Plomería Mansilla, Baño de cero" aria-label="Reel de Plomería Mansilla: Baño de cero, sin sonido"></video>
+              <button type="button" class="reel-pp" data-anda="true"><svg class="i-pausa" viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="2" width="3.6" height="12" rx="1" fill="currentColor"/><rect x="9.4" y="2" width="3.6" height="12" rx="1" fill="currentColor"/></svg><svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.2v11.6c0 .6.7 1 1.2.7l9-5.8c.5-.3.5-1 0-1.3l-9-5.9C4.7 1.2 4 1.6 4 2.2Z" fill="currentColor"/></svg></button>
+            </div>
+            <figcaption>Baño de cero</figcaption>
+          </figure>
+          <figure class="reel">
+            <div class="reel-marco">
+              <video poster="img/reels/mansilla-humedad.jpg" data-src="img/reels/mansilla-humedad.mp4" data-src-cel="img/reels/mansilla-humedad-cel.mp4" muted loop playsinline preload="none" disablepictureinpicture data-nombre="Plomería Mansilla, Humedad en la pared" aria-label="Reel de Plomería Mansilla: Humedad en la pared, sin sonido"></video>
+              <button type="button" class="reel-pp" data-anda="true"><svg class="i-pausa" viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="2" width="3.6" height="12" rx="1" fill="currentColor"/><rect x="9.4" y="2" width="3.6" height="12" rx="1" fill="currentColor"/></svg><svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.2v11.6c0 .6.7 1 1.2.7l9-5.8c.5-.3.5-1 0-1.3l-9-5.9C4.7 1.2 4 1.6 4 2.2Z" fill="currentColor"/></svg></button>
+            </div>
+            <figcaption>Humedad</figcaption>
+          </figure>
+          <figure class="reel">
+            <div class="reel-marco">
+              <video poster="img/reels/mansilla-calefon.jpg" data-src="img/reels/mansilla-calefon.mp4" data-src-cel="img/reels/mansilla-calefon-cel.mp4" muted loop playsinline preload="none" disablepictureinpicture data-nombre="Plomería Mansilla, Calefón" aria-label="Reel de Plomería Mansilla: Calefón, sin sonido"></video>
+              <button type="button" class="reel-pp" data-anda="true"><svg class="i-pausa" viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="2" width="3.6" height="12" rx="1" fill="currentColor"/><rect x="9.4" y="2" width="3.6" height="12" rx="1" fill="currentColor"/></svg><svg class="i-play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.2v11.6c0 .6.7 1 1.2.7l9-5.8c.5-.3.5-1 0-1.3l-9-5.9C4.7 1.2 4 1.6 4 2.2Z" fill="currentColor"/></svg></button>
+            </div>
+            <figcaption>Calefón</figcaption>
+          </figure>
+        </div>
+      </div>
       <div class="paqs paqs-orq">
         <article class="paq card rv">
           <h3>Esencial</h3>
@@ -630,6 +665,106 @@
         <div class="step card rv"><div class="dot">02</div><span class="when">Alcance por escrito</span><h3>Propuesta</h3><p>Qué vamos a hacer, qué necesitamos de tu lado y cuánto cuesta, antes de empezar.</p></div>
         <div class="step card rv"><div class="dot">03</div><span class="when">Paquetes: 5 a 10 días hábiles</span><h3>Implementación</h3><p>Lo armamos, lo conectamos a lo que ya usás y lo probamos con tu equipo antes de largarlo. Los días corren desde que nos pasás todos los accesos; en lo a medida, el plazo queda en la propuesta.</p></div>
         <div class="step card rv"><div class="dot">04</div><span class="when">Mes a mes</span><h3>Soporte y mejoras</h3><p>Seguimiento, ajustes y nuevas automatizaciones a medida que tu empresa crece.</p></div>
+      </div>
+      <!-- Paso a paso por servicio (26/11/2026). Pasos sacados del alta (alta/) y de la web; el único plazo es el publicado
+           en #paquetes (5 a 10 días hábiles desde los accesos). Sin días de la semana: no hay un plazo por paso confirmado. -->
+      <div class="pasos-srv card rv">
+        <div class="pasos-srv-cab">
+          <div>
+            <h3>Cada servicio,<br><span class="em">paso a paso.</span></h3>
+            <p>Elegí uno y mirá en qué orden se arma, qué te pedimos y en qué paso empieza a trabajar para vos.</p>
+          </div>
+          <ul class="tildes">
+            <li>Sabés qué necesitamos de tu lado antes de empezar</li>
+            <li>Lo probás antes de que salga</li>
+            <li><span>Paquetes: <b>entre 5 y 10 días hábiles</b> desde que nos pasás todos los accesos</span></li>
+          </ul>
+        </div>
+        <div class="srv-tabs" role="tablist" aria-label="Elegí un servicio" data-srv-tabs>
+          <button type="button" role="tab" id="tab-boti" aria-controls="paso-boti" aria-selected="true">Bot de WhatsApp</button>
+          <button type="button" role="tab" id="tab-web" aria-controls="paso-web" aria-selected="false" tabindex="-1">Página web</button>
+          <button type="button" role="tab" id="tab-landing" aria-controls="paso-landing" aria-selected="false" tabindex="-1">Landing</button>
+        </div>
+        <div class="srv-panel" id="paso-boti" role="tabpanel" aria-labelledby="tab-boti" tabindex="0">
+          <h4 class="srv-panel-tit">Bot de WhatsApp</h4>
+          <ol class="tira" style="--n:6">
+            <li style="--i:0"><b>Tus datos</b><span>El negocio, el plan y cómo te contactamos.</span></li>
+            <li style="--i:1"><b>Conexión</b><span>Conectás el WhatsApp del negocio con Meta, sin poner tarjeta.</span></li>
+            <li style="--i:2"><b>Cuestionario</b><span>Contás cómo trabajás y subís tu lista de precios en foto, PDF o Excel.</span></li>
+            <li style="--i:3"><b>Prueba</b><span>Le hacés preguntas vos y lo aprobás antes de que atienda a nadie.</span></li>
+            <li class="sale" style="--i:4"><b>Contestando</b><span>Empieza a contestar cuando lo aprobás y tu WhatsApp está conectado. Si hay que revisar algo, te avisamos por mail.</span></li>
+            <li class="despues" style="--i:5"><b>14 días gratis</b><span>Dos semanas de prueba: el primer pago vence el día que termina, y antes te avisamos por mail.</span></li>
+          </ol>
+          <p class="tira-nota">Lo armás vos desde el <a href="alta/" class="trab-link">alta</a>, o lo hacemos juntos en una llamada corta. <b>Si lo armamos nosotros, se entrega entre 5 y 10 días hábiles</b> desde que nos pasás todos los accesos. Al terminar la prueba se pagan la instalación y el primer mes (mirá los <a href="#paquetes" class="trab-link">paquetes</a>).</p>
+        </div>
+        <div class="srv-panel" id="paso-web" role="tabpanel" aria-labelledby="tab-web" tabindex="0" hidden>
+          <h4 class="srv-panel-tit">Página web</h4>
+          <ol class="tira" style="--n:7">
+            <li style="--i:0"><b>Diagnóstico</b><span>30 minutos por videollamada, gratis.</span></li>
+            <li style="--i:1"><b>Propuesta</b><span>Alcance y precio por escrito: depende de cuántas secciones lleva.</span></li>
+            <li style="--i:2"><b>Material</b><span>Nos pasás textos, fotos y accesos, y tu dominio si ya tenés uno.</span></li>
+            <li style="--i:3"><b>Diseño</b><span>La armamos y la conectamos a tu WhatsApp.</span></li>
+            <li style="--i:4"><b>Revisión</b><span>La miramos con vos antes de publicarla.</span></li>
+            <li class="sale" style="--i:5"><b>Publicada</b><span>Online y conectada a tu WhatsApp, para que te encuentren.</span></li>
+            <li class="despues" style="--i:6"><b>Mes a mes</b><span>Hosting y cambios chicos, en el abono.</span></li>
+          </ol>
+          <p class="tira-nota"><b>Se entrega entre 5 y 10 días hábiles</b> desde que nos pasás todos los accesos. Se paga al empezar. Una ya publicada: <a href="https://plomeriamansilla.com.ar/" target="_blank" rel="noopener" class="trab-link">plomeriamansilla.com.ar</a>.</p>
+        </div>
+        <div class="srv-panel" id="paso-landing" role="tabpanel" aria-labelledby="tab-landing" tabindex="0" hidden>
+          <h4 class="srv-panel-tit">Landing</h4>
+          <ol class="tira" style="--n:6">
+            <li style="--i:0"><b>Pedido</b><span>Nos contás qué producto o campaña querés empujar.</span></li>
+            <li style="--i:1"><b>Material</b><span>Fotos, textos y el WhatsApp al que tiene que llevar.</span></li>
+            <li style="--i:2"><b>Diseño</b><span>Una sola sección, pensada para tus anuncios.</span></li>
+            <li style="--i:3"><b>Revisión</b><span>La miramos con vos antes de publicarla.</span></li>
+            <li class="sale" style="--i:4"><b>Online</b><span>Con el botón directo a tu WhatsApp.</span></li>
+            <li class="despues" style="--i:5"><b>Mes a mes</b><span>Hosting y cambios chicos, en el abono.</span></li>
+          </ol>
+          <p class="tira-nota"><b>Se entrega entre 5 y 10 días hábiles</b> desde que nos pasás todos los accesos. Se paga al empezar; no tiene días gratis.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LO QUE APRENDE EL BOTI (26/11/2026): lo que ya hace el panel del cliente (panel/aprendido.js). Peluquería inventada, marcada como ejemplo. -->
+  <section class="sec" id="aprende" style="padding-top:0">
+    <div class="wrap aprende">
+      <figure class="apr-panel card rv" aria-labelledby="apr-tit" style="margin:0">
+        <div class="apr-cab"><strong id="apr-tit">Lo que aprendió tu Boti</strong><span class="apr-ej">Ejemplo: una peluquería inventada</span></div>
+        <ul class="apr-lista">
+          <li class="apr-fila">
+            <span class="apr-de"><b>Precios</b>, de una respuesta corregida</span>
+            <span class="apr-cambio">Corte y brushing <span class="par"><s>$&nbsp;12.000</s> <span class="fle" aria-hidden="true">→</span><span class="sr"> pasa a </span> <strong>$&nbsp;14.000</strong></span></span>
+            <span class="apr-ok">Aprobado</span>
+          </li>
+          <li class="apr-fila">
+            <span class="apr-de"><b>Horarios</b>, de una pregunta que contestaste</span>
+            <span class="apr-cambio">Sábados <span class="par"><s>de 9 a 13</s> <span class="fle" aria-hidden="true">→</span><span class="sr"> pasa a </span> <strong>de 9 a 17</strong></span></span>
+            <span class="apr-ok">Aprobado</span>
+          </li>
+          <li class="apr-fila">
+            <span class="apr-de"><b>Servicios</b>, de lo que contestaste desde el celular</span>
+            <span class="apr-cambio">Servicio nuevo: <strong>Alisado con keratina</strong></span>
+            <span class="apr-ok nuevo">Aprendido</span>
+          </li>
+          <li class="apr-fila falta">
+            <span class="apr-de"><b>Preguntas que no supo contestar</b></span>
+            <span class="apr-cambio">«¿Atienden los feriados?»</span>
+            <span class="apr-btn" aria-hidden="true">Enseñarle</span>
+          </li>
+        </ul>
+        <figcaption class="sr">Ejemplo del panel del Boti con datos inventados: un precio corregido, un horario cambiado, un servicio nuevo y una pregunta para enseñarle.</figcaption>
+      </figure>
+      <div class="aprende-txt">
+        <span class="eyebrow">Tu Boti aprende</span>
+        <h2>Lo corregís una vez.<br><span class="em">Y ya lo sabe.</span></h2>
+        <p class="lead">Con el Bot de WhatsApp, si cambia un precio, un horario o sumás algo nuevo, no hace falta llamarnos: lo corregís desde tu panel y el Boti lo aprende. Todo lo que aprende queda a la vista para que lo revises.</p>
+        <ul class="tildes">
+          <li>Marcás una respuesta con «Está mal» y escribís qué tendría que haber dicho</li>
+          <li>Aprobás, cambiás o descartás lo que aprendió de tus charlas</li>
+          <li>Las preguntas que no supo contestar te esperan en un solo lugar para que se las enseñes</li>
+        </ul>
+        <p class="aprende-nota">En el Bot de WhatsApp, el abono incluye <b>hosting, mantenimiento y soporte</b>; los mensajes de WhatsApp de Meta y la IA van aparte, según lo que se usa. En la landing y la página web, incluye <b>el hosting y los cambios chicos</b>.</p>
       </div>
     </div>
   </section>
@@ -774,5 +909,6 @@
 
 <script src="config.js?v=202611260020"></script>
 <script src="main.js?v=202611202100"></script>
+<script src="secciones.js?v=202611261630"></script>
 </body>
 </html>
