@@ -15,7 +15,7 @@
 
   // Menú general (20/11/2026): acceso.js lo carga en todas las páginas de admin/ y lo muestra al entrar.
   const base = (document.currentScript && document.currentScript.src || '').replace(/[^/]*$/, '');
-  if (base && !window.MENU) { const s = document.createElement('script'); s.src = base + 'menu.js?v=20261121e'; document.head.appendChild(s); }
+  if (base && !window.MENU) { const s = document.createElement('script'); s.src = base + 'menu.js?v=202611260020'; document.head.appendChild(s); }
   const menu = (u) => { if (window.MENU) window.MENU.mostrar(u); else window.__menuPendiente = u; };
   const sinMenu = () => { window.__menuPendiente = null; if (window.MENU) window.MENU.ocultar(); };
 
