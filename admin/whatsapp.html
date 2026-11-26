@@ -2399,12 +2399,17 @@
     if (abierta && e.target.closest('#waFicha')) { fichaSucia = abierta.telefono; $('#fichamsg').textContent = 'Cambios sin guardar.'; }
   });
   $('#waChat').addEventListener('keydown', (e) => { if (e.target.id === 'texto' && e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); $('#escribir').requestSubmit(); } });
+  let mandandoTexto = false;
   $('#waChat').addEventListener('submit', async (e) => {
     e.preventDefault();
     if (e.target.id === 'fichaform') return guardarFicha(e.target);
     if (e.target.id === 'buscarBar') return;
     const texto = $('#texto').value.trim(), boton = $('#accion');
     if (!texto || !abierta) return;
+    // (26/11/2026) Enter manda con requestSubmit(), que no mira si el botón está deshabilitado: un Enter
+    // apretado dos veces (o Enter y clic) mandaba el mismo mensaje dos veces. Se frena mientras sale uno.
+    if (mandandoTexto) return;
+    mandandoTexto = true;
     boton.disabled = true;
     const cita = respondiendo && respondiendo.tel === abierta.telefono ? respondiendo.id : '';
     try {
@@ -2417,7 +2422,7 @@
       boton.disabled = false;
       if (err.status === 409) { abierta.ventana_abierta = false; pintarChat(); msg('La ventana de 24 h está cerrada: no se puede escribirle hasta que vuelva a escribir.'); }
       else msg('No se pudo mandar: ' + err.message);
-    }
+    } finally { mandandoTexto = false; }
   });
   // ---------- Visor de PDF (16/11/2026) ----------
   // El PDF lo da AppMyM con la misma llave del panel; se dibuja con pdf.js porque Chrome del celular no
