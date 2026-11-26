@@ -19,7 +19,7 @@ Para mandarla como PDF: abrí el link en la computadora, tocá «Guardar como PD
 ```
 Hola [CONTACTO], soy Matías, de MyM Soluciones.
 Te armé la propuesta para [EMPRESA] con los seis planes de automatización y los tres de Redes en automático.
-Cada uno dice qué hace, qué necesitamos de tu lado y su precio (más IVA), y casi todos tienen un video corto que lo explica.
+Cada uno dice qué hace, qué necesitamos de tu lado y su precio final (con IVA incluido), y casi todos tienen un video corto que lo explica.
 [LINK]
 Mirala tranquilo. Si alguno te sirve, lo vemos en un diagnóstico gratis de 30 minutos por videollamada.
 Cualquier duda, escribime por acá.
