@@ -8,8 +8,8 @@
 <meta name="description" content="Casa de electricidad, telefonía e iluminación en Flores desde hace más de 45 años. Materiales, lámparas, porteros eléctricos y reparaciones. Av. Bonorino 81.">
 <meta property="og:title" content="Electricidad y Telefonía Laino · Flores">
 <meta property="og:description" content="Materiales eléctricos, iluminación, telefonía, porteros y reparaciones. Consultas por WhatsApp.">
-<meta property="og:image" content="img/local.jpg">
-<meta name="theme-color" content="#0e1726">
+<meta property="og:image" content="img/portada.jpg">
+<meta name="theme-color" content="#07205f">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap" rel="stylesheet">
@@ -20,21 +20,22 @@
 "geo":{"@type":"GeoCoordinates","latitude":-34.6288422,"longitude":-58.4595437},
 "openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],"opens":"09:30","closes":"19:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Sunday","opens":"09:00","closes":"17:00"}],
 "aggregateRating":{"@type":"AggregateRating","ratingValue":"4.2","reviewCount":"31"},
-"image":"img/local.jpg","sameAs":["https://www.instagram.com/electricidad.laino/"]}
+"image":"img/portada.jpg","sameAs":["https://www.instagram.com/electricidad.laino/"]}
 </script>
 <style>
 /* Layout: cartel de local arriba, tablero de "¿qué necesitás?" como pieza central, ficha de horario y mapa al pie. */
 :root {
-  --hoja: #eef2f6;
+  --hoja: #eef4ff;
   --blanco: #ffffff;
-  --tablero: #0e1726;
-  --tablero-2: #18243a;
-  --rayo: #1f63ff;
-  --rayo-osc: #1449c9;
-  --senal: #ffcf1a;
-  --tierra: #2e8b3e;
-  --acero: #56637a;
-  --linea: #d3dbe6;
+  --tinta: #0b1330;
+  --tablero: #07205f;
+  --tablero-2: #0c2f86;
+  --rayo: #1557e8;
+  --rayo-osc: #0e43bd;
+  --cielo: #6db8ff;
+  --estrella: #ffc83d;
+  --acero: #4d5a78;
+  --linea: #d4e0f5;
   --whatsapp: #1fa855;
   --sans: "Archivo", "Arial Narrow", "Segoe UI", system-ui, sans-serif;
   --ancho: 1180px;
@@ -42,7 +43,7 @@
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; scroll-padding-top: 76px; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
-body { margin: 0; background: var(--hoja); color: var(--tablero); font: 400 17px/1.55 var(--sans); font-variation-settings: "wdth" 100; -webkit-font-smoothing: antialiased; }
+body { margin: 0; background: var(--hoja); color: var(--tinta); font: 400 17px/1.55 var(--sans); font-variation-settings: "wdth" 100; -webkit-font-smoothing: antialiased; }
 img { max-width: 100%; height: auto; display: block; }
 a { color: inherit; }
 :focus-visible { outline: 3px solid var(--rayo); outline-offset: 3px; border-radius: 4px; }
@@ -70,44 +71,42 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .marca { display: flex; align-items: center; gap: 12px; text-decoration: none; }
 .marca img { width: 44px; height: 44px; border-radius: 50%; }
 .marca b { display: block; font-weight: 800; font-size: 22px; letter-spacing: .02em; font-variation-settings: "wdth" 125; line-height: 1; }
-.marca small { display: block; font-size: 12px; color: #a9b6cc; margin-top: 3px; }
+.marca small { display: block; font-size: 12px; color: #a9c1ee; margin-top: 3px; }
 .menu { display: flex; gap: 26px; font-weight: 500; font-size: 15px; }
-.menu a { text-decoration: none; color: #d6deec; }
+.menu a { text-decoration: none; color: #dbe6fb; }
 .menu a:hover { color: #fff; }
 .cabecera .boton { min-height: 42px; padding: 0 16px; font-size: 15px; }
 @media (max-width: 900px) { .menu { display: none; } }
 @media (max-width: 420px) { .marca small { display: none; } .cabecera .boton span { display: none; } .cabecera .boton { width: 46px; padding: 0; } }
 
 /* Portada */
-.portada { background: var(--tablero); color: #fff; padding-block: 48px 0; overflow: hidden; }
-.portada .envase { display: grid; grid-template-columns: 1.1fr .9fr; gap: 48px; align-items: end; }
-.portada .texto { padding-bottom: 64px; }
-.estado { display: inline-flex; align-items: center; gap: 10px; background: var(--tablero-2); border: 1px solid #2b3a57; border-radius: 999px; padding: 7px 14px 7px 12px; font-size: 14px; font-weight: 600; }
+.portada { background: linear-gradient(160deg, var(--tablero) 0%, var(--tablero-2) 100%); color: #fff; padding-block: 48px 56px; overflow: hidden; }
+.portada .envase { display: grid; grid-template-columns: 1.1fr .9fr; gap: 48px; align-items: center; }
+.portada .texto { padding-bottom: 0; }
+.estado { display: inline-flex; align-items: center; gap: 10px; background: var(--tablero-2); border: 1px solid #2350b8; border-radius: 999px; padding: 7px 14px 7px 12px; font-size: 14px; font-weight: 600; }
 .estado i { width: 10px; height: 10px; border-radius: 50%; background: #8a94a6; }
 .estado.abierto i { background: #3ddc6f; box-shadow: 0 0 0 4px rgba(61,220,111,.18); }
 .estado.cerrado i { background: #ff6b5b; }
 .portada h1 { font-size: clamp(38px, 6vw, 72px); margin-top: 22px; }
-.portada h1 em { font-style: normal; color: var(--senal); }
-.portada .bajada { color: #b9c4d8; margin: 22px 0 30px; }
+.portada h1 em { font-style: normal; color: var(--cielo); }
+.portada .bajada { color: #c9d8f5; margin: 22px 0 30px; }
 .acciones { display: flex; flex-wrap: wrap; gap: 12px; }
 .portada .boton.borde { color: #fff; }
 .portada .boton.borde:hover { background: #fff; color: var(--tablero); border-color: #fff; }
-.nota-google { display: inline-flex; align-items: center; gap: 10px; margin-top: 28px; color: #d6deec; font-size: 15px; text-decoration: none; }
+.nota-google { display: inline-flex; align-items: center; gap: 10px; margin-top: 28px; color: #dbe6fb; font-size: 15px; text-decoration: none; }
 .nota-google b { font-size: 22px; color: #fff; font-variation-settings: "wdth" 125; }
-.nota-google .estrellas { color: var(--senal); letter-spacing: 2px; }
+.nota-google .estrellas { color: var(--estrella); letter-spacing: 2px; }
 .nota-google:hover span:last-child { text-decoration: underline; }
-.vidriera { margin: 0; position: relative; border-radius: 18px 18px 0 0; overflow: hidden; border: 6px solid var(--tablero-2); border-bottom: 0; }
+.vidriera { margin: 0; position: relative; border-radius: 20px; overflow: hidden; box-shadow: 0 30px 60px -24px rgba(0,0,0,.55); }
 .vidriera img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; }
-.vidriera figcaption { position: absolute; left: 14px; bottom: 14px; background: rgba(14,23,38,.86); color: #fff; padding: 8px 14px; border-radius: 8px; font-size: 14px; font-weight: 600; }
 @media (max-width: 900px) {
-  .portada { padding-block: 34px 0; }
-  .portada .envase { grid-template-columns: 1fr; gap: 0; }
-  .portada .texto { padding-bottom: 40px; }
+  .portada { padding-block: 34px 40px; }
+  .portada .envase { grid-template-columns: 1fr; gap: 36px; }
   .vidriera { max-width: 520px; }
 }
 
-/* Franja de cable de tierra */
-.tierra { height: 10px; background: repeating-linear-gradient(115deg, var(--tierra) 0 22px, var(--senal) 22px 44px); }
+/* Franja azul como la del folleto */
+.tierra { height: 8px; background: linear-gradient(90deg, var(--tablero) 0%, var(--rayo) 55%, var(--cielo) 100%); }
 
 /* Qué necesitás */
 .necesitas { padding-block: 84px; }
@@ -119,11 +118,11 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .tecla p { color: var(--acero); font-size: 15px; margin-top: 8px; }
 .tecla .ir { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 15px; color: var(--whatsapp); }
 .tecla .ir svg { width: 18px; height: 18px; }
-.tecla.urgente { background: var(--senal); border-color: var(--senal); grid-row: span 2; }
+.tecla.urgente { background: var(--rayo); border-color: var(--rayo); color: #fff; grid-row: span 2; }
 .tecla.urgente h3 { font-size: 34px; font-variation-settings: "wdth" 125; font-weight: 800; }
-.tecla.urgente p { color: #3b3203; font-size: 17px; }
-.tecla.urgente .ir { color: var(--tablero); }
-.tecla.urgente .tel { font-size: 15px; color: #3b3203; }
+.tecla.urgente p { color: #dbe6fb; font-size: 17px; }
+.tecla.urgente .ir { color: #fff; }
+.tecla.urgente .tel { font-size: 15px; color: #dbe6fb; }
 @media (max-width: 900px) { .tablero { grid-template-columns: 1fr 1fr; } .tecla.urgente { grid-column: span 2; grid-row: auto; } }
 @media (max-width: 560px) { .necesitas { padding-block: 60px; } .tablero { grid-template-columns: 1fr; } .tecla.urgente { grid-column: auto; } .tecla { min-height: 0; } }
 
@@ -148,7 +147,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .barra { margin-top: 18px; display: grid; gap: 6px; max-width: 340px; font-size: 14px; color: var(--acero); font-variant-numeric: tabular-nums; }
 .barra div { display: grid; grid-template-columns: 22px 1fr 26px; gap: 10px; align-items: center; }
 .barra i { display: block; height: 8px; border-radius: 4px; background: var(--hoja); overflow: hidden; }
-.barra i::after { content: ""; display: block; height: 100%; width: var(--p); background: var(--senal); }
+.barra i::after { content: ""; display: block; height: 100%; width: var(--p); background: var(--rayo); }
 .citas { display: grid; gap: 14px; }
 .cita { margin: 0; padding: 22px 24px; border-radius: 14px; background: var(--hoja); }
 .cita p { font-size: 20px; font-weight: 600; line-height: 1.35; }
@@ -179,15 +178,15 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 /* Pie */
 .pie { background: var(--tablero); color: #fff; padding-block: 64px calc(30px + env(safe-area-inset-bottom, 0px)); }
 .pie-grilla { display: grid; grid-template-columns: 1.3fr 1fr 1fr 1fr; gap: 36px; }
-.pie p { color: #b9c4d8; margin-top: 14px; max-width: 34ch; }
-.pie h3 { font-size: 14px; font-weight: 600; color: #8f9db6; margin-bottom: 14px; letter-spacing: .02em; }
+.pie p { color: #c9d8f5; margin-top: 14px; max-width: 34ch; }
+.pie h3 { font-size: 14px; font-weight: 600; color: #9db6e6; margin-bottom: 14px; letter-spacing: .02em; }
 .pie ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
 .pie ul a { text-decoration: none; font-weight: 600; }
 .pie ul a:hover { text-decoration: underline; }
-.pie ul small { display: block; color: #8f9db6; font-weight: 400; font-size: 13px; }
+.pie ul small { display: block; color: #9db6e6; font-weight: 400; font-size: 13px; }
 .pie .boton { margin-top: 22px; }
-.pie-final { border-top: 1px solid #263450; margin-top: 48px; padding-top: 22px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 24px; font-size: 13px; color: #8f9db6; }
-.pie-final a { color: #d6deec; }
+.pie-final { border-top: 1px solid #1d3f9a; margin-top: 48px; padding-top: 22px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 24px; font-size: 13px; color: #9db6e6; }
+.pie-final a { color: #dbe6fb; }
 @media (max-width: 960px) { .pie-grilla { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 520px) { .pie-grilla { grid-template-columns: 1fr; } }
 
@@ -227,8 +226,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
         <a class="nota-google" href="https://maps.google.com/?cid=4854106797725966246" target="_blank" rel="noopener"><b>4,2</b><span class="estrellas" aria-hidden="true">★★★★</span><span>31 opiniones en Google</span></a>
       </div>
       <figure class="vidriera">
-        <img src="img/local.jpg" width="1000" height="1000" alt="Frente del local Laino en Av. Bonorino 81, con teléfonos, lámparas y la vidriera iluminada">
-        <figcaption>Av. Bonorino 81, Flores</figcaption>
+        <img src="img/portada.jpg" width="1000" height="1000" alt="Laino Electricidad y Telefonía: service y reparación de productos de telefonía y electricidad, con asesoramiento, accesorios y atención personalizada. WhatsApp +54 9 11 5028-9583">
       </figure>
     </div>
   </section>
