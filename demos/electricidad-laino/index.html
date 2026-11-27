@@ -183,6 +183,12 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .rubro .ir { margin-top: auto; font: 700 13px var(--etiqueta); letter-spacing: .12em; text-transform: uppercase; color: var(--celeste); text-decoration: none; }
 .rubro .ir:hover { color: #fff; }
 .inv-nota { margin-top: 20px; color: var(--suave); font-size: 15px; }
+.inv-mas { margin-top: 20px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px 28px; padding: 26px 28px; border-radius: 18px; background: linear-gradient(120deg, #1550d6, #2f7bff); box-shadow: 0 30px 60px -34px rgba(47,123,255,.9); }
+.inv-mas h3 { font-size: clamp(26px, 3.4vw, 36px); }
+.inv-mas p { color: #e6efff; margin-top: 8px; max-width: 56ch; }
+.inv-mas .acciones { display: flex; flex-wrap: wrap; gap: 10px; }
+.inv-mas .boton.oscuro { background: var(--noche); color: #fff; }
+.inv-mas .boton.claro { border-color: rgba(255,255,255,.7); color: #fff; }
 @media (max-width: 1100px) { .inv-grilla { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 900px) { .inv-grilla { grid-template-columns: 1fr 1fr; } .inv-fotos { grid-template-columns: 1fr 1fr; } .inv-fotos figure:first-child { grid-column: span 2; grid-row: auto; } .inv-fotos figure:first-child img { aspect-ratio: 4 / 3; } }
 @media (max-width: 560px) { .inv-grilla { grid-template-columns: 1fr; } }
@@ -377,7 +383,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
   <section class="inventario" id="inventario" aria-labelledby="t-inv">
     <div class="envase">
       <h2 id="t-inv">Todo lo que hay <em>en el local.</em></h2>
-      <p class="bajada" style="margin-top:14px">Vendemos por mayor y por menor. Buscá lo que necesitás y preguntanos el stock por WhatsApp.</p>
+      <p class="bajada" style="margin-top:14px">Vendemos por mayor y por menor. Acá tenés una parte de lo que hay: buscá lo que necesitás y, si no lo ves, consultanos igual.</p>
       <div class="inv-fotos">
         <figure><img src="img/inv-frente.jpg" width="1000" height="817" loading="lazy" alt="Frente del local de Laino en Bonorino 81 con sus vidrieras de telefonía y materiales eléctricos"><figcaption>El frente, en Bonorino 81</figcaption></figure>
         <figure><img src="img/inv-interior.jpg" width="1000" height="562" loading="lazy" alt="Interior del local con lámparas colgantes, spots, porteros y estantes llenos de materiales"><figcaption>Adentro del local</figcaption></figure>
@@ -399,6 +405,10 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
         <article class="rubro"><h3>Pilas y baterías</h3><ul><li>Pilas Varta y otras marcas</li><li>Baterías recargables</li><li>Baterías para teléfonos inalámbricos</li></ul><a class="ir" data-wa="Hola, busco pilas o baterías. Necesito " href="#">Preguntar por stock →</a></article>
         <article class="rubro"><h3>Soportes para TV</h3><ul><li>Fijos e inclinables</li><li>Con brazo articulado</li><li>Para todas las medidas</li></ul><a class="ir" data-wa="Hola, busco un soporte de TV para " href="#">Preguntar por stock →</a></article>
         <article class="rubro"><h3>Servicios en el local</h3><ul><li>Service de celulares<small>Cambio de módulo en 2 horas: iPhone, Samsung, Motorola, Xiaomi y más</small></li><li>Reparación de electrodomésticos</li><li>Instalaciones eléctricas en casas y comercios</li><li>Mantenimiento y asesoramiento</li></ul><a class="ir" data-wa="Hola, consulto por un servicio. Necesito " href="#">Preguntar por stock →</a></article>
+      </div>
+      <div class="inv-mas">
+        <div><h3>Y mucho más en el local.</h3><p>Esto es sólo una parte. Tenemos muchos más productos y repuestos: si buscás algo que no está en la lista, consultanos y te decimos si lo tenemos.</p></div>
+        <div class="acciones"><a class="boton oscuro" data-wa="Hola, busco algo que no vi en la web. Necesito " href="#"><svg><use href="#i-wa"/></svg>Consultar por WhatsApp</a><a class="boton claro" href="tel:+541146319267">Llamar al 4631-9267</a></div>
       </div>
       <p class="inv-nota">Los precios cambian seguido: te los pasamos por WhatsApp o en el local.</p>
     </div>
