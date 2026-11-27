@@ -11,7 +11,7 @@
 
   const COLECCIONES = ['productos', 'depositos', 'lotes', 'clientes', 'proveedores', 'preventistas', 'choferes', 'vehiculos',
     'pedidos', 'comprobantes', 'remitos', 'hojasRuta', 'recibos', 'cheques', 'ordenesCompra', 'comprasFacturas', 'pagos',
-    'movCtaCte', 'asientos', 'planCuentas', 'ajustesStock', 'listasPrecio', 'aumentosPrecio', 'visitas', 'liquidacionesComision'];
+    'movCtaCte', 'asientos', 'planCuentas', 'ajustesStock', 'listasPrecio', 'aumentosPrecio', 'visitas', 'liquidacionesComision', 'recetas', 'ordenesProduccion'];
 
   const CUENTAS = {
     caja: '1.1.01', banco: '1.1.02', valores: '1.1.03', deudores: '1.1.04', ivaCF: '1.1.05', mercaderias: '1.1.06',
@@ -35,6 +35,9 @@
   // ---------- números ----------
   const r2 = n => Math.round((Number(n) + Number.EPSILON) * 100) / 100;
   App.r2 = r2;
+  // las cantidades se guardan con 4 decimales: una unidad suelta de un bulto x 24 es 0,0417 bulto; un pesable va en kilos
+  const rq = n => Math.round((Number(n) + Number.EPSILON) * 10000) / 10000;
+  App.rq = rq;
   const pad = (n, l) => String(n).padStart(l, '0');
 
   // ---------- fechas (ISO 'aaaa-mm-dd', en UTC para no depender del huso) ----------
@@ -85,20 +88,20 @@
   function nuevoId(pref) { db.contadores.id++; return pref + db.contadores.id.toString(36).padStart(5, '0'); }
   function siguiente(tipo) { db.contadores[tipo] = (db.contadores[tipo] || 0) + 1; return db.contadores[tipo]; }
   const nroCompleto = (pv, n) => pad(pv, 4) + '-' + pad(n, 8);
-  function reservar(prod, dep, cant) { const k = prod + '|' + dep; idx.reservado[k] = r2((idx.reservado[k] || 0) + cant); }
+  function reservar(prod, dep, cant) { const k = prod + '|' + dep; idx.reservado[k] = rq((idx.reservado[k] || 0) + cant); }
   App.get = (col, id) => (idx && idx.porId[col] ? idx.porId[col].get(id) : null) || null;
   const exigir = (col, id, nombre) => { const o = App.get(col, id); if (!o) throw new Error('No se encontró ' + nombre + ' (' + id + ').'); return o; };
 
   function crearLote({ productoId, depositoId, cantidad, costo, lote, vence, ingreso, origen }) {
     const l = insertar('lotes', { id: nuevoId('lt'), productoId, depositoId, lote: lote || ('L' + hoyActual.slice(2).replace(/-/g, '')), vence: vence || null,
-      cantidad: r2(cantidad), inicial: r2(cantidad), costo: r2(costo), ingreso: ingreso || hoyActual, origen: origen || 'compra' });
+      cantidad: rq(cantidad), inicial: rq(cantidad), costo: r2(costo), ingreso: ingreso || hoyActual, origen: origen || 'compra' });
     if (l.cantidad > 0) (idx.lotes[productoId] = idx.lotes[productoId] || []).push(l);
     return l;
   }
   App._crearLote = crearLote;   // sólo para la semilla (existencia inicial)
   function moverLote(l, delta) {
     const antes = l.cantidad;
-    l.cantidad = r2(l.cantidad + delta);
+    l.cantidad = rq(l.cantidad + delta);
     if (antes <= 0 && l.cantidad > 0) { const arr = idx.lotes[l.productoId] = idx.lotes[l.productoId] || []; if (!arr.includes(l)) arr.push(l); }
   }
   const ordenFEFO = (a, b) => (a.vence || '9999') < (b.vence || '9999') ? -1 : (a.vence || '9999') > (b.vence || '9999') ? 1 : (a.ingreso < b.ingreso ? -1 : a.ingreso > b.ingreso ? 1 : 0);
@@ -115,7 +118,7 @@
     for (const l of lotesActivos(productoId, depositoId)) {
       if (!incluirVencidos && l.vence && l.vence < hoy) continue;
       const toma = Math.min(l.cantidad, falta);
-      if (toma > 0) { plan.push({ lote: l, cantidad: r2(toma) }); falta = r2(falta - toma); }
+      if (toma > 0) { plan.push({ lote: l, cantidad: rq(toma) }); falta = rq(falta - toma); }
       if (falta <= 0) break;
     }
     return { plan, falta };
@@ -141,9 +144,35 @@
   const NOMBRE_TIPO = { FA: 'Factura A', FB: 'Factura B', NCA: 'Nota de crédito A', NCB: 'Nota de crédito B', RC: 'Recibo', R: 'Remito', FC: 'Factura de compra', OP: 'Orden de pago' };
   App.nombreTipo = t => NOMBRE_TIPO[t] || t;
 
+  // presentaciones de venta: el stock siempre está en la unidad base del producto (el bulto, o el kilo en los pesables);
+  // cada presentación dice cuántas unidades base lleva (factor) y si tiene recargo por fraccionar (en %)
+  function presentaciones(p) {
+    if (!p) return [];
+    if (p.presentaciones && p.presentaciones.length) return p.presentaciones;
+    const r = [{ id: 'b', nombre: p.unidad, factor: 1, recargo: 0 }];
+    if (p.contenido > 1) {
+      if (p.contenido >= 12 && p.contenido % 6 === 0) r.push({ id: 'pk', nombre: 'Pack x 6', factor: 6 / p.contenido, recargo: 4 });
+      r.push({ id: 'u', nombre: 'Unidad', factor: 1 / p.contenido, recargo: 8 });
+    }
+    return r;
+  }
+  App.presentaciones = presentaciones;
+  App.presentacionDe = (p, id) => { const ps = presentaciones(p); return ps.find(x => x.id === id) || ps[0]; };
+  // texto de la cantidad de un renglón: «3 cajas x 12», «2,350 kg», «5 unidades»
+  App.cantidadTexto = it => {
+    const p = App.get('productos', it.productoId);
+    if (it.pres) return App.ui.num(it.pres.cantidad, it.pres.cantidad % 1 ? (p && p.pesable && it.pres.id === 'kg' ? 3 : 2) : 0) + ' × ' + it.pres.nombre.toLowerCase();
+    return App.ui.num(it.cantidad, it.cantidad % 1 ? 2 : 0);
+  };
+  // subtotal de un renglón: con presentación se cobra por presentación (así 1 unidad cuesta lo que dice la lista, sin centavos de más)
+  function subtotalItem(it) {
+    if (it.pres && it.pres.factor !== 1) return r2(it.pres.cantidad * r2(precioNeto(it) * it.pres.factor));
+    return r2(it.cantidad * precioNeto(it));
+  }
+  App.subtotalItem = subtotalItem;
   function totalesItems(items) {
     let neto21 = 0, neto105 = 0;
-    items.forEach(it => { const s = r2(it.cantidad * precioNeto(it)); if (it.iva === 10.5) neto105 += s; else neto21 += s; });
+    items.forEach(it => { const s = subtotalItem(it); if (it.iva === 10.5) neto105 += s; else neto21 += s; });
     neto21 = r2(neto21); neto105 = r2(neto105);
     const iva21 = r2(neto21 * 0.21), iva105 = r2(neto105 * 0.105);
     const neto = r2(neto21 + neto105), iva = r2(iva21 + iva105);
@@ -184,11 +213,10 @@
     const dep = depositoId || c.depositoId;
     const juntos = {};
     items.forEach(it => {
-      const cant = Number(it.cantidad);
-      if (!(cant > 0)) throw new Error('Las cantidades tienen que ser mayores que cero.');
       const p = exigir('productos', it.productoId, 'el producto');
-      if (!juntos[p.id]) juntos[p.id] = { productoId: p.id, cantidad: 0, precio: it.precio != null ? r2(it.precio) : App.q.precio(p.id, c.listaId), iva: p.iva, bonif: it.bonif != null && it.bonif !== '' ? Number(it.bonif) : null };
-      juntos[p.id].cantidad = r2(juntos[p.id].cantidad + cant);
+      const r = renglon(p, it, c.listaId, null);
+      if (!juntos[p.id]) juntos[p.id] = r;
+      else unirRenglon(juntos[p.id], r);
     });
     const lista = Object.values(juntos);
     lista.forEach(it => {
@@ -213,6 +241,25 @@
     return p;
   });
 
+  // un renglón de pedido a partir de lo que carga la persona: { productoId, cantidad (en la presentación), presentacion, precio?, bonif? }
+  function renglon(p, it, listaId, previo) {
+    const cantPres = Number(it.cantidad);
+    if (!(cantPres > 0)) throw new Error('Las cantidades tienen que ser mayores que cero.');
+    const pr = App.presentacionDe(p, it.presentacion || (previo && previo.pres ? previo.pres.id : null));
+    if (!p.pesable || pr.id !== 'kg') { if (pr.factor !== 1 && cantPres % 1) throw new Error('De «' + p.descripcion + '» se venden ' + pr.nombre.toLowerCase() + ' enteras: usá una cantidad sin decimales.'); }
+    const mismoPrecio = previo && (previo.pres ? previo.pres.id : 'b') === pr.id;
+    const precio = it.precio != null && it.precio !== '' ? r2(it.precio) : (mismoPrecio ? previo.precio : r2(App.q.precio(p.id, listaId) * (1 + (pr.recargo || 0) / 100)));
+    const conPres = p.presentaciones && p.presentaciones.length ? true : pr.id !== 'b';
+    return { productoId: p.id, cantidad: rq(cantPres * pr.factor), precio, iva: p.iva, bonif: it.bonif != null && it.bonif !== '' ? Number(it.bonif) : null,
+      pres: conPres ? { id: pr.id, nombre: pr.nombre, factor: pr.factor, cantidad: cantPres } : null };
+  }
+  // el mismo producto en dos presentaciones se une en la unidad base
+  function unirRenglon(a, b) {
+    if (a.pres && b.pres && a.pres.id === b.pres.id) a.pres.cantidad = rq(a.pres.cantidad + b.pres.cantidad);
+    else { a.pres = null; a.precio = r2((a.cantidad * a.precio + b.cantidad * b.precio) / (a.cantidad + b.cantidad)); }
+    a.cantidad = rq(a.cantidad + b.cantidad);
+  }
+
   accion('modificarPedido', function (pedidoId, { items, obs }) {
     const p = exigir('pedidos', pedidoId, 'el pedido');
     if (p.estado !== 'pendiente') throw new Error('Sólo se puede modificar un pedido pendiente.');
@@ -223,9 +270,9 @@
       if (!(cant > 0)) return;
       const prod = exigir('productos', it.productoId, 'el producto');
       const previo = p.items.find(x => x.productoId === prod.id);
-      if (!juntos[prod.id]) juntos[prod.id] = { productoId: prod.id, cantidad: 0, precio: it.precio != null ? r2(it.precio) : (previo ? previo.precio : App.q.precio(prod.id, c.listaId)), iva: prod.iva,
-        bonif: it.bonif != null && it.bonif !== '' ? Number(it.bonif) : null, previoBonif: previo ? previo.bonif || 0 : null, previoCant: previo ? previo.cantidad : null };
-      juntos[prod.id].cantidad = r2(juntos[prod.id].cantidad + cant);
+      const r = renglon(prod, it, c.listaId, previo);
+      r.previoBonif = previo ? previo.bonif || 0 : null; r.previoCant = previo ? previo.cantidad : null;
+      if (!juntos[prod.id]) juntos[prod.id] = r; else unirRenglon(juntos[prod.id], r);
     });
     const lista = Object.values(juntos);
     lista.forEach(it => {
@@ -245,6 +292,38 @@
     Object.assign(p, totalesItems(lista), { obs: obs != null ? obs : p.obs });
     delete p.neto21; delete p.neto105; delete p.iva21; delete p.iva105;
     return p;
+  });
+
+  // pedido facturado que todavía no salió a reparto ni tiene cobranzas: se anula la factura con una nota de crédito
+  // (vuelve el stock y se acredita la cuenta corriente) y se factura el pedido corregido
+  App.q.puedeModificarFacturado = (pedidoId) => {
+    const p = App.get('pedidos', pedidoId);
+    if (!p || p.estado !== 'facturado') return { ok: false, motivo: 'El pedido no está facturado.' };
+    const f = App.get('comprobantes', p.comprobanteId), rem = App.get('remitos', p.remitoId);
+    if (rem && rem.estado !== 'pendiente') return { ok: false, motivo: 'El remito ya salió en una hoja de ruta: para quitar productos, hacé una nota de crédito desde la factura.' };
+    if (f && (f.cobrado > 0.01 || (f.ncIds || []).length)) return { ok: false, motivo: 'La factura ya tiene cobranzas o notas de crédito: los cambios van por nota de crédito.' };
+    return { ok: true };
+  };
+  accion('modificarPedidoFacturado', function (pedidoId, { items, obs }) {
+    const chequeo = App.q.puedeModificarFacturado(pedidoId);
+    if (!chequeo.ok) throw new Error(chequeo.motivo);
+    const p = App.get('pedidos', pedidoId);
+    const f = App.get('comprobantes', p.comprobanteId), rem = App.get('remitos', p.remitoId);
+    const lista = (items || []).filter(it => Number(it.cantidad) > 0).map(it => {
+      const previo = p.items.find(x => x.productoId === it.productoId);
+      const nuevo = Object.assign({}, it);
+      if (nuevo.precio == null && previo && (!it.presentacion || (previo.pres ? previo.pres.id : 'b') === it.presentacion)) nuevo.precio = previo.precio;
+      return nuevo;
+    });
+    if (!lista.length) throw new Error('El pedido quedó sin productos. Si no corresponde, hacé una nota de crédito por el total.');
+    const nc = App.acciones.notaCredito(f.id, null, 'Modificación del pedido ' + p.nro);
+    if (rem) rem.estado = 'anulado';
+    p.estado = 'modificado';
+    const nuevo = App.acciones.crearPedido({ clienteId: p.clienteId, preventistaId: p.preventistaId, items: lista, origen: p.origen, obs: obs != null ? obs : p.obs, depositoId: p.depositoId });
+    nuevo.reemplazaA = p.id;
+    p.reemplazadoPor = nuevo.id; p.ncModificacionId = nc.id;
+    const fc = App.acciones.facturarPedido(nuevo.id);
+    return { pedido: nuevo, factura: fc, nc };
   });
 
   accion('cancelarPedido', function (pedidoId, motivo) {
@@ -285,7 +364,7 @@
     const comp = insertar('comprobantes', {
       id, tipo, clase: 'factura', letra, puntoVenta: CONFIG.puntoVenta, numero: n, nro, fecha,
       clienteId: c.id, razonSocial: c.razonSocial, cuit: c.cuit, condicionIVA: c.condicionIVA, pedidoId: p.id,
-      items: p.items.map(it => { const pr = App.get('productos', it.productoId); return { productoId: it.productoId, codigo: pr.codigo, descripcion: pr.descripcion, unidad: pr.unidad, cantidad: it.cantidad, precio: it.precio, bonif: it.bonif || 0, iva: it.iva, subtotal: r2(it.cantidad * precioNeto(it)) }; }),
+      items: p.items.map(it => { const pr = App.get('productos', it.productoId); return { productoId: it.productoId, codigo: pr.codigo, descripcion: pr.descripcion, unidad: it.pres ? it.pres.nombre : pr.unidad, cantidad: it.cantidad, pres: it.pres || null, precio: it.precio, bonif: it.bonif || 0, iva: it.iva, subtotal: subtotalItem(it) }; }),
       neto21: tot.neto21, neto105: tot.neto105, neto: tot.neto, iva21: tot.iva21, iva105: tot.iva105, iva: tot.iva, total: tot.total,
       costo, consumos, cae, vtoCae: F.sumar(fecha, 10), vence: F.sumar(fecha, c.plazo || 0),
       cobrado: 0, acreditado: 0, ncIds: [], devuelto: {}, remitoId: null
@@ -730,6 +809,133 @@
     return insertar(coleccion, obj);
   });
 
+  // ---- listas de precios nuevas: salen del costo o de otra lista, con un porcentaje ----
+  accion('crearListaPrecio', function ({ nombre, detalle, base, porcentaje }) {
+    const nom = String(nombre || '').trim();
+    if (!nom) throw new Error('La lista necesita un nombre.');
+    if (db.listasPrecio.some(l => App.ui.normalizar(l.nombre) === App.ui.normalizar(nom))) throw new Error('Ya existe una lista llamada «' + nom + '».');
+    const pct = Number(porcentaje);
+    if (!isFinite(pct) || pct <= -90) throw new Error('El porcentaje no es válido.');
+    const desde = base && base !== 'costo' ? exigir('listasPrecio', base, 'la lista de base') : null;
+    let n = db.listasPrecio.length + 1; while (App.get('listasPrecio', 'L' + n)) n++;
+    const id = 'L' + n;
+    const recargo = desde ? r2(((1 + desde.recargo) * (1 + pct / 100) - 1) * 1000) / 1000 : r2(pct / 100 * 1000) / 1000;
+    const l = insertar('listasPrecio', { id, nombre: nom, recargo, detalle: detalle || (desde ? (pct >= 0 ? pct + ' % sobre ' : Math.abs(pct) + ' % menos que ') + desde.nombre : pct + ' % sobre el costo'),
+      base: desde ? desde.id : 'costo', porcentaje: pct, creada: hoyActual });
+    db.productos.forEach(p => {
+      const b = desde ? (p.precios[desde.id] != null ? p.precios[desde.id] : Math.round(p.costo * (1 + desde.recargo))) : p.costo;
+      p.precios[id] = Math.round(b * (1 + pct / 100));
+    });
+    return l;
+  });
+
+  // ---- código propio: además del EAN-13 del fabricante, un código de la distribuidora para cada producto ----
+  // numérico de 12 o 13 dígitos → EAN-13 interno (prefijo 29, reservado para uso interno); con letras → Code 39
+  App.f.codigoPropioSugerido = p => { const doce = '29' + pad(hash('propio' + p.id) % 10000000000, 10); return doce + F.digitoEAN(doce); };
+  App.f.tipoCodigo = c => /^\d{12,13}$/.test(c) ? 'ean13' : 'code39';
+  accion('asignarCodigoPropio', function (productoId, codigo) {
+    const p = exigir('productos', productoId, 'el producto');
+    let c = String(codigo == null ? '' : codigo).trim().toUpperCase();
+    if (!c) { p.codigoPropio = null; return p; }
+    if (/^\d{12}$/.test(c)) c += F.digitoEAN(c);
+    if (/^\d{13}$/.test(c)) { if (!F.eanValido(c)) throw new Error('El código ' + c + ' no es un EAN-13 válido: el último dígito tendría que ser ' + F.digitoEAN(c.slice(0, 12)) + '.'); }
+    else if (!/^[A-Z0-9 .\-\/+%$]{2,20}$/.test(c)) throw new Error('El código propio puede tener de 2 a 20 caracteres: letras, números, espacio y . - / + % $.');
+    const otro = db.productos.find(x => x.id !== p.id && (x.ean === c || x.codigoPropio === c));
+    if (otro) throw new Error('El código ' + c + ' ya lo usa «' + otro.descripcion + '».');
+    p.codigoPropio = c;
+    return p;
+  });
+
+  // ---- foto del producto elegida desde la búsqueda de imágenes ----
+  accion('asignarFoto', function (productoId, foto) {
+    const p = exigir('productos', productoId, 'el producto');
+    p.foto = foto ? { consulta: String(foto.consulta || ''), resultado: Number(foto.resultado) || 0, sitio: foto.sitio || '', fecha: hoyActual } : null;
+    return p;
+  });
+
+  // ---- producción: recetas (insumos y cantidades por tanda) y órdenes de producción ----
+  accion('guardarReceta', function (datos) {
+    const d = datos || {};
+    const prod = exigir('productos', d.productoId, 'el producto que se produce');
+    const rinde = Number(d.rinde);
+    if (!(rinde > 0)) throw new Error('Indicá cuánto rinde cada tanda.');
+    const insumos = (d.insumos || []).filter(i => Number(i.cantidad) > 0).map(i => {
+      const p = exigir('productos', i.productoId, 'el insumo');
+      if (p.id === prod.id) throw new Error('Un producto no puede ser insumo de sí mismo.');
+      return { productoId: p.id, cantidad: rq(i.cantidad) };
+    });
+    if (!insumos.length) throw new Error('La receta necesita al menos un insumo.');
+    const otros = (d.otrosCostos || []).filter(o => String(o.concepto || '').trim() && Number(o.importe) > 0).map(o => ({ concepto: String(o.concepto).trim(), importe: r2(o.importe) }));
+    const existente = d.id ? App.get('recetas', d.id) : null;
+    const obj = { nombre: String(d.nombre || prod.descripcion).trim(), productoId: prod.id, rinde: rq(rinde), insumos, otrosCostos: otros, nota: d.nota || '', actualizada: hoyActual };
+    if (existente) { Object.assign(existente, obj); return existente; }
+    const n = siguiente('RE');
+    return insertar('recetas', Object.assign({ id: nuevoId('re'), numero: n, activa: true, creada: hoyActual }, obj));
+  });
+  // costo de un insumo: promedio ponderado del stock que hay; si no hay stock, el costo de la ficha
+  App.q.costoInsumo = productoId => {
+    const p = App.get('productos', productoId);
+    let c = 0, v = 0;
+    lotesActivos(productoId, null).forEach(l => { c += l.cantidad; v += l.cantidad * l.costo; });
+    return c > 0 ? r2(v / c) : (p ? p.costo : 0);
+  };
+  // calculador de costos: cuánto cuesta una tanda y cada unidad, y qué margen deja cada lista
+  App.q.costoReceta = (receta, tandas) => {
+    const r = typeof receta === 'string' ? App.get('recetas', receta) : receta;
+    if (!r) return null;
+    const t = Number(tandas) > 0 ? Number(tandas) : 1;
+    const insumos = r.insumos.map(i => { const p = App.get('productos', i.productoId); const cu = App.q.costoInsumo(i.productoId); const cant = rq(i.cantidad * t);
+      return { productoId: i.productoId, producto: p, cantidad: cant, costoUnitario: cu, subtotal: r2(cant * cu), disponible: App.q.stock(i.productoId).disponible }; });
+    const materiales = r2(insumos.reduce((s, i) => s + i.subtotal, 0));
+    const otros = r2((r.otrosCostos || []).reduce((s, o) => s + o.importe, 0) * t);
+    const cantidad = rq(r.rinde * t);
+    const total = r2(materiales + otros);
+    const prod = App.get('productos', r.productoId);
+    const porUnidad = cantidad ? r2(total / cantidad) : 0;
+    const listas = db.listasPrecio.map(l => { const precio = App.q.precio(prod.id, l.id); return { lista: l, precio, margen: precio ? (precio - porUnidad) / precio : 0 }; });
+    return { receta: r, producto: prod, tandas: t, cantidad, insumos, materiales, otros, total, porUnidad, materialesPorUnidad: cantidad ? r2(materiales / cantidad) : 0,
+      faltantes: insumos.filter(i => i.disponible < i.cantidad), listas };
+  };
+  accion('producir', function ({ recetaId, tandas, depositoId, fecha, obs }) {
+    const r = exigir('recetas', recetaId, 'la receta');
+    const t = Number(tandas);
+    if (!(t > 0)) throw new Error('Indicá cuántas tandas se producen.');
+    const dep = depositoId || 'D1';
+    exigir('depositos', dep, 'el depósito');
+    const f = fecha || hoyActual;
+    const prod = App.get('productos', r.productoId);
+    // primero se calcula todo; si falta algún insumo no se toca nada
+    const planes = r.insumos.map(i => {
+      const cant = rq(i.cantidad * t);
+      const pl = planFEFO(i.productoId, dep, cant, false);
+      const libre = App.q.stock(i.productoId, dep).disponible;
+      if (pl.falta > 0.00005 || libre + 0.00005 < cant) throw new Error('No alcanza «' + App.get('productos', i.productoId).descripcion + '» en ' + App.get('depositos', dep).nombre + ': hacen falta ' + App.ui.num(cant, 2) + ' y hay ' + App.ui.num(libre, 2) + '.');
+      return { insumo: i, cantidad: cant, plan: pl.plan };
+    });
+    const consumos = [];
+    let materiales = 0;
+    planes.forEach(x => x.plan.forEach(({ lote, cantidad }) => {
+      moverLote(lote, -cantidad);
+      consumos.push({ productoId: x.insumo.productoId, loteId: lote.id, lote: lote.lote, cantidad, costo: lote.costo });
+      materiales += cantidad * lote.costo;
+    }));
+    materiales = r2(materiales);
+    const cantidad = rq(r.rinde * t);
+    const costoUnit = r2(materiales / cantidad);
+    const n = siguiente('PR');
+    const lote = crearLote({ productoId: prod.id, depositoId: dep, cantidad, costo: costoUnit, lote: 'P' + f.slice(2).replace(/-/g, '') + '-' + pad(n % 100, 2),
+      vence: prod.vidaUtil ? F.sumar(f, prod.vidaUtil) : null, ingreso: f, origen: 'produccion' });
+    const valorTerminado = r2(cantidad * costoUnit);
+    const otros = r2((r.otrosCostos || []).reduce((s, o) => s + o.importe, 0) * t);
+    const op = insertar('ordenesProduccion', { id: nuevoId('op'), numero: n, nro: pad(n, 6), fecha: f, recetaId: r.id, productoId: prod.id, tandas: t, cantidad, depositoId: dep,
+      consumos, costoMateriales: materiales, otrosCostos: otros, costoUnitario: costoUnit, costoTotalUnitario: r2((materiales + otros) / cantidad), loteId: lote.id, obs: obs || '', estado: 'terminada' });
+    // el stock se valoriza al costo de los materiales (la mano de obra y los gastos ya están en los gastos del mes)
+    op.asientoId = asentar({ fecha: f, detalle: 'Orden de producción ' + op.nro + ': ' + App.ui.num(cantidad, cantidad % 1 ? 2 : 0) + ' × ' + prod.descripcion, origen: 'produccion', refId: op.id, lineas: [
+      { cuenta: CUENTAS.mercaderias, debe: valorTerminado }, { cuenta: CUENTAS.mercaderias, haber: materiales },
+      valorTerminado > materiales ? { cuenta: CUENTAS.diferenciasInventario, haber: r2(valorTerminado - materiales) } : { cuenta: CUENTAS.diferenciasInventario, debe: r2(materiales - valorTerminado) }] }).id;
+    return op;
+  });
+
   accion('actualizarPrecios', function ({ productoIds, porcentaje, listaId, detalle, fecha, costo }) {
     const pct = Number(porcentaje);
     if (!pct) throw new Error('Se debe indicar el porcentaje de aumento.');
@@ -1038,7 +1244,7 @@
     if (t.length < 2) return [];
     const lim = limite || 8, res = [];
     const coincide = (...campos) => campos.some(c => c && App.ui.normalizar(String(c)).includes(t));
-    db.productos.forEach(p => { if (coincide(p.descripcion, p.codigo, p.ean, p.marca)) res.push({ tipo: 'Producto', titulo: p.descripcion, detalle: p.codigo + ' · ' + p.marca, ruta: '#/stock/producto/' + p.id }); });
+    db.productos.forEach(p => { if (coincide(p.descripcion, p.codigo, p.ean, p.marca, p.codigoPropio, p.plu)) res.push({ tipo: 'Producto', titulo: p.descripcion, detalle: p.codigo + ' · ' + p.marca, ruta: '#/stock/producto/' + p.id }); });
     db.clientes.forEach(c => { if (coincide(c.fantasia, c.razonSocial, c.cuit, c.codigo, c.localidad)) res.push({ tipo: 'Cliente', titulo: c.fantasia, detalle: c.razonSocial + ' · ' + c.localidad, ruta: '#/clientes/' + c.id }); });
     db.proveedores.forEach(p => { if (coincide(p.razonSocial, p.cuit, p.codigo)) res.push({ tipo: 'Proveedor', titulo: p.razonSocial, detalle: p.cuit, ruta: '#/proveedores/' + p.id }); });
     const tn = t.replace(/[^0-9]/g, '');
@@ -1142,6 +1348,7 @@
       hoyActual = CONFIG.desde;
       S.historia(App);
       hoyActual = CONFIG.hoy;
+      if (S.extras) { const guardado = db.contadores.id; db.contadores.id = 1600000; S.extras(App); db.contadores.id = guardado; }
       App.tiempoGeneracion = (typeof performance !== 'undefined' ? performance : Date).now() - t0;
       const validos = [];
       registro.forEach(r => {
@@ -1189,7 +1396,8 @@
     en_ruta: ['En reparto', 'info'], entregado: ['Entregado', 'ok'], rechazado: ['Rechazado', 'peligro'], parcial: ['Entrega parcial', 'alerta'],
     armada: ['Armada', 'info'], en_curso: ['En curso', 'info'], cerrada: ['Cerrada', 'ok'],
     en_cartera: ['En cartera', 'info'], depositado: ['Depositado', 'ok'], endosado: ['Endosado', 'neutro'],
-    recibida: ['Recibida', 'ok'], vencida: ['Vencida', 'peligro'], pagada: ['Pagada', 'ok'], cobrada: ['Cobrada', 'ok']
+    recibida: ['Recibida', 'ok'], vencida: ['Vencida', 'peligro'], pagada: ['Pagada', 'ok'], cobrada: ['Cobrada', 'ok'],
+    modificado: ['Modificado', 'neutro'], anulado: ['Anulado', 'neutro'], terminada: ['Terminada', 'ok']
   };
   ui.estado = estado => { const e = ESTADOS[estado] || [estado, 'neutro']; return ui.chip(e[0], e[1]); };
   ui.kpi = ({ titulo, valor, detalle, tono }) => ui.h`<div class="kpi${tono ? ' kpi-' + tono : ''}"><div class="kpi-titulo">${titulo}</div><div class="kpi-valor">${valor}</div>${detalle ? ui.h`<div class="kpi-detalle">${detalle}</div>` : ''}</div>`;
@@ -1493,6 +1701,75 @@
       ' role="img" aria-label="Código de barras ' + c + '" shape-rendering="crispEdges"><rect width="113" height="' + vh + '" fill="#fff"/><g fill="currentColor">' + rects + '</g>' + txt + '</svg>');
   };
 
+  // --- Code 39: para códigos propios con letras ---
+  const C39 = { '0': 'nnnwwnwnn', '1': 'wnnwnnnnw', '2': 'nnwwnnnnw', '3': 'wnwwnnnnn', '4': 'nnnwwnnnw', '5': 'wnnwwnnnn', '6': 'nnwwwnnnn', '7': 'nnnwnnwnw', '8': 'wnnwnnwnn', '9': 'nnwwnnwnn',
+    A: 'wnnnnwnnw', B: 'nnwnnwnnw', C: 'wnwnnwnnn', D: 'nnnnwwnnw', E: 'wnnnwwnnn', F: 'nnwnwwnnn', G: 'nnnnnwwnw', H: 'wnnnnwwnn', I: 'nnwnnwwnn', J: 'nnnnwwwnn',
+    K: 'wnnnnnnww', L: 'nnwnnnnww', M: 'wnwnnnnwn', N: 'nnnnwnnww', O: 'wnnnwnnwn', P: 'nnwnwnnwn', Q: 'nnnnnnwww', R: 'wnnnnnwwn', S: 'nnwnnnwwn', T: 'nnnnwnwwn',
+    U: 'wwnnnnnnw', V: 'nwwnnnnnw', W: 'wwwnnnnnn', X: 'nwnnwnnnw', Y: 'wwnnwnnnn', Z: 'nwwnwnnnn', '-': 'nwnnnnwnw', '.': 'wwnnnnwnn', ' ': 'nwwnnnwnn',
+    '$': 'nwnwnwnnn', '/': 'nwnwnnnwn', '+': 'nwnnnwnwn', '%': 'nnnwnwnwn', '*': 'nwnnwnwnn' };
+  ui.barcodeCode39 = (texto, opciones) => {
+    const o = opciones || {};
+    const t = String(texto || '').toUpperCase().split('').filter(ch => C39[ch] && ch !== '*').join('');
+    const todo = '*' + t + '*';
+    let x = 8, rects = '';
+    todo.split('').forEach(ch => {
+      C39[ch].split('').forEach((w, i) => { const a = w === 'w' ? 3 : 1; if (i % 2 === 0) rects += '<rect x="' + x + '" y="4" width="' + a + '" height="' + (o.alto || 62) + '"/>'; x += a; });
+      x += 1;
+    });
+    const ancho = x + 7, alto = o.alto || 62, conTexto = o.texto !== false, vh = conTexto ? alto + 18 : alto + 8;
+    const txt = conTexto ? '<text x="' + (ancho / 2) + '" y="' + (alto + 15) + '" text-anchor="middle" font-family="Archivo, Arial, sans-serif" font-size="10.5" font-weight="500" fill="currentColor">' + ui.escapar(t) + '</text>' : '';
+    return ui.seguro('<svg class="ean13 code39" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + ancho + ' ' + vh + '"' + (o.ancho ? ' width="' + o.ancho + '"' : '') +
+      ' role="img" aria-label="Código de barras ' + ui.escapar(t) + '" shape-rendering="crispEdges"><rect width="' + ancho + '" height="' + vh + '" fill="#fff"/><g fill="currentColor">' + rects + '</g>' + txt + '</svg>');
+  };
+  // el código de barras de un producto: cual = 'ean' (fabricante) o 'propio'
+  ui.barcodeProducto = (p, opciones) => {
+    const o = opciones || {};
+    const c = o.cual === 'propio' && p.codigoPropio ? p.codigoPropio : p.ean;
+    return App.f.tipoCodigo(c) === 'ean13' ? ui.barcodeEAN13(c, o) : ui.barcodeCode39(c, o);
+  };
+  // etiqueta de balanza (pesables): 2 + 0 + PLU (4) + 0 + gramos (5) + verificador
+  App.f.eanBalanza = (plu, kilos) => { const doce = '20' + pad(String(plu || '0').slice(-4), 4) + '0' + pad(Math.round((Number(kilos) || 0) * 1000) % 100000, 5); return doce + F.digitoEAN(doce); };
+
+  // --- búsqueda de fotos (simulada en la demo): resultados con aspecto de foto de producto ---
+  const SITIOS = ['mercadolibre.com.ar', 'carrefour.com.ar', 'cotodigital.com.ar', 'diaonline.com.ar', 'vea.com.ar', 'masonline.com.ar'];
+  const TONOS_RUBRO = { 'Almacén': ['#C8572B', '#E9B44C', '#2F6B3B', '#7A3B2E'], 'Bebidas': ['#B3261E', '#1F6FB2', '#2E8B57', '#E0A800'], 'Lácteos y frescos': ['#2B5C8A', '#A0522D', '#C0392B', '#6B8E23'],
+    'Limpieza': ['#1E88E5', '#7CB342', '#8E24AA', '#00897B'], 'Perfumería': ['#D81B60', '#5E35B1', '#00ACC1', '#F4511E'], 'Golosinas': ['#6D4C41', '#E53935', '#FB8C00', '#8E24AA'],
+    'Insumos de producción': ['#8D6E63', '#B98B4E', '#607D8B', '#9E9D24'] };
+  App.q.buscarFotos = (consulta, p) => {
+    const base = hash(App.ui.normalizar(consulta || (p ? p.descripcion : '')));
+    return Array.from({ length: 8 }, (_, i) => { const h = hash(base + ':' + i); return { resultado: i, sitio: SITIOS[h % SITIOS.length], ancho: 800 + (h % 5) * 100, alto: 800 + ((h >>> 3) % 4) * 100 }; });
+  };
+  // dibujo del envase según el producto (bolsa, botella, caja, lata, pieza) con su nombre y marca: se usa como «foto»
+  ui.fotoProducto = (p, resultado, opciones) => {
+    const o = opciones || {};
+    const r = resultado != null ? resultado : (p.foto ? p.foto.resultado : 0);
+    const h = hash(p.id + ':' + r);
+    const tonos = TONOS_RUBRO[p.rubro] || TONOS_RUBRO['Almacén'];
+    const c1 = tonos[h % tonos.length], c2 = tonos[(h >>> 4) % tonos.length] === c1 ? tonos[(h % tonos.length + 1) % tonos.length] : tonos[(h >>> 4) % tonos.length];
+    const fondo = ['#F4F4F2', '#FFFFFF', '#ECEFF1', '#F7F1E8'][(h >>> 7) % 4];
+    const d = App.ui.normalizar(p.descripcion);
+    const forma = p.pesable ? 'pieza' : /gaseosa|agua|aceite|jugo de|lavandina|detergente|suavizante|limpiador|shampoo|acondicionador|soda|cerveza|saborizada/.test(d) ? (/cerveza/.test(d) ? 'lata' : 'botella')
+      : /leche|yogur|crema/.test(d) ? 'sachet' : /atun|arvejas|pure|lata/.test(d) ? 'lata' : /yerba|azucar|arroz|fideos|harina|sal |polenta|cafe|mani|caramelos|papas|bolsa|jabon en polvo|panales/.test(d) ? 'bolsa' : 'caja';
+    const giro = ((h >>> 9) % 7) - 3;
+    const nombre = ui.escapar(p.descripcion.length > 26 ? p.descripcion.slice(0, 25) + '…' : p.descripcion);
+    const marca = ui.escapar(p.marca || '');
+    let figura = '';
+    if (forma === 'botella') figura = '<path d="M86 22h28v18c0 6 14 12 14 30v96c0 8-6 12-14 12H86c-8 0-14-4-14-12V70c0-18 14-24 14-30z" fill="' + c1 + '"/><rect x="88" y="12" width="24" height="12" rx="3" fill="' + c2 + '"/><rect x="72" y="92" width="56" height="46" fill="#fff" opacity=".92"/>';
+    else if (forma === 'lata') figura = '<rect x="64" y="50" width="72" height="118" rx="10" fill="' + c1 + '"/><ellipse cx="100" cy="50" rx="36" ry="8" fill="#cfd4d8"/><rect x="64" y="96" width="72" height="40" fill="#fff" opacity=".92"/>';
+    else if (forma === 'sachet') figura = '<path d="M62 40h76l8 120c0 8-6 12-14 12H68c-8 0-14-4-14-12z" fill="#fff" stroke="' + c1 + '" stroke-width="3"/><path d="M58 118h84v28H58z" fill="' + c1 + '"/><rect x="62" y="34" width="76" height="10" fill="' + c2 + '"/>';
+    else if (forma === 'bolsa') figura = '<path d="M60 36h80l6 12v116c0 6-4 10-10 10H64c-6 0-10-4-10-10V48z" fill="' + c1 + '"/><path d="M60 36h80l-4 10H64z" fill="' + c2 + '"/><rect x="66" y="92" width="68" height="44" rx="4" fill="#fff" opacity=".92"/>';
+    else if (forma === 'pieza') figura = '<rect x="36" y="74" width="128" height="76" rx="34" fill="' + c1 + '"/><rect x="36" y="74" width="128" height="76" rx="34" fill="url(#brillo' + h + ')"/><rect x="70" y="96" width="60" height="32" rx="4" fill="#fff" opacity=".92"/>';
+    else figura = '<path d="M58 44l60-10 26 12v118l-60 10-26-12z" fill="' + c1 + '"/><path d="M118 34l26 12-60 10-26-12z" fill="' + c2 + '"/><path d="M84 56l60-10v118l-60 10z" fill="#000" opacity=".12"/><rect x="62" y="92" width="58" height="42" fill="#fff" opacity=".92" transform="skewY(-8)"/>';
+    const marcaY = forma === 'pieza' ? 110 : forma === 'caja' ? 120 : forma === 'lata' ? 112 : 110;
+    return ui.seguro('<svg class="foto-producto" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"' + (o.ancho ? ' width="' + o.ancho + '"' : '') + ' role="img" aria-label="Foto de ' + ui.escapar(p.descripcion) + '">' +
+      '<defs><linearGradient id="brillo' + h + '" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".35"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/></linearGradient>' +
+      '<radialGradient id="piso' + h + '"><stop offset="0" stop-color="#000" stop-opacity=".18"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient></defs>' +
+      '<rect width="200" height="200" fill="' + fondo + '"/><ellipse cx="100" cy="178" rx="62" ry="9" fill="url(#piso' + h + ')"/>' +
+      '<g transform="rotate(' + giro + ' 100 110)">' + figura +
+      '<text x="100" y="' + marcaY + '" text-anchor="middle" font-family="Archivo, Arial, sans-serif" font-size="11" font-weight="800" fill="' + c1 + '">' + marca + '</text>' +
+      '<text x="100" y="' + (marcaY + 13) + '" text-anchor="middle" font-family="Archivo, Arial, sans-serif" font-size="7.5" fill="#333">' + nombre + '</text></g></svg>');
+  };
+
   // --- QR de aspecto real (simulado: los datos son un patrón derivado del texto) ---
   ui.qr = (texto, opciones) => {
     const o = opciones || {};
@@ -1574,8 +1851,8 @@
     } else {
       cuerpo = h`<table class="comp-items"><thead><tr><th>Código</th><th>Descripción</th><th>Unidad</th><th class="al-der">Cant.</th>
         ${esRemito ? '' : h`<th class="al-der">Precio${discrimina ? ' neto' : ''}</th>${conBonif ? h`<th class="al-der">Bonif.</th>` : ''}${discrimina ? h`<th class="al-der">IVA</th>` : ''}<th class="al-der">Subtotal</th>`}</tr></thead><tbody>
-        ${filas.map(it => { const f = discrimina ? 1 : 1 + it.iva / 100; return h`<tr><td>${it.codigo}</td><td>${it.descripcion}</td><td>${it.unidad}</td><td class="al-der">${ui.num(it.cantidad)}</td>
-          ${esRemito ? '' : h`<td class="al-der">${ui.pesos(it.precio * f)}</td>${conBonif ? h`<td class="al-der">${it.bonif ? ui.num(it.bonif, 1) + ' %' : ''}</td>` : ''}${discrimina ? h`<td class="al-der">${ui.num(it.iva, 1)} %</td>` : ''}<td class="al-der">${ui.pesos(it.subtotal * f)}</td>`}</tr>`; })}
+        ${filas.map(it => { const f = discrimina ? 1 : 1 + it.iva / 100; const pr = it.pres && it.pres.factor !== 1 ? it.pres : null; const cant = pr ? pr.cantidad : it.cantidad; return h`<tr><td>${it.codigo}</td><td>${it.descripcion}</td><td>${it.unidad}</td><td class="al-der">${ui.num(cant, cant % 1 ? (cant * 1000 % 10 ? 3 : 2) : 0)}</td>
+          ${esRemito ? '' : h`<td class="al-der">${ui.pesos((pr ? App.r2(it.precio * pr.factor) : it.precio) * f)}</td>${conBonif ? h`<td class="al-der">${it.bonif ? ui.num(it.bonif, 1) + ' %' : ''}</td>` : ''}${discrimina ? h`<td class="al-der">${ui.num(it.iva, 1)} %</td>` : ''}<td class="al-der">${ui.pesos(it.subtotal * f)}</td>`}</tr>`; })}
         </tbody></table>
         ${esRemito ? h`<div class="comp-totales"><div><span>Bultos</span><strong>${ui.num(doc.bultos)}</strong></div><div><span>Peso aprox.</span><strong>${ui.num(doc.kg)} kg</strong></div></div>
           ${(() => { const hr = doc.hojaRutaId ? App.get('hojasRuta', doc.hojaRutaId) : null; const ch = hr ? App.get('choferes', hr.choferId) : null; const ve = hr ? App.get('vehiculos', hr.vehiculoId) : null;

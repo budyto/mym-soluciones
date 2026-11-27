@@ -1,0 +1,69 @@
+/* Módulo «Producción»: calculador de costos, recetas y órdenes de producción.
+   Usa los tokens de app.css. Lo propio del módulo es la «escalera de márgenes»: por cada lista de precios,
+   el precio neto partido en costo (cartón) y margen (color del estado). */
+
+.pr-lado { position: sticky; top: 76px; }
+.pr-seccion-chica { margin-top: 22px; }
+.pr-subtitulo { font-size: var(--fs-14); font-weight: 700; margin: 18px 0 10px; }
+.pr-nota { margin: 14px 0 0; max-width: 80ch; }
+.pr-nota-receta { white-space: pre-line; }
+.pr-aviso { margin-bottom: 12px; }
+.pr-agregar { margin-top: 10px; }
+
+/* resumen de costo (panel lateral) */
+.pr-resumen-cabeza { padding-bottom: 14px; margin-bottom: 14px; border-bottom: 1px solid var(--linea); }
+.pr-resumen-cabeza .cifra-grande { margin: 4px 0 4px; overflow-wrap: anywhere; }
+.pr-resumen-cabeza > span { display: block; font-size: var(--fs-13); }
+.pr-datos { gap: 5px 14px; }
+.pr-datos dd { text-align: right; }
+.pr-botones { display: flex; flex-direction: column; gap: 8px; margin-top: 18px; }
+.pr-botones .btn { justify-content: center; width: 100%; }
+
+/* escalera de márgenes */
+.pr-escalera { display: flex; flex-direction: column; gap: 12px; }
+.pr-escalon { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'nombre margen' 'barra barra'; gap: 4px 12px; align-items: end; }
+.pr-escalon-nombre { grid-area: nombre; min-width: 0; }
+.pr-escalon-nombre strong { display: block; }
+.pr-escalon-nombre span, .pr-escalon-margen span { display: block; font-size: var(--fs-12); color: var(--texto-2); }
+.pr-escalon-margen { grid-area: margen; text-align: right; }
+.pr-escalon-margen strong { font-stretch: 118%; font-weight: 800; font-size: var(--fs-16); }
+.pr-escalon-barra { grid-area: barra; display: flex; height: 10px; background: var(--neutro-suave); border-radius: 3px; overflow: hidden; }
+.pr-escalon-barra span { display: block; height: 100%; }
+.pr-costo { background: var(--carton); }
+.pr-margen.pr-ok { background: var(--ok); }
+.pr-margen.pr-alerta { background: var(--alerta); }
+.pr-margen.pr-peligro { background: var(--peligro); }
+.pr-leyenda { margin: 12px 0 0; display: flex; flex-wrap: wrap; gap: 4px 14px; }
+.pr-leyenda > span { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.pr-muestra { display: inline-block; width: 10px; height: 10px; border-radius: 2px; }
+
+/* controles del calculador */
+.pr-controles { display: flex; flex-wrap: wrap; gap: 14px 16px; align-items: flex-start; }
+.pr-controles > .campo { flex: 1 1 130px; }
+.pr-controles > .pr-campo-receta { flex: 2 1 160px; }
+.pr-controles > .pr-campo-modo { flex: none; }
+.pr-controles .segmentado { height: 36px; align-items: center; }
+.pr-tabla-calc td { vertical-align: middle; }
+.pr-input-chico { width: 84px !important; height: 32px !important; }
+.pr-input-costo { width: 112px !important; height: 32px !important; }
+.pr-input-costo.pr-simulado { border-color: var(--alerta); background: var(--alerta-suave); }
+.tabla .pr-fila-falta td { background: var(--peligro-suave); }
+
+/* buscador de insumos */
+.pr-buscador { position: relative; max-width: 520px; margin-bottom: 12px; }
+.pr-res { position: absolute; top: 40px; left: 0; right: 0; z-index: 25; background: var(--hoja); border: 1px solid var(--linea); border-radius: var(--r-panel); box-shadow: var(--sombra-modal); padding: 6px; max-height: 340px; overflow-y: auto; }
+.pr-res-item { display: flex; flex-direction: column; align-items: flex-start; gap: 1px; width: 100%; text-align: left; border: 0; background: none; padding: 7px 10px; border-radius: var(--r-control); cursor: pointer; }
+.pr-res-item span:first-child { font-weight: 600; }
+.pr-res-item span + span { font-size: var(--fs-12); }
+.pr-res-item:hover, .pr-res-item.activo { background: var(--fila-hover); box-shadow: inset 3px 0 0 var(--senal); }
+.pr-res-vacio { padding: 10px; color: var(--texto-2); }
+
+@media (max-width: 1100px) {
+  .pr-lado { position: static; }
+}
+@media (max-width: 760px) {
+  .pr-controles > .campo, .pr-controles > .pr-campo-receta { flex: 1 1 100%; }
+  .pr-input-chico { width: 74px !important; }
+  .pr-input-costo { width: 96px !important; }
+  .pr-resumen-cabeza .cifra-grande { font-size: var(--fs-28); }
+}
