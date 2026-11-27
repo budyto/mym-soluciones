@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>MyM Distribuidoras | Gestión</title>
+  <meta name="description" content="Sistema de gestión para distribuidoras, hecho por MyM Soluciones.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2317202A'/%3E%3Cpath d='M7 12l9-5 9 5-9 5z M7 12v8l9 5 9-5v-8' fill='none' stroke='%23B98B4E' stroke-width='2.2' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap">
+  <link rel="stylesheet" href="css/app.css?v=202611280100">
+  <link rel="stylesheet" href="css/produccion.css?v=202611280100">
+  <link rel="stylesheet" href="css/nube.css?v=202611280100">
+</head>
+<body>
+  <div class="ingreso" id="ingreso">
+    <div class="ingreso-marco">
+      <div class="ingreso-marca">
+        <svg class="marca-icono" viewBox="0 0 34 34" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 12l12-6.5L29 12 17 18.5z"/><path d="M5 12v10.5L17 29l12-6.5V12"/><path d="M17 18.5V29"/><path d="M11 9l12 6.5" stroke-dasharray="2.5 2"/>
+        </svg>
+        <div><strong>MyM Distribuidoras</strong><span>Sistema de gestión</span></div>
+      </div>
+      <div class="ingreso-caja"><p class="ingreso-cargando">Conectando…</p></div>
+      <p class="ingreso-pie">Hecho por MyM Soluciones. ¿Problemas para entrar? Escribile a Daniel, de lunes a sábados de 9 a 17 h.</p>
+    </div>
+  </div>
+  <noscript><p style="padding:24px">Para usar el sistema hay que activar JavaScript en el navegador.</p></noscript>
+
+  <div id="app" hidden>
+  <div class="shell">
+    <aside class="lateral" id="lateral" aria-label="Menú principal">
+      <div class="marca">
+        <svg class="marca-icono" viewBox="0 0 34 34" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true">
+          <path d="M5 12l12-6.5L29 12 17 18.5z"/><path d="M5 12v10.5L17 29l12-6.5V12"/><path d="M17 18.5V29"/><path d="M11 9l12 6.5" stroke-dasharray="2.5 2"/>
+        </svg>
+        <div><strong class="marca-nombre" data-negocio>Distribuidora del Centro</strong><span class="marca-bajada">Gestión integral</span></div>
+      </div>
+      <nav id="nav"></nav>
+      <div class="lateral-pie">
+        <div class="usuario-lateral"><strong data-usuario></strong><span data-puesto></span></div>
+        <button class="btn btn-chico" id="btn-salir" type="button">Salir</button>
+      </div>
+    </aside>
+
+    <div class="principal">
+      <header class="barra-superior">
+        <button class="btn btn-icono btn-menu" id="btn-menu" type="button" aria-controls="lateral" aria-expanded="false" aria-label="Abrir el menú">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M3 5.5h14M3 10h14M3 14.5h14"/></svg>
+        </button>
+        <div class="buscador-global" role="search">
+          <svg class="lupa" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="M12.6 12.6L17 17"/></svg>
+          <label for="buscar-global" class="solo-lector">Buscar productos, clientes o comprobantes</label>
+          <input id="buscar-global" type="search" autocomplete="off" placeholder="Buscar productos, clientes o comprobantes" role="combobox" aria-expanded="false" aria-controls="resultados-global" aria-autocomplete="list">
+          <kbd>/</kbd>
+          <div class="resultados" id="resultados-global" role="listbox" hidden></div>
+        </div>
+        <div class="hoy">Hoy <strong data-hoy></strong></div>
+        <span class="chip chip-ok sincro" data-sincro role="status">Todo guardado</span>
+      </header>
+
+      <main id="vista" tabindex="-1"></main>
+
+      <footer class="pie"><span data-pie>Sistema hecho por MyM Soluciones</span></footer>
+    </div>
+  </div>
+
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <script src="js/semilla-vacia.js?v=202611280100"></script>
+  <script src="js/nube.js?v=202611280100"></script>
+</body>
+</html>
