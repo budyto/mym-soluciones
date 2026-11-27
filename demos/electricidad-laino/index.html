@@ -158,6 +158,35 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .prod span { color: var(--suave); font-size: 14px; }
 @media (max-width: 900px) { .estantes { grid-template-columns: 1fr 1fr; } }
 
+/* Inventario: fotos reales del local y lista por rubro con buscador */
+.inventario { padding-block: 72px; border-top: 1px solid var(--linea); }
+.inv-fotos { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 12px; margin-top: 36px; }
+.inv-fotos figure { margin: 0; position: relative; border-radius: 16px; overflow: hidden; border: 1px solid var(--linea); background: var(--panel); }
+.inv-fotos figure:first-child { grid-row: span 2; }
+.inv-fotos img { width: 100%; height: 100%; object-fit: cover; aspect-ratio: 4 / 3; }
+.inv-fotos figure:first-child img { aspect-ratio: auto; }
+.inv-fotos figcaption { position: absolute; left: 10px; bottom: 10px; background: rgba(6,17,30,.86); padding: 5px 10px; border-radius: 8px; font: 600 13px var(--etiqueta); letter-spacing: .04em; }
+.inv-buscar { margin-top: 36px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.inv-buscar label { font: 700 13px var(--etiqueta); letter-spacing: .12em; text-transform: uppercase; color: var(--celeste); }
+.inv-buscar input { flex: 1 1 260px; min-width: 0; min-height: 50px; padding: 0 18px; border-radius: 999px; border: 2px solid var(--linea); background: var(--noche-2); color: var(--texto); font: 400 17px var(--sans); }
+.inv-buscar input:focus { border-color: var(--electrico); outline: none; }
+.inv-nada { margin-top: 16px; color: var(--suave); }
+.inv-nada a { color: var(--celeste); font-weight: 700; }
+.inv-grilla { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 24px; }
+.rubro { background: var(--panel); border: 1px solid var(--linea); border-radius: 16px; padding: 20px 22px 22px; display: flex; flex-direction: column; }
+.rubro[hidden], .rubro li[hidden] { display: none; }
+.rubro h3 { font-size: 24px; }
+.rubro ul { list-style: none; margin: 14px 0 16px; padding: 0; display: grid; gap: 8px; font-size: 15px; }
+.rubro li { padding-left: 16px; position: relative; color: #d3deee; }
+.rubro li::before { content: ""; position: absolute; left: 0; top: .62em; width: 7px; height: 7px; background: var(--electrico); transform: skewX(-12deg); }
+.rubro li small { display: block; color: var(--suave); font-size: 13px; }
+.rubro .ir { margin-top: auto; font: 700 13px var(--etiqueta); letter-spacing: .12em; text-transform: uppercase; color: var(--celeste); text-decoration: none; }
+.rubro .ir:hover { color: #fff; }
+.inv-nota { margin-top: 20px; color: var(--suave); font-size: 15px; }
+@media (max-width: 1100px) { .inv-grilla { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 900px) { .inv-grilla { grid-template-columns: 1fr 1fr; } .inv-fotos { grid-template-columns: 1fr 1fr; } .inv-fotos figure:first-child { grid-column: span 2; grid-row: auto; } .inv-fotos figure:first-child img { aspect-ratio: 4 / 3; } }
+@media (max-width: 560px) { .inv-grilla { grid-template-columns: 1fr; } }
+
 /* Horario */
 .visita { padding-block: 80px; border-top: 1px solid var(--linea); }
 .visita h2 { margin-bottom: 36px; }
@@ -253,7 +282,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
     <nav class="menu" aria-label="Secciones">
       <a href="#como-pedir">Cómo pedir</a>
       <a href="#necesitas">Qué necesitás</a>
-      <a href="#mostrador">Productos</a>
+      <a href="#inventario">Productos</a>
       <a href="#visita">El local</a>
       <a href="#opiniones">Opiniones</a>
     </nav>
@@ -342,6 +371,36 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
         <figure class="prod"><img src="img/soportes-tv.jpg" width="800" height="800" loading="lazy" alt="Catálogo de soportes para TV fijos y con brazo"><figcaption><b>Soportes para TV</b><span>Fijos, inclinables y con brazo.</span></figcaption></figure>
         <figure class="prod"><img src="img/lamparas-lion.jpg" width="800" height="800" loading="lazy" alt="Lámparas LED Lion de 40 y 50 W sobre el mostrador"><figcaption><b>Lámparas LED Lion</b><span>40 y 50 W, para locales y patios.</span></figcaption></figure>
       </div>
+    </div>
+  </section>
+
+  <section class="inventario" id="inventario" aria-labelledby="t-inv">
+    <div class="envase">
+      <h2 id="t-inv">Todo lo que hay <em>en el local.</em></h2>
+      <p class="bajada" style="margin-top:14px">Vendemos por mayor y por menor. Buscá lo que necesitás y preguntanos el stock por WhatsApp.</p>
+      <div class="inv-fotos">
+        <figure><img src="img/inv-frente.jpg" width="1000" height="817" loading="lazy" alt="Frente del local de Laino en Bonorino 81 con sus vidrieras de telefonía y materiales eléctricos"><figcaption>El frente, en Bonorino 81</figcaption></figure>
+        <figure><img src="img/inv-interior.jpg" width="1000" height="562" loading="lazy" alt="Interior del local con lámparas colgantes, spots, porteros y estantes llenos de materiales"><figcaption>Adentro del local</figcaption></figure>
+        <figure><img src="img/inv-controles-tv.jpg" width="1000" height="825" loading="lazy" alt="Vidriera con controles remotos para televisores LCD y Smart"><figcaption>Controles para TV</figcaption></figure>
+        <figure><img src="img/inv-controles-aire.jpg" width="800" height="1001" loading="lazy" alt="Cartel con modelos de controles remotos para aire acondicionado"><figcaption>Controles para aire</figcaption></figure>
+        <figure><img src="img/lamparas-tecnoled.jpg" width="800" height="800" loading="lazy" alt="Folleto de lámparas LED de alta potencia"><figcaption>Lámparas de alta potencia</figcaption></figure>
+      </div>
+      <div class="inv-buscar">
+        <label for="inv-q">Buscar</label>
+        <input id="inv-q" type="search" placeholder="Por ejemplo: control Samsung, tira LED, pilas" autocomplete="off">
+      </div>
+      <p class="inv-nada" id="inv-nada" hidden>No está en la lista, pero puede que lo tengamos. <a data-wa="Hola, busco algo que no vi en la web: " href="#" id="inv-preguntar">Preguntanos por WhatsApp</a>.</p>
+      <div class="inv-grilla" id="inv-grilla">
+        <article class="rubro"><h3>Iluminación</h3><ul><li>Lámparas LED comunes y de alta potencia<small>De 20 a 80 W</small></li><li>Tubos y regletas LED</li><li>Paneles y plafones LED embutidos</li><li>Spots y rieles con proyectores</li><li>Colgantes y campanas de colores</li><li>Tiras LED</li><li>Faroles, apliques y balizas de exterior</li></ul><a class="ir" data-wa="Hola, consulto por iluminación. Busco " href="#">Preguntar por stock →</a></article>
+        <article class="rubro"><h3>Materiales eléctricos</h3><ul><li>Llaves, tomas y módulos<small>Línea Platinum en varios colores</small></li><li>Cables y cordones</li><li>Cajas, caños y perfiles</li><li>Fichas, zapatillas y adaptadores</li><li>Tornillos, tarugos y grampas sueltos</li><li>Adhesivo Fastix y lubricante WD-40</li></ul><a class="ir" data-wa="Hola, consulto por materiales eléctricos. Busco " href="#">Preguntar por stock →</a></article>
+        <article class="rubro"><h3>Controles remotos</h3><ul><li>Para TV LCD y Smart<small>Samsung, LG, Hisense, AOC, Hyundai, Épico y más, con botones de Netflix y YouTube</small></li><li>Para aire acondicionado<small>Decenas de modelos a la vista</small></li><li>Controles universales</li><li>Para DVD, conversor, home audio y estéreo</li><li>Para portón de garage y alarma</li></ul><a class="ir" data-wa="Hola, busco un control remoto para " href="#">Preguntar por stock →</a></article>
+        <article class="rubro"><h3>Telefonía</h3><ul><li>Teléfonos fijos e inalámbricos</li><li>Repuestos y accesorios</li><li>Reparación de teléfonos comunes, inalámbricos y celulares</li></ul><a class="ir" data-wa="Hola, consulto por telefonía. Necesito " href="#">Preguntar por stock →</a></article>
+        <article class="rubro"><h3>Porteros eléctricos</h3><ul><li>Porteros e intercomunicadores Kocom</li><li>Teléfonos de portero y frentes</li><li>Venta, service y repuestos para casas y edificios</li></ul><a class="ir" data-wa="Hola, consulto por un portero eléctrico. Es para " href="#">Preguntar por stock →</a></article>
+        <article class="rubro"><h3>Pilas y baterías</h3><ul><li>Pilas Varta y otras marcas</li><li>Baterías recargables</li><li>Baterías para teléfonos inalámbricos</li></ul><a class="ir" data-wa="Hola, busco pilas o baterías. Necesito " href="#">Preguntar por stock →</a></article>
+        <article class="rubro"><h3>Soportes para TV</h3><ul><li>Fijos e inclinables</li><li>Con brazo articulado</li><li>Para todas las medidas</li></ul><a class="ir" data-wa="Hola, busco un soporte de TV para " href="#">Preguntar por stock →</a></article>
+        <article class="rubro"><h3>Servicios en el local</h3><ul><li>Service de celulares<small>Cambio de módulo en 2 horas: iPhone, Samsung, Motorola, Xiaomi y más</small></li><li>Reparación de electrodomésticos</li><li>Instalaciones eléctricas en casas y comercios</li><li>Mantenimiento y asesoramiento</li></ul><a class="ir" data-wa="Hola, consulto por un servicio. Necesito " href="#">Preguntar por stock →</a></article>
+      </div>
+      <p class="inv-nota">Los precios cambian seguido: te los pasamos por WhatsApp o en el local.</p>
     </div>
   </section>
 
@@ -475,6 +534,24 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
     var c = document.getElementById('cinta-estado'); c.innerHTML = '<b>' + titulo + '</b> · ' + sub.toLowerCase(); c.classList.toggle('abierto', abierto);
     var fila = document.querySelector('#horario tr[data-dia="' + dia + '"]'); if (fila) fila.classList.add('hoy');
   } catch (e) {}
+
+  // Buscador del inventario.
+  var q = document.getElementById('inv-q'), nada = document.getElementById('inv-nada'), preg = document.getElementById('inv-preguntar');
+  function sinTildes(t) { return t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); }
+  if (q) q.addEventListener('input', function () {
+    var palabras = sinTildes(q.value).split(/\s+/).filter(Boolean), hay = 0;
+    document.querySelectorAll('#inv-grilla .rubro').forEach(function (r) {
+      var titulo = sinTildes(r.querySelector('h3').textContent), visibles = 0;
+      r.querySelectorAll('li').forEach(function (li) {
+        var t = titulo + ' ' + sinTildes(li.textContent);
+        var ok = palabras.every(function (w) { return t.indexOf(w) > -1; });
+        li.hidden = !ok; if (ok) visibles++;
+      });
+      r.hidden = !visibles; hay += visibles;
+    });
+    nada.hidden = !!hay || !palabras.length;
+    preg.href = 'https://wa.me/' + WA + '?text=' + encodeURIComponent('Hola, busco algo que no vi en la web: ' + q.value);
+  });
 
   var flot = document.getElementById('flotante'), portada = document.querySelector('.portada');
   if ('IntersectionObserver' in window) new IntersectionObserver(function (e) { flot.classList.toggle('ver', !e[0].isIntersecting); }).observe(portada);
