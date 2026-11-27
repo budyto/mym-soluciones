@@ -89,6 +89,17 @@
 .st-bf-sitio { font-size: var(--fs-12); color: var(--tinta); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .st-bf-tam { font-size: var(--fs-12); color: var(--texto-2); }
 .st-bf-nota { font-size: var(--fs-12); color: var(--texto-2); margin: 0; }
+.st-bf-pasos { margin: 0; padding-left: 20px; display: grid; gap: 4px; font-size: var(--fs-13); color: var(--texto-2); }
+.st-bf-pegar { border: 2px dashed #B9C0B7; border-radius: var(--r-panel); min-height: 220px; display: grid; place-items: center; background: var(--hoja); cursor: pointer; outline: none; }
+.st-bf-pegar:focus-visible, .st-bf-pegar.encima { border-color: var(--tinta); background: #fff; }
+.st-bf-vacio { display: grid; gap: 4px; text-align: center; color: var(--texto-2); font-size: var(--fs-13); padding: 16px; }
+.st-bf-vacio b { color: var(--tinta); font-size: var(--fs-16); }
+.st-bf-vista { width: 100%; height: 260px; padding: 10px; box-sizing: border-box; }
+.st-bf-vista img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.st-bf-otros { display: flex; flex-wrap: wrap; gap: 8px; }
+.st-bf-otros .btn { cursor: pointer; }
+.st-bf-cel { display: none; }
+@media (max-width: 760px) { .st-bf-compu { display: none; } .st-bf-cel { display: inline; } .st-bf-pegar { min-height: 160px; } }
 @media (max-width: 760px) {
   .st-bf-grilla { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .st-objetos { width: 100%; flex-wrap: nowrap; gap: 10px; }
@@ -501,55 +512,119 @@
     ui.modal({ titulo: p.codigoPropio ? 'Código propio' : 'Crear código propio', cuerpo, ancho: 560, acciones });
   }
 
-  // ---------- foto del producto: buscador de imágenes dentro del sistema ----------
-  // en la demo cada búsqueda trae 8 «fotos» de ejemplo; el número de resultado depende de lo buscado, así otra búsqueda muestra otras
-  function hashTexto(s) { let x = 0; for (const ch of ui.normalizar(s)) x = (x * 31 + ch.charCodeAt(0)) >>> 0; return x; }
+  // ---------- foto del producto: búsqueda real en Google Imágenes ----------
+  // Google no se puede mostrar dentro del sistema, así que se abre en otra pestaña con la búsqueda hecha;
+  // la foto que guste se copia («Copiar imagen») y se pega acá. También se puede arrastrar, elegir un archivo o pegar el enlace.
+  function achicar(blob) {
+    return new Promise((res, rej) => {
+      const url = URL.createObjectURL(blob), img = new Image();
+      img.onload = () => {
+        const lado = 640, k = Math.min(1, lado / Math.max(img.naturalWidth, img.naturalHeight));
+        const c = document.createElement('canvas');
+        c.width = Math.max(1, Math.round(img.naturalWidth * k)); c.height = Math.max(1, Math.round(img.naturalHeight * k));
+        const x = c.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, c.width, c.height); x.drawImage(img, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(url);
+        res({ imagen: c.toDataURL('image/jpeg', 0.82), ancho: img.naturalWidth, alto: img.naturalHeight });
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); rej(new Error('No se pudo leer la imagen. Probá copiarla de nuevo.')); };
+      img.src = url;
+    });
+  }
+  function probarEnlace(enlace) {
+    return new Promise((res, rej) => {
+      const img = new Image();
+      img.referrerPolicy = 'no-referrer';
+      img.onload = () => res({ imagen: enlace, ancho: img.naturalWidth, alto: img.naturalHeight });
+      img.onerror = () => rej(new Error('Ese enlace no abre una imagen. En Google tocá la foto y elegí «Copiar imagen», o «Copiar dirección de la imagen».'));
+      img.src = enlace;
+    });
+  }
+  function sitioDe(enlace) { try { return new URL(enlace).hostname.replace(/^www\./, ''); } catch (e) { return ''; } }
   function modalFoto(p) {
     let consulta = [p.descripcion, p.marca].filter(Boolean).join(' ');
-    let resultados = [], elegido = null;
+    let elegida = null;
     const cuerpo = document.createElement('div');
     cuerpo.className = 'st-bf';
     cuerpo.innerHTML = h`
-      <form class="st-bf-barra" role="search"><label class="solo-lector" for="bf-q">Buscar imágenes</label>
-        <input id="bf-q" type="search" autocomplete="off" value="${consulta}"><button class="btn btn-primario" type="submit">Buscar</button></form>
-      <div class="st-bf-info" aria-live="polite"></div>
-      <div class="st-bf-grilla"></div>
-      <p class="st-bf-nota">En la demo los resultados son de ejemplo; en el sistema real se buscan en Google Imágenes.</p>`;
-    const grilla = cuerpo.querySelector('.st-bf-grilla'), info = cuerpo.querySelector('.st-bf-info'), input = cuerpo.querySelector('#bf-q');
+      <form class="st-bf-barra" role="search"><label class="solo-lector" for="bf-q">Qué buscar en Google Imágenes</label>
+        <input id="bf-q" type="search" autocomplete="off" value="${consulta}"><button class="btn btn-primario" type="submit">Buscar en Google</button></form>
+      <ol class="st-bf-pasos">
+        <li>Se abre Google Imágenes en otra pestaña con esta búsqueda.</li>
+        <li>Abrí la foto que te guste y elegí <b>Copiar imagen</b>: en la compu con clic derecho, en el celular dejándola apretada.</li>
+        <li>Volvé a esta pestaña y pegala acá abajo.</li>
+      </ol>
+      <div class="st-bf-pegar" tabindex="0" role="button" aria-label="Pegar la imagen copiada">
+        <div class="st-bf-vista" hidden><img alt="Foto elegida"></div>
+        <div class="st-bf-vacio"><b>Pegá acá la imagen</b><span class="st-bf-compu">Ctrl + V, o arrastrala desde la otra pestaña</span><span class="st-bf-cel">Tocá «Pegar imagen copiada»</span></div>
+      </div>
+      <div class="st-bf-otros">
+        <button type="button" class="btn btn-secundario" data-bf="pegar">Pegar imagen copiada</button>
+        <label class="btn btn-secundario">Elegir de la galería o la compu<input type="file" accept="image/*" hidden></label>
+      </div>
+      <div class="st-bf-info" aria-live="polite"></div>`;
+    const input = cuerpo.querySelector('#bf-q'), zona = cuerpo.querySelector('.st-bf-pegar'), vista = cuerpo.querySelector('.st-bf-vista'),
+      vacio = cuerpo.querySelector('.st-bf-vacio'), info = cuerpo.querySelector('.st-bf-info');
     let boton = null;
-    const marcar = () => {
-      grilla.querySelectorAll('[data-r]').forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.r) === (elegido ? elegido.resultado : -1))));
-      if (boton) boton.disabled = !elegido;
+    const mostrar = (r, origen) => {
+      elegida = Object.assign({ sitio: origen }, r);
+      vista.querySelector('img').src = r.imagen;
+      vista.hidden = false; vacio.hidden = true;
+      info.textContent = 'Foto lista' + (r.ancho ? ' (' + r.ancho + ' × ' + r.alto + ')' : '') + '. Si no es la que querés, pegá otra encima.';
+      if (boton) boton.disabled = false;
     };
-    const buscar = () => {
+    const falla = e => { info.textContent = e.message; ui.toast(e.message, 'alerta'); };
+    const recibirArchivo = f => { if (!f || !/^image\//.test(f.type)) return falla(new Error('Lo que pegaste no es una imagen. En Google elegí «Copiar imagen».')); info.textContent = 'Leyendo la imagen…'; achicar(f).then(r => mostrar(r, 'Google Imágenes'), falla); };
+    const recibirTexto = t => {
+      t = String(t || '').trim();
+      if (/^https:\/\/\S+$/.test(t)) { info.textContent = 'Abriendo el enlace…'; probarEnlace(t).then(r => mostrar(r, sitioDe(t)), falla); }
+      else falla(new Error('Lo que pegaste no es una imagen. En Google elegí «Copiar imagen».'));
+    };
+    cuerpo.querySelector('form').addEventListener('submit', e => {
+      e.preventDefault();
       consulta = input.value.trim();
       if (!consulta) { ui.toast('Escribí qué buscar.', 'alerta'); input.focus(); return; }
-      const desplazar = (hashTexto(consulta) % 40) * 8;
-      // se saltean los dibujos que salen sin color (en algunos números el dibujo del núcleo queda incompleto)
-      const sano = n => !/undefined|NaN/.test(String(ui.fotoProducto(p, n)));
-      const usados = new Set();
-      resultados = App.q.buscarFotos(consulta, p).map(r => {
-        let n = desplazar + r.resultado;
-        for (let i = 0; i < 40 && (usados.has(n) || !sano(n)); i++) n += 8;
-        usados.add(n);
-        return Object.assign({}, r, { resultado: n });
-      });
-      elegido = null;
-      info.textContent = 'Resultados de imágenes para «' + consulta + '». Elegí la que corresponde al producto.';
-      grilla.innerHTML = resultados.map(r => String(h`<button type="button" class="st-bf-item" data-r="${r.resultado}" aria-pressed="false" aria-label="Foto de ${r.sitio}, ${r.ancho} por ${r.alto} píxeles">
-        <span class="st-bf-img">${ui.fotoProducto(p, r.resultado)}</span><span class="st-bf-sitio">${r.sitio}</span><span class="st-bf-tam">${r.ancho} × ${r.alto}</span></button>`)).join('');
-      marcar();
+      window.open('https://www.google.com/search?tbm=isch&q=' + encodeURIComponent(consulta), '_blank', 'noopener');
+      info.textContent = 'Google Imágenes quedó abierto en otra pestaña. Copiá la foto que te guste y pegala acá.';
+      zona.focus();
+    });
+    const alPegar = e => {
+      if (!document.body.contains(cuerpo)) return document.removeEventListener('paste', alPegar);
+      if (e.target === input) return;
+      const d = e.clipboardData; if (!d) return;
+      const f = [...d.files].find(x => /^image\//.test(x.type));
+      e.preventDefault();
+      if (f) return recibirArchivo(f);
+      const html = d.getData('text/html'), m = html && html.match(/<img[^>]+src="(https:[^"]+)"/i);
+      recibirTexto(m ? m[1].replace(/&amp;/g, '&') : d.getData('text/plain'));
     };
-    cuerpo.querySelector('form').addEventListener('submit', e => { e.preventDefault(); buscar(); });
-    grilla.addEventListener('click', e => { const b = e.target.closest('[data-r]'); if (!b) return; elegido = resultados.find(r => r.resultado === Number(b.dataset.r)); marcar(); });
-    grilla.addEventListener('dblclick', e => { if (e.target.closest('[data-r]') && boton) boton.click(); });
-    const m = ui.modal({ titulo: 'Buscar foto en Google', cuerpo, ancho: 860, acciones: [{ texto: 'Cancelar' }, { texto: 'Usar esta foto', tipo: 'primario', alClic: () => {
-      if (!elegido) throw new Error('Elegí una foto de los resultados.');
-      App.acciones.asignarFoto(p.id, { consulta, resultado: elegido.resultado, sitio: elegido.sitio });
-      ui.toast('Foto asignada a «' + p.descripcion + '». Ya se ve en la ficha, en la lista y en el catálogo online.', 'ok');
-    } }] });
+    document.addEventListener('paste', alPegar);
+    cuerpo.querySelector('[data-bf=pegar]').addEventListener('click', async () => {
+      try {
+        if (!navigator.clipboard || !navigator.clipboard.read) throw new Error('Este navegador no deja pegar con el botón: tocá el recuadro y usá Ctrl + V, o «Pegar» del teclado del celular.');
+        const items = await navigator.clipboard.read();
+        for (const it of items) { const tipo = it.types.find(t => /^image\//.test(t)); if (tipo) return recibirArchivo(await it.getType(tipo)); }
+        for (const it of items) if (it.types.includes('text/plain')) return recibirTexto(await (await it.getType('text/plain')).text());
+        throw new Error('No hay ninguna imagen copiada. En Google abrí la foto y elegí «Copiar imagen».');
+      } catch (e) { falla(e.name === 'NotAllowedError' ? new Error('El navegador no dio permiso para pegar. Tocá el recuadro y usá Ctrl + V.') : e); }
+    });
+    cuerpo.querySelector('input[type=file]').addEventListener('change', e => recibirArchivo(e.target.files[0]));
+    zona.addEventListener('dragover', e => { e.preventDefault(); zona.classList.add('encima'); });
+    zona.addEventListener('dragleave', () => zona.classList.remove('encima'));
+    zona.addEventListener('drop', e => {
+      e.preventDefault(); zona.classList.remove('encima');
+      const f = [...(e.dataTransfer.files || [])].find(x => /^image\//.test(x.type));
+      if (f) return recibirArchivo(f);
+      const html = e.dataTransfer.getData('text/html'), m = html && html.match(/<img[^>]+src="(https:[^"]+)"/i);
+      recibirTexto(m ? m[1].replace(/&amp;/g, '&') : e.dataTransfer.getData('text/uri-list') || e.dataTransfer.getData('text/plain'));
+    });
+    const m = ui.modal({ titulo: 'Buscar foto en Google', cuerpo, ancho: 640, alCerrar: () => document.removeEventListener('paste', alPegar),
+      acciones: [{ texto: 'Cancelar' }, { texto: 'Usar esta foto', tipo: 'primario', alClic: () => {
+        if (!elegida) throw new Error('Primero pegá la foto que elegiste en Google.');
+        App.acciones.asignarFoto(p.id, { consulta, sitio: elegida.sitio, imagen: elegida.imagen });
+        ui.toast('Foto asignada a «' + p.descripcion + '». Ya se ve en la ficha, en la lista y en el catálogo online.', 'ok');
+      } }] });
     boton = m.el.querySelector('.modal-pie .btn-primario');
-    buscar();
+    boton.disabled = true;
   }
   async function quitarFoto(p) {
     const ok = await ui.confirmar('«' + p.descripcion + '» queda sin foto: en el catálogo online vuelve a mostrarse el bulto dibujado.', { titulo: 'Quitar foto', aceptar: 'Quitar foto', tipo: 'peligro' });
@@ -982,7 +1057,7 @@
         </div>
         <div class="st-objetos">
           ${p.foto
-            ? h`<figure class="st-foto"><div class="st-foto-marco">${ui.fotoProducto(p, null)}</div><figcaption>Foto de ${p.foto.sitio || 'la búsqueda'}, elegida el ${ui.fecha(p.foto.fecha)}<span class="st-foto-acc"><button type="button" data-acc="foto">Cambiar foto</button><button type="button" data-acc="quitar-foto">Quitar</button></span></figcaption></figure>`
+            ? h`<figure class="st-foto"><div class="st-foto-marco">${ui.fotoProducto(p, null)}</div><figcaption>Foto de ${p.foto.sitio || 'Google Imágenes'}, elegida el ${ui.fecha(p.foto.fecha)}<span class="st-foto-acc"><button type="button" data-acc="foto">Cambiar foto</button><button type="button" data-acc="quitar-foto">Quitar</button></span></figcaption></figure>`
             : h`<div class="st-foto-vacia"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="M4 17l5-4.5 3.5 3 3-2.5L20 17"/></svg><span>Sin foto en el catálogo</span><button type="button" class="btn btn-secundario btn-chico" data-acc="foto">Buscar foto en Google</button></div>`}
           <div class="st-codigos">
             <figure class="st-ean" style="margin:0">${ui.barcodeEAN13(p.ean, { alto: 50 })}<figcaption class="st-ean-pie"><span>EAN-13 del fabricante</span><span>${App.f.eanValido(p.ean) ? 'Verificado' : 'Código inválido'}</span></figcaption></figure>
