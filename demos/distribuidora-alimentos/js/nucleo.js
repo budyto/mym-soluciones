@@ -849,7 +849,10 @@
   // ---- foto del producto elegida desde la búsqueda de imágenes ----
   accion('asignarFoto', function (productoId, foto) {
     const p = exigir('productos', productoId, 'el producto');
-    p.foto = foto ? { consulta: String(foto.consulta || ''), resultado: Number(foto.resultado) || 0, sitio: foto.sitio || '', fecha: hoyActual } : null;
+    let imagen = foto && foto.imagen ? String(foto.imagen) : '';
+    if (imagen && !/^data:image\/(jpeg|png|webp|gif);base64,/.test(imagen) && !/^https:\/\//.test(imagen)) throw new Error('La imagen no es válida: pegá una foto o el enlace https de la imagen.');
+    if (imagen.length > 900000) throw new Error('La imagen es demasiado pesada. Probá con otra foto.');
+    p.foto = foto ? { consulta: String(foto.consulta || ''), resultado: Number(foto.resultado) || 0, sitio: foto.sitio || '', imagen, fecha: hoyActual } : null;
     return p;
   });
 
@@ -1742,6 +1745,11 @@
   // dibujo del envase según el producto (bolsa, botella, caja, lata, pieza) con su nombre y marca: se usa como «foto»
   ui.fotoProducto = (p, resultado, opciones) => {
     const o = opciones || {};
+    // foto real elegida en Google Imágenes: se muestra la imagen tal cual
+    if (resultado == null && p.foto && p.foto.imagen) {
+      return ui.seguro('<img class="foto-producto" src="' + ui.escapar(p.foto.imagen) + '" alt="Foto de ' + ui.escapar(p.descripcion) + '"' + (o.ancho ? ' width="' + o.ancho + '"' : '') +
+        ' style="width:100%;height:100%;object-fit:contain;background:#fff;display:block" loading="lazy" referrerpolicy="no-referrer">');
+    }
     const r = resultado != null ? resultado : (p.foto ? p.foto.resultado : 0);
     const h = hash(p.id + ':' + r);
     const tonos = TONOS_RUBRO[p.rubro] || TONOS_RUBRO['Almacén'];
