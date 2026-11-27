@@ -148,6 +148,25 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 @media (max-width: 900px) { .tablero { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 560px) { .tablero { grid-template-columns: 1fr; } }
 
+/* Dos servicios: cambio de módulo y electricista a domicilio */
+.servicios { padding-block: 72px; border-top: 1px solid var(--linea); }
+.servicios-grilla { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 36px; }
+.servicio { background: var(--panel); border: 1px solid var(--linea); border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; }
+.servicio > img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.servicio .cuerpo { padding: 24px 26px 26px; display: flex; flex-direction: column; gap: 14px; flex: 1; }
+.servicio h3 { font-size: clamp(28px, 3.2vw, 38px); }
+.servicio h3 em { font-style: italic; color: var(--celeste); }
+.servicio p { color: var(--suave); }
+.servicio ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: 15px; }
+.servicio li { padding-left: 16px; position: relative; color: #d3deee; }
+.servicio li::before { content: ""; position: absolute; left: 0; top: .62em; width: 7px; height: 7px; background: var(--electrico); transform: skewX(-12deg); }
+.marcas { display: flex; flex-wrap: wrap; gap: 6px; }
+.marcas span { border: 1px solid var(--linea); background: var(--noche-2); border-radius: 999px; padding: 4px 11px; font: 600 13px var(--etiqueta); letter-spacing: .04em; color: var(--texto); }
+.servicio .boton { margin-top: auto; align-self: flex-start; }
+.servicio.modulos { border-color: #4a8dff; box-shadow: 0 30px 60px -34px rgba(47,123,255,.8); }
+.sello { display: inline-flex; align-items: center; gap: 8px; align-self: flex-start; background: var(--estrella); color: var(--noche); font: italic 900 15px var(--titulo); text-transform: uppercase; padding: 6px 12px; transform: skewX(-10deg); }
+@media (max-width: 860px) { .servicios-grilla { grid-template-columns: 1fr; } }
+
 /* Mostrador */
 .mostrador { padding-block: 72px; }
 .estantes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 40px; }
@@ -286,6 +305,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
     <nav class="menu" aria-label="Secciones">
       <a href="#como-pedir">Cómo pedir</a>
       <a href="#necesitas">Qué necesitás</a>
+      <a href="#servicios">Servicios</a>
       <a href="#inventario">Productos</a>
       <a href="#visita">El local</a>
       <a href="#opiniones">Opiniones</a>
@@ -312,8 +332,8 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
     <div class="envase"><div class="gigante" aria-hidden="true">Laino</div></div>
   </section>
 
-  <div class="rubros" role="img" aria-label="Rubros: lámparas LED, teléfonos, porteros, soportes de TV, pilas, baterías, iluminación exterior, service y reparaciones">
-    <div class="fila" aria-hidden="true"><span>Lámparas LED</span><span>Teléfonos</span><span>Porteros</span><span>Soportes de TV</span><span>Pilas</span><span>Lámparas LED</span><span>Teléfonos</span><span>Porteros</span><span>Soportes de TV</span><span>Pilas</span></div>
+  <div class="rubros" role="img" aria-label="Rubros: lámparas LED, teléfonos, porteros, soportes de TV, pilas, baterías, iluminación exterior, service, cambio de módulos de celulares y electricista a domicilio">
+    <div class="fila" aria-hidden="true"><span>Lámparas LED</span><span>Teléfonos</span><span>Porteros</span><span>Soportes de TV</span><span>Pilas</span><span>Cambio de módulos</span><span>Electricista a domicilio</span><span>Lámparas LED</span><span>Teléfonos</span><span>Porteros</span><span>Soportes de TV</span><span>Pilas</span><span>Cambio de módulos</span><span>Electricista a domicilio</span></div>
     <div class="fila contorno" aria-hidden="true"><span>Baterías</span><span>Iluminación exterior</span><span>Service</span><span>Reparaciones</span><span>Baterías</span><span>Iluminación exterior</span><span>Service</span><span>Reparaciones</span></div>
   </div>
 
@@ -365,6 +385,41 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
     </div>
   </section>
 
+  <section class="servicios" id="servicios" aria-labelledby="t-serv">
+    <div class="envase">
+      <h2 id="t-serv">Celular roto o trabajo en casa: <em>también.</em></h2>
+      <p class="bajada" style="margin-top:14px">Además del mostrador, en Laino te arreglan el celular en el día y te mandan un electricista a tu casa.</p>
+      <div class="servicios-grilla">
+        <article class="servicio modulos">
+          <img src="img/cambio-modulos.jpg" width="740" height="554" loading="lazy" alt="Cartel en la vereda del local: servicio técnico en celulares, cambio de módulos en 2 horas, todas las marcas">
+          <div class="cuerpo">
+            <span class="sello">Listo en 2 horas</span>
+            <h3>Cambio de módulo <em>de cualquier celular.</em></h3>
+            <p>¿Se te rompió o dejó de andar la pantalla? Cambiamos el módulo de todas las marcas y modelos, con service técnico especializado en microelectrónica. Traelo y en 2 horas lo tenés.</p>
+            <div class="marcas" aria-label="Marcas"><span>iPhone</span><span>Samsung</span><span>Motorola</span><span>Xiaomi</span><span>Oppo</span><span>Realme</span><span>TCL</span><span>ZTE</span><span>OnePlus</span><span>Google</span><span>Huawei</span><span>Honor</span><span>LG</span><span>Nokia</span><span>Vivo</span><span>Poco</span><span>Infinix</span><span>Tecno</span><span>y todas las marcas</span></div>
+            <a class="boton lleno" data-wa="Hola, quiero cambiar el módulo de mi celular. Es un " href="#"><svg><use href="#i-wa"/></svg>Consultar por mi celular</a>
+          </div>
+        </article>
+        <article class="servicio">
+          <img src="img/electricista-domicilio.jpg" width="900" height="675" loading="lazy" alt="Electricista instalando una lámpara colgante en el techo de una casa">
+          <div class="cuerpo">
+            <span class="sello">Vamos a tu casa</span>
+            <h3>Electricista <em>a domicilio.</em></h3>
+            <p>Para cualquier trabajo eléctrico en tu casa, departamento o comercio. Contanos qué necesitás y coordinamos la visita.</p>
+            <ul>
+              <li>Instalaciones nuevas, ampliaciones y cableado</li>
+              <li>Tableros, térmicas y disyuntores</li>
+              <li>Tomas, llaves y enchufes que no andan</li>
+              <li>Colocación de lámparas, ventiladores de techo y artefactos</li>
+              <li>Cortes de luz, cortocircuitos y urgencias</li>
+            </ul>
+            <a class="boton lleno" data-wa="Hola, necesito un electricista a domicilio. El trabajo es: " href="#"><svg><use href="#i-wa"/></svg>Pedir un electricista</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
   <section class="mostrador" id="mostrador" aria-labelledby="t-most">
     <div class="envase">
       <h2 id="t-most">Lo que hay <em>en el mostrador.</em></h2>
@@ -401,7 +456,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
         <article class="rubro"><h3>Porteros eléctricos</h3><ul><li>Porteros e intercomunicadores Kocom</li><li>Teléfonos de portero y frentes</li><li>Venta, service y repuestos para casas y edificios</li></ul><a class="ir" data-wa="Hola, consulto por un portero eléctrico. Es para " href="#">Preguntar por stock →</a></article>
         <article class="rubro"><h3>Pilas y baterías</h3><ul><li>Pilas Varta y otras marcas</li><li>Baterías recargables</li><li>Baterías para teléfonos inalámbricos</li></ul><a class="ir" data-wa="Hola, busco pilas o baterías. Necesito " href="#">Preguntar por stock →</a></article>
         <article class="rubro"><h3>Soportes para TV</h3><ul><li>Fijos e inclinables</li><li>Con brazo articulado</li><li>Para todas las medidas</li></ul><a class="ir" data-wa="Hola, busco un soporte de TV para " href="#">Preguntar por stock →</a></article>
-        <article class="rubro"><h3>Servicios en el local</h3><ul><li>Service de celulares<small>Cambio de módulo en 2 horas: iPhone, Samsung, Motorola, Xiaomi y más</small></li><li>Reparación de electrodomésticos</li><li>Instalaciones eléctricas en casas y comercios</li><li>Mantenimiento y asesoramiento</li></ul><a class="ir" data-wa="Hola, consulto por un servicio. Necesito " href="#">Preguntar por stock →</a></article>
+        <article class="rubro"><h3>Servicios en el local</h3><ul><li>Cambio de módulo de celulares<small>En 2 horas, todas las marcas</small></li><li>Electricista a domicilio<small>Para cualquier trabajo eléctrico</small></li><li>Reparación de electrodomésticos</li><li>Instalaciones eléctricas en casas y comercios</li><li>Mantenimiento y asesoramiento</li></ul><a class="ir" data-wa="Hola, consulto por un servicio. Necesito " href="#">Preguntar por stock →</a></article>
       </div>
       <div class="inv-mas">
         <div><h3>Y mucho más en el local.</h3><p>Esto es sólo una parte. Tenemos muchos más productos y repuestos: si buscás algo que no está en la lista, consultanos y te decimos si lo tenemos.</p></div>
@@ -508,7 +563,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
     </div>
     <div class="gigante" aria-hidden="true">Laino</div>
     <div class="pie-final">
-      <span>Fotos de reparaciones, porteros y lámpara LED: <a href="https://unsplash.com/photos/GXLPLG3_Vf4" target="_blank" rel="noopener">Raze Solar</a>, <a href="https://unsplash.com/photos/q4_IaMcu1Ps" target="_blank" rel="noopener">Kalina O.</a> y <a href="https://unsplash.com/photos/TuAtSs8peoM" target="_blank" rel="noopener">Federico Bottos</a> en Unsplash. Las demás son del local.</span>
+      <span>Fotos de reparaciones, porteros, lámpara LED y electricista: <a href="https://unsplash.com/photos/GXLPLG3_Vf4" target="_blank" rel="noopener">Raze Solar</a>, <a href="https://unsplash.com/photos/q4_IaMcu1Ps" target="_blank" rel="noopener">Kalina O.</a>, <a href="https://unsplash.com/photos/TuAtSs8peoM" target="_blank" rel="noopener">Federico Bottos</a> y <a href="https://unsplash.com/photos/4HjF7TNV1us" target="_blank" rel="noopener">Ewan Buck</a> en Unsplash. Las demás son del local.</span>
       <span>Demo de <a href="https://mymsoluciones.online" target="_blank" rel="noopener">MyM Soluciones</a></span>
     </div>
   </div>
