@@ -13,7 +13,8 @@
   // ---------- estado del módulo ----------
   let preventistaId = null;
   let diaElegido = null;          // null = hoy
-  const carritos = {};            // clienteId → { items: [{productoId, cantidad}], obs }
+  const carritos = {};            // clienteId → { items: [{productoId, presentacion, cantidad (en esa presentación), bonif}], obs }
+  const presElegida = {};         // productoId → presentación marcada en la lista de productos
   const textoBusqueda = {};       // clienteId → lo último que se buscó
   let aviso = null;               // { pedidoId } tras confirmar: se muestra una vez en la ruta
 
@@ -116,7 +117,7 @@
 .pv-paso button { width: 44px; height: 40px; border: 0; background: none; font-size: 22px; line-height: 1; cursor: pointer; color: var(--tinta); border-radius: 22px; }
 .pv-paso button:hover { background: var(--fila-hover); }
 .pv-paso button:disabled { color: var(--linea); cursor: not-allowed; background: none; }
-.pv-paso input[type="number"] { width: 58px; height: 40px; border: 0; border-radius: 0; text-align: center; font-weight: 700; font-size: var(--fs-16); padding: 0 2px; -moz-appearance: textfield; }
+.pv-paso input { width: 58px; height: 40px; border: 0; border-radius: 0; text-align: center; font-weight: 700; font-size: var(--fs-16); padding: 0 2px; -moz-appearance: textfield; }
 .pv-paso input::-webkit-inner-spin-button, .pv-paso input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 .pv-quitar { border: 0; background: none; color: var(--texto-2); font-size: var(--fs-13); text-decoration: underline; cursor: pointer; padding: 8px 2px; }
 .pv-quitar:hover { color: var(--peligro); }
@@ -145,7 +146,18 @@
 .pv-nocompro button { flex: 1 1 calc(50% - 6px); justify-content: center; }
 .pv-bonif { display: inline-flex; align-items: center; gap: 4px; font-size: var(--fs-12); color: var(--texto-2); }
 .pv-bonif input { width: 58px; height: 30px; padding: 0 6px; }
-.pv-escala { display: block; font-size: var(--fs-12); color: var(--ok); font-weight: 600; }`;
+.pv-escala { display: block; font-size: var(--fs-12); color: var(--ok); font-weight: 600; }
+.pv-pres { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+.pv-pres button { min-height: 40px; padding: 4px 10px 4px 9px; display: inline-flex; flex-direction: column; justify-content: center; align-items: flex-start; line-height: 1.2; border: 1px solid var(--linea); border-left: 3px solid var(--carton); border-radius: var(--r-control); background: var(--hoja); font-size: var(--fs-12); color: var(--texto-2); cursor: pointer; text-align: left; }
+.pv-pres button span { font-size: var(--fs-13); font-weight: 700; color: var(--tinta); font-variant-numeric: tabular-nums; }
+.pv-pres button:hover { border-color: var(--tinta); border-left-color: var(--carton); }
+.pv-pres button[aria-pressed="true"] { background: var(--tinta); border-color: var(--tinta); border-left-color: var(--carton); color: #DDE3E8; }
+.pv-pres button[aria-pressed="true"] span { color: #fff; }
+.pv-pres-aviso { grid-column: 1 / -1; font-size: var(--fs-12); color: var(--alerta); font-weight: 600; }
+.pv-linea-pres { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; font-size: var(--fs-12); color: var(--texto-2); font-weight: 600; }
+.pv-linea-pres select { flex: 1 1 auto; min-width: 0; height: 40px; font-size: var(--fs-14); }
+.pv-unidad { font-weight: 700; color: var(--texto-2); margin-left: -4px; }
+.pv-linea-abajo { flex-wrap: wrap; }`;
     document.head.appendChild(st);
   }
 
@@ -168,15 +180,41 @@
   function visitaDelDia(clienteId, fecha) { const vs = App.db.visitas.filter(v => v.clienteId === clienteId && v.fecha === fecha); return vs[vs.length - 1] || null; }
   const disponible = (productoId, depositoId) => App.q.stock(productoId, depositoId).disponible;
   const carrito = clienteId => (carritos[clienteId] = carritos[clienteId] || { items: [], obs: '' });
+  // ---------- presentaciones: bulto o caja, pack, unidad y, en los pesables, por kilo ----------
+  // el stock está en la unidad base (el bulto, o el kilo en los pesables)
+  const rq = n => Math.round(n * 1000) / 1000;
+  const esKg = pr => !!pr && pr.id === 'kg';
+  const presDe = (p, id) => App.presentacionDe(p, id);
+  const leerCant = v => { const s = String(v == null ? '' : v).trim(); return Number(s.includes(',') ? s.replace(/\./g, '').replace(',', '.') : s); };
+  const precioBasePres = (p, listaId, pr) => App.r2(App.q.precio(p.id, listaId) * (1 + (pr.recargo || 0) / 100));
+  const precioPres = (p, listaId, pr) => App.r2(precioBasePres(p, listaId, pr) * pr.factor);
+  const precioPresIVA = (p, listaId, pr) => pr.id === 'b' && pr.factor === 1 && !pr.recargo ? App.q.precioConIVA(p.id, listaId) : App.r2(precioPres(p, listaId, pr) * (1 + p.iva / 100));
+  const maxPres = (pr, disp) => disp <= 0 ? 0 : (esKg(pr) ? rq(disp) : Math.floor(disp / pr.factor + 1e-9));
+  const cantTexto = (pr, n) => App.ui.num(n, esKg(pr) && n % 1 ? 3 : 0);
+  const valorInput = (pr, n) => esKg(pr) ? String(rq(n)).replace('.', ',') : String(n);
+  // el renglón como lo va a guardar el núcleo, para mostrar el mismo subtotal
+  function renglonVista(it, listaId) {
+    const p = App.get('productos', it.productoId), pr = presDe(p, it.presentacion);
+    return { productoId: p.id, cantidad: rq(it.cantidad * pr.factor), precio: precioBasePres(p, listaId, pr), iva: p.iva, bonif: it.bonif || 0,
+      pres: { id: pr.id, nombre: pr.nombre, factor: pr.factor, cantidad: it.cantidad } };
+  }
   function totales(c, items) {
-    let neto = 0, iva = 0;
-    items.forEach(it => {
-      const p = App.get('productos', it.productoId);
-      const s = App.r2(it.cantidad * App.precioNeto({ precio: App.q.precio(it.productoId, c.listaId), bonif: it.bonif || 0 }));
-      neto += s; iva += s * p.iva / 100;
-    });
-    neto = App.r2(neto); iva = App.r2(iva);
+    let n21 = 0, n105 = 0;
+    items.forEach(it => { const r = renglonVista(it, c.listaId); const s = App.subtotalItem(r); if (r.iva === 10.5) n105 += s; else n21 += s; });
+    n21 = App.r2(n21); n105 = App.r2(n105);
+    const neto = App.r2(n21 + n105), iva = App.r2(App.r2(n21 * 0.21) + App.r2(n105 * 0.105));
     return { neto, iva, total: App.r2(neto + iva) };
+  }
+  // código exacto: EAN, código interno o propio, PLU, o etiqueta de balanza (20 + PLU + 0 + gramos + verificador)
+  function productoPorCodigo(crudo) {
+    const cod = crudo.replace(/\D/g, '');
+    const activos = App.db.productos.filter(x => x.activo !== false);
+    if (cod.length === 13 && cod.startsWith('20')) {
+      const plu = cod.slice(2, 6), p = activos.find(x => x.pesable && x.plu === plu);
+      if (p) return { p, presentacion: 'kg', cantidad: rq(Number(cod.slice(7, 12)) / 1000) };
+    }
+    const p = activos.find(x => (cod.length >= 8 && x.ean === cod) || x.codigo.toUpperCase() === crudo.toUpperCase() || (x.codigoPropio && x.codigoPropio.toUpperCase() === crudo.toUpperCase()) || (cod.length === 4 && x.plu === cod && crudo === cod));
+    return p ? { p } : null;
   }
   const iconoCheck = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 10.5l3.5 3.5 7.5-8"/></svg>';
   const iconoLupa = '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="M12.6 12.6L17 17"/></svg>';
@@ -309,10 +347,10 @@
       </div>
       <div class="pv-buscar">
         <div class="pv-buscar-caja">${ui.seguro(iconoLupa)}
-          <label for="pv-buscar" class="solo-lector">Buscar producto por nombre o código de barras</label>
-          <input id="pv-buscar" type="search" autocomplete="off" enterkeyhint="search" placeholder="Producto, marca o código de barras">
+          <label for="pv-buscar" class="solo-lector">Buscar producto por nombre, código de barras o PLU de balanza</label>
+          <input id="pv-buscar" type="search" autocomplete="off" enterkeyhint="search" placeholder="Producto, marca, código de barras o PLU">
         </div>
-        <div class="campo-ayuda">Al escanear el código con la lectora, el producto se agrega automáticamente.</div>
+        <div class="campo-ayuda">Al escanear el código con la lectora se agrega solo; la etiqueta de la balanza trae el peso.</div>
       </div>
       <p class="pv-sugerencia" id="pv-sug"></p>
       <ul class="pv-productos" id="pv-productos"></ul>
@@ -334,27 +372,48 @@
     const listaProd = $('#pv-productos');
     const sug = $('#pv-sug');
 
-    const cantidadEn = productoId => { const it = car.items.find(x => x.productoId === productoId); return it ? it.cantidad : 0; };
-    function sumar(productoId, delta) {
-      const disp = disponible(productoId, c.depositoId);
-      let it = car.items.find(x => x.productoId === productoId);
-      if (!it) { if (delta <= 0) return; it = { productoId, cantidad: 0 }; car.items.push(it); }
-      if (delta > 0 && it.cantidad + delta > disp) ui.toast('De «' + App.get('productos', productoId).descripcion + '» quedan ' + ui.num(disp) + ' disponibles en ' + dep.nombre + '.', 'alerta');
-      it.cantidad = delta < 0 ? Math.max(0, it.cantidad + delta) : Math.min(Math.max(disp, it.cantidad), it.cantidad + delta);
-      if (!it.cantidad) car.items = car.items.filter(x => x !== it);
-      else if (!it.bonifManual) it.bonif = App.bonifEscala(App.get('productos', productoId), it.cantidad);
+    const linea = productoId => car.items.find(x => x.productoId === productoId);
+    const presLinea = it => presDe(App.get('productos', it.productoId), it.presentacion);
+    // la presentación marcada en la lista: la elegida, la del renglón del pedido o la primera (bulto, o kilo en pesables)
+    function presMarcada(p) { const it = linea(p.id); return presDe(p, presElegida[p.id] || (it && it.presentacion)); }
+    const faltaLinea = it => renglonVista(it, c.listaId).cantidad > disponible(it.productoId, c.depositoId) + 1e-9;
+    const cantOk = it => it.cantidad > 0 && (esKg(presLinea(it)) || it.cantidad % 1 === 0);
+    function escala(it) { if (!it.bonifManual) it.bonif = App.bonifEscala(App.get('productos', it.productoId), renglonVista(it, c.listaId).cantidad); }
+    // suma o resta en la presentación del renglón (en kilos de a medio kilo); presId sólo al agregar desde la lista
+    function sumar(productoId, delta, presId, exacta) {
+      const p = App.get('productos', productoId);
+      let it = linea(productoId);
+      if (it && presId && presId !== it.presentacion) {
+        ui.toast('«' + p.descripcion + '» ya está en el pedido por ' + presLinea(it).nombre.toLowerCase() + '. Cambiá la presentación desde el renglón.', 'alerta');
+        return;
+      }
+      if (!it) { if (delta <= 0) return; it = { productoId, presentacion: presDe(p, presId).id, cantidad: 0, bonif: 0 }; car.items.push(it); }
+      const pr = presLinea(it);
+      const paso = exacta != null ? exacta : (esKg(pr) && it.cantidad ? 0.5 : 1) * Math.sign(delta);
+      const tope = maxPres(pr, disponible(productoId, c.depositoId));
+      let nueva = rq(it.cantidad + paso);
+      if (paso > 0 && nueva > tope) { ui.toast('De «' + p.descripcion + '» alcanzan para ' + cantTexto(pr, tope) + ' × ' + pr.nombre.toLowerCase() + ' en ' + dep.nombre + '.', 'alerta'); nueva = Math.max(it.cantidad, tope); }
+      if (nueva <= 0) car.items = car.items.filter(x => x !== it);
+      else { it.cantidad = nueva; escala(it); }
       dibujarCarrito(); dibujarProductos();
     }
 
     function filaProducto(p) {
+      const ps = App.presentaciones(p);
+      const pr = presMarcada(p);
       const disp = disponible(p.id, c.depositoId);
-      const enCar = cantidadEn(p.id);
-      const conIVA = App.q.precioConIVA(p.id, c.listaId);
+      const it = linea(p.id);
+      const enCar = it && it.presentacion === pr.id ? it.cantidad : 0;
+      const otraPres = it && it.presentacion !== pr.id;
+      const lugar = maxPres(pr, disp) - enCar;
+      const conIVA = precioPresIVA(p, c.listaId, pr);
       const esc = (p.escalaBonif || [])[0];
       return h`<li class="pv-prod">
-        <div><div class="pv-prod-desc">${p.descripcion}</div><div class="pv-prod-sub">${p.marca}, ${p.unidad.toLowerCase()}, <span style="white-space:nowrap">${p.codigo}</span></div>${esc ? h`<span class="pv-escala">Bonificación del ${ui.num(esc.pct, 0)} % desde ${esc.desde} bultos</span>` : ''}</div>
-        <div class="pv-prod-precio">${ui.pesos(conIVA)}<small>${p.contenido > 1 ? 'el bulto' : 'la unidad'}, con IVA</small><small class="${disp > 0 ? '' : 'sin'}">${disp > 0 ? 'Quedan ' + ui.num(disp) : 'Sin stock'}</small></div>
-        <button type="button" class="pv-mas${enCar ? ' en-carrito' : ''}" data-mas="${p.id}" ${disp - enCar > 0 ? '' : 'disabled'} aria-label="${enCar ? 'Agregar una unidad de ' + p.descripcion + ', cantidad actual ' + enCar : 'Agregar ' + p.descripcion}">${enCar ? enCar : '+'}</button>
+        <div><div class="pv-prod-desc">${p.descripcion}</div><div class="pv-prod-sub">${p.marca}, <span style="white-space:nowrap">${p.codigo}</span>${p.plu ? h`, <span style="white-space:nowrap">PLU ${p.plu}</span>` : ''}</div>${esc ? h`<span class="pv-escala">Bonificación del ${ui.num(esc.pct, 0)} % desde ${esc.desde} bultos</span>` : ''}</div>
+        <div class="pv-prod-precio">${ui.pesos(conIVA)}<small>${esKg(pr) ? 'el kilo' : pr.nombre.toLowerCase()}, con IVA</small><small class="${maxPres(pr, disp) > 0 ? '' : 'sin'}">${maxPres(pr, disp) > 0 ? (esKg(pr) ? 'Quedan ' + cantTexto(pr, disp) + ' kg' : 'Quedan ' + cantTexto(pr, maxPres(pr, disp))) : 'Sin stock'}</small></div>
+        <button type="button" class="pv-mas${enCar ? ' en-carrito' : ''}" data-mas="${p.id}" data-pres="${pr.id}" ${lugar > 0 && !otraPres ? '' : 'disabled'} aria-label="${enCar ? 'Agregar ' + (esKg(pr) ? 'medio kilo' : 'una') + ' de ' + p.descripcion + ', ' + pr.nombre.toLowerCase() + ', cantidad actual ' + cantTexto(pr, enCar) : 'Agregar ' + p.descripcion + ', ' + pr.nombre.toLowerCase()}">${enCar ? cantTexto(pr, enCar) : '+'}</button>
+        ${ps.length > 1 ? h`<div class="pv-pres" role="group" aria-label="Presentación de ${p.descripcion}">${ps.map(x => h`<button type="button" data-elegir="${p.id}" data-pres="${x.id}" aria-pressed="${x.id === pr.id}">${x.nombre}<span>${ui.pesos(precioPresIVA(p, c.listaId, x))}</span></button>`)}</div>` : ''}
+        ${otraPres ? h`<div class="pv-pres-aviso">En el pedido va por ${presLinea(it).nombre.toLowerCase()}: cambiá la presentación desde el renglón.</div>` : ''}
       </li>`;
     }
     let ultimoTexto = textoBusqueda[c.id] || '';
@@ -365,71 +424,86 @@
         xs = habituales(c.id, 8);
         sug.textContent = xs.length ? 'Productos más comprados por el cliente:' : 'Buscar un producto para comenzar.';
       } else {
-        xs = App.db.productos.filter(p => p.activo !== false && ui.coincide(t, p.descripcion, p.marca, p.codigo, p.ean, p.rubro)).slice(0, 25);
-        sug.textContent = xs.length ? xs.length + (xs.length === 1 ? ' producto' : ' productos') + ' con «' + ultimoTexto.trim() + '»' : 'No se encontraron productos para «' + ultimoTexto.trim() + '». Se puede buscar por marca o código.';
+        xs = App.db.productos.filter(p => p.activo !== false && ui.coincide(t, p.descripcion, p.marca, p.codigo, p.ean, p.rubro, p.plu, p.codigoPropio)).slice(0, 25);
+        sug.textContent = xs.length ? xs.length + (xs.length === 1 ? ' producto' : ' productos') + ' con «' + ultimoTexto.trim() + '»' : 'No se encontraron productos para «' + ultimoTexto.trim() + '». Se puede buscar por marca, código o PLU.';
       }
       listaProd.hidden = !xs.length;
       listaProd.innerHTML = xs.map(p => String(filaProducto(p))).join('');
     }
-    listaProd.addEventListener('click', e => { const b = e.target.closest('[data-mas]'); if (b) sumar(b.dataset.mas, 1); });
+    listaProd.addEventListener('click', e => {
+      const el2 = e.target.closest('[data-elegir]');
+      if (el2) { presElegida[el2.dataset.elegir] = el2.dataset.pres; dibujarProductos(); const b = listaProd.querySelector('[data-elegir="' + el2.dataset.elegir + '"][data-pres="' + el2.dataset.pres + '"]'); if (b) b.focus(); return; }
+      const b = e.target.closest('[data-mas]');
+      if (b) sumar(b.dataset.mas, 1, b.dataset.pres);
+    });
 
     inp.value = ultimoTexto;
     ui.buscador(inp, (t, crudo) => { ultimoTexto = textoBusqueda[c.id] = crudo || ''; dibujarProductos(); }, 100);
-    // lectora de código de barras: tipea el EAN (o el código interno) y Enter
+    // lectora: EAN, código interno, PLU o etiqueta de la balanza (trae el peso) y Enter
     inp.addEventListener('keydown', e => {
       if (e.key !== 'Enter') return;
       e.preventDefault();
       const crudo = inp.value.trim();
-      const cod = crudo.replace(/\D/g, '');
-      const p = App.db.productos.find(x => x.activo !== false && ((cod.length >= 8 && x.ean === cod) || x.codigo.toUpperCase() === crudo.toUpperCase()));
-      if (p) {
-        if (disponible(p.id, c.depositoId) - cantidadEn(p.id) <= 0) { ui.toast('De «' + p.descripcion + '» no queda stock disponible.', 'peligro'); return; }
-        sumar(p.id, 1);
-        ui.toast('Producto agregado: ' + p.descripcion + '. Cantidad: ' + cantidadEn(p.id) + '.', 'ok');
+      const hallado = productoPorCodigo(crudo);
+      if (hallado) {
+        const p = hallado.p, it = linea(p.id);
+        const presId = hallado.presentacion || (it ? it.presentacion : presMarcada(p).id);
+        const pr = presDe(p, presId);
+        if (maxPres(pr, disponible(p.id, c.depositoId)) - (it && it.presentacion === pr.id ? it.cantidad : 0) <= 0) { ui.toast('De «' + p.descripcion + '» no queda stock disponible.', 'peligro'); return; }
+        sumar(p.id, 1, presId, hallado.cantidad);
+        const ya = linea(p.id);
+        if (ya) ui.toast('Producto agregado: ' + p.descripcion + '. Cantidad: ' + cantTexto(presLinea(ya), ya.cantidad) + ' × ' + presLinea(ya).nombre.toLowerCase() + '.', 'ok');
         inp.value = ''; ultimoTexto = textoBusqueda[c.id] = ''; dibujarProductos();
-      } else if (cod.length >= 8) ui.toast('No existe un producto con el código ' + cod + '.', 'alerta');
+      } else if (crudo.replace(/\D/g, '').length >= 8) ui.toast('No existe un producto con el código ' + crudo.replace(/\D/g, '') + '.', 'alerta');
     });
 
     function dibujarCarrito() {
       const cont = $('#pv-lineas');
-      const t = totales(c, car.items);
-      let faltaStock = false;
+      const validos = car.items.filter(cantOk);
+      const t = totales(c, validos);
+      let faltaStock = false, invalida = false;
       if (!car.items.length) {
-        cont.innerHTML = '<div class="pv-vacio-carrito">El pedido no tiene productos. Se agregan con el botón + de la lista superior.</div>';
+        cont.innerHTML = '<div class="pv-vacio-carrito">El pedido no tiene productos. Se agregan con el botón + de la lista superior, eligiendo antes la presentación.</div>';
       } else {
         cont.innerHTML = String(h`<ul class="pv-lineas">${car.items.map(it => {
           const p = App.get('productos', it.productoId);
+          const pr = presLinea(it);
+          const ps = App.presentaciones(p);
           const disp = disponible(p.id, c.depositoId);
-          const precio = App.q.precio(p.id, c.listaId);
-          const mal = it.cantidad > disp;
+          const tope = maxPres(pr, disp);
+          const mal = faltaLinea(it), malCant = !cantOk(it);
           if (mal) faltaStock = true;
-          const neto = App.precioNeto({ precio, bonif: it.bonif || 0 });
-          return h`<li class="pv-linea${mal ? ' sin-stock' : ''}">
-            <div><div class="pv-prod-desc">${p.descripcion}</div><div class="pv-linea-sub">${ui.pesos(precio)} sin IVA por ${p.unidad.toLowerCase()}, IVA ${ui.num(p.iva, p.iva % 1 ? 1 : 0)} %${it.bonif ? ', bonificado ' + ui.num(it.bonif, 1) + ' %' : ''}</div></div>
-            <div class="pv-linea-total">${ui.pesos(App.r2(neto * it.cantidad))}<small class="pv-linea-sub" style="display:block;font-weight:400">sin IVA</small></div>
+          if (malCant) invalida = true;
+          const r = renglonVista(it, c.listaId);
+          return h`<li class="pv-linea${mal || malCant ? ' sin-stock' : ''}">
+            <div><div class="pv-prod-desc">${p.descripcion}</div><div class="pv-linea-sub">${ui.pesos(precioPres(p, c.listaId, pr))} sin IVA ${esKg(pr) ? 'el kilo' : 'por ' + pr.nombre.toLowerCase()}, IVA ${ui.num(p.iva, p.iva % 1 ? 1 : 0)} %${it.bonif ? ', bonificado ' + ui.num(it.bonif, 1) + ' %' : ''}</div></div>
+            <div class="pv-linea-total">${malCant ? '' : ui.pesos(App.subtotalItem(r))}<small class="pv-linea-sub" style="display:block;font-weight:400">sin IVA</small></div>
+            ${ps.length > 1 ? h`<label class="pv-linea-pres"><span>Presentación</span><select data-cambiar="${p.id}" aria-label="Presentación de ${p.descripcion}">${ps.map(x => h`<option value="${x.id}" ${x.id === pr.id ? 'selected' : ''}>${x.nombre}, ${ui.pesos(precioPresIVA(p, c.listaId, x))} con IVA</option>`)}</select></label>` : ''}
             <div class="pv-linea-abajo">
               <div class="pv-paso">
-                <button type="button" data-menos="${p.id}" aria-label="Restar una unidad de ${p.descripcion}">−</button>
-                <input type="number" inputmode="numeric" min="1" step="1" value="${it.cantidad}" data-cant="${p.id}" aria-label="Cantidad de ${p.descripcion}">
-                <button type="button" data-sumar="${p.id}" ${it.cantidad >= disp ? 'disabled' : ''} aria-label="Agregar una unidad de ${p.descripcion}">+</button>
+                <button type="button" data-menos="${p.id}" aria-label="Restar ${esKg(pr) ? 'medio kilo' : 'una'} de ${p.descripcion}">−</button>
+                <input type="text" inputmode="${esKg(pr) ? 'decimal' : 'numeric'}" value="${valorInput(pr, it.cantidad)}" data-cant="${p.id}" aria-label="Cantidad de ${p.descripcion}${esKg(pr) ? ' en kilos' : ', ' + pr.nombre.toLowerCase()}">
+                <button type="button" data-sumar="${p.id}" ${it.cantidad >= tope ? 'disabled' : ''} aria-label="Agregar ${esKg(pr) ? 'medio kilo' : 'una'} de ${p.descripcion}">+</button>
               </div>
+              ${esKg(pr) ? h`<span class="pv-unidad">kg</span>` : ''}
               <label class="pv-bonif">% bonif. <input type="number" inputmode="decimal" min="0" max="99" step="0.5" value="${it.bonif || 0}" data-bonif="${p.id}" aria-label="Bonificación de ${p.descripcion}"></label>
               <button type="button" class="pv-quitar" data-quitar="${p.id}">Quitar</button>
             </div>
-            ${mal ? h`<div class="pv-error-linea">Disponibles en ${dep.nombre}: ${ui.num(disp)}. Es necesario reducir la cantidad.</div>` : ''}
+            ${malCant ? h`<div class="pv-error-linea">${esKg(pr) ? 'Indicá los kilos, por ejemplo 1,35.' : 'La cantidad tiene que ser un número entero.'}</div>`
+              : mal ? h`<div class="pv-error-linea">En ${dep.nombre} alcanzan para ${cantTexto(pr, tope)} × ${pr.nombre.toLowerCase()}. Es necesario reducir la cantidad.</div>` : ''}
           </li>`;
         })}</ul>`);
       }
-      const bultos = car.items.reduce((s, x) => s + x.cantidad, 0);
-      $('#pv-car-cuenta').textContent = car.items.length ? car.items.length + (car.items.length === 1 ? ' producto, ' : ' productos, ') + ui.num(bultos) + (bultos === 1 ? ' unidad de venta' : ' unidades de venta') : '';
+      $('#pv-car-cuenta').textContent = car.items.length ? car.items.length + (car.items.length === 1 ? ' producto' : ' productos') : '';
       const avisos = [];
       if (car.items.length && saldo + t.total > c.limiteCredito) avisos.push(h`<div class="aviso aviso-alerta"><div><strong>Excede el límite de crédito.</strong> Con este pedido la cuenta queda en ${ui.pesos(saldo + t.total)} y el límite es ${ui.pesos(c.limiteCredito)}. Puede confirmarse de todos modos: quedará marcado para revisión de administración antes de facturar.</div></div>`);
       if (vencida > 0.01) avisos.push(h`<div class="aviso aviso-peligro"><div>Tiene ${ui.pesos(vencida)} de deuda vencida. Se recomienda gestionar la cobranza durante la visita.</div></div>`);
       if (faltaStock) avisos.push(h`<div class="aviso aviso-peligro"><div>Hay productos sin stock suficiente. Es necesario corregir las cantidades marcadas para confirmar.</div></div>`);
+      if (invalida) avisos.push(h`<div class="aviso aviso-peligro"><div>Hay cantidades para revisar: los bultos, packs y unidades van enteros; por kilo se admiten decimales.</div></div>`);
       $('#pv-avisos').innerHTML = avisos.map(String).join('');
       $('#pv-pie-det').textContent = car.items.length ? 'Neto ' + ui.pesos(t.neto) + ' + IVA ' + ui.pesos(t.iva) : 'Sin productos';
       $('#pv-pie-total').textContent = ui.pesos(t.total);
-      $('#pv-confirmar').disabled = !car.items.length || faltaStock;
+      $('#pv-confirmar').disabled = !car.items.length || faltaStock || invalida;
     }
 
     $('#pv-lineas').addEventListener('click', e => {
@@ -441,13 +515,24 @@
     });
     $('#pv-lineas').addEventListener('change', e => {
       const bi = e.target.closest('[data-bonif]');
-      if (bi) { const it = car.items.find(x => x.productoId === bi.dataset.bonif); if (it) { it.bonif = Math.max(0, Math.min(99, Number(bi.value) || 0)); it.bonifManual = true; } dibujarCarrito(); return; }
+      if (bi) { const it = linea(bi.dataset.bonif); if (it) { it.bonif = Math.max(0, Math.min(99, Number(bi.value) || 0)); it.bonifManual = true; } dibujarCarrito(); return; }
+      const sp = e.target.closest('[data-cambiar]');
+      if (sp) {
+        const it = linea(sp.dataset.cambiar); if (!it) return;
+        const pr = presDe(App.get('productos', it.productoId), sp.value);
+        it.presentacion = pr.id; presElegida[it.productoId] = pr.id;
+        if (!esKg(pr)) it.cantidad = Math.max(1, Math.round(it.cantidad) || 1);
+        escala(it); dibujarCarrito(); dibujarProductos();
+        return;
+      }
       const i = e.target.closest('[data-cant]');
       if (!i) return;
-      const it = car.items.find(x => x.productoId === i.dataset.cant);
+      const it = linea(i.dataset.cant);
       if (!it) return;
-      const v = Math.floor(Number(i.value));
-      if (!(v > 0)) car.items = car.items.filter(x => x !== it); else { it.cantidad = v; if (!it.bonifManual) it.bonif = App.bonifEscala(App.get('productos', it.productoId), v); }
+      const pr = presLinea(it);
+      const v = leerCant(i.value);
+      if (!(v > 0)) car.items = car.items.filter(x => x !== it);
+      else { it.cantidad = esKg(pr) ? rq(v) : v; escala(it); }
       dibujarCarrito(); dibujarProductos();
     });
     $('#pv-obs').addEventListener('input', e => { car.obs = e.target.value; });
@@ -459,11 +544,14 @@
       ult.items.forEach(x => {
         const p = App.get('productos', x.productoId);
         if (!p || p.activo === false) return;
-        const pone = Math.min(x.cantidad, disponible(p.id, c.depositoId));
-        if (pone < x.cantidad) recortados.push(p.descripcion + (pone > 0 ? ' (sólo ' + ui.num(pone) + ')' : ' (sin stock)'));
+        const pr = presDe(p, x.pres ? x.pres.id : 'b');
+        const quiere = x.pres ? x.pres.cantidad : x.cantidad;
+        const pone = Math.min(quiere, maxPres(pr, disponible(p.id, c.depositoId)));
+        if (pone < quiere) recortados.push(p.descripcion + (pone > 0 ? ' (sólo ' + cantTexto(pr, pone) + ')' : ' (sin stock)'));
         if (pone <= 0) return;
-        const it = car.items.find(y => y.productoId === p.id);
-        if (it) it.cantidad = Math.max(it.cantidad, pone); else car.items.push({ productoId: p.id, cantidad: pone });
+        const it = linea(p.id);
+        if (it && it.presentacion === pr.id) it.cantidad = Math.max(it.cantidad, pone);
+        else if (!it) car.items.push({ productoId: p.id, presentacion: pr.id, cantidad: pone, bonif: x.bonif || 0, bonifManual: !!x.bonif });
         sumados++;
       });
       dibujarCarrito(); dibujarProductos();
@@ -474,7 +562,7 @@
     $('#pv-confirmar').addEventListener('click', () => {
       const p = App.intentar(() => App.acciones.crearPedido({
         clienteId: c.id, preventistaId: pvId, origen: 'preventa', obs: car.obs.trim(),
-        items: car.items.map(x => ({ productoId: x.productoId, cantidad: x.cantidad, bonif: x.bonif || 0 }))
+        items: car.items.map(x => ({ productoId: x.productoId, presentacion: x.presentacion, cantidad: x.cantidad, bonif: x.bonif || 0 }))
       }), r => 'Pedido ' + r.nro + ' confirmado');
       if (!p) return;
       delete carritos[c.id];

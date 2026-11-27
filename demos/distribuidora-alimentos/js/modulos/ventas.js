@@ -60,9 +60,9 @@
 .vt-variacion { font-size: var(--fs-12); font-weight: 600; }
 .vt-mostrador-res { list-style: none; margin: 6px 0 0; padding: 4px; background: var(--hoja); border: 1px solid var(--linea); border-radius: var(--r-panel); max-height: 320px; overflow-y: auto; }
 .vt-mostrador-res:empty { display: none; }
-.vt-mostrador-res li button { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 12px; align-items: center; text-align: left; padding: 8px 10px; border: 0; background: none; border-radius: var(--r-control); cursor: pointer; }
-.vt-mostrador-res li button:hover, .vt-mostrador-res li button:focus-visible { background: var(--fila-hover); }
-.vt-mostrador-res li button:disabled { opacity: .5; cursor: not-allowed; }
+.vt-mostrador-res li > button { width: 100%; display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 12px; align-items: center; text-align: left; padding: 8px 10px; border: 0; background: none; border-radius: var(--r-control); cursor: pointer; }
+.vt-mostrador-res li > button:hover, .vt-mostrador-res li > button:focus-visible { background: var(--fila-hover); }
+.vt-mostrador-res li > button:disabled { opacity: .5; cursor: not-allowed; }
 .vt-mostrador-res .celda-sub { display: block; font-size: var(--fs-12); color: var(--texto-2); }
 .vt-cant { width: 84px; }
 .vt-resumen-lote { margin: 0; padding: 0; list-style: none; }
@@ -84,10 +84,79 @@
   .vt-nro { font-size: 30px; }
   .vt-totales { max-width: none; }
   .vt-rank-tabla .barra-h { width: 90px; }
-  .vt-mostrador-res li button { grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; }
-  .vt-mostrador-res li button > span:first-child { grid-row: span 2; }
-  .vt-mostrador-res li button > strong { grid-column: 2; grid-row: 1; text-align: right; }
-  .vt-mostrador-res li button > .chico { grid-column: 2; grid-row: 2; text-align: right; }
+  .vt-mostrador-res li > button { grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; }
+  .vt-mostrador-res li > button > span:first-child { grid-row: span 2; }
+  .vt-mostrador-res li > button > strong { grid-column: 2; grid-row: 1; text-align: right; }
+  .vt-mostrador-res li > button > .chico { grid-column: 2; grid-row: 2; text-align: right; }
+}
+.vt-res-fila { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 14px; align-items: center; padding: 8px 10px; }
+.vt-res-fila + .vt-res-fila { border-top: 1px solid var(--linea-suave); }
+.vt-res-info { min-width: 0; }
+.vt-pres-botones { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+.vt-pres-btn { display: inline-flex; flex-direction: column; align-items: flex-start; gap: 1px; padding: 5px 10px 5px 9px; border: 1px solid var(--linea); border-left: 3px solid var(--carton); background: var(--hoja); border-radius: var(--r-control); line-height: 1.2; font-size: var(--fs-12); color: var(--texto-2); cursor: pointer; text-align: left; }
+.vt-pres-btn strong { font-size: var(--fs-13); color: var(--tinta); font-variant-numeric: tabular-nums; }
+.vt-pres-btn:hover:not(:disabled), .vt-pres-btn:focus-visible { border-color: var(--tinta); border-left-color: var(--carton); background: var(--fila-hover); }
+.vt-pres-btn:disabled { opacity: .45; cursor: not-allowed; }
+.vt-sel-pres { width: 140px; max-width: none; }
+.vt-m-tabla .vt-cant { width: 74px; text-align: right; }
+.vt-m-tabla .vt-bonif { width: 58px; }
+.vt-m-tabla th, .vt-m-tabla td { padding-left: 8px; padding-right: 8px; }
+.vt-ed-nota { margin: 0 0 14px; padding: 2px 0 2px 12px; border-left: 3px solid var(--carton); color: var(--texto-2); font-size: var(--fs-13); }
+.vt-ed-buscar input { max-width: none; }
+.vt-ed-buscar .vt-mostrador-res { max-height: 260px; }
+.vt-ed-cab, .vt-ed-fila { display: grid; grid-template-columns: minmax(0, 1fr) 200px 96px 72px 96px 116px 84px; gap: 6px 10px; align-items: center; }
+.vt-ed-cab { margin-top: 14px; padding: 0 10px 6px; border-bottom: 1px solid var(--linea); font-size: var(--fs-12); font-weight: 600; color: var(--texto-2); }
+.vt-ed-cab span:nth-child(5), .vt-ed-cab span:nth-child(6) { text-align: right; }
+.vt-ed-fila { padding: 8px 10px; border-bottom: 1px solid var(--linea-suave); }
+.vt-ed-fila.nueva { box-shadow: inset 3px 0 0 var(--ok); }
+.vt-ed-fila.quitada { background: var(--fila-hover); }
+.vt-ed-fila.quitada .vt-ed-prod .celda-principal { text-decoration: line-through; color: var(--texto-2); }
+.vt-ed-fila.quitada .vt-ed-campo, .vt-ed-fila.quitada .vt-ed-num { opacity: .45; }
+.vt-ed-fila.falta { background: var(--peligro-suave); box-shadow: inset 3px 0 0 var(--peligro); }
+.vt-ed-marca { color: var(--ok); font-weight: 600; }
+.vt-ed-prod { min-width: 0; }
+.vt-ed-prod .celda-principal, .vt-ed-prod .celda-sub { display: block; }
+.vt-ed-rot { display: none; }
+.vt-ed-campo { display: block; min-width: 0; }
+.vt-ed-campo select, .vt-ed-campo input { width: 100%; max-width: none; }
+.vt-ed-c-cant input, .vt-ed-c-bonif input { text-align: right; }
+.vt-ed-num { text-align: right; font-variant-numeric: tabular-nums; }
+.vt-ed-quitar { justify-self: end; }
+.vt-ed-error { grid-column: 1 / -1; font-size: var(--fs-12); color: var(--peligro); font-weight: 600; }
+.vt-ed-error:empty { display: none; }
+.vt-ed-fila.recien { animation: vt-recien 1.4s ease-out; }
+@keyframes vt-recien { from { background: var(--ok-suave); } to { background: transparent; } }
+.vt-ed-resumen { margin-top: 16px; display: grid; gap: 10px; }
+.vt-ed-totales { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); background: var(--hoja); border: 1px solid var(--linea); border-radius: var(--r-panel); }
+.vt-ed-totales > div { display: flex; flex-direction: column; gap: 2px; padding: 10px 16px; min-width: 0; }
+.vt-ed-totales > div + div { border-left: 1px solid var(--linea); }
+.vt-ed-totales span, .vt-ed-totales small { font-size: var(--fs-12); color: var(--texto-2); }
+.vt-ed-totales strong { font-size: var(--fs-20); font-stretch: 112%; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.vt-ed-totales strong.vt-ed-grande { font-size: var(--fs-28); font-stretch: 118%; line-height: 1.05; }
+.vt-ed-cta { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 14px; align-items: center; padding: 10px 16px 12px; border: 1px solid var(--linea); border-radius: var(--r-panel); }
+.vt-ed-cta-txt span { display: block; font-size: var(--fs-13); color: var(--texto-2); margin-top: 2px; }
+.vt-ed-cta-txt span strong { color: var(--tinta); }
+.vt-ed-cta .barra-h { grid-column: 1 / -1; }
+.vt-ed-cta.excede .barra-h > span { background: var(--peligro); }
+.vt-no-modif { max-width: 300px; align-self: center; }
+@media (prefers-reduced-motion: reduce) { .vt-ed-fila.recien { animation: none; } }
+@media (max-width: 760px) {
+  .vt-res-fila { grid-template-columns: minmax(0, 1fr); }
+  .vt-pres-botones { justify-content: flex-start; }
+  .vt-ed-cab { display: none; }
+  .vt-ed-fila { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr); gap: 8px 10px; padding: 12px 4px; }
+  .vt-ed-prod, .vt-ed-c-pres { grid-column: 1 / -1; }
+  .vt-ed-rot { display: block; font-size: var(--fs-12); color: var(--texto-2); margin-bottom: 2px; font-weight: 600; }
+  .vt-ed-num { text-align: left; }
+  .vt-ed-c-sub { grid-column: 1 / 3; }
+  .vt-ed-quitar { grid-column: 3; justify-self: end; align-self: end; }
+  .vt-ed-totales { grid-template-columns: minmax(0, 1fr); }
+  .vt-ed-totales > div + div { border-left: 0; border-top: 1px solid var(--linea); }
+  .vt-ed-totales > div { flex-direction: row; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 0 10px; padding: 8px 12px; }
+  .vt-ed-totales small { flex-basis: 100%; text-align: right; }
+  .vt-ed-totales strong.vt-ed-grande { font-size: var(--fs-20); }
+  .vt-ed-cta { grid-template-columns: minmax(0, 1fr); }
+  .vt-no-modif { max-width: none; flex-basis: 100%; }
 }`;
     document.head.appendChild(st);
   }
@@ -101,6 +170,65 @@
     const v = (actual - anterior) / Math.abs(anterior);
     return h`<span class="vt-variacion ${v >= 0 ? 'ok' : 'peligro'}">${v >= 0 ? '+' : ''}${ui.porcentaje(v, 1)}</span>`;
   }
+  // ---------- presentaciones de venta (bulto, pack, unidad, caja, por kilo) ----------
+  // El stock está en la unidad base (el bulto, o el kilo en los pesables); cada renglón en carga guarda
+  // { productoId, presentacion, cantidad (en esa presentación), bonif }.
+  const rq = n => Math.round(n * 1000) / 1000;
+  const esKg = pr => !!pr && pr.id === 'kg';
+  const presDe = (prod, id) => App.presentacionDe(prod, id);
+  // admite «1,35» y «1.35»; si trae coma, los puntos son de miles
+  const leerCant = v => { const s = String(v == null ? '' : v).trim(); return Number(s.includes(',') ? s.replace(/\./g, '').replace(',', '.') : s); };
+  const precioBasePres = (prod, listaId, pr) => App.r2(App.q.precio(prod.id, listaId) * (1 + (pr.recargo || 0) / 100));
+  const precioPres = (prod, listaId, pr) => App.r2(precioBasePres(prod, listaId, pr) * pr.factor);
+  const maxPres = (pr, disp) => disp <= 0 ? 0 : (esKg(pr) ? rq(disp) : Math.floor(disp / pr.factor + 1e-9));
+  const cantTexto = (pr, n) => ui.num(n, esKg(pr) && n % 1 ? 3 : 0);
+  const valorInput = (pr, n) => esKg(pr) ? String(rq(n)).replace('.', ',') : String(n);
+  // el renglón calculado igual que en el núcleo (mismo precio y mismo redondeo) para mostrarlo antes de guardar
+  function renglonVista(linea, listaId, previo) {
+    const prod = App.get('productos', linea.productoId);
+    const pr = presDe(prod, linea.presentacion);
+    const cant = Number(linea.cantidad) || 0;
+    const mismo = previo && (previo.pres ? previo.pres.id : 'b') === pr.id;
+    return { productoId: prod.id, cantidad: rq(cant * pr.factor), precio: mismo ? previo.precio : precioBasePres(prod, listaId, pr), iva: prod.iva,
+      bonif: Number(linea.bonif) || 0, pres: { id: pr.id, nombre: pr.nombre, factor: pr.factor, cantidad: cant } };
+  }
+  function totalesVista(renglones) {
+    let n21 = 0, n105 = 0;
+    renglones.forEach(r => { const s = App.subtotalItem(r); if (r.iva === 10.5) n105 += s; else n21 += s; });
+    n21 = App.r2(n21); n105 = App.r2(n105);
+    const neto = App.r2(n21 + n105), iva = App.r2(App.r2(n21 * 0.21) + App.r2(n105 * 0.105));
+    return { neto, iva, total: App.r2(neto + iva) };
+  }
+  // precio por presentación sin IVA, con el renglón y su bonificación
+  const precioRenglon = r => App.r2(App.precioNeto(r) * (r.pres ? r.pres.factor : 1));
+  // producto por código exacto: EAN, código interno, código propio, PLU de balanza o etiqueta de balanza (20 + PLU + 0 + gramos)
+  function productoPorCodigo(crudo) {
+    const cod = crudo.replace(/\D/g, '');
+    const activos = App.db.productos.filter(x => x.activo !== false);
+    if (cod.length === 13 && cod.startsWith('20')) {
+      const plu = cod.slice(2, 6), p = activos.find(x => x.pesable && x.plu === plu);
+      if (p) return { p, presentacion: 'kg', cantidad: rq(Number(cod.slice(7, 12)) / 1000) };
+    }
+    const p = activos.find(x => (cod.length >= 8 && x.ean === cod) || x.codigo.toUpperCase() === crudo.toUpperCase() || (x.codigoPropio && x.codigoPropio.toUpperCase() === crudo.toUpperCase()) || (cod.length === 4 && x.plu === cod && crudo === cod));
+    return p ? { p } : null;
+  }
+  const buscarProductos = (t, n) => App.db.productos.filter(p => p.activo !== false && ui.coincide(t, p.descripcion, p.marca, p.codigo, p.ean, p.rubro, p.plu, p.codigoPropio)).slice(0, n);
+  // botones de presentación con su precio, para agregar un producto en la presentación elegida
+  function botonesPres(prod, listaId, dispPres, attr) {
+    return h`<span class="vt-pres-botones">${App.presentaciones(prod).map(pr => {
+      const puede = dispPres(pr);
+      return h`<button type="button" class="vt-pres-btn" ${attr}="${prod.id}" data-pres="${pr.id}" ${puede ? '' : 'disabled'} aria-label="Agregar ${prod.descripcion}, ${pr.nombre.toLowerCase()}, ${ui.pesos(precioPres(prod, listaId, pr))} sin IVA">
+        <span>${pr.nombre}</span><strong>${ui.pesos(precioPres(prod, listaId, pr))}</strong></button>`;
+    })}</span>`;
+  }
+  function opcionesPres(prod, listaId, elegida, previo) {
+    return App.presentaciones(prod).map(pr => {
+      const mismo = previo && (previo.pres ? previo.pres.id : 'b') === pr.id;
+      const precio = mismo ? App.r2(previo.precio * pr.factor) : precioPres(prod, listaId, pr);
+      return h`<option value="${pr.id}" ${pr.id === elegida ? 'selected' : ''}>${pr.nombre}, ${ui.pesos(precio)}</option>`;
+    });
+  }
+
   function imprimirComprobantes(comps) {
     if (!comps.length) return;
     ui.imprimir(comps.map(c => String(ui.comprobanteHTML(c))).join(''), { titulo: comps.length === 1 ? App.nombreTipo(comps[0].tipo) + ' ' + comps[0].nro : comps.length + ' facturas' });
@@ -192,7 +320,7 @@
 
   function renderPedidos(panel) {
     const pvs = App.db.preventistas;
-    const ESTADOS = [['pendiente', 'Pendientes'], ['facturado', 'Facturados'], ['cancelado', 'Cancelados'], ['', 'Todos']];
+    const ESTADOS = [['pendiente', 'Pendientes'], ['facturado', 'Facturados'], ['modificado', 'Modificados'], ['cancelado', 'Cancelados'], ['', 'Todos']];
     const fil = ui.nodo(String(h`<div class="filtros vt-filtros">
       <div class="segmentado" role="group" aria-label="Estado">${ESTADOS.map(([v, t]) => h`<button type="button" data-estado="${v}" aria-pressed="${filtros.estado === v}">${t}</button>`)}</div>
       <div class="vt-corte" aria-hidden="true"></div>
@@ -216,9 +344,9 @@
         i.addEventListener('change', () => { if (i.checked) seleccion.add(p.id); else seleccion.delete(p.id); dibujarBarra(); });
         return i;
       } },
-      { titulo: 'Pedido', clase: 'vt-c-pedido ocultar-celu', campo: 'numero', valor: p => h`<span class="celda-principal">${p.nro}</span>${p.alertas && p.alertas.length ? h`<span class="vt-alerta-ico" title="${p.alertas.join(' ')}" aria-label="Excede el límite de crédito">${ui.seguro('<svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px"><path d="M10 3l8 14H2z"/><path d="M10 8.5v3.5"/><path d="M10 14.6v.1"/></svg>')}</span>` : ''}<span class="celda-sub solo-celu">${{ pendiente: 'Pendiente', facturado: 'Facturado', cancelado: 'Cancelado' }[p.estado] || p.estado}</span>` },
+      { titulo: 'Pedido', clase: 'vt-c-pedido ocultar-celu', campo: 'numero', valor: p => h`<span class="celda-principal">${p.nro}</span>${p.alertas && p.alertas.length ? h`<span class="vt-alerta-ico" title="${p.alertas.join(' ')}" aria-label="Excede el límite de crédito">${ui.seguro('<svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px"><path d="M10 3l8 14H2z"/><path d="M10 8.5v3.5"/><path d="M10 14.6v.1"/></svg>')}</span>` : ''}<span class="celda-sub solo-celu">${{ pendiente: 'Pendiente', facturado: 'Facturado', cancelado: 'Cancelado', modificado: 'Modificado' }[p.estado] || p.estado}</span>` },
       { titulo: 'Fecha', clase: 'vt-c-fecha ocultar-celu', campo: 'fecha', valor: p => ui.fecha(p.fecha) },
-      { titulo: 'Cliente', clase: 'celu-envolver', ordenar: p => cliente(p.clienteId).fantasia, valor: p => { const c = cliente(p.clienteId); return h`<span class="celda-principal">${c.fantasia}</span><span class="celda-sub">${c.localidad || ''}, ${nombrePrev(p.preventistaId)}, ${p.items.length} ${p.items.length === 1 ? 'ítem' : 'ítems'}</span><span class="celda-sub solo-celu">Pedido ${p.nro}${p.alertas && p.alertas.length ? ', supera el límite' : ''}, ${{ pendiente: 'pendiente', facturado: 'facturado', cancelado: 'cancelado' }[p.estado] || p.estado}</span>`; } },
+      { titulo: 'Cliente', clase: 'celu-envolver', ordenar: p => cliente(p.clienteId).fantasia, valor: p => { const c = cliente(p.clienteId); return h`<span class="celda-principal">${c.fantasia}</span><span class="celda-sub">${c.localidad || ''}, ${nombrePrev(p.preventistaId)}, ${p.items.length} ${p.items.length === 1 ? 'ítem' : 'ítems'}</span><span class="celda-sub solo-celu">Pedido ${p.nro}${p.alertas && p.alertas.length ? ', supera el límite' : ''}, ${{ pendiente: 'pendiente', facturado: 'facturado', cancelado: 'cancelado', modificado: 'modificado' }[p.estado] || p.estado}</span>`; } },
       { titulo: 'Origen', clase: 'vt-c-origen ocultar-celu', campo: 'origen', valor: p => ui.chip(ORIGEN[p.origen] || p.origen, ORIGEN_TONO[p.origen]) },
       { titulo: 'Total', clase: 'vt-c-total', alinear: 'der', campo: 'total', valor: p => ui.pesos(p.total) },
       { titulo: 'Estado', clase: 'vt-c-estado ocultar-celu', campo: 'estado', valor: p => ui.estado(p.estado) },
@@ -235,7 +363,7 @@
     const tabla = ui.tabla({
       columnas, filas, clase: 'vt-tabla', limite: 60,
       alClic: p => ui.ir('#/ventas/pedido/' + p.id),
-      filaClase: p => p.estado === 'cancelado' ? 'fila-apagada' : (p.alertas && p.alertas.length && p.estado === 'pendiente' ? 'fila-alerta' : ''),
+      filaClase: p => p.estado === 'cancelado' || p.estado === 'modificado' ? 'fila-apagada' : (p.alertas && p.alertas.length && p.estado === 'pendiente' ? 'fila-alerta' : ''),
       vacio: filtros.estado === 'pendiente' && !filtros.texto ? 'No hay pedidos pendientes de facturación. Los pedidos de preventa y del catálogo se listan aquí al ingresar.' : 'No hay pedidos para los filtros aplicados. Se pueden modificar las fechas o limpiar los filtros.'
     });
     panel.appendChild(tabla);
@@ -461,8 +589,31 @@
       boton('Modificar pedido', 'secundario', () => modificar(p));
       boton('Facturar pedido', 'primario', () => facturarUno(p.id));
     } else if (comp) {
-      if (rem) boton('Imprimir remito', 'secundario', () => ui.imprimir(String(ui.comprobanteHTML(rem, 'R')), { titulo: 'Remito ' + rem.nro }));
-      boton('Imprimir factura', 'primario', () => imprimirComprobantes([comp]));
+      if (p.estado === 'facturado') {
+        const puede = App.q.puedeModificarFacturado(p.id);
+        if (puede.ok) boton('Modificar pedido', 'secundario', () => modificar(p));
+        else {
+          const b = boton('Modificar pedido', 'secundario', () => {});
+          b.disabled = true; b.setAttribute('aria-describedby', 'vt-no-modif');
+          acc.appendChild(ui.nodo(String(h`<span class="vt-ayuda vt-no-modif" id="vt-no-modif">${puede.motivo}</span>`)));
+        }
+      }
+      if (rem && rem.estado !== 'anulado') boton('Imprimir remito', 'secundario', () => ui.imprimir(String(ui.comprobanteHTML(rem, 'R')), { titulo: 'Remito ' + rem.nro }));
+      boton('Imprimir factura', p.estado === 'modificado' ? 'secundario' : 'primario', () => imprimirComprobantes([comp]));
+    }
+
+    // vínculos de una modificación de un pedido ya facturado
+    const ncMod = p.ncModificacionId && App.get('comprobantes', p.ncModificacionId);
+    const nuevoPed = p.reemplazadoPor && App.get('pedidos', p.reemplazadoPor);
+    const viejoPed = p.reemplazaA && App.get('pedidos', p.reemplazaA);
+    if (nuevoPed) {
+      el.appendChild(ui.nodo(String(h`<div class="aviso aviso-info vt-vinculo" style="margin-bottom:16px"><div><strong>Reemplazado por el pedido <a href="#/ventas/pedido/${nuevoPed.id}">${nuevoPed.nro}</a>.</strong>
+        Después de facturado se modificó: ${comp ? h`la ${App.nombreTipo(comp.tipo)} ${comp.nro} quedó anulada ` : ''}${ncMod ? h`con la <a href="#/facturacion/comprobante/${ncMod.id}">${App.nombreTipo(ncMod.tipo)} ${ncMod.nro}</a> por ${ui.pesos(ncMod.total)}` : ''}, el stock volvió al depósito y el remito se anuló.</div></div>`)));
+    }
+    if (viejoPed) {
+      const ncV = viejoPed.ncModificacionId && App.get('comprobantes', viejoPed.ncModificacionId);
+      el.appendChild(ui.nodo(String(h`<div class="aviso vt-vinculo" style="margin-bottom:16px"><div><strong>Reemplaza al pedido <a href="#/ventas/pedido/${viejoPed.id}">${viejoPed.nro}</a></strong>, de ${ui.pesos(viejoPed.total)}.
+        ${ncV ? h`Su factura se anuló con la <a href="#/facturacion/comprobante/${ncV.id}">${App.nombreTipo(ncV.tipo)} ${ncV.nro}</a>.` : ''} Diferencia con el pedido anterior: ${(p.total - viejoPed.total >= 0 ? '+' : '−') + ui.pesos(Math.abs(p.total - viejoPed.total))}.</div></div>`)));
     }
 
     if (p.alertas && p.alertas.length && pend) el.appendChild(ui.nodo(String(h`<div class="aviso aviso-alerta" style="margin-bottom:16px"><div><strong>Requiere revisión antes de facturar.</strong> ${p.alertas.join(' ')} Saldo actual de la cuenta: ${ui.pesos(App.q.saldoCliente(c.id))}.</div></div>`)));
@@ -478,12 +629,12 @@
       columnas: [
         { titulo: 'Código', valor: it => App.get('productos', it.productoId).codigo },
         { titulo: 'Producto', valor: it => { const pr = App.get('productos', it.productoId); return h`<span class="celda-principal">${pr.descripcion}</span><span class="celda-sub">${pr.marca}, ${pr.unidad.toLowerCase()}</span>`; } },
-        { titulo: 'Cantidad', alinear: 'der', campo: 'cantidad', valor: it => ui.num(it.cantidad) },
-        { titulo: 'Precio unitario', alinear: 'der', campo: 'precio', valor: it => ui.pesos(it.precio) },
+        { titulo: 'Cantidad', alinear: 'der', campo: 'cantidad', valor: it => App.cantidadTexto(it) },
+        { titulo: 'Precio', alinear: 'der', campo: 'precio', valor: it => it.pres && it.pres.factor !== 1 ? h`${ui.pesos(App.r2(it.precio * it.pres.factor))}<span class="celda-sub">${it.pres.nombre.toLowerCase()}</span>` : ui.pesos(it.precio) },
         { titulo: 'Bonif.', alinear: 'der', valor: it => it.bonif ? ui.num(it.bonif, 1) + ' %' : '' },
         { titulo: 'IVA', alinear: 'der', clase: 'ocultar-celu', valor: it => ui.num(it.iva, it.iva % 1 ? 1 : 0) + ' %' },
-        { titulo: 'Subtotal', alinear: 'der', ordenar: it => it.cantidad * App.precioNeto(it), valor: it => ui.pesos(App.r2(it.cantidad * App.precioNeto(it))) }
-      ].concat(pend ? [{ titulo: 'Stock sin reservar', alinear: 'der', valor: it => ui.num(disponible(it.productoId, p.depositoId)) }] : []),
+        { titulo: 'Subtotal', alinear: 'der', ordenar: it => App.subtotalItem(it), valor: it => ui.pesos(App.subtotalItem(it)) }
+      ].concat(pend ? [{ titulo: 'Stock sin reservar', alinear: 'der', valor: it => { const pr = App.get('productos', it.productoId); return h`${ui.num(disponible(it.productoId, p.depositoId), pr.pesable ? 3 : 0)}<span class="celda-sub">${pr.pesable ? 'kg' : pr.unidad.toLowerCase()}</span>`; } }] : []),
       filas: p.items
     }));
     izq.appendChild(ui.nodo(String(h`<dl class="vt-totales">
@@ -511,8 +662,8 @@
         <div class="panel-titulo">Recorrido</div>
         <ol class="vt-pasos">
           <li class="hecho"><span>Pedido cargado<span class="texto-2">${ui.fecha(p.fecha)}, ${ORIGEN[p.origen] || p.origen}</span></span></li>
-          <li class="${comp ? 'hecho' : (pend ? 'actual' : '')}"><span>${comp ? 'Facturado' : (p.estado === 'cancelado' ? 'Cancelado, sin facturación' : 'Pendiente de facturación')}<span class="texto-2">${comp ? comp.tipo + ' ' + comp.nro + ', ' + ui.fecha(comp.fecha) : ''}</span></span></li>
-          <li class="${rem && rem.estado !== 'pendiente' ? 'hecho' : (rem ? 'actual' : '')}"><span>${rem ? (rem.estado === 'pendiente' ? 'Remito pendiente de hoja de ruta' : 'En hoja de ruta') : 'Remito y reparto'}<span class="texto-2">${rem ? 'Remito ' + rem.nro + (hr ? ', hoja ' + hr.nro : '') : ''}</span></span></li>
+          <li class="${comp ? 'hecho' : (pend ? 'actual' : '')}"><span>${comp ? (p.estado === 'modificado' ? 'Facturado y luego modificado' : 'Facturado') : (p.estado === 'cancelado' ? 'Cancelado, sin facturación' : 'Pendiente de facturación')}<span class="texto-2">${comp ? comp.tipo + ' ' + comp.nro + ', ' + ui.fecha(comp.fecha) : ''}</span></span></li>
+          <li class="${rem && rem.estado !== 'pendiente' ? 'hecho' : (rem ? 'actual' : '')}"><span>${rem ? (rem.estado === 'pendiente' ? 'Remito pendiente de hoja de ruta' : rem.estado === 'anulado' ? 'Remito anulado por la modificación' : 'En hoja de ruta') : 'Remito y reparto'}<span class="texto-2">${rem ? 'Remito ' + rem.nro + (hr ? ', hoja ' + hr.nro : '') : ''}</span></span></li>
           <li class="${rem && ['entregado', 'parcial', 'rechazado'].includes(rem.estado) ? 'hecho' : (rem && rem.estado === 'en_ruta' ? 'actual' : '')}"><span>${rem && rem.estado === 'entregado' ? 'Entregado' : rem && rem.estado === 'parcial' ? 'Entrega parcial' : rem && rem.estado === 'rechazado' ? 'Rechazado en la entrega' : 'Entrega'}<span class="texto-2">${rem && rem.fechaEntrega ? ui.fecha(rem.fechaEntrega) : ''}</span></span></li>
           <li class="${comp && App.q.saldoComprobante(comp) <= 0.01 ? 'hecho' : ''}"><span>${comp && App.q.saldoComprobante(comp) <= 0.01 ? 'Cobrado' : 'Cobranza'}<span class="texto-2">${comp ? (App.q.saldoComprobante(comp) > 0.01 ? 'Saldo pendiente ' + ui.pesos(App.q.saldoComprobante(comp)) + ', vence ' + ui.fecha(comp.vence) : 'Sin saldo') : ''}</span></span></li>
         </ol>
@@ -520,21 +671,197 @@
     grilla.appendChild(der);
   }
 
+  // ---------- editor del pedido: sumar, sacar y cambiar renglones (pendiente o facturado sin reparto) ----------
   function modificar(p) {
-    const form = document.createElement('div');
-    const filas = p.items.map(it => ({ productoId: it.productoId, cantidad: it.cantidad, bonif: it.bonif || 0 }));
-    form.innerHTML = String(h`<p class="texto-2" style="margin-top:0">Se pueden modificar las cantidades y la bonificación. Con cantidad 0 el producto se quita del pedido. Los precios se mantienen según la toma del pedido.</p>
-      <div class="tabla-envoltura"><table class="tabla"><thead><tr><th>Producto</th><th class="al-der">Disponible</th><th class="al-der">Cantidad</th><th class="al-der">% bonif.</th></tr></thead><tbody>
-      ${filas.map(f => { const pr = App.get('productos', f.productoId); return h`<tr><td class="envolver">${pr.descripcion}</td><td class="al-der">${ui.num(disponible(f.productoId, p.depositoId) + f.cantidad)}</td><td class="al-der"><input class="vt-cant" type="number" min="0" step="1" value="${f.cantidad}" data-prod="${f.productoId}" aria-label="Cantidad de ${pr.descripcion}"></td><td class="al-der"><input class="vt-bonif" type="number" min="0" max="99" step="0.5" value="${f.bonif}" data-bonif="${f.productoId}" aria-label="Bonificación de ${pr.descripcion}"></td></tr>`; })}
-      </tbody></table></div>
+    const facturado = p.estado === 'facturado';
+    const c = cliente(p.clienteId);
+    const dep = App.get('depositos', p.depositoId);
+    const comp = facturado ? App.get('comprobantes', p.comprobanteId) : null;
+    const reservadoPrevio = id => p.items.filter(x => x.productoId === id).reduce((s, x) => s + x.cantidad, 0);
+    // lo que puede llevar el renglón, en unidad base: el disponible más lo que ya tiene este pedido
+    // (en un pendiente es su reserva; en un facturado la nota de crédito lo devuelve al depósito)
+    const dispBase = id => rq(disponible(id, p.depositoId) + reservadoPrevio(id));
+    const filas = p.items.map(it => ({ productoId: it.productoId, presentacion: it.pres ? it.pres.id : 'b', cantidad: it.pres ? it.pres.cantidad : it.cantidad, bonif: it.bonif || 0, previo: it, quitada: false, bonifManual: true }));
+    let texto = '';
+
+    const cuerpo = document.createElement('div');
+    cuerpo.className = 'vt-ed';
+    cuerpo.innerHTML = String(h`<p class="vt-ed-nota">${facturado
+      ? h`Pedido facturado: al guardar se emite una nota de crédito por el total de la ${App.nombreTipo(comp.tipo)} ${comp.nro} y una factura nueva con los cambios.`
+      : 'Pedido pendiente: al guardar se ajustan la reserva de stock y los totales. Los precios de los renglones que ya estaban se mantienen.'}</p>
+      <div class="campo vt-ed-buscar"><label for="vt-ed-buscar">Agregar producto</label>
+        <input id="vt-ed-buscar" type="search" autocomplete="off" placeholder="Descripción, código, código de barras o PLU de balanza">
+        <ul class="vt-mostrador-res vt-res-pres" id="vt-ed-res"></ul></div>
+      <div class="vt-ed-cab" aria-hidden="true"><span>Producto</span><span>Presentación</span><span>Cantidad</span><span>% bonif.</span><span>Disponible</span><span>Subtotal</span><span></span></div>
+      <div class="vt-ed-lista" id="vt-ed-lista"></div>
+      <div class="vt-ed-resumen" id="vt-ed-resumen" aria-live="polite"></div>
       <div class="campo" style="margin-top:14px"><label for="vt-mod-obs">Observaciones</label><textarea id="vt-mod-obs" rows="2">${p.obs || ''}</textarea></div>`);
-    ui.modal({ titulo: 'Modificar pedido ' + p.nro, cuerpo: form, ancho: 620, acciones: [
+    const $ = s => cuerpo.querySelector(s);
+    const lista = $('#vt-ed-lista'), res = $('#vt-ed-res'), inp = $('#vt-ed-buscar');
+
+    const vista = f => renglonVista(f, p.listaId, f.previo);
+    const activas = () => filas.filter(f => !f.quitada && Number(f.cantidad) > 0);
+    const falta = f => !f.quitada && vista(f).cantidad > dispBase(f.productoId) + 1e-9;
+    const cantValida = f => { const pr = presDe(App.get('productos', f.productoId), f.presentacion); const n = Number(f.cantidad); return n > 0 && (esKg(pr) || n % 1 === 0); };
+
+    function htmlFila(f, i) {
+      const prod = App.get('productos', f.productoId);
+      const pr = presDe(prod, f.presentacion);
+      const r = vista(f);
+      const disp = maxPres(pr, dispBase(f.productoId));
+      const mal = falta(f), invalida = !f.quitada && !cantValida(f);
+      return h`<div class="vt-ed-fila${f.quitada ? ' quitada' : ''}${mal || invalida ? ' falta' : ''}${f.previo ? '' : ' nueva'}" data-fila="${i}">
+        <div class="vt-ed-prod"><span class="celda-principal">${prod.descripcion}</span>
+          <span class="celda-sub">${prod.codigo}${prod.plu ? ', PLU ' + prod.plu : ''}, ${f.previo ? h`antes ${App.cantidadTexto(f.previo)}` : h`<strong class="vt-ed-marca">renglón nuevo</strong>`}${f.quitada ? ', se quita del pedido' : ''}</span></div>
+        <label class="vt-ed-campo vt-ed-c-pres"><span class="vt-ed-rot">Presentación</span><select data-pres="${i}" ${f.quitada ? 'disabled' : ''} aria-label="Presentación de ${prod.descripcion}">${opcionesPres(prod, p.listaId, pr.id, f.previo)}</select></label>
+        <label class="vt-ed-campo vt-ed-c-cant"><span class="vt-ed-rot">Cantidad${esKg(pr) ? ' en kg' : ''}</span><input data-cant="${i}" type="text" inputmode="${esKg(pr) ? 'decimal' : 'numeric'}" value="${valorInput(pr, f.cantidad)}" ${f.quitada ? 'disabled' : ''} aria-label="Cantidad de ${prod.descripcion}${esKg(pr) ? ' en kilos' : ''}"></label>
+        <label class="vt-ed-campo vt-ed-c-bonif"><span class="vt-ed-rot">% bonif.</span><input data-bonif="${i}" type="number" min="0" max="99" step="0.5" value="${f.bonif}" ${f.quitada ? 'disabled' : ''} aria-label="Bonificación de ${prod.descripcion}"></label>
+        <div class="vt-ed-num vt-ed-c-disp"><span class="vt-ed-rot">Disponible</span><span data-disp="${i}" class="${mal ? 'peligro' : ''}">${cantTexto(pr, disp)}</span></div>
+        <div class="vt-ed-num vt-ed-c-sub"><span class="vt-ed-rot">Subtotal</span><strong data-sub="${i}">${f.quitada ? '' : ui.pesos(App.subtotalItem(r))}</strong></div>
+        <button type="button" class="btn btn-fantasma btn-chico vt-ed-quitar" data-quitar="${i}">${f.quitada ? 'Restaurar' : 'Quitar'}</button>
+        <div class="vt-ed-error" data-error="${i}">${mensajeFila(f)}</div>
+      </div>`;
+    }
+    function mensajeFila(f) {
+      if (f.quitada) return '';
+      const prod = App.get('productos', f.productoId), pr = presDe(prod, f.presentacion);
+      if (!cantValida(f)) return esKg(pr) ? 'Indicá los kilos, por ejemplo 1,35.' : 'La cantidad tiene que ser un número entero mayor que cero.';
+      if (falta(f)) return 'En ' + (dep ? dep.nombre : 'el depósito') + ' alcanzan para ' + cantTexto(pr, maxPres(pr, dispBase(f.productoId))) + ' × ' + pr.nombre.toLowerCase() + '. Reducí la cantidad.';
+      return '';
+    }
+    function dibujarLista() {
+      lista.innerHTML = filas.length ? filas.map((f, i) => String(htmlFila(f, i))).join('') : '<p class="vt-ayuda">El pedido no tiene renglones. Agregá productos con el buscador.</p>';
+      dibujarResumen();
+    }
+    // al tipear sólo se actualizan los números de esa fila: así no se pierde el foco
+    function actualizarFila(i) {
+      const f = filas[i], fila = lista.querySelector('[data-fila="' + i + '"]');
+      if (!fila) return;
+      const prod = App.get('productos', f.productoId), pr = presDe(prod, f.presentacion);
+      const mal = falta(f), invalida = !cantValida(f);
+      fila.classList.toggle('falta', mal || invalida);
+      fila.querySelector('[data-sub]').textContent = invalida ? '' : ui.pesos(App.subtotalItem(vista(f)));
+      const d = fila.querySelector('[data-disp]'); d.className = mal ? 'peligro' : ''; d.textContent = cantTexto(pr, maxPres(pr, dispBase(f.productoId)));
+      fila.querySelector('[data-error]').textContent = mensajeFila(f);
+      dibujarResumen();
+    }
+    function dibujarResumen() {
+      const validas = activas().filter(cantValida);
+      const t = totalesVista(validas.map(vista));
+      const dif = App.r2(t.total - p.total);
+      const saldo = App.q.saldoCliente(c.id);
+      const saldoAntes = facturado ? saldo : App.r2(saldo + p.total);
+      const saldoDespues = App.r2((facturado ? saldo - (comp ? comp.total : p.total) : saldo) + t.total);
+      const conLimite = c.tipo !== 'Mostrador' && c.limiteCredito > 0;
+      const excede = conLimite && saldoDespues > c.limiteCredito + 0.01;
+      const problemas = filas.filter(f => !f.quitada && (falta(f) || !cantValida(f))).length;
+      const agregados = filas.filter(f => !f.previo && !f.quitada).length, quitados = filas.filter(f => f.previo && f.quitada).length;
+      $('#vt-ed-resumen').innerHTML = String(h`<div class="vt-ed-totales">
+          <div><span>Total anterior</span><strong>${ui.pesos(p.total)}</strong></div>
+          <div><span>Total nuevo</span><strong class="vt-ed-grande">${ui.pesos(t.total)}</strong><small>neto ${ui.pesos(t.neto)} + IVA ${ui.pesos(t.iva)}</small></div>
+          <div><span>Diferencia</span><strong class="${dif > 0.004 ? 'alerta' : dif < -0.004 ? 'ok' : ''}">${dif > 0.004 ? '+' : dif < -0.004 ? '−' : ''}${ui.pesos(Math.abs(dif))}</strong><small>${agregados ? agregados + (agregados === 1 ? ' renglón nuevo' : ' renglones nuevos') : ''}${agregados && quitados ? ', ' : ''}${quitados ? quitados + (quitados === 1 ? ' quitado' : ' quitados') : ''}</small></div>
+        </div>
+        ${conLimite ? h`<div class="vt-ed-cta${excede ? ' excede' : ''}">
+          <div class="vt-ed-cta-txt"><strong>Cuenta corriente de ${c.fantasia}</strong>
+            <span>${facturado ? 'Saldo actual, con la factura ' + (comp ? comp.nro : '') : 'Al facturar el pedido como estaba'}: ${ui.pesos(saldoAntes)}. Con el cambio queda en <strong>${ui.pesos(saldoDespues)}</strong>, contra un límite de ${ui.pesos(c.limiteCredito)}.</span></div>
+          ${excede ? ui.chip('Supera el límite por ' + ui.pesos(saldoDespues - c.limiteCredito), 'peligro') : ui.chip('Crédito disponible ' + ui.pesos(c.limiteCredito - saldoDespues), 'ok')}
+          <div class="barra-h" aria-hidden="true"><span class="${excede ? 'lleno' : ''}" style="width:${Math.min(100, Math.max(0, saldoDespues / c.limiteCredito * 100)).toFixed(1)}%"></span></div>
+        </div>` : ''}
+        ${problemas ? h`<div class="aviso aviso-peligro"><div>${problemas === 1 ? 'Hay un renglón para corregir' : 'Hay ' + problemas + ' renglones para corregir'} antes de guardar.</div></div>` : ''}
+        ${!validas.length ? h`<div class="aviso aviso-alerta"><div>El pedido quedó sin productos. Si no va más, ${facturado ? 'hacé una nota de crédito por el total desde la factura' : 'cancelalo desde el detalle'}.</div></div>` : ''}`);
+    }
+
+    function agregar(productoId, presentacion, cantidad) {
+      const prod = App.get('productos', productoId);
+      const pr = presDe(prod, presentacion);
+      const ya = filas.find(f => f.productoId === productoId);
+      if (ya) {
+        if (ya.quitada) { ya.quitada = false; ya.presentacion = pr.id; ya.cantidad = cantidad || 1; }
+        else if (ya.presentacion === pr.id) ya.cantidad = rq((Number(ya.cantidad) || 0) + (cantidad || 1));
+        else { ui.toast('«' + prod.descripcion + '» ya está en el pedido por ' + presDe(prod, ya.presentacion).nombre.toLowerCase() + '. Cambiá la presentación o la cantidad en su renglón.', 'alerta'); return; }
+      } else {
+        const base = rq((cantidad || 1) * pr.factor);
+        filas.push({ productoId, presentacion: pr.id, cantidad: cantidad || 1, bonif: App.bonifEscala(prod, base), previo: null, quitada: false, bonifManual: false });
+      }
+      dibujarLista();
+      const i = filas.findIndex(f => f.productoId === productoId);
+      const fila = lista.querySelector('[data-fila="' + i + '"]');
+      if (fila) { fila.classList.add('recien'); const ic = fila.querySelector('[data-cant]'); if (ic) ic.focus(); }
+    }
+    function resultados() {
+      const t = ui.normalizar(texto).trim();
+      if (t.length < 2) { res.innerHTML = ''; return; }
+      const xs = buscarProductos(t, 10);
+      res.innerHTML = xs.length ? xs.map(prod => {
+        const d = dispBase(prod.id);
+        return String(h`<li class="vt-res-fila"><span class="vt-res-info"><span class="celda-principal">${prod.descripcion}</span><span class="celda-sub">${prod.codigo}${prod.plu ? ', PLU ' + prod.plu : ''}, ${prod.marca}, ${d > 0 ? 'quedan ' + ui.num(d, prod.pesable ? 3 : 0) + (prod.pesable ? ' kg' : '') : 'sin stock'}</span></span>
+          ${botonesPres(prod, p.listaId, pr => maxPres(pr, d) > 0, 'data-agregar')}</li>`);
+      }).join('') : String(h`<li class="nota-discreta" style="padding:8px 10px">No se encontraron productos para «${texto}».</li>`);
+    }
+    res.addEventListener('click', e => { const b = e.target.closest('[data-agregar]'); if (b) agregar(b.dataset.agregar, b.dataset.pres); });
+    ui.buscador(inp, (t, crudo) => { texto = crudo || ''; resultados(); }, 100);
+    inp.addEventListener('keydown', e => {
+      if (e.key !== 'Enter') return;
+      e.preventDefault();
+      const hallado = productoPorCodigo(inp.value.trim());
+      if (hallado) { agregar(hallado.p.id, hallado.presentacion || App.presentaciones(hallado.p)[0].id, hallado.cantidad); inp.value = ''; texto = ''; resultados(); }
+      else { const b = res.querySelector('[data-agregar]:not([disabled])'); if (b) agregar(b.dataset.agregar, b.dataset.pres); }
+    });
+
+    lista.addEventListener('input', e => {
+      const ic = e.target.closest('[data-cant]');
+      if (ic) { const f = filas[ic.dataset.cant]; f.cantidad = leerCant(ic.value); if (!f.bonifManual) f.bonif = App.bonifEscala(App.get('productos', f.productoId), vista(f).cantidad); actualizarFila(Number(ic.dataset.cant)); return; }
+      const ib = e.target.closest('[data-bonif]');
+      if (ib) { const f = filas[ib.dataset.bonif]; f.bonif = Math.max(0, Math.min(99, Number(ib.value) || 0)); f.bonifManual = true; actualizarFila(Number(ib.dataset.bonif)); }
+    });
+    lista.addEventListener('change', e => {
+      const sp = e.target.closest('[data-pres]');
+      if (!sp) return;
+      const f = filas[sp.dataset.pres], prod = App.get('productos', f.productoId), pr = presDe(prod, sp.value);
+      f.presentacion = pr.id;
+      if (!esKg(pr)) f.cantidad = Math.max(1, Math.round(Number(f.cantidad) || 1));
+      if (!f.bonifManual) f.bonif = App.bonifEscala(prod, vista(f).cantidad);
+      dibujarLista();
+    });
+    lista.addEventListener('click', e => {
+      const b = e.target.closest('[data-quitar]');
+      if (!b) return;
+      const i = Number(b.dataset.quitar), f = filas[i];
+      if (f.previo) f.quitada = !f.quitada; else filas.splice(i, 1);
+      dibujarLista();
+    });
+    dibujarLista();
+
+    ui.modal({ titulo: 'Modificar pedido ' + p.nro, cuerpo, ancho: 980, acciones: [
       { texto: 'Volver', tipo: 'secundario' },
-      { texto: 'Guardar cambios', tipo: 'primario', alClic: ({ cuerpo }) => {
-        const items = [...cuerpo.querySelectorAll('[data-prod]')].map(i => ({ productoId: i.dataset.prod, cantidad: Math.floor(Number(i.value) || 0), bonif: Number(cuerpo.querySelector('[data-bonif="' + i.dataset.prod + '"]').value) || 0 }));
-        App.acciones.modificarPedido(p.id, { items, obs: cuerpo.querySelector('#vt-mod-obs').value.trim() });
-        ui.toast('Pedido ' + p.nro + ' modificado', 'ok');
+      { texto: facturado ? 'Emitir nota de crédito y factura nueva' : 'Guardar cambios', tipo: 'primario', alClic: ({ cuerpo: cu }) => {
+        const vivas = activas();
+        if (filas.some(f => !f.quitada && !cantValida(f)) || filas.some(falta)) { ui.toast('Corregí los renglones marcados antes de guardar.', 'peligro'); return false; }
+        if (!vivas.length) { ui.toast(facturado ? 'El pedido quedó sin productos: para anularlo entero hacé una nota de crédito desde la factura.' : 'El pedido quedó sin productos: si no va más, cancelalo.', 'peligro'); return false; }
+        const items = vivas.map(f => ({ productoId: f.productoId, presentacion: f.presentacion, cantidad: Number(f.cantidad), bonif: Number(f.bonif) || 0 }));
+        const obs = cu.querySelector('#vt-mod-obs').value.trim();
+        if (!facturado) {
+          App.acciones.modificarPedido(p.id, { items, obs });
+          ui.toast('Pedido ' + p.nro + ' modificado: total ' + ui.pesos(App.get('pedidos', p.id).total), 'ok');
+          return true;
+        }
+        const r = App.acciones.modificarPedidoFacturado(p.id, { items, obs });
+        ui.toast(App.nombreTipo(r.nc.tipo) + ' ' + r.nc.nro + ' y ' + App.nombreTipo(r.factura.tipo) + ' ' + r.factura.nro + ' emitidas: pedido modificado', 'ok');
+        setTimeout(() => { ui.ir('#/ventas/pedido/' + r.pedido.id); ofrecerModificacion(p, r); }, 0);
+        return true;
       } }
+    ] });
+  }
+  function ofrecerModificacion(viejo, r) {
+    const cuerpo = h`<p style="margin-top:0">El pedido ${viejo.nro} quedó reemplazado por el <strong>${r.pedido.nro}</strong>.</p>
+      <ul class="vt-resumen-lote">
+        <li><span>${App.nombreTipo(r.nc.tipo)} ${r.nc.nro}<span class="celda-sub texto-2">anula la factura anterior, devuelve el stock y acredita la cuenta</span></span><strong>−${ui.pesos(r.nc.total)}</strong></li>
+        <li><span>${App.nombreTipo(r.factura.tipo)} ${r.factura.nro}<span class="celda-sub texto-2">con los cambios, CAE ${r.factura.cae}, remito nuevo</span></span><strong>${ui.pesos(r.factura.total)}</strong></li>
+      </ul>
+      <p class="nota-discreta">En la versión productiva el CAE es otorgado por ARCA (web service de factura electrónica).</p>`;
+    ui.modal({ titulo: 'Pedido modificado', cuerpo: String(cuerpo), ancho: 560, acciones: [
+      { texto: 'Cerrar', tipo: 'secundario' },
+      { texto: 'Imprimir nota de crédito y factura', tipo: 'primario', alClic: () => imprimirComprobantes([r.nc, r.factura]) }
     ] });
   }
 
@@ -581,8 +908,8 @@
           <span class="campo-ayuda">${IVA_NOMBRE[c.condicionIVA] || c.condicionIVA}: corresponde factura ${c.condicionIVA === 'RI' ? 'A' : 'B'}. Lista ${(App.get('listasPrecio', c.listaId) || {}).nombre || c.listaId}.</span></div>
         <div class="campo"><label for="vt-m-dep">Depósito de retiro</label><select id="vt-m-dep">${ui.opciones(App.db.depositos.filter(d => d.activo !== false), 'id', 'nombre', m.depositoId)}</select></div>
         <div class="campo ancho-total"><label for="vt-m-buscar">Agregar producto</label>
-          <input id="vt-m-buscar" type="search" autocomplete="off" placeholder="Nombre, marca, código o código de barras" value="${m.texto}">
-          <ul class="vt-mostrador-res" id="vt-m-res"></ul></div>
+          <input id="vt-m-buscar" type="search" autocomplete="off" placeholder="Nombre, marca, código, código de barras o PLU de balanza" value="${m.texto}">
+          <ul class="vt-mostrador-res vt-res-pres" id="vt-m-res"></ul></div>
       </div>
     </div>
     <div class="seccion"><h2 class="seccion-titulo">Productos <span class="texto-2" id="vt-m-cuenta"></span></h2><div id="vt-m-items"></div></div>`);
@@ -601,77 +928,98 @@
 
     const $ = s => el.querySelector(s);
     const inp = $('#vt-m-buscar'), res = $('#vt-m-res');
-    const cantidad = id => { const it = m.items.find(x => x.productoId === id); return it ? it.cantidad : 0; };
-    function agregar(id, n) {
-      const disp = disponible(id, m.depositoId);
+    // lo que ya hay en el pedido de un producto, en unidad base
+    const baseEn = id => m.items.filter(x => x.productoId === id).reduce((s, x) => s + renglonVista(x, c.listaId).cantidad, 0);
+    const vistaM = it => renglonVista(it, c.listaId);
+    const cantOk = it => { const pr = presDe(App.get('productos', it.productoId), it.presentacion); const n = Number(it.cantidad); return n > 0 && (esKg(pr) || n % 1 === 0); };
+    const faltaM = it => vistaM(it).cantidad > disponible(it.productoId, m.depositoId) + 1e-9;
+    function agregar(id, presId, n) {
+      const prod = App.get('productos', id);
+      const pr = presDe(prod, presId);
       const it = m.items.find(x => x.productoId === id);
-      if (cantidad(id) + n > disp) { ui.toast('De «' + App.get('productos', id).descripcion + '» quedan ' + ui.num(disp) + ' disponibles.', 'alerta'); if (cantidad(id) >= disp) return; n = disp - cantidad(id); }
-      if (it) { it.cantidad += n; if (!it.bonifManual) it.bonif = App.bonifEscala(App.get('productos', id), it.cantidad); }
-      else m.items.push({ productoId: id, cantidad: n, bonif: App.bonifEscala(App.get('productos', id), n) });
+      if (it && it.presentacion !== pr.id) { ui.toast('«' + prod.descripcion + '» ya está en el pedido por ' + presDe(prod, it.presentacion).nombre.toLowerCase() + '. Cambiá la presentación o la cantidad en su renglón.', 'alerta'); return; }
+      const cant = n || 1;
+      const lugar = maxPres(pr, disponible(id, m.depositoId) - baseEn(id));
+      if (cant > lugar) { ui.toast('De «' + prod.descripcion + '» alcanzan para ' + cantTexto(pr, lugar) + ' × ' + pr.nombre.toLowerCase() + ' más.', 'alerta'); if (lugar <= 0) return; }
+      const suma = Math.min(cant, lugar);
+      if (it) { it.cantidad = rq(Number(it.cantidad) + suma); if (!it.bonifManual) it.bonif = App.bonifEscala(prod, vistaM(it).cantidad); }
+      else { const nuevo = { productoId: id, presentacion: pr.id, cantidad: suma, bonif: 0 }; nuevo.bonif = App.bonifEscala(prod, vistaM(nuevo).cantidad); m.items.push(nuevo); }
       dibujar();
     }
     function resultados() {
       const t = ui.normalizar(m.texto).trim();
       if (t.length < 2) { res.innerHTML = ''; return; }
-      const xs = App.db.productos.filter(p => p.activo !== false && ui.coincide(t, p.descripcion, p.marca, p.codigo, p.ean, p.rubro)).slice(0, 12);
-      res.innerHTML = xs.length ? xs.map(p => { const d = disponible(p.id, m.depositoId); return String(h`<li><button type="button" data-agregar="${p.id}" ${d > cantidad(p.id) ? '' : 'disabled'}><span><span class="celda-principal">${p.descripcion}</span><span class="celda-sub">${p.codigo}, ${p.marca}, ${p.unidad.toLowerCase()}</span></span><span class="texto-2 chico">${d > 0 ? 'Quedan ' + ui.num(d) : 'Sin stock'}</span><strong>${ui.pesos(App.q.precio(p.id, c.listaId))}</strong></button></li>`); }).join('')
+      const xs = buscarProductos(t, 12);
+      res.innerHTML = xs.length ? xs.map(p => {
+        const d = rq(disponible(p.id, m.depositoId) - baseEn(p.id));
+        return String(h`<li class="vt-res-fila"><span class="vt-res-info"><span class="celda-principal">${p.descripcion}</span><span class="celda-sub">${p.codigo}${p.plu ? ', PLU ' + p.plu : ''}, ${p.marca}, ${d > 0 ? 'quedan ' + ui.num(d, p.pesable ? 3 : 0) + (p.pesable ? ' kg' : '') : 'sin stock'}</span></span>
+          ${botonesPres(p, c.listaId, pr => maxPres(pr, d) > 0, 'data-agregar')}</li>`);
+      }).join('')
         : String(h`<li class="nota-discreta" style="padding:8px 10px">No se encontraron productos para «${m.texto}».</li>`);
     }
-    res.addEventListener('click', e => { const b = e.target.closest('[data-agregar]'); if (b) { agregar(b.dataset.agregar, 1); resultados(); } });
+    res.addEventListener('click', e => { const b = e.target.closest('[data-agregar]'); if (b) { agregar(b.dataset.agregar, b.dataset.pres); resultados(); } });
     ui.buscador(inp, (t, crudo) => { m.texto = crudo || ''; resultados(); }, 100);
     inp.addEventListener('keydown', e => {
       if (e.key !== 'Enter') return;
       e.preventDefault();
-      const crudo = inp.value.trim(), cod = crudo.replace(/\D/g, '');
-      const p = App.db.productos.find(x => x.activo !== false && ((cod.length >= 8 && x.ean === cod) || x.codigo.toUpperCase() === crudo.toUpperCase()));
-      if (p) { agregar(p.id, 1); inp.value = ''; m.texto = ''; resultados(); }
-      else { const b = res.querySelector('[data-agregar]:not([disabled])'); if (b) { agregar(b.dataset.agregar, 1); resultados(); } }
+      const hallado = productoPorCodigo(inp.value.trim());
+      if (hallado) { agregar(hallado.p.id, hallado.presentacion || App.presentaciones(hallado.p)[0].id, hallado.cantidad); inp.value = ''; m.texto = ''; resultados(); }
+      else { const b = res.querySelector('[data-agregar]:not([disabled])'); if (b) { agregar(b.dataset.agregar, b.dataset.pres); resultados(); } }
     });
 
     let tablaItems = null;
     function dibujar() {
       const cont = $('#vt-m-items');
       cont.innerHTML = '';
-      let neto = 0, iva = 0, falta = false;
-      const pu = it => App.precioNeto({ precio: App.q.precio(it.productoId, c.listaId), bonif: it.bonif || 0 });
-      m.items.forEach(it => { const pr = App.get('productos', it.productoId); const s = App.r2(it.cantidad * pu(it)); neto += s; iva += s * pr.iva / 100; if (it.cantidad > disponible(it.productoId, m.depositoId)) falta = true; });
-      neto = App.r2(neto); iva = App.r2(iva);
+      const validos = m.items.filter(cantOk);
+      const falta = m.items.some(faltaM), invalida = m.items.some(it => !cantOk(it));
+      const tot = totalesVista(validos.map(vistaM));
       tablaItems = ui.tabla({
         columnas: [
-          { titulo: 'Producto', valor: it => { const pr = App.get('productos', it.productoId); return h`<span class="celda-principal">${pr.descripcion}</span><span class="celda-sub">${pr.codigo}, ${pr.unidad.toLowerCase()}</span>`; } },
-          { titulo: 'Disponible', alinear: 'der', valor: it => { const d = disponible(it.productoId, m.depositoId); return it.cantidad > d ? h`<span class="peligro">${ui.num(d)}</span>` : ui.num(d); } },
+          { titulo: 'Producto', valor: it => {
+            const prod = App.get('productos', it.productoId), pr = presDe(prod, it.presentacion), d = maxPres(pr, disponible(it.productoId, m.depositoId));
+            return h`<span class="celda-principal">${prod.descripcion}</span><span class="celda-sub">${prod.codigo}${prod.plu ? ', PLU ' + prod.plu : ''}</span><span class="celda-sub ${faltaM(it) ? 'peligro' : ''}">Disponible: ${cantTexto(pr, d)}${esKg(pr) ? ' kg' : ' × ' + pr.nombre.toLowerCase()}</span>`;
+          } },
+          { titulo: 'Presentación', valor: it => {
+            const prod = App.get('productos', it.productoId);
+            const s = document.createElement('select'); s.className = 'vt-sel-pres';
+            s.innerHTML = String(h`${opcionesPres(prod, c.listaId, it.presentacion)}`);
+            s.setAttribute('aria-label', 'Presentación de ' + prod.descripcion);
+            s.addEventListener('change', () => { const pr = presDe(prod, s.value); it.presentacion = pr.id; if (!esKg(pr)) it.cantidad = Math.max(1, Math.round(Number(it.cantidad) || 1)); if (!it.bonifManual) it.bonif = App.bonifEscala(prod, vistaM(it).cantidad); dibujar(); resultados(); });
+            return s;
+          } },
           { titulo: 'Cantidad', alinear: 'der', valor: it => {
-            const i = document.createElement('input'); i.type = 'number'; i.min = '0'; i.step = '1'; i.value = it.cantidad; i.className = 'vt-cant';
-            i.setAttribute('aria-label', 'Cantidad de ' + App.get('productos', it.productoId).descripcion);
-            i.addEventListener('change', () => { const v = Math.floor(Number(i.value) || 0); if (v > 0) { it.cantidad = v; if (!it.bonifManual) it.bonif = App.bonifEscala(App.get('productos', it.productoId), v); } else m.items = m.items.filter(x => x !== it); dibujar(); });
+            const prod = App.get('productos', it.productoId), pr = presDe(prod, it.presentacion);
+            const i = document.createElement('input'); i.type = 'text'; i.inputMode = esKg(pr) ? 'decimal' : 'numeric'; i.value = valorInput(pr, it.cantidad); i.className = 'vt-cant';
+            i.setAttribute('aria-label', 'Cantidad de ' + prod.descripcion + (esKg(pr) ? ' en kilos' : ''));
+            i.addEventListener('change', () => { const v = leerCant(i.value); if (v > 0) { it.cantidad = esKg(pr) ? rq(v) : v; if (!it.bonifManual) it.bonif = App.bonifEscala(prod, vistaM(it).cantidad); } else m.items = m.items.filter(x => x !== it); dibujar(); resultados(); });
             return i;
           } },
-          { titulo: 'Precio', alinear: 'der', valor: it => ui.pesos(App.q.precio(it.productoId, c.listaId)) },
           { titulo: '% bonif.', alinear: 'der', valor: it => {
             const i = document.createElement('input'); i.type = 'number'; i.min = '0'; i.max = '99'; i.step = '0.5'; i.value = it.bonif || 0; i.className = 'vt-bonif';
             i.setAttribute('aria-label', 'Bonificación de ' + App.get('productos', it.productoId).descripcion);
             i.addEventListener('change', () => { it.bonif = Math.max(0, Math.min(99, Number(i.value) || 0)); it.bonifManual = true; dibujar(); });
             return i;
           } },
-          { titulo: 'Subtotal', alinear: 'der', valor: it => ui.pesos(App.r2(it.cantidad * pu(it))) },
+          { titulo: 'Subtotal', alinear: 'der', valor: it => cantOk(it) ? h`${ui.pesos(App.subtotalItem(vistaM(it)))}<span class="celda-sub">${ui.pesos(precioRenglon(vistaM(it)))} ${esKg(presDe(App.get('productos', it.productoId), it.presentacion)) ? 'el kilo' : 'c/u'}</span>` : h`<span class="peligro">Revisar cantidad</span>` },
           { titulo: '', alinear: 'der', valor: it => { const b = document.createElement('button'); b.type = 'button'; b.className = 'btn btn-fantasma btn-chico'; b.textContent = 'Quitar'; b.addEventListener('click', () => { m.items = m.items.filter(x => x !== it); dibujar(); resultados(); }); return b; } }
         ],
-        filas: m.items, filaClase: it => it.cantidad > disponible(it.productoId, m.depositoId) ? 'fila-peligro' : '',
-        vacio: 'Los productos se agregan desde el buscador superior. Con la lectora de códigos se agregan automáticamente.'
+        clase: 'vt-m-tabla', filas: m.items, filaClase: it => faltaM(it) || !cantOk(it) ? 'fila-peligro' : '',
+        vacio: 'Los productos se agregan desde el buscador superior, eligiendo la presentación. Con la lectora de códigos o la etiqueta de la balanza se agregan automáticamente.'
       });
       cont.appendChild(tablaItems);
       $('#vt-m-cuenta').textContent = m.items.length ? m.items.length + (m.items.length === 1 ? ' producto' : ' productos') : '';
-      const total = App.r2(neto + iva);
-      $('#vt-m-tot').innerHTML = String(h`<dt>Neto</dt><dd>${ui.pesos(neto)}</dd><dt>IVA</dt><dd>${ui.pesos(iva)}</dd><dt class="vt-total">Total</dt><dd class="vt-total">${ui.pesos(total)}</dd>`);
+      $('#vt-m-tot').innerHTML = String(h`<dt>Neto</dt><dd>${ui.pesos(tot.neto)}</dd><dt>IVA</dt><dd>${ui.pesos(tot.iva)}</dd><dt class="vt-total">Total</dt><dd class="vt-total">${ui.pesos(tot.total)}</dd>`);
       const avisos = [];
-      if (m.items.length && c.tipo !== 'Mostrador' && App.q.saldoCliente(c.id) + total > c.limiteCredito) avisos.push(h`<div class="aviso aviso-alerta"><div>Con este pedido ${c.fantasia} supera su límite de crédito de ${ui.pesos(c.limiteCredito)}.</div></div>`);
+      if (m.items.length && c.tipo !== 'Mostrador' && App.q.saldoCliente(c.id) + tot.total > c.limiteCredito) avisos.push(h`<div class="aviso aviso-alerta"><div>Con este pedido ${c.fantasia} supera su límite de crédito de ${ui.pesos(c.limiteCredito)}.</div></div>`);
       if (falta) avisos.push(h`<div class="aviso aviso-peligro"><div>Hay cantidades mayores al stock disponible en ${App.get('depositos', m.depositoId).nombre}. Es necesario corregirlas para continuar.</div></div>`);
+      if (invalida) avisos.push(h`<div class="aviso aviso-peligro"><div>Hay cantidades para revisar: en bultos, packs y unidades van enteras; por kilo se admiten decimales (1,35).</div></div>`);
       $('#vt-m-avisos').innerHTML = avisos.map(String).join('');
-      $('#vt-m-facturar').disabled = $('#vt-m-cargar').disabled = !m.items.length || falta;
-      $('#vt-m-ayuda').textContent = !m.items.length ? 'Agregar al menos un producto para cargar el pedido.' : falta ? 'Corregir las cantidades sin stock para continuar.' : '';
+      $('#vt-m-facturar').disabled = $('#vt-m-cargar').disabled = !m.items.length || falta || invalida;
+      $('#vt-m-ayuda').textContent = !m.items.length ? 'Agregar al menos un producto para cargar el pedido.' : falta ? 'Corregir las cantidades sin stock para continuar.' : invalida ? 'Corregir las cantidades marcadas para continuar.' : '';
     }
     function crear() {
-      return App.acciones.crearPedido({ clienteId: c.id, depositoId: m.depositoId, origen: 'mostrador', obs: m.obs.trim(), items: m.items.map(x => ({ productoId: x.productoId, cantidad: x.cantidad, bonif: x.bonif || 0 })) });
+      return App.acciones.crearPedido({ clienteId: c.id, depositoId: m.depositoId, origen: 'mostrador', obs: m.obs.trim(), items: m.items.map(x => ({ productoId: x.productoId, presentacion: x.presentacion, cantidad: Number(x.cantidad), bonif: x.bonif || 0 })) });
     }
     function limpiar() { m.items = []; m.obs = ''; m.texto = ''; }
     $('#vt-m-cli').addEventListener('change', e => { m.clienteId = e.target.value; m.depositoId = App.get('clientes', m.clienteId).depositoId; App.renderizar(); });

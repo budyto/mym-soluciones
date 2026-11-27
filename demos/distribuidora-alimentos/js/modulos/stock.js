@@ -42,7 +42,65 @@
 .st-precio-sug { font-size: var(--fs-12); color: var(--texto-2); min-height: 1.2em; }
 .st-lado { display: grid; grid-template-columns: minmax(0, 400px) minmax(0, 1fr); gap: 20px; align-items: start; }
 @media (max-width: 1100px) { .st-lado { grid-template-columns: minmax(0, 1fr); } }
+/* objetos de la ficha: la foto y los dos códigos, como etiquetas pegadas al costado */
+.st-objetos { display: flex; gap: 14px; align-items: flex-start; flex-wrap: wrap; flex: none; }
+.st-codigos { display: grid; gap: 10px; }
+.st-ean.st-propio { border-left: 4px solid var(--carton); }
+.st-enlace, .st-ean-pie button { border: 0; background: none; padding: 0; font: inherit; color: var(--info); text-decoration: underline; cursor: pointer; }
+.st-propio-vacio { width: 210px; box-sizing: border-box; border: 1px dashed #B9C0B7; border-radius: var(--r-control); padding: 12px; display: grid; gap: 8px; font-size: var(--fs-12); color: var(--texto-2); background: transparent; }
+.st-propio-vacio strong { color: var(--tinta); font-size: var(--fs-13); }
+.st-propio-vacio .btn { justify-self: start; }
+.st-foto { margin: 0; width: 168px; display: grid; gap: 6px; }
+.st-foto-marco { width: 168px; height: 168px; border: 1px solid var(--linea); border-radius: var(--r-panel); overflow: hidden; background: var(--hoja); }
+.st-foto-marco svg { width: 100%; height: 100%; display: block; }
+.st-foto figcaption { font-size: var(--fs-12); color: var(--texto-2); line-height: 1.3; }
+.st-foto-acc { display: flex; gap: 10px; }
+.st-foto-acc button { border: 0; background: none; padding: 0; font: inherit; font-size: var(--fs-12); color: var(--info); text-decoration: underline; cursor: pointer; }
+.st-foto-vacia { width: 168px; height: 168px; box-sizing: border-box; border: 1px dashed #B9C0B7; border-radius: var(--r-panel); display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 10px; padding: 12px; text-align: center; font-size: var(--fs-12); color: var(--texto-2); }
+.st-foto-vacia svg { width: 34px; height: 34px; color: #9AA39A; }
+/* miniatura en la lista */
+.st-prod-celda { display: flex; gap: 10px; align-items: center; min-width: 0; }
+.st-prod-celda > div { min-width: 0; }
+.st-mini { width: 36px; height: 36px; flex: none; border-radius: 4px; overflow: hidden; background: var(--papel); border: 1px solid var(--linea-suave); }
+.st-mini svg { width: 100%; height: 100%; display: block; }
+/* modal del código propio */
+.st-cp { display: grid; gap: 14px; }
+.st-cp .segmentado { display: flex; }
+.st-cp .segmentado button { flex: 1 1 auto; }
+.st-cp-previa { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; gap: 8px; padding: 18px 16px 14px; background: var(--papel); border-radius: var(--r-panel); }
+.st-cp-etq { background: #fff; color: #000; border: 1px solid var(--linea); border-left: 4px solid var(--carton); border-radius: var(--r-control); padding: 10px 14px 6px; width: 100%; max-width: 320px; box-sizing: border-box; }
+.st-cp-etq svg { width: 100%; height: auto; display: block; max-height: 120px; }
+.st-cp-etq .st-cp-desc { font-weight: 800; font-stretch: 112%; font-size: var(--fs-13); line-height: 1.15; margin-bottom: 6px; }
+.st-cp-estado { font-size: var(--fs-13); text-align: center; min-height: 1.3em; }
+.st-cp-estado.mal { color: var(--peligro); }
+.st-cp-vacio { color: var(--texto-2); font-size: var(--fs-13); padding: 26px 0; }
+/* buscador de fotos */
+.st-bf { display: grid; gap: 12px; }
+.st-bf-barra { display: flex; gap: 8px; }
+.st-bf-barra input { flex: 1; min-width: 0; height: 42px; font-size: var(--fs-16); border-radius: 21px; padding: 0 18px; }
+.st-bf-barra .btn { height: 42px; border-radius: 21px; padding: 0 20px; }
+.st-bf-info { font-size: var(--fs-12); color: var(--texto-2); }
+.st-bf-grilla { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.st-bf-item { border: 0; background: none; padding: 0; text-align: left; cursor: pointer; display: grid; gap: 4px; min-width: 0; font: inherit; color: inherit; }
+.st-bf-item .st-bf-img { aspect-ratio: 1; border-radius: 8px; overflow: hidden; outline: 1px solid var(--linea-suave); }
+.st-bf-item svg { width: 100%; height: 100%; display: block; }
+.st-bf-item:hover .st-bf-img { outline: 2px solid var(--texto-2); }
+.st-bf-item[aria-pressed="true"] .st-bf-img { outline: 3px solid var(--senal); outline-offset: 1px; box-shadow: 0 0 0 5px var(--tinta); }
+.st-bf-sitio { font-size: var(--fs-12); color: var(--tinta); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.st-bf-tam { font-size: var(--fs-12); color: var(--texto-2); }
+.st-bf-nota { font-size: var(--fs-12); color: var(--texto-2); margin: 0; }
 @media (max-width: 760px) {
+  .st-bf-grilla { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .st-objetos { width: 100%; flex-wrap: nowrap; gap: 10px; }
+  .st-codigos { flex: 1 1 0; min-width: 0; }
+  .st-codigos .st-ean { padding: 6px 8px 2px; }
+  .st-codigos .st-ean-pie { white-space: normal; flex-wrap: wrap; gap: 0 8px; }
+  .st-foto, .st-foto-marco, .st-foto-vacia { width: 112px; }
+  .st-foto-marco, .st-foto-vacia { height: 112px; }
+  .st-foto-vacia > span { display: none; }
+  .st-foto-vacia .btn { white-space: normal; height: auto; padding: 6px 8px; line-height: 1.2; }
+  .st-foto-acc { flex-wrap: wrap; }
+  .st-propio-vacio { width: 100%; max-width: 260px; }
   .st-ean { width: 100%; max-width: 260px; }
   .st-resumen-inv { flex-direction: column; align-items: stretch; }
   .st-resumen-inv .btn { width: 100%; justify-content: center; }
@@ -170,6 +228,7 @@
       <div class="campo"><label for="pf-vida">Vida útil (días)</label><input id="pf-vida" name="vidaUtil" type="number" min="1" step="1" value="${p.vidaUtil == null ? '' : p.vidaUtil}"><span class="campo-ayuda">Sin completar si el producto no vence.</span></div>
       <div class="campo"><label for="pf-peso">Peso del bulto (kg)</label><input id="pf-peso" name="pesoKg" type="number" min="0" step="0.1" value="${p.pesoKg}"></div>
       <div class="campo"><label for="pf-ean">Código EAN-13</label><input id="pf-ean" name="ean" inputmode="numeric" maxlength="13" value="${p.ean}" placeholder="Sin completar: se genera uno interno"><span class="campo-ayuda" data-ean-ayuda>13 dígitos; el último es el dígito verificador.</span></div>
+      <div class="campo"><label for="pf-propio">Código propio</label><input id="pf-propio" name="codigoPropio" autocomplete="off" maxlength="20" spellcheck="false" value="${p.codigoPropio || ''}" placeholder="Opcional"><span class="campo-ayuda" data-propio-ayuda>Numérico (EAN-13 interno) o con letras (Code 39). <button type="button" class="st-enlace" data-propio-sug>Usar uno sugerido</button></span></div>
       ${prod ? h`<label class="check ancho-total"><input type="checkbox" name="activo"${p.activo !== false ? ' checked' : ''}> Producto activo (se vende y aparece en el catálogo)</label>` : ''}`;
     const costoIn = form.querySelector('[name=costo]');
     const sugerencias = () => {
@@ -197,6 +256,19 @@
       else ayuda.textContent = '13 dígitos; el último es el dígito verificador.';
       eanIn.setAttribute('aria-invalid', v.length === 13 && !App.f.eanValido(v) ? 'true' : 'false');
     });
+    const propioIn = form.querySelector('[name=codigoPropio]');
+    const propioAyuda = form.querySelector('[data-propio-ayuda]');
+    const ayudaPropio = propioAyuda.innerHTML;
+    const revisarCampoPropio = () => {
+      const r = revisarPropio(propioIn.value, prod ? prod.id : null);
+      propioIn.setAttribute('aria-invalid', r.error ? 'true' : 'false');
+      if (r.vacio) { propioAyuda.innerHTML = ayudaPropio; enganchar(); }
+      else propioAyuda.textContent = r.error || (nombreTipo(r.tipo) + ': ' + r.codigo + '.');
+    };
+    const enganchar = () => { const b = propioAyuda.querySelector('[data-propio-sug]'); if (b) b.addEventListener('click', () => { propioIn.value = App.f.codigoPropioSugerido(prod || { id: 'nuevo-' + (form.querySelector('[name=descripcion]').value || '') }); revisarCampoPropio(); }); };
+    enganchar();
+    propioIn.addEventListener('input', revisarCampoPropio);
+    if (propioIn.value) revisarCampoPropio();
     form.addEventListener('submit', e => e.preventDefault());
     ui.modal({
       titulo: prod ? 'Editar producto' : 'Nuevo producto', cuerpo: form, ancho: 760,
@@ -215,6 +287,9 @@
         if (ean && !App.f.eanValido(ean)) throw new Error('Código EAN-13 inválido: el dígito verificador no coincide.');
         const repetido = ean && App.db.productos.find(x => x.ean === ean && (!prod || x.id !== prod.id));
         if (repetido) throw new Error('El código EAN ya está asignado a «' + repetido.descripcion + '».');
+        const rp = revisarPropio(propioIn.value, prod ? prod.id : null);
+        if (rp.error) throw new Error('Código propio: ' + rp.error);
+        if (rp.codigo && ean && rp.codigo === ean) throw new Error('El código propio no puede ser igual al EAN del fabricante.');
         const vida = d.vidaUtil ? Math.round(d.vidaUtil) : null;
         const datos = {
           descripcion: d.descripcion.trim(), marca: (d.marca || '').trim(), rubro: d.rubro, proveedorId: d.proveedorId,
@@ -225,6 +300,7 @@
         if (prod) { datos.id = prod.id; datos.activo = !!d.activo; if (prod.rubro !== d.rubro) datos.codigo = siguienteCodigo(d.rubro); }
         else { datos.codigo = siguienteCodigo(d.rubro); datos.popularidad = 0.5; }
         const r = App.acciones.guardarMaestro('productos', datos);
+        if ((rp.codigo || '') !== ((prod && prod.codigoPropio) || '')) App.acciones.asignarCodigoPropio(r.id, rp.codigo);
         ui.toast(prod ? 'Cambios guardados' : 'Producto creado: ' + r.codigo, 'ok');
         if (!prod) setTimeout(() => ui.ir('#/stock/producto/' + r.id), 0);
       } }]
@@ -236,7 +312,7 @@
     cuerpo.className = 'form-grilla';
     cuerpo.innerHTML = h`
       <div class="campo"><label for="ap-rubro">Productos</label><select id="ap-rubro" name="rubro"><option value="">Todos los rubros</option>${rubros().map(r => h`<option>${r}</option>`)}</select></div>
-      <div class="campo"><label for="ap-lista">Lista</label><select id="ap-lista" name="lista"><option value="">Las tres listas</option>${ui.opciones(App.db.listasPrecio, 'id', 'nombre')}</select></div>
+      <div class="campo"><label for="ap-lista">Lista</label><select id="ap-lista" name="lista"><option value="">Todas las listas</option>${ui.opciones(App.db.listasPrecio, 'id', 'nombre')}</select></div>
       <div class="campo"><label for="ap-pct">Aumento (%)</label><input id="ap-pct" name="pct" type="number" step="0.5" value="5"><span class="campo-ayuda">Valor negativo para una baja de precios.</span></div>
       <div class="ancho-total aviso" data-vista></div>`;
     const vista = cuerpo.querySelector('[data-vista]');
@@ -361,6 +437,147 @@
       acciones: [{ texto: 'Cancelar' }, { texto: 'Transferir stock', tipo: 'primario', alClic: () => { f.hacer(); } }] });
   }
 
+  // ---------- código propio ----------
+  // revisa lo que se escribe (misma regla que App.acciones.asignarCodigoPropio) para la vista previa en vivo
+  function revisarPropio(texto, prodId) {
+    let c = String(texto == null ? '' : texto).trim().toUpperCase();
+    if (!c) return { codigo: '', vacio: true };
+    let nota = '';
+    if (/^\d{12}$/.test(c)) { c += App.f.digitoEAN(c); nota = 'Se completa el dígito verificador: ' + c.slice(-1) + '.'; }
+    if (/^\d+$/.test(c) && c.length !== 13) return { codigo: c, error: 'Un código numérico lleva 12 o 13 dígitos (tiene ' + c.length + '). Con letras se puede usar de 2 a 20 caracteres.' };
+    if (/^\d{13}$/.test(c) && !App.f.eanValido(c)) return { codigo: c, error: 'No es un EAN-13 válido: el último dígito tendría que ser ' + App.f.digitoEAN(c.slice(0, 12)) + '.' };
+    if (!/^\d{13}$/.test(c) && !/^[A-Z0-9 .\-\/+%$]{2,20}$/.test(c)) return { codigo: c, error: 'De 2 a 20 caracteres: letras sin acento, números, espacio y . - / + % $.' };
+    const otro = App.db.productos.find(x => x.id !== prodId && (x.ean === c || x.codigoPropio === c));
+    if (otro) return { codigo: c, error: 'Ya lo usa «' + otro.descripcion + '».' };
+    const tipo = App.f.tipoCodigo(c);
+    return { codigo: c, tipo, nota: nota || (tipo === 'ean13' ? 'Lo lee cualquier lector de caja o de depósito.' : 'Lo leen los lectores comunes de depósito y de caja.') };
+  }
+  const nombreTipo = t => t === 'ean13' ? 'EAN-13 interno' : 'Code 39';
+
+  function modalCodigoPropio(p) {
+    const sugerido = App.f.codigoPropioSugerido(p);
+    let modo = p.codigoPropio && p.codigoPropio !== sugerido ? 'propio' : 'sugerido';
+    const cuerpo = document.createElement('form');
+    cuerpo.className = 'st-cp';
+    cuerpo.innerHTML = h`
+      <p class="texto-2" style="margin:0">Además del EAN-13 del fabricante, la distribuidora puede identificar «${p.descripcion}» con un código suyo: sirve para productos sin código, fraccionados o para la codificación interna del depósito.</p>
+      <div class="segmentado" role="group" aria-label="Origen del código">
+        <button type="button" data-modo="sugerido" aria-pressed="${modo === 'sugerido'}">Usar el sugerido</button>
+        <button type="button" data-modo="propio" aria-pressed="${modo === 'propio'}">Escribir uno</button>
+      </div>
+      <div class="campo"><label for="cp-codigo">Código propio</label><input id="cp-codigo" name="codigo" autocomplete="off" maxlength="20" spellcheck="false">
+        <span class="campo-ayuda">Numérico de 12 o 13 dígitos: se imprime como EAN-13 interno (prefijo 29, reservado para uso interno). Con letras: Code 39, de 2 a 20 caracteres.</span></div>
+      <div class="st-cp-previa" aria-live="polite"></div>`;
+    const input = cuerpo.querySelector('#cp-codigo'), previa = cuerpo.querySelector('.st-cp-previa');
+    input.value = modo === 'sugerido' ? sugerido : (p.codigoPropio || '');
+    input.readOnly = modo === 'sugerido';
+    const pintar = () => {
+      const r = revisarPropio(input.value, p.id);
+      input.setAttribute('aria-invalid', r.error ? 'true' : 'false');
+      if (r.vacio) { previa.innerHTML = '<div class="st-cp-vacio">Escribí el código para ver cómo queda la etiqueta.</div>'; return; }
+      const barras = r.error ? '' : (r.tipo === 'ean13' ? ui.barcodeEAN13(r.codigo, { alto: 50 }) : ui.barcodeCode39(r.codigo, { alto: 50 }));
+      previa.innerHTML = h`${r.error ? '' : h`<div class="st-cp-etq"><div class="st-cp-desc">${p.descripcion}</div>${barras}</div>`}
+        <div class="st-cp-estado${r.error ? ' mal' : ''}">${r.error ? r.error : h`${ui.chip(nombreTipo(r.tipo), 'info')} ${r.nota}`}</div>`;
+    };
+    cuerpo.querySelectorAll('[data-modo]').forEach(b => b.addEventListener('click', () => {
+      modo = b.dataset.modo;
+      cuerpo.querySelectorAll('[data-modo]').forEach(x => x.setAttribute('aria-pressed', x === b));
+      if (modo === 'sugerido') { input.value = sugerido; input.readOnly = true; }
+      else { if (input.value === sugerido) input.value = ''; input.readOnly = false; input.focus(); }
+      pintar();
+    }));
+    input.addEventListener('input', pintar);
+    cuerpo.addEventListener('submit', e => e.preventDefault());
+    pintar();
+    const acciones = [{ texto: 'Cancelar' }];
+    if (p.codigoPropio) acciones.push({ texto: 'Borrar código propio', tipo: 'fantasma', alClic: () => { App.acciones.asignarCodigoPropio(p.id, ''); ui.toast('Código propio borrado. Las etiquetas vuelven a imprimirse con el EAN del fabricante.', 'ok'); } });
+    acciones.push({ texto: p.codigoPropio ? 'Guardar código propio' : 'Crear código propio', tipo: 'primario', alClic: () => {
+      const r = revisarPropio(input.value, p.id);
+      if (r.vacio) throw new Error('Falta el código propio.');
+      if (r.error) throw new Error(r.error);
+      const prod = App.acciones.asignarCodigoPropio(p.id, input.value);
+      ui.toast('Código propio guardado: ' + prod.codigoPropio + ' (' + nombreTipo(App.f.tipoCodigo(prod.codigoPropio)) + ')', 'ok');
+    } });
+    ui.modal({ titulo: p.codigoPropio ? 'Código propio' : 'Crear código propio', cuerpo, ancho: 560, acciones });
+  }
+
+  // ---------- foto del producto: buscador de imágenes dentro del sistema ----------
+  // en la demo cada búsqueda trae 8 «fotos» de ejemplo; el número de resultado depende de lo buscado, así otra búsqueda muestra otras
+  function hashTexto(s) { let x = 0; for (const ch of ui.normalizar(s)) x = (x * 31 + ch.charCodeAt(0)) >>> 0; return x; }
+  function modalFoto(p) {
+    let consulta = [p.descripcion, p.marca].filter(Boolean).join(' ');
+    let resultados = [], elegido = null;
+    const cuerpo = document.createElement('div');
+    cuerpo.className = 'st-bf';
+    cuerpo.innerHTML = h`
+      <form class="st-bf-barra" role="search"><label class="solo-lector" for="bf-q">Buscar imágenes</label>
+        <input id="bf-q" type="search" autocomplete="off" value="${consulta}"><button class="btn btn-primario" type="submit">Buscar</button></form>
+      <div class="st-bf-info" aria-live="polite"></div>
+      <div class="st-bf-grilla"></div>
+      <p class="st-bf-nota">En la demo los resultados son de ejemplo; en el sistema real se buscan en Google Imágenes.</p>`;
+    const grilla = cuerpo.querySelector('.st-bf-grilla'), info = cuerpo.querySelector('.st-bf-info'), input = cuerpo.querySelector('#bf-q');
+    let boton = null;
+    const marcar = () => {
+      grilla.querySelectorAll('[data-r]').forEach(b => b.setAttribute('aria-pressed', String(Number(b.dataset.r) === (elegido ? elegido.resultado : -1))));
+      if (boton) boton.disabled = !elegido;
+    };
+    const buscar = () => {
+      consulta = input.value.trim();
+      if (!consulta) { ui.toast('Escribí qué buscar.', 'alerta'); input.focus(); return; }
+      const desplazar = (hashTexto(consulta) % 40) * 8;
+      // se saltean los dibujos que salen sin color (en algunos números el dibujo del núcleo queda incompleto)
+      const sano = n => !/undefined|NaN/.test(String(ui.fotoProducto(p, n)));
+      const usados = new Set();
+      resultados = App.q.buscarFotos(consulta, p).map(r => {
+        let n = desplazar + r.resultado;
+        for (let i = 0; i < 40 && (usados.has(n) || !sano(n)); i++) n += 8;
+        usados.add(n);
+        return Object.assign({}, r, { resultado: n });
+      });
+      elegido = null;
+      info.textContent = 'Resultados de imágenes para «' + consulta + '». Elegí la que corresponde al producto.';
+      grilla.innerHTML = resultados.map(r => String(h`<button type="button" class="st-bf-item" data-r="${r.resultado}" aria-pressed="false" aria-label="Foto de ${r.sitio}, ${r.ancho} por ${r.alto} píxeles">
+        <span class="st-bf-img">${ui.fotoProducto(p, r.resultado)}</span><span class="st-bf-sitio">${r.sitio}</span><span class="st-bf-tam">${r.ancho} × ${r.alto}</span></button>`)).join('');
+      marcar();
+    };
+    cuerpo.querySelector('form').addEventListener('submit', e => { e.preventDefault(); buscar(); });
+    grilla.addEventListener('click', e => { const b = e.target.closest('[data-r]'); if (!b) return; elegido = resultados.find(r => r.resultado === Number(b.dataset.r)); marcar(); });
+    grilla.addEventListener('dblclick', e => { if (e.target.closest('[data-r]') && boton) boton.click(); });
+    const m = ui.modal({ titulo: 'Buscar foto en Google', cuerpo, ancho: 860, acciones: [{ texto: 'Cancelar' }, { texto: 'Usar esta foto', tipo: 'primario', alClic: () => {
+      if (!elegido) throw new Error('Elegí una foto de los resultados.');
+      App.acciones.asignarFoto(p.id, { consulta, resultado: elegido.resultado, sitio: elegido.sitio });
+      ui.toast('Foto asignada a «' + p.descripcion + '». Ya se ve en la ficha, en la lista y en el catálogo online.', 'ok');
+    } }] });
+    boton = m.el.querySelector('.modal-pie .btn-primario');
+    buscar();
+  }
+  async function quitarFoto(p) {
+    const ok = await ui.confirmar('«' + p.descripcion + '» queda sin foto: en el catálogo online vuelve a mostrarse el bulto dibujado.', { titulo: 'Quitar foto', aceptar: 'Quitar foto', tipo: 'peligro' });
+    if (ok) App.intentar(() => App.acciones.asignarFoto(p.id, null), 'Foto quitada');
+  }
+  function miniatura(p) {
+    return h`<span class="st-mini" aria-hidden="true">${p.foto ? ui.fotoProducto(p, null) : ''}</span>`;
+  }
+
+  // ---------- presentaciones de venta ----------
+  function tablaPresentaciones(p) {
+    const base = q.precioConIVA(p.id, 'L2');
+    const contenido = pr => {
+      if (p.pesable) return pr.id === 'kg' ? 'Se cobra por peso' : ui.num(pr.factor, pr.factor % 1 ? (pr.factor * 10 % 1 ? 2 : 1) : 0) + ' kg aprox.';
+      const u = App.r2(pr.factor * (p.contenido || 1));
+      return plural(u, 'unidad', 'unidades');
+    };
+    return ui.tabla({
+      columnas: [
+        { titulo: 'Presentación', valor: pr => h`<span class="celda-principal">${pr.nombre}</span>${pr.id === 'b' && !p.pesable ? h`<span class="celda-sub">Unidad de stock</span>` : p.pesable && pr.id === 'kg' ? h`<span class="celda-sub">Unidad de stock, PLU ${p.plu}</span>` : ''}` },
+        { titulo: p.pesable ? 'Kilos' : 'Unidades', valor: contenido },
+        { titulo: 'Recargo', clase: 'ocultar-celu', alinear: 'der', valor: pr => pr.recargo ? ui.num(pr.recargo, pr.recargo % 1 ? 1 : 0) + ' %' : '–' },
+        { titulo: 'Precio con IVA', alinear: 'der', valor: pr => h`<strong>${ui.pesos(base * (1 + (pr.recargo || 0) / 100) * pr.factor)}</strong>${p.pesable && pr.id !== 'kg' ? h`<span class="celda-sub">${ui.pesos(base * (1 + (pr.recargo || 0) / 100))} el kilo</span>` : ''}` }
+      ],
+      filas: App.presentaciones(p)
+    });
+  }
+
   // ---------- pantalla principal ----------
   function renderInicio(el) {
     const total = q.valorStock();
@@ -400,7 +617,7 @@
   function tabProductos(panel) {
     const filtros = ui.nodo(h`<div class="filtros">
       <label class="solo-lector" for="st-buscar">Buscar producto</label>
-      <input id="st-buscar" type="search" placeholder="Buscar por nombre, código, EAN o marca" value="${estado.textoCrudo}">
+      <input id="st-buscar" type="search" placeholder="Buscar por nombre, código, EAN, código propio, PLU o marca" value="${estado.textoCrudo}">
       <label class="solo-lector" for="st-rubro">Rubro</label>
       <select id="st-rubro"><option value="">Todos los rubros</option>${rubros().map(r => h`<option${r === estado.rubro ? ' selected' : ''}>${r}</option>`)}</select>
       <div class="segmentado" role="group" aria-label="Depósito">
@@ -411,7 +628,7 @@
       <label class="check"><input type="checkbox" data-inact${estado.verInactivos ? ' checked' : ''}> Ver inactivos</label>
     </div>`);
     panel.appendChild(filtros);
-    const filas = () => App.db.productos.filter(p => (estado.verInactivos || p.activo !== false) && (!estado.rubro || p.rubro === estado.rubro) && ui.coincide(estado.texto, p.descripcion, p.codigo, p.ean, p.marca))
+    const filas = () => App.db.productos.filter(p => (estado.verInactivos || p.activo !== false) && (!estado.rubro || p.rubro === estado.rubro) && ui.coincide(estado.texto, p.descripcion, p.codigo, p.ean, p.marca, p.codigoPropio, p.plu))
       .map(p => {
         const st = q.stock(p.id, estado.dep || undefined);
         const tot = estado.dep ? q.stock(p.id) : st;
@@ -421,7 +638,7 @@
       const datos = filas();
       return ui.tabla({
         columnas: [
-          { titulo: 'Producto', valor: f => h`<span class="celda-principal">${f.p.descripcion}</span><span class="celda-sub">${f.p.codigo}, EAN ${f.p.ean}${f.p.activo === false ? ', inactivo' : ''}</span>`, ordenar: f => f.p.descripcion },
+          { titulo: 'Producto', valor: f => h`<div class="st-prod-celda">${miniatura(f.p)}<div><span class="celda-principal">${f.p.descripcion}</span><span class="celda-sub">${f.p.codigo}, EAN ${f.p.ean}${f.p.codigoPropio ? ', propio ' + f.p.codigoPropio : ''}${f.p.pesable ? ', PLU ' + f.p.plu : ''}${f.p.activo === false ? ', inactivo' : ''}</span></div></div>`, ordenar: f => f.p.descripcion },
           { titulo: 'Rubro', clase: 'ocultar-celu', valor: f => f.p.rubro, ordenar: f => f.p.rubro },
           { titulo: 'Unidad', clase: 'ocultar-celu', valor: f => f.p.unidad },
           { titulo: 'Físico', clase: 'ocultar-celu', alinear: 'der', valor: f => ui.num(f.st.fisico), ordenar: f => f.st.fisico },
@@ -754,15 +971,26 @@
         <div class="st-cabeza-texto">
           <h1 class="titulo-vista">${p.descripcion}</h1>
           <p class="bajada">${((p.marca ? p.marca + ', ' : '') + p.unidad + '. Código ' + p.codigo + (prov ? ', proveedor ' + prov.razonSocial : '') + '.').replace(/\.\.$/, '.')}</p>
-          <div class="st-etiquetas-datos">${p.activo === false ? ui.chip('Inactivo', 'neutro') : ui.chip('Activo', 'ok')}${ui.chip('IVA ' + ui.num(p.iva, p.iva % 1 ? 1 : 0) + ' %', 'neutro')}${p.vidaUtil ? ui.chip('Vida útil: ' + p.vidaUtil + ' días', p.fresco ? 'alerta' : 'neutro') : ui.chip('No vence', 'neutro')}${bajo ? ui.chip('Bajo mínimo', 'alerta') : ''}</div>
+          <div class="st-etiquetas-datos">${p.activo === false ? ui.chip('Inactivo', 'neutro') : ui.chip('Activo', 'ok')}${ui.chip('IVA ' + ui.num(p.iva, p.iva % 1 ? 1 : 0) + ' %', 'neutro')}${p.vidaUtil ? ui.chip('Vida útil: ' + p.vidaUtil + ' días', p.fresco ? 'alerta' : 'neutro') : ui.chip('No vence', 'neutro')}${p.pesable ? ui.chip('Pesable, PLU ' + p.plu, 'info') : ''}${bajo ? ui.chip('Bajo mínimo', 'alerta') : ''}</div>
           <div class="acciones">
             <button type="button" class="btn btn-primario" data-acc="ajustar">Ajustar stock</button>
             <button type="button" class="btn btn-secundario" data-acc="transferir">Transferir stock</button>
             <button type="button" class="btn btn-secundario" data-acc="editar">Editar producto</button>
-            <a class="btn btn-secundario" href="#/etiquetas/producto/${p.id}">Imprimir etiquetas</a>
+            <button type="button" class="btn btn-secundario" data-acc="etiqueta">Imprimir etiqueta</button>
+            ${p.pesable ? h`<button type="button" class="btn btn-secundario" data-acc="balanza">Etiqueta de balanza</button>` : ''}
           </div>
         </div>
-        <figure class="st-ean" style="margin:0">${ui.barcodeEAN13(p.ean, { alto: 50 })}<figcaption class="st-ean-pie"><span>EAN-13</span><span>${App.f.eanValido(p.ean) ? 'Verificador correcto' : 'Código inválido'}</span></figcaption></figure>
+        <div class="st-objetos">
+          ${p.foto
+            ? h`<figure class="st-foto"><div class="st-foto-marco">${ui.fotoProducto(p, null)}</div><figcaption>Foto de ${p.foto.sitio || 'la búsqueda'}, elegida el ${ui.fecha(p.foto.fecha)}<span class="st-foto-acc"><button type="button" data-acc="foto">Cambiar foto</button><button type="button" data-acc="quitar-foto">Quitar</button></span></figcaption></figure>`
+            : h`<div class="st-foto-vacia"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.8"/><path d="M4 17l5-4.5 3.5 3 3-2.5L20 17"/></svg><span>Sin foto en el catálogo</span><button type="button" class="btn btn-secundario btn-chico" data-acc="foto">Buscar foto en Google</button></div>`}
+          <div class="st-codigos">
+            <figure class="st-ean" style="margin:0">${ui.barcodeEAN13(p.ean, { alto: 50 })}<figcaption class="st-ean-pie"><span>EAN-13 del fabricante</span><span>${App.f.eanValido(p.ean) ? 'Verificado' : 'Código inválido'}</span></figcaption></figure>
+            ${p.codigoPropio
+              ? h`<figure class="st-ean st-propio" style="margin:0">${ui.barcodeProducto(p, { alto: 50, cual: 'propio' })}<figcaption class="st-ean-pie"><span>Propio, ${nombreTipo(App.f.tipoCodigo(p.codigoPropio))}</span><button type="button" data-acc="propio">Modificar</button></figcaption></figure>`
+              : h`<div class="st-propio-vacio"><strong>Sin código propio</strong><span>Un código de la distribuidora, numérico o con letras, para sus propias etiquetas.</span><button type="button" class="btn btn-secundario btn-chico" data-acc="propio">Crear código propio</button></div>`}
+          </div>
+        </div>
       </div>
       ${ui.franjaKpi([
         { titulo: 'Disponible para la venta', valor: ui.num(st.disponible), detalle: p.unidad, tono: bajo ? 'alerta' : st.disponible ? '' : 'peligro' },
@@ -775,11 +1003,20 @@
         <div><h2 class="seccion-titulo">Stock por depósito</h2><div data-deps></div></div>
         <div><h2 class="seccion-titulo">Precios por lista <span class="texto-2">por ${p.unidad.toLowerCase()}</span></h2><div data-precios></div></div>
       </div>
+      <div class="seccion"><h2 class="seccion-titulo">Presentaciones de venta <span class="texto-2">${p.pesable ? 'se vende por peso; la balanza imprime la etiqueta con el PLU ' + p.plu + ' y el peso. Precios lista Almacén con IVA' : 'precios de la lista Almacén con IVA; fraccionar tiene recargo'}</span></h2><div data-pres></div></div>
       <div class="seccion"><h2 class="seccion-titulo">Lotes en orden FEFO <span class="texto-2">primero vence, primero sale</span></h2><div data-lotes></div></div>
       <div class="seccion"><h2 class="seccion-titulo">Movimientos <span class="texto-2">compras, ventas, devoluciones, ajustes y transferencias</span></h2><div data-movs></div></div>`;
     el.querySelector('[data-acc=ajustar]').addEventListener('click', () => modalAjuste(p, null));
     el.querySelector('[data-acc=transferir]').addEventListener('click', () => modalTransferencia(p));
     el.querySelector('[data-acc=editar]').addEventListener('click', () => modalProducto(p));
+    el.querySelector('[data-acc=etiqueta]').addEventListener('click', () => ui.ir('#/etiquetas/producto/' + p.id + (p.codigoPropio ? '/propio' : '')));
+    const bBal = el.querySelector('[data-acc=balanza]');
+    if (bBal) bBal.addEventListener('click', () => ui.ir('#/etiquetas/balanza/' + p.id));
+    el.querySelectorAll('[data-acc=propio]').forEach(b => b.addEventListener('click', () => modalCodigoPropio(p)));
+    el.querySelectorAll('[data-acc=foto]').forEach(b => b.addEventListener('click', () => modalFoto(p)));
+    const bQuitar = el.querySelector('[data-acc=quitar-foto]');
+    if (bQuitar) bQuitar.addEventListener('click', () => quitarFoto(p));
+    el.querySelector('[data-pres]').appendChild(tablaPresentaciones(p));
 
     el.querySelector('[data-deps]').appendChild(ui.tabla({
       columnas: [

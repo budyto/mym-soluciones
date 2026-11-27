@@ -8,8 +8,9 @@
 
   const est = {
     zoom: 'ajustar',
-    g: { modo: null, items: [], rubro: 'Almacén', soloStock: true, lista: 'L2', por: 'unidad', copias: 1, termica: false, borde: true },
-    b: { tipo: 'bulto', productoId: '', dep: 'D1', loteId: '', copias: 6, bultosPallet: null, copiasPallet: 2, termica: true },
+    g: { modo: null, items: [], rubro: 'Almacén', soloStock: true, lista: 'L2', por: 'unidad', copias: 1, termica: false, borde: true, codigo: 'ean' },
+    b: { tipo: 'bulto', productoId: '', dep: 'D1', loteId: '', copias: 6, bultosPallet: null, copiasPallet: 2, termica: true, codigo: 'ean' },
+    k: { productoId: '', kilos: 0.75, lista: 'L2', copias: 1 },
     e: { clienteId: '', ids: null, porBulto: true, termica: true }
   };
 
@@ -19,6 +20,7 @@
       a4: { ancho: 63.5, alto: 38.1, cols: 3, filas: 7, padV: 15.15, padH: 7.25, gapH: 2.5, nombre: 'Hoja A4 de 21 etiquetas de 63,5 × 38,1 mm' } },
     b: { termica: { ancho: 100, alto: 70, pagina: '100mm 70mm', nombre: 'Rollo térmico 100 × 70 mm', termica: true },
       a4: { ancho: 100, alto: 70, cols: 2, filas: 4, padV: 8.5, padH: 5, gapH: 0, nombre: 'Hoja A4 de 8 etiquetas de 100 × 70 mm' } },
+    k: { termica: { ancho: 60, alto: 40, pagina: '60mm 40mm', nombre: 'Rollo térmico de balanza 60 × 40 mm', termica: true } },
     p: { termica: { ancho: 100, alto: 150, pagina: '100mm 150mm', nombre: 'Rollo térmico 100 × 150 mm', termica: true },
       a4: { ancho: 100, alto: 150, cols: 2, filas: 1, padV: 10, padH: 5, gapH: 0, nombre: 'Hoja A4 de 2 etiquetas de 100 × 150 mm' } }
   };
@@ -128,6 +130,26 @@
 .et-e-pie { margin-top: auto; display: grid; grid-template-columns: 42mm 1fr; gap: 3mm; align-items: end; font-size: 6.6pt; line-height: 1.32; }
 .et-e-pie .ean13 { width: 42mm; }
 
+/* etiqueta de balanza 60 × 40 mm: lo que pega la balanza en la pieza fraccionada */
+.et-bal { width: 60mm; height: 40mm; padding: 1.6mm 2.2mm 1.2mm; display: flex; flex-direction: column; gap: .8mm; }
+.et-bal-cab { display: flex; justify-content: space-between; gap: 2mm; font-size: 5.4pt; line-height: 1.2; color: #222; }
+.et-bal-cab b { color: #000; font-weight: 700; }
+.et-bal-desc { font-weight: 800; font-stretch: 112%; font-size: 9pt; line-height: 1.05; }
+.et-bal-datos { display: grid; grid-template-columns: .85fr 1fr 1.3fr; border-top: .35mm solid #000; border-bottom: .35mm solid #000; }
+.et-bal-datos > div { padding: .5mm 1mm .6mm 0; min-width: 0; }
+.et-bal-datos > div + div { border-left: .25mm solid #000; padding-left: 1.2mm; }
+.et-bal-datos span { display: block; font-size: 4.9pt; }
+.et-bal-datos strong { display: block; font-weight: 800; font-stretch: 108%; font-size: 7.4pt; white-space: nowrap; }
+.et-bal-datos .et-bal-importe strong { font-stretch: 112%; font-size: 8.6pt; letter-spacing: -.02em; }
+.et-bal-pie { margin-top: auto; display: grid; grid-template-columns: 31mm minmax(0, 1fr); gap: 1.6mm; align-items: end; }
+.et-bal-pie .ean13 { width: 31mm; }
+.et-bal-pie div { font-size: 5.3pt; line-height: 1.3; color: #222; }
+.et-bal-pie strong { color: #000; font-size: 6.4pt; }
+.et-aviso-cod { margin-top: 8px; }
+.et-pesos { display: flex; flex-wrap: wrap; gap: 6px; }
+.et-ean-desglose { font-size: var(--fs-12); color: var(--texto-2); line-height: 1.45; }
+.et-ean-desglose code { font: inherit; font-weight: 700; color: var(--tinta); letter-spacing: .04em; }
+
 /* ---------- impresión ---------- */
 .et-impresion .et-hoja { border: 0; margin: 0; break-after: page; }
 .et-impresion .et-hoja:last-child { break-after: auto; }
@@ -189,6 +211,22 @@
   // código interno EAN-13 del remito: prefijo 20 (uso interno), número de remito y dígito verificador
   const eanRemito = r => { const doce = '20' + String(r.numero).padStart(10, '0'); return doce + App.f.digitoEAN(doce); };
 
+  // código de barras que va en la etiqueta: el EAN del fabricante o el código propio (si el producto no tiene, va el EAN)
+  // el Code 39 es más ancho que el EAN-13: se le da más alto para que en el mismo ancho de etiqueta las barras no queden achatadas
+  function barras(p, cual, o) {
+    const c = cual === 'propio' && p.codigoPropio ? p.codigoPropio : p.ean;
+    const op = Object.assign({}, o, { cual: cual === 'propio' ? 'propio' : 'ean' });
+    if (App.f.tipoCodigo(c) === 'code39' && op.alto) op.alto = Math.round(Math.min(3, (16 * (c.length + 2) + 15) / 113) * op.alto);
+    return ui.barcodeProducto(p, op);
+  }
+  const textoCodigo = (p, cual) => cual === 'propio' && p.codigoPropio ? 'Código propio ' + p.codigoPropio : 'EAN ' + p.ean;
+  function avisoSinPropio(prods, cual) {
+    if (cual !== 'propio') return '';
+    const sin = prods.filter(p => !p.codigoPropio);
+    if (!sin.length) return '';
+    return String(h`<div class="aviso aviso-alerta et-aviso-cod">${sin.length === 1 ? '«' + sin[0].descripcion + '» no tiene código propio' : plural(sin.length, 'producto no tiene', 'productos no tienen') + ' código propio'}: se imprime su EAN del fabricante. El código propio se crea desde la ficha del producto, en Stock.</div>`);
+  }
+
   // ---------- etiquetas ----------
   function datosPrecio(p, g) {
     const pBulto = q.precioConIVA(p.id, g.lista);
@@ -210,14 +248,14 @@
       return String(h`<div class="et-lab et-t50">
         <div class="et-t50-desc et-clamp2">${p.descripcion}</div>
         <div class="et-t50-precio${d.largo ? ' et-largo' : ''}">${precioGrande(d.precio)}</div>
-        <div class="et-t50-pie"><div class="et-t50-datos"><strong>${d.unit ? 'Por unidad' : p.unidad}</strong>${d.porMedida ? h`<br>${d.porMedida}` : ''}<br>${p.codigo}, ${lista ? lista.nombre : ''}<br>${fechaCorta(App.hoy())}</div>${ui.barcodeEAN13(p.ean, { alto: 40 })}</div>
+        <div class="et-t50-pie"><div class="et-t50-datos"><strong>${d.unit ? 'Por unidad' : p.unidad}</strong>${d.porMedida ? h`<br>${d.porMedida}` : ''}<br>${p.codigo}, ${lista ? lista.nombre : ''}<br>${fechaCorta(App.hoy())}</div>${barras(p, g.codigo, { alto: 40 })}</div>
       </div>`);
     }
     return String(h`<div class="etiqueta et-g">
       <div class="etiqueta-desc">${p.descripcion}</div>
       <div class="etiqueta-marca">${p.marca}${d.unit ? ', precio por unidad' : ', ' + p.unidad}</div>
       <div class="etiqueta-pie"><div><div class="etiqueta-precio${d.largo ? ' et-largo' : ''}">${precioGrande(d.precio)}<small>${d.que}</small></div>
-        <div class="etiqueta-codigo">${d.porMedida ? h`${d.porMedida}<br>` : ''}${p.codigo}, ${fechaCorta(App.hoy())}</div></div>${ui.barcodeEAN13(p.ean, { alto: 46 })}</div>
+        <div class="etiqueta-codigo">${d.porMedida ? h`${d.porMedida}<br>` : ''}${p.codigo}, ${fechaCorta(App.hoy())}</div></div>${barras(p, g.codigo, { alto: 46 })}</div>
     </div>`);
   }
   function etiquetaBulto(p, lote, i, n) {
@@ -226,7 +264,7 @@
       <div class="et-b-desc et-clamp2">${p.descripcion}</div>
       <div class="et-b-sub">${p.marca ? p.marca + ', ' : ''}${p.unidad}${p.contenido > 1 ? ' (' + p.contenido + ' unidades)' : ''}</div>
       <div class="et-franja"><div><span>Lote</span><strong>${lote ? lote.lote : 'Sin lote'}</strong></div><div><span>Vence</span><strong>${lote && lote.vence ? ui.fecha(lote.vence) : 'No vence'}</strong></div><div><span>Contenido</span><strong>${p.contenido} u.</strong></div></div>
-      <div class="et-pie">${ui.barcodeEAN13(p.ean, { alto: 46 })}<div>Código ${p.codigo}<br>${lote ? 'Ingreso: ' + ui.fecha(lote.ingreso) : 'Rotulado: ' + ui.fecha(App.hoy())}<br>${p.pesoKg ? 'Peso aprox. ' + ui.num(p.pesoKg, 1) + ' kg' : ''}</div></div>
+      <div class="et-pie">${barras(p, est.b.codigo, { alto: 46 })}<div>Código ${p.codigo}<br>${lote ? 'Ingreso: ' + ui.fecha(lote.ingreso) : 'Rotulado: ' + ui.fecha(App.hoy())}<br>${p.pesoKg ? 'Peso aprox. ' + ui.num(p.pesoKg, 1) + ' kg' : ''}</div></div>
     </div>`);
   }
   function ocDeLote(lote) { return lote ? App.db.ordenesCompra.find(oc => oc.recepcion && (oc.recepcion.loteIds || []).includes(lote.id)) : null; }
@@ -247,7 +285,25 @@
         <div><span>Orden de compra</span><strong>${oc ? oc.nro : '–'}</strong></div>
         <div class="et-ancho"><span>Proveedor</span><strong>${prov ? prov.razonSocial : '–'}</strong></div>
       </div>
-      <div class="et-p-pie">${ui.barcodeEAN13(p.ean, { alto: 54 })}<div>No apilar más de 2 pallets.<br>Primero que vence, primero que sale.<div class="et-firma">Armado y control</div></div></div>
+      <div class="et-p-pie">${barras(p, est.b.codigo, { alto: 54 })}<div>No apilar más de 2 pallets.<br>Primero que vence, primero que sale.<div class="et-firma">Armado y control</div></div></div>
+    </div>`);
+  }
+  // etiqueta de balanza: precio por kilo de la lista (con el recargo de la venta por kilo) por el peso; el código lleva PLU y gramos
+  function datosBalanza(p, k) {
+    const pk = App.presentacionDe(p, 'kg');
+    const porKilo = App.r2(q.precioConIVA(p.id, k.lista) * (1 + ((pk && pk.id === 'kg' ? pk.recargo : 0) || 0) / 100));
+    const kilos = Math.round((Number(k.kilos) || 0) * 1000) / 1000;
+    return { porKilo, kilos, importe: App.r2(porKilo * kilos), ean: App.f.eanBalanza(p.plu, kilos) };
+  }
+  function etiquetaBalanza(p, k) {
+    const d = datosBalanza(p, k);
+    // la pieza fraccionada vence antes que la entera: hasta 30 días o la vida útil, si es menor
+    const vence = p.vidaUtil ? App.f.sumar(App.hoy(), Math.min(p.vidaUtil, 30)) : null;
+    return String(h`<div class="et-lab et-bal">
+      <div class="et-bal-cab"><span><b>${App.config.negocio}</b></span><span>Envasado ${fechaCorta(App.hoy())}</span></div>
+      <div class="et-bal-desc et-clamp2">${p.descripcion}</div>
+      <div class="et-bal-datos"><div><span>Peso neto</span><strong>${ui.num(d.kilos, 3)} kg</strong></div><div><span>Precio por kg</span><strong>${ui.pesos(d.porKilo)}</strong></div><div class="et-bal-importe"><span>Importe</span><strong>${ui.pesos(d.importe)}</strong></div></div>
+      <div class="et-bal-pie">${ui.barcodeEAN13(d.ean, { alto: 34 })}<div><strong>PLU ${p.plu}</strong><br>${p.marca}${vence ? h`<br>Consumir antes del ${fechaCorta(vence)}` : ''}<br>Conservar refrigerado</div></div>
     </div>`);
   }
   function etiquetaEnvio(r, i, n) {
@@ -360,6 +416,7 @@
     if (g.modo === 'mano' && !g.items.length) {
       g.items = productosActivos().slice().sort((a, b) => b.popularidad - a.popularidad).slice(0, 6).map(p => ({ id: p.id, copias: 1 }));
     }
+    let avisoCod = null;
     function generar() {
       const f = FORMATOS.g[g.termica ? 'termica' : 'a4'];
       let lista;
@@ -367,6 +424,7 @@
       else if (g.modo === 'rubro') lista = productosActivos().filter(p => p.rubro === g.rubro && (!g.soloStock || q.stock(p.id).disponible > 0)).map(p => ({ p, copias: g.copias }));
       else lista = cambiaron().map(p => ({ p, copias: g.copias }));
       const etiquetas = [];
+      if (avisoCod) avisoCod.innerHTML = avisoSinPropio(lista.map(x => x.p), g.codigo);
       lista.forEach(x => { const html = etiquetaGondola(x.p, g); for (let i = 0; i < Math.max(0, Math.min(99, x.copias || 0)); i++) etiquetas.push(html); });
       return { etiquetas, f, clase: !g.termica && !g.borde ? 'et-sin-borde' : '',
         vacio: g.modo === 'cambio' ? 'No hay precios cambiados desde la última lista.' : g.modo === 'rubro' ? 'El rubro no tiene productos con stock.' : 'Sin productos seleccionados. Pueden agregarse con el buscador.' };
@@ -385,6 +443,7 @@
             <div class="campo"><span class="etiqueta-campo">Precio grande</span>${segmentado('por', [['unidad', 'Por unidad'], ['bulto', 'Por bulto o caja']], g.por, 'Precio grande')}
               <span class="campo-ayuda">IVA incluido. Debajo se muestra el precio por kilo o por litro cuando la descripción indica el contenido.</span></div>
           </div>
+          <div class="et-bloque"><h3>Código a imprimir</h3>${segmentado('codigo', [['ean', 'EAN del fabricante'], ['propio', 'Código propio']], g.codigo, 'Código a imprimir')}<div data-aviso-cod></div></div>
           <div class="et-bloque"><h3>Papel</h3>${segmentado('papel', [['a4', 'Hoja A4 (21)'], ['termica', 'Térmica 50 × 30']], g.termica ? 'termica' : 'a4', 'Papel')}
             ${!g.termica ? h`<label class="check"><input type="checkbox" data-borde${g.borde ? ' checked' : ''}> Marcar borde de corte (papel común)</label>` : ''}</div>`;
         const cuerpo = el.querySelector('[data-cuerpo]');
@@ -402,6 +461,8 @@
         }
         alSegmentado(el, 'modo', v => { g.modo = v; if (v === 'mano' && !g.items.length) g.items = []; pintar(); redibujar(); });
         alSegmentado(el, 'por', v => { g.por = v; redibujar(); });
+        avisoCod = el.querySelector('[data-aviso-cod]');
+        alSegmentado(el, 'codigo', v => { g.codigo = v; if (g.modo === 'mano') pintar(); redibujar(); });
         alSegmentado(el, 'papel', v => { g.termica = v === 'termica'; pintar(); redibujar(); });
         el.querySelector('#eg-lista').addEventListener('change', e => { g.lista = e.target.value; if (g.modo === 'cambio') pintar(); redibujar(); });
         const cop = el.querySelector('#eg-copias');
@@ -410,7 +471,7 @@
         if (bo) bo.addEventListener('change', () => { g.borde = bo.checked; redibujar(); });
       }
       function cuerpoMano(cuerpo) {
-        cuerpo.innerHTML = `<label class="solo-lector" for="eg-buscar">Buscar producto</label><input id="eg-buscar" type="search" autocomplete="off" placeholder="Buscar por nombre, código o EAN">
+        cuerpo.innerHTML = `<label class="solo-lector" for="eg-buscar">Buscar producto</label><input id="eg-buscar" type="search" autocomplete="off" placeholder="Buscar por nombre, código, EAN o código propio">
           <ul class="et-lista" data-res></ul><ul class="et-lista" data-eleg></ul>
           <div class="fila separar" style="margin-top:8px"><span class="nota-discreta" data-cuantos></span><button type="button" class="btn btn-fantasma btn-chico" data-vaciar>Quitar todos</button></div>`;
         const res = cuerpo.querySelector('[data-res]'), eleg = cuerpo.querySelector('[data-eleg]'), input = cuerpo.querySelector('#eg-buscar');
@@ -418,7 +479,7 @@
           eleg.innerHTML = '';
           g.items.forEach(it => {
             const p = App.get('productos', it.id); if (!p) return;
-            const li = ui.nodo(h`<li><span class="et-item-txt">${p.descripcion}<small>${p.codigo}, ${ui.pesos(datosPrecio(p, g).precio)} ${datosPrecio(p, g).unit ? 'la unidad' : 'el bulto'}</small></span>
+            const li = ui.nodo(h`<li><span class="et-item-txt">${p.descripcion}<small>${p.codigo}, ${ui.pesos(datosPrecio(p, g).precio)} ${datosPrecio(p, g).unit ? 'la unidad' : 'el bulto'}${g.codigo === 'propio' ? (p.codigoPropio ? ', propio ' + p.codigoPropio : ', sin código propio') : ''}</small></span>
               <input type="number" min="1" max="99" step="1" value="${it.copias}" aria-label="Copias de ${p.descripcion}" title="Copias">
               <button type="button" class="et-quitar" aria-label="Quitar ${p.descripcion}">×</button></li>`);
             li.querySelector('input').addEventListener('input', e => { it.copias = Math.max(0, Math.min(99, Math.round(Number(e.target.value) || 0))); redibujar(); });
@@ -430,7 +491,7 @@
         function buscar(t) {
           res.innerHTML = '';
           if (!t) return;
-          productosActivos().filter(p => !g.items.some(it => it.id === p.id) && ui.coincide(t, p.descripcion, p.codigo, p.ean, p.marca)).slice(0, 6).forEach(p => {
+          productosActivos().filter(p => !g.items.some(it => it.id === p.id) && ui.coincide(t, p.descripcion, p.codigo, p.ean, p.marca, p.codigoPropio, p.plu)).slice(0, 6).forEach(p => {
             const li = ui.nodo(h`<li><span class="et-item-txt">${p.descripcion}<small>${p.codigo}, EAN ${p.ean}</small></span><button type="button" class="btn btn-secundario btn-chico">Agregar</button></li>`);
             li.querySelector('button').addEventListener('click', () => { g.items.push({ id: p.id, copias: 1 }); buscar(ui.normalizar(input.value).trim()); pintarElegidos(); redibujar(); input.focus(); });
             res.appendChild(li);
@@ -496,10 +557,12 @@
                 <span class="campo-ayuda">Se recomiendan dos: una en cada cara del pallet visible desde el pasillo.</span>`}
             ${p && lote ? h`<p class="nota-discreta" style="margin:0">Existencia del lote ${lote.lote}: ${ui.num(lote.cantidad)} (${p.unidad}) en ${nombreDep(lote.depositoId)}.</p>` : ''}
           </div>
+          <div class="et-bloque"><h3>Código a imprimir</h3>${segmentado('codigo', [['ean', 'EAN del fabricante'], ['propio', 'Código propio']], b.codigo, 'Código a imprimir')}${p ? ui.seguro(avisoSinPropio([p], b.codigo)) : ''}</div>
           <div class="et-bloque"><h3>Papel</h3>${segmentado('papel', b.tipo === 'pallet' ? [['termica', 'Térmica 100 × 150'], ['a4', 'Hoja A4 (2)']] : [['termica', 'Térmica 100 × 70'], ['a4', 'Hoja A4 (8)']], b.termica ? 'termica' : 'a4', 'Papel')}</div>
           <div class="et-bloque"><h3>Ingresos recientes</h3><ul class="et-lista" data-recientes></ul></div>`;
         alSegmentado(el, 'tipo', v => { b.tipo = v; pintar(); redibujar(); });
         alSegmentado(el, 'papel', v => { b.termica = v === 'termica'; redibujar(); });
+        alSegmentado(el, 'codigo', v => { b.codigo = v; pintar(); redibujar(); });
         el.querySelector('#eb-prod').addEventListener('change', e => { b.productoId = e.target.value; b.loteId = ''; b.bultosPallet = null; pintar(); redibujar(); });
         el.querySelector('#eb-dep').addEventListener('change', e => { b.dep = e.target.value; b.loteId = ''; b.bultosPallet = null; pintar(); redibujar(); });
         el.querySelector('#eb-lote').addEventListener('change', e => { b.loteId = e.target.value; b.bultosPallet = null; pintar(); redibujar(); });
@@ -527,6 +590,58 @@
   function lotesRecientes() {
     return App.db.lotes.filter(l => l.cantidad > 0 && l.origen === 'compra' && l.ingreso >= App.config.desde && App.get('productos', l.productoId))
       .sort((a, b) => a.ingreso < b.ingreso ? 1 : a.ingreso > b.ingreso ? -1 : 0);
+  }
+
+  // ---------- pestaña balanza (pesables) ----------
+  const pesables = () => productosActivos().filter(p => p.pesable && p.plu);
+  function tabBalanza(panel) {
+    const k = est.k;
+    const lista = pesables();
+    if (!lista.length) { panel.appendChild(ui.nodo('<div class="vacio">No hay productos pesables. Un producto pesable lleva su PLU de 4 dígitos, el código de la balanza, y se vende por kilo.</div>')); return; }
+    if (!k.productoId || !lista.some(p => p.id === k.productoId)) k.productoId = lista[0].id;
+    function generar() {
+      const p = App.get('productos', k.productoId);
+      const f = FORMATOS.k.termica;
+      const etiquetas = [];
+      if (p && k.kilos > 0) { const html = etiquetaBalanza(p, k); for (let i = 0; i < Math.max(0, Math.min(99, k.copias || 0)); i++) etiquetas.push(html); }
+      return { etiquetas, f, vacio: 'Falta indicar el peso en kilos.' };
+    }
+    function config(el, redibujar) {
+      const decimales = n => n % 1 ? (Math.round(n * 100) % 10 ? 2 : 1) : 0;
+      function desglose() {
+        const p = App.get('productos', k.productoId);
+        const d = datosBalanza(p, k);
+        const c = d.ean;
+        return h`<p class="et-ean-desglose" style="margin:0">Código de la etiqueta: <code>${c}</code><br>${c.slice(0, 2)} pesable, ${c.slice(2, 6)} PLU, ${c.slice(6, 7)} control, ${c.slice(7, 12)} gramos y ${c.slice(12)} verificador. La caja lee el código y sabe qué producto es y cuánto pesa.</p>
+          <p class="nota-discreta" style="margin:6px 0 0">${ui.pesos(d.porKilo)} el kilo (lista ${(App.get('listasPrecio', k.lista) || {}).nombre}, con IVA y el recargo de la venta por kilo). Importe: ${ui.pesos(d.importe)}.</p>`;
+      }
+      function pintar() {
+        const p = App.get('productos', k.productoId);
+        const piezas = App.presentaciones(p).filter(x => x.id !== 'kg');
+        el.innerHTML = h`
+          <div class="et-bloque et-campos">
+            <div class="campo"><label for="ek-prod">Producto pesable</label><select id="ek-prod">${lista.map(x => h`<option value="${x.id}"${x.id === k.productoId ? ' selected' : ''}>${x.descripcion} (PLU ${x.plu})</option>`)}</select></div>
+            <div class="et-campos-2">
+              <div class="campo"><label for="ek-kilos">Peso (kg)</label><input id="ek-kilos" type="number" inputmode="decimal" min="0.005" max="99.999" step="0.005" value="${k.kilos}"></div>
+              <div class="campo"><label for="ek-copias">Etiquetas</label><input id="ek-copias" type="number" min="1" max="99" step="1" value="${k.copias}"></div>
+            </div>
+            ${piezas.length ? h`<div class="et-pesos" role="group" aria-label="Peso de una presentación">${piezas.map(x => h`<button type="button" class="btn btn-fantasma btn-chico" data-kilos="${x.factor}">${x.nombre.replace(/\s*\(.*\)/, '')}: ${ui.num(x.factor, decimales(x.factor))} kg</button>`)}</div>` : ''}
+            <div class="campo"><label for="ek-lista">Lista de precios</label><select id="ek-lista">${ui.opciones(App.db.listasPrecio, 'id', 'nombre', k.lista)}</select></div>
+          </div>
+          <div class="et-bloque" data-desglose>${desglose()}</div>
+          <div class="et-bloque"><h3>Papel</h3><p class="nota-discreta" style="margin:0">Rollo térmico de balanza, 60 × 40 mm. En el sistema real la balanza imprime sola al pesar; desde acá se reimprime o se rotula una pieza pesada aparte.</p></div>`;
+        const refrescar = () => { el.querySelector('[data-desglose]').innerHTML = String(desglose()); redibujar(); };
+        el.querySelector('#ek-prod').addEventListener('change', e => { k.productoId = e.target.value; pintar(); redibujar(); });
+        el.querySelector('#ek-lista').addEventListener('change', e => { k.lista = e.target.value; refrescar(); });
+        const kil = el.querySelector('#ek-kilos');
+        kil.addEventListener('input', () => { k.kilos = Math.max(0, Math.min(99.999, Number(kil.value) || 0)); refrescar(); });
+        const cop = el.querySelector('#ek-copias');
+        cop.addEventListener('input', () => { k.copias = Math.max(0, Math.min(99, Math.round(Number(cop.value) || 0))); redibujar(); });
+        el.querySelectorAll('[data-kilos]').forEach(b => b.addEventListener('click', () => { k.kilos = Number(b.dataset.kilos); kil.value = k.kilos; refrescar(); }));
+      }
+      pintar();
+    }
+    mesa(panel, config, generar);
   }
 
   // ---------- pestaña envíos ----------
@@ -588,7 +703,11 @@
       const id = params[1];
       est.g.modo = 'mano';
       est.g.items = [{ id, copias: 1 }].concat(est.g.items.filter(it => it.id !== id));
+      est.g.codigo = params[2] === 'propio' ? 'propio' : 'ean';
       activa = 'gondola';
+    } else if (params[0] === 'balanza' && App.get('productos', params[1])) {
+      est.k.productoId = params[1];
+      activa = 'balanza';
     } else if (params[0] === 'remito' && App.get('remitos', params[1])) {
       est.e.ids = [params[1]]; est.e.clienteId = '';
       activa = 'envios';
@@ -597,12 +716,13 @@
     const cam = cambiaron().length;
     el.innerHTML = h`
       <div class="encabezado-vista"><div><h1 class="titulo-vista">Etiquetas y códigos</h1>
-        <p class="bajada">Etiquetas de góndola, rótulos de bulto y de pallet, y rótulos de envío, con código de barras EAN-13 compatible con cualquier lector. Vista previa en tamaño real antes de imprimir.</p></div></div>
+        <p class="bajada">Etiquetas de góndola, rótulos de bulto y de pallet, etiquetas de balanza para pesables y rótulos de envío, con el EAN-13 del fabricante o el código propio de la distribuidora. Vista previa en tamaño real antes de imprimir.</p></div></div>
       ${cam ? h`<div class="aviso aviso-alerta" style="margin-bottom:16px">${plural(cam, 'producto cambió', 'productos cambiaron')} de precio desde la última lista: corresponde reimprimir sus etiquetas de góndola para que el precio exhibido coincida con el facturado.</div>` : ''}
       <div data-pestanas></div>`;
     ui.pestanas(el.querySelector('[data-pestanas]'), [
       { id: 'gondola', titulo: 'Góndola', render: tabGondola },
       { id: 'bulto', titulo: 'Bulto y pallet', render: tabBulto },
+      { id: 'balanza', titulo: 'Balanza', render: tabBalanza },
       { id: 'envios', titulo: 'Rótulos de envío', cuenta: remitosAbiertos().length, render: tabEnvios }
     ], { clave: 'etiquetas', activa: activa || undefined });
   }

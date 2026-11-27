@@ -802,8 +802,73 @@
   }
   const liquidado = {}, anticipo = {};
 
+  // ---------- lo que pidió Leandro en la reunión (27/11) ----------
+  // Fiambres y quesos pesables (PLU de 4 dígitos de la balanza en el código), insumos y dos recetas de producción.
+  // Se cargan después de la historia, por las mismas acciones, así el stock, la cuenta del proveedor y los asientos cierran.
+  const PESABLES = [
+    // id, descripción, marca, PLU, costo por kg, días de vida, presentaciones [id, nombre, kilos, recargo %]
+    ['p71', 'Queso de máquina en barra', 'Tambo Las Lomas', '2101', 9800, 60, [['kg', 'Por kilo', 1, 8], ['u', 'Barra (3,2 kg aprox.)', 3.2, 3], ['cj', 'Caja x 4 barras', 12.8, 0]]],
+    ['p72', 'Jamón cocido natural', 'Frigorífico Pampeano', '2205', 12400, 45, [['kg', 'Por kilo', 1, 8], ['u', 'Pieza (4,5 kg aprox.)', 4.5, 3], ['cj', 'Caja x 2 piezas', 9, 0]]],
+    ['p73', 'Salame tandilero', 'Frigorífico Pampeano', '2310', 15800, 90, [['kg', 'Por kilo', 1, 8], ['u', 'Unidad (300 g aprox.)', 0.3, 6], ['pk', 'Pack x 6', 1.8, 3], ['cj', 'Caja x 24', 7.2, 0]]],
+    ['p74', 'Mortadela con pistacho', 'Frigorífico Pampeano', '2412', 7600, 40, [['kg', 'Por kilo', 1, 8], ['u', 'Pieza (4 kg aprox.)', 4, 3], ['cj', 'Caja x 2 piezas', 8, 0]]]
+  ];
+  const INSUMOS = [
+    // id, descripción, marca, unidad, contenido, costo, vida, proveedor
+    ['p75', 'Maní crudo pelado a granel', 'Tostadero Sur', 'Bolsa x 25 kg', 25, 62500, 180, 'v2'],
+    ['p76', 'Bolsa impresa 500 g', 'Envases del Centro', 'Paquete x 100', 100, 9000, null, 'v9'],
+    ['p77', 'Caja de cartón corrugado', 'Envases del Centro', 'Atado x 25', 25, 21250, null, 'v9'],
+    ['p78', 'Caja navideña impresa', 'Envases del Centro', 'Atado x 20', 20, 36000, null, 'v9']
+  ];
+  function extras(App) {
+    const A = App.acciones, db = App.db, F = App.f;
+    const porNombre = t => db.productos.find(p => p.descripcion === t).id;
+    A.guardarMaestro('proveedores', { id: 'v9', codigo: 'PR-209', razonSocial: 'Envases del Centro S.R.L.', cuit: cuit(30, 71584236), condicionIVA: 'RI', marcas: ['Envases del Centro'], plazo: 30,
+      direccion: 'Parque Industrial Villa María, lote 31, Villa María, Córdoba', email: 'ventas@envasesdelcentro.com.ar', telefono: '(0353) 453-2210' });
+    const precios = (costo, factor) => { const r = {}; LISTAS.forEach(l => { r[l.id] = Math.round(costo * (1 + l.recargo * factor)); }); return r; };
+    const ean = (n) => { const doce = '779' + '4471' + String(10000 + n * 113).slice(-5); return doce + digitoEAN(doce); };
+    PESABLES.forEach((t, i) => {
+      const [id, descripcion, marca, plu, costo, vida, pres] = t;
+      A.guardarMaestro('productos', { id, codigo: 'LAC-' + plu, plu, pesable: true, ean: ean(70 + i), descripcion, marca, rubro: 'Lácteos y frescos', unidad: 'kg', contenido: 1, iva: 21, costo,
+        precios: precios(costo, 1.0), proveedorId: 'v5', vidaUtil: vida, fresco: true, popularidad: 0.8, minimo: 0, activo: true, escalaBonif: [], pesoKg: 1,
+        presentaciones: pres.map(x => ({ id: x[0], nombre: x[1], factor: x[2], recargo: x[3], pesable: x[0] === 'kg' })) });
+    });
+    INSUMOS.forEach((t, i) => {
+      const [id, descripcion, marca, unidad, contenido, costo, vida, prov] = t;
+      A.guardarMaestro('productos', { id, codigo: 'INS-' + String(i + 1).padStart(3, '0'), ean: ean(80 + i), descripcion, marca, rubro: 'Insumos de producción', unidad, contenido, iva: 21, costo,
+        precios: precios(costo, 0.5), proveedorId: prov, vidaUtil: vida, fresco: false, popularidad: 0, minimo: 0, activo: true, escalaBonif: [], pesoKg: 1, insumo: true });
+    });
+    // productos propios que salen de producción
+    A.guardarMaestro('productos', { id: 'p79', codigo: 'GOL-101', ean: ean(90), descripcion: 'Maní tostado salado 500 g', marca: 'Del Centro', rubro: 'Golosinas', unidad: 'Caja x 20', contenido: 20, iva: 21,
+      costo: 29100, precios: precios(29100, 1.3), proveedorId: 'v2', vidaUtil: 120, fresco: false, popularidad: 0.7, minimo: 0, activo: true, escalaBonif: [], pesoKg: 10.6, propio: true });
+    A.guardarMaestro('productos', { id: 'p80', codigo: 'GOL-102', ean: ean(91), descripcion: 'Caja navideña Clásica', marca: 'Del Centro', rubro: 'Golosinas', unidad: 'Caja', contenido: 1, iva: 21,
+      costo: 15700, precios: precios(15700, 1.3), proveedorId: 'v2', vidaUtil: 120, fresco: false, popularidad: 0.6, minimo: 0, activo: true, escalaBonif: [], pesoKg: 2.1, propio: true });
+
+    // compras del 23/11: fiambres a la láctea, maní al tostadero, envases a Envases del Centro
+    const comprar = (prov, items) => { const oc = A.crearOrdenCompra({ proveedorId: prov, items, fecha: '2026-11-23', depositoId: 'D1' });
+      A.recibirCompra(oc.id, { fecha: '2026-11-23', depositoId: 'D1', factura: { tipo: 'A', numero: '0004-000' + (31200 + oc.numero % 1000), fecha: '2026-11-23' } }); };
+    comprar('v5', [{ productoId: 'p71', cantidad: 64 }, { productoId: 'p72', cantidad: 54 }, { productoId: 'p73', cantidad: 21.6 }, { productoId: 'p74', cantidad: 32 }]);
+    comprar('v2', [{ productoId: 'p75', cantidad: 20 }]);
+    comprar('v9', [{ productoId: 'p76', cantidad: 10 }, { productoId: 'p77', cantidad: 4 }, { productoId: 'p78', cantidad: 3 }]);
+    // lo que lleva la caja navideña, para tener stock en el Depósito Central
+    comprar('v8', [{ productoId: porNombre('Turrón de maní'), cantidad: 2 }, { productoId: porNombre('Chocolate con leche 100 g'), cantidad: 3 }, { productoId: porNombre('Alfajor triple chocolate'), cantidad: 6 }]);
+    comprar('v2', [{ productoId: porNombre('Yerba mate suave 500 g'), cantidad: 3 }, { productoId: porNombre('Café molido 500 g'), cantidad: 4 }]);
+
+    // recetas: una tanda de maní son 10 cajas (incluye 5 % de merma del tostado); una tanda de cajas navideñas, 20 cajas
+    const mani = A.guardarReceta({ nombre: 'Maní tostado salado 500 g', productoId: 'p79', rinde: 10, nota: 'Incluye 5 % de merma del tostado. Tostar a 160 °C, salar en caliente y embolsar frío.',
+      insumos: [{ productoId: 'p75', cantidad: 4.2 }, { productoId: porNombre('Sal fina 500 g'), cantidad: 0.2 }, { productoId: 'p76', cantidad: 2 }, { productoId: 'p77', cantidad: 0.4 }],
+      otrosCostos: [{ concepto: 'Mano de obra (4 horas)', importe: 38000 }, { concepto: 'Gas del tostador', importe: 9500 }, { concepto: 'Energía eléctrica', importe: 4200 }] });
+    A.guardarReceta({ nombre: 'Caja navideña Clásica', productoId: 'p80', rinde: 20, nota: 'Armado a mano. Cada caja: 2 turrones, 1 chocolate, 3 alfajores, 1 yerba 500 g, 1 café, 1 maní tostado y la caja impresa.',
+      insumos: [{ productoId: porNombre('Turrón de maní'), cantidad: 0.8 }, { productoId: porNombre('Chocolate con leche 100 g'), cantidad: 1 }, { productoId: porNombre('Alfajor triple chocolate'), cantidad: 2.5 },
+        { productoId: porNombre('Yerba mate suave 500 g'), cantidad: 1 }, { productoId: porNombre('Café molido 500 g'), cantidad: 1.6667 }, { productoId: 'p79', cantidad: 1 }, { productoId: 'p78', cantidad: 1 }],
+      otrosCostos: [{ concepto: 'Armado (2 horas)', importe: 19000 }, { concepto: 'Cinta y tarjeta', importe: 6000 }] });
+    // ya se tostaron 2 tandas de maní el 24/11
+    A.producir({ recetaId: mani.id, tandas: 2, depositoId: 'D1', fecha: '2026-11-24', obs: 'Primera producción de la marca propia' });
+    void F;
+  }
+
   window.SEMILLA = {
     config: CONFIG, maestros, historia: function (App) { for (const k in liquidado) delete liquidado[k]; for (const k in anticipo) delete anticipo[k]; return historia(App); },
+    extras,
     util: { cuit, digitoEAN, azar }
   };
 })();

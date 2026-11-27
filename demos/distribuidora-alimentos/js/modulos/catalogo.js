@@ -34,6 +34,11 @@
       .catm-seg { max-width: 100%; overflow-x: auto; }
       .catm-seg button { white-space: nowrap; flex: none; }
       .catm-pie-form { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 18px; }
+      .catm-fotos { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+      .catm-foto { margin: 0; min-width: 0; display: grid; gap: 3px; text-decoration: none; color: inherit; }
+      .catm-foto span { aspect-ratio: 1; border: 1px solid var(--linea); border-radius: var(--r-control); overflow: hidden; background: #fff; display: block; }
+      .catm-foto svg { width: 100%; height: 100%; display: block; }
+      .catm-foto small { font-size: var(--fs-12); color: var(--texto-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     `;
     document.head.appendChild(s);
   }
@@ -182,11 +187,15 @@
       const c = leerForm();
       const ps = App.db.productos.filter(p => p.activo !== false && c.rubros.includes(p.rubro));
       const sinStock = ps.filter(p => App.q.stock(p.id, 'D1').disponible <= 0).length;
+      const fotos = ps.filter(p => p.foto);
       vista.innerHTML = String(h`<div class="panel-titulo">Vista del cliente</div>
         <div class="catm-bulto"><i></i><span><span class="cifra">${ui.num(ps.length)}</span> productos en ${c.rubros.length} ${c.rubros.length === 1 ? 'rubro' : 'rubros'}</span></div>
         <div class="texto-2">${sinStock ? sinStock + ' aparecen «Sin stock» en el Depósito Central.' : 'Todos tienen stock en el Depósito Central.'}</div>
         <div class="texto-2">Sin identificarse accede a la lista ${nombreLista(c.listaId)}. Compra mínima: ${ui.pesos(c.minimo)}.</div>
         ${!c.rubros.length ? h`<div class="aviso aviso-peligro">Sin rubros seleccionados el catálogo queda vacío.</div>` : ''}
+        ${fotos.length ? h`<div class="texto-2">${fotos.length === 1 ? '1 producto se muestra' : fotos.length + ' productos se muestran'} con su foto; ${ps.length - fotos.length === 1 ? 'el otro, con el bulto dibujado' : 'los otros ' + ui.num(ps.length - fotos.length) + ', con el bulto dibujado'}.</div>
+          <div class="catm-fotos">${fotos.slice(0, 8).map(p => h`<a class="catm-foto" href="#/stock/producto/${p.id}" title="${p.descripcion}"><span>${ui.fotoProducto(p, null)}</span><small>${p.descripcion}</small></a>`)}</div>`
+          : h`<div class="texto-2">Ningún producto tiene foto todavía: se muestra el bulto dibujado. La foto se busca desde la ficha del producto, en Stock e inventario.</div>`}
         <a class="btn btn-secundario" href="catalogo.html" target="_blank" rel="noopener">Abrir catálogo como cliente</a>`);
     }
     form.addEventListener('input', previa);

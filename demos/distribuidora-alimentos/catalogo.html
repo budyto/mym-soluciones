@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap">
-  <link rel="stylesheet" href="css/app.css?v=202611261210">
+  <link rel="stylesheet" href="css/app.css?v=202611271500">
   <style>
     /* Catálogo público: celular primero. Lo memorable es el bulto dibujado (cartón corrugado con su rótulo);
        todo lo demás usa los componentes de app.css. Clases propias con prefijo cat-. */
@@ -112,6 +112,10 @@
     .cat-bulto-sello { position: absolute; left: 8%; bottom: 5%; font-stretch: 112%; font-weight: 800; font-size: 11px; color: #5E4219;
       border: 1.5px solid #5E4219; border-radius: 2px; padding: 1px 5px; opacity: .8; transform: rotate(-1.5deg); white-space: nowrap; }
     .cat-bulto-codigo { position: absolute; right: 8%; bottom: 6%; font-size: 10px; color: #5E4219; opacity: .8; }
+    /* con foto elegida en la ficha del producto: la foto ocupa el lugar del bulto */
+    .cat-foto { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: #fff; border-bottom: 1px solid var(--linea-suave); display: grid; place-items: center; }
+    .cat-foto svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+    .cat-foto .cat-bulto-codigo { color: var(--texto-2); opacity: 1; z-index: 1; }
     .cat-bulto[data-r="Bebidas"] { --c: var(--cat-bebidas); }
     .cat-bulto[data-r="Lácteos y frescos"] { --c: var(--cat-lacteos); }
     .cat-bulto[data-r="Limpieza"] { --c: var(--cat-limpieza); }
@@ -188,7 +192,8 @@
     body.con-carrito .toasts { bottom: 84px; }
     body.carrito-abierto .toasts { top: 70px; bottom: auto; }
     @media (max-width: 619px) {
-      .cat-bulto { aspect-ratio: auto; height: 92px; }
+      .cat-bulto, .cat-foto { aspect-ratio: auto; height: 92px; }
+      .cat-foto svg { position: static; width: auto; height: 100%; aspect-ratio: 1; }
       .cat-rotulo { top: 18%; bottom: 28%; padding: 3% 6% 2% 7%; }
       .cat-rotulo-nombre { font-size: 16px; }
     }
@@ -259,8 +264,8 @@
 
   <footer class="cat-pie"><div class="cat-pie-in"><span data-pie>Demo hecha por MyM Soluciones para Leandro · noviembre 2026</span><span id="pie-contacto"></span></div></footer>
 
-  <script src="js/datos.js?v=202611261210"></script>
-  <script src="js/nucleo.js?v=202611261210"></script>
+  <script src="js/datos.js?v=202611271500"></script>
+  <script src="js/nucleo.js?v=202611271500"></script>
   <script>
   (function () {
     'use strict';
@@ -351,6 +356,8 @@
     // ---------- piezas de interfaz ----------
     const FLECHAS = '<svg class="cat-bulto-flechas" viewBox="0 0 26 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 15V3M2.5 7.5L7 3l4.5 4.5M19 15V3M14.5 7.5L19 3l4.5 4.5"/></svg>';
     function bulto(p) {
+      // la foto es cuadrada: se recorta arriba y abajo para llenar el recuadro 4:3 de la tarjeta
+      if (p.foto) return h`<div class="cat-foto">${ui.seguro(String(ui.fotoProducto(p, null)).replace('<svg ', '<svg preserveAspectRatio="xMidYMid slice" '))}<span class="cat-bulto-codigo">${p.codigo}</span></div>`;
       const n = partirNombre(p.descripcion);
       return h`<div class="cat-bulto" data-r="${p.rubro}" role="img" aria-label="${p.descripcion}, ${p.unidad}">${ui.seguro(FLECHAS)}
         <div class="cat-rotulo"><span class="cat-rotulo-rubro">${p.rubro}</span><span class="cat-rotulo-nombre">${n.medida || p.unidad}</span><span class="cat-rotulo-medida">${p.marca}</span></div>
