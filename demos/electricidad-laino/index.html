@@ -8,7 +8,7 @@
 <meta name="description" content="Casa de electricidad, telefonía e iluminación en Flores desde hace más de 45 años. Lámparas, teléfonos, porteros, soportes de TV, pilas y service. Av. Bonorino 81.">
 <meta property="og:title" content="Electricidad y Telefonía Laino · Flores">
 <meta property="og:description" content="Electricidad, telefonía e iluminación con asesoramiento. Consultas por WhatsApp.">
-<meta property="og:image" content="img/portada.jpg">
+<meta property="og:image" content="img/frente-local.jpg">
 <meta name="theme-color" content="#06111e">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,7 +20,7 @@
 "geo":{"@type":"GeoCoordinates","latitude":-34.6288422,"longitude":-58.4595437},
 "openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],"opens":"09:30","closes":"19:00"},{"@type":"OpeningHoursSpecification","dayOfWeek":"Sunday","opens":"09:00","closes":"17:00"}],
 "aggregateRating":{"@type":"AggregateRating","ratingValue":"4.2","reviewCount":"31"},
-"image":"img/portada.jpg","sameAs":["https://www.instagram.com/electricidad.laino/"]}
+"image":"img/frente-local.jpg","sameAs":["https://www.instagram.com/electricidad.laino/"]}
 </script>
 <style>
 /* Layout: noche azul eléctrica. Cinta de datos, portada con el folleto, cinta de rubros, pasos, rubros por problema, mostrador, horario, llamado, opiniones al final y pie con el nombre gigante. */
@@ -160,11 +160,9 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 
 /* Inventario: fotos reales del local y lista por rubro con buscador */
 .inventario { padding-block: 72px; border-top: 1px solid var(--linea); }
-.inv-fotos { display: grid; grid-template-columns: 1.3fr 1fr 1fr; gap: 12px; margin-top: 36px; }
+.inv-fotos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 36px; }
 .inv-fotos figure { margin: 0; position: relative; border-radius: 16px; overflow: hidden; border: 1px solid var(--linea); background: var(--panel); }
-.inv-fotos figure:first-child { grid-row: span 2; }
 .inv-fotos img { width: 100%; height: 100%; object-fit: cover; aspect-ratio: 4 / 3; }
-.inv-fotos figure:first-child img { aspect-ratio: auto; }
 .inv-fotos figcaption { position: absolute; left: 10px; bottom: 10px; background: rgba(6,17,30,.86); padding: 5px 10px; border-radius: 8px; font: 600 13px var(--etiqueta); letter-spacing: .04em; }
 .inv-buscar { margin-top: 36px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
 .inv-buscar label { font: 700 13px var(--etiqueta); letter-spacing: .12em; text-transform: uppercase; color: var(--celeste); }
@@ -190,7 +188,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .inv-mas .boton.oscuro { background: var(--noche); color: #fff; }
 .inv-mas .boton.claro { border-color: rgba(255,255,255,.7); color: #fff; }
 @media (max-width: 1100px) { .inv-grilla { grid-template-columns: repeat(3, 1fr); } }
-@media (max-width: 900px) { .inv-grilla { grid-template-columns: 1fr 1fr; } .inv-fotos { grid-template-columns: 1fr 1fr; } .inv-fotos figure:first-child { grid-column: span 2; grid-row: auto; } .inv-fotos figure:first-child img { aspect-ratio: 4 / 3; } }
+@media (max-width: 900px) { .inv-grilla { grid-template-columns: 1fr 1fr; } .inv-fotos { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 560px) { .inv-grilla { grid-template-columns: 1fr; } }
 
 /* Horario */
@@ -309,7 +307,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
         </div>
         <a class="nota" href="#opiniones"><b>4,2</b><span class="estrellas" aria-hidden="true">★★★★</span><span>31 opiniones en Google</span></a>
       </div>
-      <figure class="folleto"><img src="img/portada.jpg" width="1000" height="1000" alt="Laino Electricidad y Telefonía: service y reparación de productos de telefonía y electricidad, con asesoramiento, accesorios y atención personalizada. WhatsApp +54 9 11 5028-9583"></figure>
+      <figure class="folleto"><img src="img/frente-local.jpg" width="1000" height="999" alt="Frente del local de Electricidad y Telefonía Laino en Bonorino 81, con el cartel azul, la vidriera de telefonía y la de materiales eléctricos"></figure>
     </div>
     <div class="envase"><div class="gigante" aria-hidden="true">Laino</div></div>
   </section>
@@ -385,7 +383,6 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
       <h2 id="t-inv">Todo lo que hay <em>en el local.</em></h2>
       <p class="bajada" style="margin-top:14px">Vendemos por mayor y por menor. Acá tenés una parte de lo que hay: buscá lo que necesitás y, si no lo ves, consultanos igual.</p>
       <div class="inv-fotos">
-        <figure><img src="img/inv-frente.jpg" width="1000" height="817" loading="lazy" alt="Frente del local de Laino en Bonorino 81 con sus vidrieras de telefonía y materiales eléctricos"><figcaption>El frente, en Bonorino 81</figcaption></figure>
         <figure><img src="img/inv-interior.jpg" width="1000" height="562" loading="lazy" alt="Interior del local con lámparas colgantes, spots, porteros y estantes llenos de materiales"><figcaption>Adentro del local</figcaption></figure>
         <figure><img src="img/inv-controles-tv.jpg" width="1000" height="825" loading="lazy" alt="Vidriera con controles remotos para televisores LCD y Smart"><figcaption>Controles para TV</figcaption></figure>
         <figure><img src="img/inv-controles-aire.jpg" width="800" height="1001" loading="lazy" alt="Cartel con modelos de controles remotos para aire acondicionado"><figcaption>Controles para aire</figcaption></figure>
