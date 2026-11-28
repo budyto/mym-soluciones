@@ -102,21 +102,36 @@ nav a:hover{color:var(--verde)}
 .rubro.claro img{object-fit:contain;padding:8% 18% 34%}
 .rubro.claro:after{background:linear-gradient(180deg,transparent 50%,rgba(0,0,0,.5))}
 
-/* DESTACADOS: fila que se desliza */
-.destacados-sec{padding-bottom:40px}
-.dest-cab{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
-.dest-flechas{display:flex;gap:8px}
-.dest-flechas button{width:44px;height:44px;border:1.5px solid var(--carbon);background:transparent;font-size:26px;line-height:1;display:grid;place-items:center}
-.dest-flechas button:hover{background:var(--carbon);color:#fff}
-.destacados{display:grid;grid-auto-flow:column;grid-auto-columns:min(72vw,300px);gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:16px;padding:0 16px 18px;scrollbar-width:thin}
+/* DESTACADOS: fila que se desliza, tarjetas con ambiente, precio y botón para sumar al pedido */
+.destacados-sec{padding:64px 0 56px;background:var(--hueso)}
+.dest-cab{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:22px}
+.dest-cab .rubros-tit{margin-bottom:6px}
+.dest-cab p{color:var(--gris);font-size:15px}
+.dest-cab p a{color:var(--carbon);font-weight:700}
+.dest-flechas{display:flex;gap:8px;flex:none}
+.dest-flechas button{width:46px;height:46px;border-radius:50%;border:1.5px solid var(--carbon);background:var(--blanco);font-size:24px;line-height:1;display:grid;place-items:center;transition:background .2s,color .2s,opacity .2s}
+.dest-flechas button:hover:not(:disabled){background:var(--carbon);color:#fff}
+.dest-flechas button:disabled{opacity:.3;cursor:default}
+@media(max-width:620px){.dest-flechas{display:none}}
+.destacados{display:grid;grid-auto-flow:column;grid-auto-columns:min(78vw,290px);gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:16px;padding:4px 16px 8px;scrollbar-width:none;overscroll-behavior-x:contain}
+.destacados::-webkit-scrollbar{display:none}
 @media(min-width:760px){.destacados{padding-inline:max(28px,calc((100vw - 1144px)/2));scroll-padding-inline:max(28px,calc((100vw - 1144px)/2))}}
-.dest{scroll-snap-align:start;text-decoration:none;color:inherit;background:none;border:0;padding:0;text-align:left;cursor:pointer}
-.dest .foto2{display:block;position:relative;aspect-ratio:1;overflow:hidden;background:var(--linea)}
-.dest .foto2 img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.dest small{display:block;margin-top:12px;font-size:12.5px;font-weight:700;color:var(--gris)}
-.dest b{display:block;font:800 19px/1.1 var(--tit);font-stretch:88%;margin-top:2px}
-.dest em{display:block;font-style:normal;font-weight:800;margin-top:6px}
-.dest em small{display:inline;margin:0;font-weight:600}
+.dest{scroll-snap-align:start;background:var(--blanco);border:1px solid var(--linea);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;transition:box-shadow .3s,transform .3s}
+@media(hover:hover){.dest:hover{box-shadow:0 14px 30px rgba(18,18,18,.12);transform:translateY(-3px)}}
+.dest .ver{display:block;position:relative;aspect-ratio:4/5;overflow:hidden;background:var(--linea);border:0;padding:0;cursor:zoom-in;width:100%}
+.dest .ver img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.dest .ver .etq{position:absolute;left:10px;top:10px;z-index:1;background:rgba(255,255,255,.94);color:var(--verde-osc);font-size:12px;font-weight:800;padding:4px 10px;border-radius:999px}
+.dest-txt{padding:14px 14px 16px;display:flex;flex-direction:column;gap:2px;flex:1}
+.dest-txt small{font-size:12.5px;font-weight:700;color:var(--gris)}
+.dest-txt b{font:800 19px/1.1 var(--tit);font-stretch:88%}
+.dest-txt em{font-style:normal;font-weight:800;font-size:17px;margin:6px 0 12px}
+.dest-txt em small{font-weight:600;font-size:13px}
+.dest-txt .sumar-dest{margin-top:auto;min-height:42px;border-radius:999px;border:1.5px solid var(--carbon);background:transparent;font-weight:800;font-size:14.5px;transition:background .2s,color .2s}
+.dest-txt .sumar-dest:hover{background:var(--carbon);color:#fff}
+.dest-txt .sumar-dest.ok{background:var(--verde);border-color:var(--verde);color:var(--carbon)}
+.dest-barra{max-width:1144px;margin:18px auto 0;height:3px;background:var(--linea);border-radius:2px;overflow:hidden}
+@media(max-width:1199px){.dest-barra{margin-inline:28px}}@media(max-width:759px){.dest-barra{margin-inline:16px}}
+.dest-barra i{display:block;height:100%;width:30%;background:var(--carbon);border-radius:2px;transition:transform .15s linear}
 
 /* Segunda foto al pasar el mouse (como dsforma.com.ar) */
 .alt{opacity:0;transition:opacity .45s ease}
@@ -521,10 +536,11 @@ body.con-pedido .flota{display:none}
 
 <section class="sec destacados-sec" id="destacados">
   <div class="wrap">
-    <div class="dest-cab"><h2 class="rubros-tit">Productos destacados</h2>
+    <div class="dest-cab"><div><h2 class="rubros-tit">Productos destacados</h2><p>Una selección con stock en el local. <a href="#catalogo">Ver todo el catálogo</a></p></div>
       <div class="dest-flechas"><button type="button" id="destAnt" aria-label="Ver productos anteriores">‹</button><button type="button" id="destSig" aria-label="Ver más productos">›</button></div></div>
   </div>
   <div class="destacados" id="destacados-fila"></div>
+  <div class="dest-barra" aria-hidden="true"><i id="destBarra"></i></div>
 </section>
 
 <section class="sec" id="catalogo">
@@ -886,12 +902,20 @@ document.querySelectorAll('[data-ir]').forEach(a=>a.addEventListener('click',()=
 (function(){
  const ids=['p1','p116','p109','p23','p50','p67','p87','p6','p108','p21','p12','p27'];
  const fila=document.getElementById('destacados-fila');
- fila.innerHTML=ids.map(id=>PRODS.find(p=>p.id===id)).filter(Boolean).map(p=>`<button type="button" class="dest" data-gal="${p.id}" aria-label="Ver las fotos de ${p.n}">
-  <span class="foto2"><img src="img/${p.g?p.g[0]:p.f}" alt="${p.n}" loading="lazy">${p.g&&p.g.length>1?`<img class="alt" src="img/${p.g[p.g.length-1]}" alt="" loading="lazy">`:''}</span>
-  <small>${p.marca}${p.med?' · '+p.med.split(' · ')[0]:''}</small><b>${p.n}</b><em>${p.p} <small>${p.u}</small></em></button>`).join('');
- const paso=()=>fila.querySelector('.dest').offsetWidth+14;
- document.getElementById('destAnt').onclick=()=>fila.scrollBy({left:-paso()*2,behavior:'smooth'});
- document.getElementById('destSig').onclick=()=>fila.scrollBy({left:paso()*2,behavior:'smooth'});
+ fila.innerHTML=ids.map(id=>PRODS.find(p=>p.id===id)).filter(Boolean).map(p=>`<article class="dest" data-id="${p.id}">
+  <button type="button" class="ver" data-gal="${p.id}" aria-label="Ver las fotos de ${p.n}">${p.stock?'<span class="etq">En stock</span>':''}<img src="img/${p.g?p.g[0]:p.f}" alt="${p.n}" loading="lazy">${p.g&&p.g.length>1?`<img class="alt" src="img/${p.g[p.g.length-1]}" alt="" loading="lazy">`:''}</button>
+  <div class="dest-txt"><small>${[p.marca,p.med?p.med.split(' · ')[0]:''].filter(Boolean).join(' · ')}</small><b>${p.n}</b><em>${p.p} <small>${p.u}</small></em>
+  <button type="button" class="sumar-dest" data-sumar="${p.id}">Sumar ${p.unidad==='cajas'?'1 caja':'1 unidad'} al pedido</button></div></article>`).join('');
+ fila.addEventListener('click',e=>{const b=e.target.closest('[data-sumar]');if(!b)return;const id=b.dataset.sumar;poner(id,(cant[id]||0)+1);
+  const t=b.textContent;b.classList.add('ok');b.textContent='Agregado al pedido';setTimeout(()=>{b.classList.remove('ok');b.textContent=t;},1600);});
+ const paso=()=>fila.querySelector('.dest').offsetWidth+16;
+ const ant=document.getElementById('destAnt'),sig=document.getElementById('destSig'),barra=document.getElementById('destBarra');
+ ant.onclick=()=>fila.scrollBy({left:-paso()*2,behavior:'smooth'});
+ sig.onclick=()=>fila.scrollBy({left:paso()*2,behavior:'smooth'});
+ function estado(){const max=fila.scrollWidth-fila.clientWidth;const r=max>0?fila.scrollLeft/max:0;
+  ant.disabled=fila.scrollLeft<4;sig.disabled=fila.scrollLeft>max-4;
+  const ancho=Math.max(.15,fila.clientWidth/fila.scrollWidth);barra.style.width=(ancho*100)+'%';barra.style.transform=`translateX(${r*(1/ancho-1)*100}%)`;}
+ fila.addEventListener('scroll',estado,{passive:true});addEventListener('resize',estado);estado();
 })();
 
 /* Pasar las fotos dentro de la tarjeta: flechas, puntitos y deslizar el dedo */
