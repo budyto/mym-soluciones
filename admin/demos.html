@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Demos web · Panel · MyM Soluciones</title>
+<link rel="icon" href="../img/favicon-2.png" type="image/png">
+<!-- Índice de demos web (28/11/2026, Budy: «con índice en demos que la puedan ver los que tienen acceso y que no quede
+     pública»; «en el grupo no, en MyM Soluciones»). mymsoluciones.online/demos/ trae acá.
+     Este archivo es público y NO tiene datos de clientes: la lista vive en la base del Grupo MyM,
+     empresas/ventas/config/demos (campo «lista»). Según crm/firestore.rules de budyto/grupo-mym la leen y escriben
+     sólo los administradores y quien tenga «ventas» en sus empresas. Se entra igual que en mails.html: primero Google
+     (cuentas de SITE.adminEmails) y después, una sola vez por navegador, el usuario del CRM del grupo.
+     Las capturas están en demos/m/ con nombres al azar: no se puede adivinar de quién es cada una.
+     Las demos en sí siguen públicas en mymsoluciones.online/demos/<negocio>/, porque se les mandan a los clientes. -->
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{ color-scheme:light; --bg:#f4f7ff; --line:#dbe4f7; --line2:#c3d2f0; --fg:#0e1a33; --muted:#4a5878; --gold:#1f57e6;
+  --deg:linear-gradient(120deg,#2458e6,#007a6a); --suave:#eef3ff; --ok:#0a8a60; --verde:#dff5ea; --ambar:#9a6b00; --ambar-f:#fff3cf; --bad:#d43a4a; }
+*{ box-sizing:border-box; }
+[hidden]{ display:none !important; }
+body{ margin:0; background:var(--bg); color:var(--fg); font:15px/1.5 'Archivo',system-ui,sans-serif; padding-bottom:env(safe-area-inset-bottom,0px); }
+a{ color:var(--gold); }
+.btn{ all:unset; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:9px 15px; border-radius:999px; font-weight:700; font-size:14px; border:1px solid var(--line2); color:var(--fg); text-align:center; background:#fff; box-sizing:border-box; }
+.btn.gold{ background:var(--deg); border-color:transparent; color:#fff; }
+.btn.sm{ padding:7px 12px; font-size:13px; }
+.btn:focus-visible,.chip:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a.vista:focus-visible{ outline:3px solid var(--gold); outline-offset:2px; }
+.muted{ color:var(--muted); } .small{ font-size:13px; }
+label{ display:flex; flex-direction:column; gap:5px; font-size:13px; font-weight:600; color:var(--muted); }
+input,select,textarea{ font:inherit; color:var(--fg); background:#fff; border:1px solid var(--line2); border-radius:10px; padding:9px 11px; width:100%; }
+.entrada{ max-width:420px; margin:14vh auto; padding:32px 26px; background:#fff; border:1px solid var(--line); border-radius:24px; box-shadow:0 20px 50px rgba(14,26,51,.08); text-align:center; display:grid; gap:12px; }
+.entrada h2{ font:900 24px Archivo,system-ui,sans-serif; margin:0; }
+.entrada p{ color:var(--muted); margin:0; }
+.entrada .msg{ color:var(--bad); min-height:20px; font-size:14px; }
+.entrada label{ text-align:left; }
+header.top{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; padding:14px 16px; border-bottom:1px solid var(--line); position:sticky; top:0; background:#f4f7ff; z-index:5; }
+header.top h1{ font:900 24px Archivo,system-ui,sans-serif; letter-spacing:-.02em; margin:0; }
+.fila{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+main{ max-width:1200px; margin:0 auto; padding:14px 16px 40px; }
+.barra{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin:0 0 14px; }
+.barra input[type=search]{ flex:1 1 220px; width:auto; }
+.chip{ border:1px solid var(--line2); background:#fff; border-radius:999px; padding:6px 12px; cursor:pointer; font:inherit; font-size:14px; color:var(--fg); }
+.chip.sel{ background:#2f5bd3; color:#fff; border-color:#2f5bd3; }
+.demos{ display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); gap:14px; }
+.demo{ background:#fff; border:1px solid var(--line); border-radius:16px; overflow:hidden; display:flex; flex-direction:column; min-width:0; box-shadow:0 10px 26px -14px rgba(23,48,120,.22); }
+/* Captura de la portada (mymsoluciones.online no deja mostrar sus páginas en un recuadro: frame-ancestors 'self'). */
+.vista{ display:block; aspect-ratio:16/10; overflow:hidden; background:var(--suave); border-bottom:1px solid var(--line); }
+.vista img{ width:100%; height:100%; object-fit:cover; object-position:top; display:block; }
+.vista.sin{ display:grid; place-items:center; font:900 40px Archivo; color:#b7c4e3; text-decoration:none; }
+a.vista:hover img{ opacity:.92; }
+.cuerpo{ padding:12px 14px 14px; display:flex; flex-direction:column; gap:6px; flex:1; }
+.cuerpo h2{ font:800 16.5px Archivo,system-ui,sans-serif; margin:0; line-height:1.25; }
+.estado{ display:inline-block; padding:2px 9px; border-radius:99px; font-size:12px; font-weight:700; background:var(--suave); color:var(--gold); white-space:nowrap; }
+.estado.cliente{ background:var(--verde); color:var(--ok); } .estado.propuesta{ background:var(--ambar-f); color:var(--ambar); } .estado.archivada{ background:#f1f1f4; color:#777; }
+.linea{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.url{ font-size:12.5px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.nota{ font-size:13.5px; margin:0; }
+.acc{ display:flex; gap:6px; flex-wrap:wrap; margin-top:auto; padding-top:6px; }
+.acc .btn{ flex:1 1 auto; }
+.caja{ background:#fff; border:1px solid var(--line); border-radius:16px; padding:16px; }
+details.caja{ margin-top:14px; } details.caja>summary{ cursor:pointer; font-weight:800; }
+.aviso{ background:#fff7d6; border-radius:12px; padding:8px 12px; font-size:13px; margin:0 0 12px; }
+dialog{ border:0; border-radius:18px; padding:0; max-width:560px; width:94%; box-shadow:0 20px 60px rgba(0,0,0,.3); }
+dialog form{ padding:18px; display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+dialog h2{ grid-column:1/-1; font:900 19px Archivo; margin:0 0 4px; }
+dialog .todo{ grid-column:1/-1; }
+dialog .err{ grid-column:1/-1; color:var(--bad); font-weight:600; margin:0; min-height:1em; }
+@media (max-width:640px){ dialog form{ grid-template-columns:1fr; } .demos{ grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<section class="entrada" id="entrada" hidden>
+  <h2>Demos web</h2>
+  <p id="entradaTxt">Entrá con tu cuenta de Google autorizada.</p>
+  <button class="btn gold" type="button" id="google">Entrar con Google</button>
+  <form id="formGrupo" hidden style="display:grid;gap:10px">
+    <label>Correo del CRM del grupo<input id="gMail" type="email" autocomplete="email" required></label>
+    <label>Contraseña<input id="gPass" type="password" autocomplete="current-password" required minlength="6"></label>
+    <button class="btn gold" type="submit">Conectar</button>
+  </form>
+  <p class="msg" id="entradaMsg" role="status"></p>
+</section>
+
+<div id="app" hidden>
+<header class="top">
+  <div class="fila"><a class="btn sm" href="./">← Panel</a><h1>Demos web</h1></div>
+  <div class="fila"><span class="muted small" id="quien"></span><button class="btn gold sm" type="button" id="nueva">+ Demo</button></div>
+</header>
+<main id="vista"><p class="muted">Cargando…</p></main>
+</div>
+
+<dialog id="dlg"><form id="fD" method="dialog">
+  <h2 id="tD">Demo</h2>
+  <label class="todo">Negocio<input name="nombre" required></label>
+  <label class="todo">Link de la demo<input name="url" type="url" placeholder="https://mymsoluciones.online/demos/…/"></label>
+  <label>Rubro y zona<input name="rubro" placeholder="Ej: Rotisería · La Tablada"></label>
+  <label>Estado<select name="estado" id="sEstado"></select></label>
+  <label>Qué es<select name="tipo" id="sTipo"></select></label>
+  <label>Fecha de la demo<input name="fecha" type="date"></label>
+  <label class="todo">Notas (qué tiene, qué falta, a quién se le mandó)<textarea name="notas" rows="3"></textarea></label>
+  <p class="err" id="eD"></p>
+  <div class="todo fila">
+    <button class="btn gold" id="gD" type="button">Guardar</button>
+    <button class="btn" id="cD" type="button">Cancelar</button>
+    <button class="btn" id="bD" type="button" style="margin-left:auto;color:var(--bad)">Sacar de la lista</button>
+  </div>
+</form></dialog>
+
+<script src="../config.js?v=202611260020"></script>
+<script>window.FIREBASE_GRUPO={apiKey:"AIzaSyDTLcVzYxFdz5AOzq40zaMDHhvaKC0SW-I",authDomain:"grupo-mym-73b8d.firebaseapp.com",projectId:"grupo-mym-73b8d",appId:"1:966952304229:web:99501761762dfd290cd08c"}; /* Base del Grupo MyM: config pública. */</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" integrity="sha384-AQ3POAMqIhwS81FrUH95ekxqBZHeP5tG2JfEL3+7GuTtfRLWnrRh32UxwzM+//A9" crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js" integrity="sha384-TnlRYaR4JYz/lpaGuaiU61PjNberSA4vjLjtF+oRC/IkohkJqnWxw5EmDSOt1vA1" crossorigin="anonymous"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js" integrity="sha384-qn4Jh88HhJA8dplNQyGjOh9OGI4izVhrfj/qIFgaKcdgOE06pXqIKGlsCILZcLAC" crossorigin="anonymous"></script>
+<script src="acceso.js?v=202611281200"></script>
+<script>
+(function () {
+  'use strict';
+  var ESTADOS = [['ofrecer', 'Para ofrecer'], ['propuesta', 'Propuesta enviada'], ['cliente', 'Cliente'], ['archivada', 'Archivada']];
+  var TIPOS = ['Página web', 'Tienda online', 'Sistema de gestión', 'Landing', 'Otro'];
+  var $ = function (s) { return document.querySelector(s); };
+  // Vista de prueba en la compu: localhost con «?demo». No se conecta a la base y usa demos inventadas.
+  var PRUEBA = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) && /[?&]demo\b/.test(location.search);
+  var auth, DOC, lista = [], filtro = { q: '', estado: '' }, editando = -1, quien = '';
+  function esc(t) { return String(t == null ? '' : t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function hoyStr() { return new Date(Date.now() - 3 * 3600e3).toISOString().slice(0, 10); }
+  function lindaFecha(s) { return s ? s.slice(8, 10) + '/' + s.slice(5, 7) + '/' + s.slice(0, 4) : ''; }
+  function txtEstado(k) { var e = ESTADOS.filter(function (x) { return x[0] === k; })[0]; return e ? e[1] : 'Para ofrecer'; }
+  function corta(u) { return String(u || '').replace(/^https?:\/\//, '').replace(/\/$/, ''); }
+
+  function pintar() {
+    var q = filtro.q.trim().toLowerCase();
+    var vis = lista.map(function (d, n) { return { d: d, n: n }; }).filter(function (x) {
+      if (filtro.estado ? x.d.estado !== filtro.estado : x.d.estado === 'archivada') return false;
+      return !q || [x.d.nombre, x.d.rubro, x.d.notas, x.d.url, x.d.tipo].join(' ').toLowerCase().indexOf(q) >= 0;
+    }).sort(function (a, b) { return String(b.d.fecha || '').localeCompare(String(a.d.fecha || '')); });
+    var cuenta = function (k) { return lista.filter(function (d) { return k ? d.estado === k : d.estado !== 'archivada'; }).length; };
+    var chip = function (k, t) { return '<button type="button" class="chip' + (filtro.estado === k ? ' sel' : '') + '" data-f="' + k + '">' + t + ' (' + cuenta(k) + ')</button>'; };
+    $('#vista').innerHTML = (PRUEBA ? '<p class="aviso"><b>Datos de ejemplo.</b> Vista de prueba en la compu: lo que cambies acá no se guarda.</p>' : '')
+      + '<div class="barra"><input type="search" id="q" placeholder="Buscar negocio, rubro o nota" aria-label="Buscar" value="' + esc(filtro.q) + '">'
+      + chip('', 'Todas') + ESTADOS.map(function (e) { return chip(e[0], e[1]); }).join('') + '</div>'
+      + (vis.length ? '<div class="demos">' + vis.map(tarjeta).join('') + '</div>'
+        : '<div class="caja muted">' + (lista.length ? 'No hay demos con ese filtro.' : 'Todavía no hay demos cargadas. Tocá «+ Demo» para sumar la primera.') + '</div>')
+      + '<details class="caja"><summary>Qué es esta pantalla</summary>'
+      + '<p>Son las páginas de muestra que armamos para cada negocio. Cada tarjeta muestra cómo se ve arriba de todo: tocala o tocá «Abrir» para verla entera, y «Copiar link» para mandársela al cliente. Las demos nuevas aparecen con la inicial hasta que alguien les saque la captura.</p>'
+      + '<p><b>Esta lista no es pública:</b> sólo la ven las cuentas del panel que además tienen acceso a Ventas en la base del grupo. Las demos sí tienen su link propio, porque se les mandan a los clientes.</p>'
+      + '<p>Cuando se publica una demo nueva, sumala con «+ Demo». Para que deje de aparecer sin borrarla, ponela en «Archivada».</p></details>';
+    $('#q').oninput = function () { var pos = this.selectionStart; filtro.q = this.value; pintar(); var e = $('#q'); e.focus(); e.setSelectionRange(pos, pos); };
+    document.querySelectorAll('[data-f]').forEach(function (b) { b.onclick = function () { filtro.estado = b.dataset.f; pintar(); }; });
+    document.querySelectorAll('[data-copiar]').forEach(function (b) { b.onclick = function () {
+      var u = lista[Number(b.dataset.copiar)].url;
+      (navigator.clipboard ? navigator.clipboard.writeText(u) : Promise.reject()).then(function () { b.textContent = 'Copiado'; setTimeout(function () { b.textContent = 'Copiar link'; }, 1500); }, function () { prompt('Copiá el link:', u); }); }; });
+    document.querySelectorAll('[data-editar]').forEach(function (b) { b.onclick = function () { abrir(Number(b.dataset.editar)); }; });
+  }
+  function tarjeta(x) {
+    var d = x.d, u = esc(d.url);
+    return '<article class="demo">'
+      + (d.url ? '<a class="vista' + (d.foto ? '' : ' sin') + '" href="' + u + '" target="_blank" rel="noopener" aria-label="Abrir la demo de ' + esc(d.nombre) + '">'
+        + (d.foto ? '<img src="' + esc(d.foto) + '" alt="" loading="lazy">' : esc(String(d.nombre || '?').charAt(0))) + '</a>' : '')
+      + '<div class="cuerpo"><h2>' + esc(d.nombre) + '</h2>'
+      + '<div class="linea"><span class="estado ' + esc(d.estado || 'ofrecer') + '">' + esc(txtEstado(d.estado)) + '</span><span class="muted small">' + esc([d.tipo, d.rubro].filter(Boolean).join(' · ')) + '</span></div>'
+      + (d.notas ? '<p class="nota">' + esc(d.notas) + '</p>' : '')
+      + '<div class="url">' + esc(corta(d.url)) + (d.fecha ? ' · ' + esc(lindaFecha(d.fecha)) : '') + '</div>'
+      + '<div class="acc">' + (d.url ? '<a class="btn gold sm" href="' + u + '" target="_blank" rel="noopener">Abrir</a><button type="button" class="btn sm" data-copiar="' + x.n + '">Copiar link</button>' : '')
+      + '<button type="button" class="btn sm" data-editar="' + x.n + '">Editar</button></div></div></article>';
+  }
+
+  function opciones(id, ops) { $(id).innerHTML = ops.map(function (o) { var v = Array.isArray(o) ? o[0] : o, t = Array.isArray(o) ? o[1] : o; return '<option value="' + esc(v) + '">' + esc(t) + '</option>'; }).join(''); }
+  function abrir(n) {
+    editando = n; var d = n >= 0 ? lista[n] : { estado: 'ofrecer', tipo: 'Página web', fecha: hoyStr() }, f = $('#fD');
+    $('#tD').textContent = n >= 0 ? d.nombre : 'Nueva demo'; $('#eD').textContent = ''; $('#bD').hidden = n < 0;
+    ['nombre', 'url', 'rubro', 'estado', 'tipo', 'fecha', 'notas'].forEach(function (k) { f.elements[k].value = d[k] == null ? '' : d[k]; });
+    $('#dlg').showModal();
+  }
+  function guardarLista(nueva) {
+    if (PRUEBA) { lista = nueva; pintar(); return Promise.resolve(); }
+    return DOC.set({ lista: nueva, cambiado: firebase.firestore.FieldValue.serverTimestamp(), cambiadoPor: quien }, { merge: true });
+  }
+  function guardar() {
+    var f = $('#fD'), d = {};
+    ['nombre', 'url', 'rubro', 'estado', 'tipo', 'fecha', 'notas'].forEach(function (k) { d[k] = f.elements[k].value.trim(); });
+    if (!d.nombre) { $('#eD').textContent = 'Falta el nombre del negocio.'; return; }
+    if (d.url && !/^https:\/\//.test(d.url)) { $('#eD').textContent = 'El link tiene que empezar con https://'; return; }
+    var nueva = lista.slice(); if (editando >= 0) nueva[editando] = Object.assign({}, nueva[editando], d); else nueva.push(d);
+    guardarLista(nueva).then(function () { $('#dlg').close(); }).catch(function (e) { $('#eD').textContent = 'No se pudo guardar: ' + e.message; });
+  }
+  function sacar() {
+    if (editando < 0 || !confirm('¿Sacar «' + lista[editando].nombre + '» de la lista? La demo sigue publicada; sólo deja de figurar acá. Si querés que no aparezca pero quede guardada, ponela en «Archivada».')) return;
+    var nueva = lista.slice(); nueva.splice(editando, 1);
+    guardarLista(nueva).then(function () { $('#dlg').close(); }).catch(function (e) { $('#eD').textContent = 'No se pudo guardar: ' + e.message; });
+  }
+  opciones('#sEstado', ESTADOS); opciones('#sTipo', TIPOS);
+  $('#nueva').onclick = function () { abrir(-1); };
+  $('#gD').onclick = guardar; $('#cD').onclick = function () { $('#dlg').close(); }; $('#bD').onclick = sacar;
+
+  if (PRUEBA) {
+    lista = [
+      { nombre: 'Panadería La Espiga', url: 'https://example.com/', foto: '../demos/m/0c798b758bb1.jpg', rubro: 'Panadería · Ramos Mejía', estado: 'ofrecer', tipo: 'Página web', fecha: '2026-11-26', notas: 'Con la carta y el pedido por WhatsApp.' },
+      { nombre: 'Gomería El Rulo', url: 'https://example.org/', foto: '../demos/m/8eabc80a93bc.jpg', rubro: 'Gomería · Haedo', estado: 'propuesta', tipo: 'Landing', fecha: '2026-11-24', notas: '' },
+      { nombre: 'Cerrajería Llave Maestra', url: 'https://example.net/', rubro: 'Cerrajería · Flores', estado: 'cliente', tipo: 'Página web', fecha: '2026-11-18', notas: 'Ya contrató.' },
+      { nombre: 'Kiosco 24 Horas', url: '', rubro: 'Kiosco', estado: 'archivada', tipo: 'Otro', fecha: '2026-11-10', notas: 'No siguió.' }
+    ];
+    quien = 'prueba@local'; $('#entrada').hidden = true; $('#app').hidden = false; $('#quien').textContent = 'Vista de prueba'; pintar(); return;
+  }
+
+  function entradaMsg(t) { $('#entradaMsg').textContent = t || ''; }
+  var googleOk = false, cortar = null;
+  function seguir() {
+    if (!googleOk) return;
+    var u = auth.currentUser;
+    if (!u) { $('#google').hidden = true; $('#formGrupo').hidden = false; $('#entradaTxt').textContent = 'Conectá la base del Grupo MyM con tu usuario del CRM. Se pide una sola vez en este navegador.'; $('#entrada').hidden = false; $('#app').hidden = true; return; }
+    if (!u.emailVerified) { entradaMsg('Tu correo del CRM todavía no está verificado.'); return; }
+    quien = u.email; $('#quien').textContent = u.email;
+    $('#entrada').hidden = true; $('#app').hidden = false;
+    if (!cortar) cortar = DOC.onSnapshot(function (s) { lista = (s.exists && s.data().lista) || []; pintar(); },
+      function (e) { $('#vista').innerHTML = '<div class="caja" style="color:var(--bad)">No tenés acceso a las demos con esta cuenta (' + esc(e.message) + '). Pedile a un administrador que te sume «ventas» en la base del grupo.</div>'; });
+  }
+  ACCESO.iniciar({
+    alEntrar: function () { googleOk = true; seguir(); },
+    alSalir: function (m) { googleOk = false; if (cortar) { cortar(); cortar = null; } $('#app').hidden = true; $('#entrada').hidden = false; $('#google').hidden = false; $('#formGrupo').hidden = true; $('#entradaTxt').textContent = 'Entrá con tu cuenta de Google autorizada.'; entradaMsg(m); }
+  });
+  var grupo = firebase.initializeApp(window.FIREBASE_GRUPO, 'grupo');
+  auth = grupo.auth(); auth.languageCode = 'es';
+  DOC = grupo.firestore().collection('empresas').doc('ventas').collection('config').doc('demos');
+  auth.onAuthStateChanged(seguir);
+  $('#google').addEventListener('click', function () { entradaMsg(''); ACCESO.entrar(); });
+  $('#formGrupo').addEventListener('submit', function (ev) {
+    ev.preventDefault(); entradaMsg('Conectando…');
+    auth.signInWithEmailAndPassword($('#gMail').value.trim(), $('#gPass').value).then(function () { entradaMsg(''); })
+      .catch(function (e) { entradaMsg(/invalid|wrong|not-found/.test(e && e.code) ? 'Correo o contraseña incorrectos.' : 'No se pudo conectar. Probá de nuevo.'); });
+  });
+})();
+</script>
+</body>
+</html>
