@@ -256,6 +256,7 @@ nav a:hover{color:var(--verde)}
   background-image:linear-gradient(90deg,rgba(255,255,255,.28) 1px,transparent 1px),linear-gradient(rgba(255,255,255,.28) 1px,transparent 1px);background-size:50% 50%}
 .prod .sw span{font:800 clamp(15px,2.4vw,20px)/1 var(--tit);font-stretch:88%;background:rgba(255,255,255,.9);color:var(--carbon);padding:7px 11px;border-radius:999px}
 .prod b.p small{font-weight:600;font-size:13px;color:var(--gris)}
+.prod p.desc{font-size:12.5px;color:var(--gris);margin-top:6px;line-height:1.4}
 .prod p.caja{font-size:12.5px;margin-top:2px}
 .prod .stock{display:inline-block;font-size:11.5px;font-weight:800;color:var(--verde-osc);background:#eef6e2;border-radius:999px;padding:2px 8px;margin-bottom:6px}
 #catalogo{padding-top:56px}
@@ -564,6 +565,8 @@ body.con-pedido .flota{display:none}
       <button class="filtro" aria-pressed="false" data-f="pared">Paredes</button>
       <button class="filtro" aria-pressed="false" data-f="piedra">Piedra para frentes</button>
       <button class="filtro" aria-pressed="false" data-f="vinilico">Vinílico</button>
+      <button class="filtro" aria-pressed="false" data-f="obra">Pinturas e impermeabilizantes</button>
+      <button class="filtro" aria-pressed="false" data-f="bano">Baño y lavadero</button>
       <button class="filtro" aria-pressed="false" data-f="pegamento">Pegamentos y accesorios</button>
     </div>
     <div class="prods" id="prods"></div>
@@ -852,7 +855,16 @@ const PRODS=[
 {"id":"p73","c":"piedra","n":"Muro Piedra HD Natural","marca":"Lourdes","med":"31 × 53 cm","f":"c-p73.jpg","t":"#c9c4bb","p":"$ 16.700","u":"el m²","caja":"Caja de 1,48 m²: $ 24.700","stock":1,"unidad":"cajas","g":["g-p73-1.jpg","r-piedra-frente.jpg"]},
 {"id":"p72","c":"piedra","n":"Muro Piedra HD Brick","marca":"Lourdes","med":"31 × 53 cm","f":"c-p72.jpg","t":"#9b5a43","p":"$ 16.700","u":"el m²","caja":"Caja de 1,48 m²: $ 24.700","stock":1,"unidad":"cajas","g":["g-p72-1.jpg","g-p72-2.jpg"]},
 {"id":"p74","c":"piedra","n":"Muro Piedra HD Petroleo","marca":"Lourdes","med":"31 × 53 cm","f":"c-p74.jpg","t":"#3f5459","p":"$ 16.700","u":"el m²","caja":"Caja de 1,48 m²: $ 24.700","stock":1,"unidad":"cajas","g":["g-p74-1.jpg","g-p74-2.jpg"]},
-{"id":"vin","c":"vinilico","n":"Piso vinílico autoadhesivo","marca":"","med":"Símil madera","f":"r-vinilico.jpg","t":"#b48c62","p":"","u":"","caja":"","stock":0,"unidad":"cajas"},
+{"id":"vin","c":"vinilico","n":"Piso vinílico autoadhesivo Abedul Beige","marca":"","med":"15 × 91 cm · Símil madera","f":"r-vinilico.jpg","t":"#b48c62","p":"$ 13.000","u":"el m²","caja":"Caja de 5,01 m² (36 tablas): $ 65.100","stock":1,"unidad":"cajas","d":"Espesor 2 mm, capa de uso 0,15 mm para tránsito residencial. Se coloca sin obra.","g":["r-vinilico.jpg","g-vin-2.jpg"]},
+{"id":"p121","c":"obra","n":"Pintura látex Evans 20 L","marca":"Evans","med":"Interior y exterior","f":"c-p121.jpg","t":"#c9c4bb","p":"$ 59.000","u":"c/u","caja":"","stock":1,"unidad":"unidades","d":"Látex acrílico mate con antihongos, de bajo olor y gran poder cubritivo.","wa":1,"g":["g-p121-1.jpg","g-p121-2.jpg"]},
+{"id":"p122","c":"obra","n":"Membrana líquida Kroner Home 20 L","marca":"Kroner","med":"","f":"c-p122.jpg","t":"#c9c4bb","p":"$ 79.000","u":"c/u","caja":"","stock":1,"unidad":"unidades","d":"Impermeabilizante acrílico al agua para techos, terrazas transitables y muros exteriores.","wa":1,"g":["g-p122-1.jpg","g-p122-2.jpg"]},
+{"id":"p123","c":"obra","n":"Rollo de membrana asfáltica con aluminio","marca":"","med":"1 × 10 m","f":"c-p123.jpg","t":"#c9c4bb","p":"$ 47.000","u":"c/u","caja":"","stock":1,"unidad":"unidades","d":"Para techos, losas y terrazas. Cada rollo rinde 10 m².","wa":1},
+{"id":"p124","c":"obra","n":"Placas antihumedad","marca":"","med":"","f":"c-p124.jpg","t":"#c9c4bb","p":"$ 17.000","u":"c/u","caja":"","stock":1,"unidad":"unidades","d":"Absorben la humedad de la pared y la eliminan. Con garantía.","wa":1,"g":["g-p124-1.jpg","g-p124-2.jpg","g-p124-3.jpg","g-p124-4.jpg"]},
+{"id":"p125","c":"obra","n":"Base coat Anclaflex x 25 kg","marca":"Anclaflex","med":"","f":"c-p125.jpg","t":"#c9c4bb","p":"$ 25.000","u":"c/u","caja":"","stock":1,"unidad":"unidades","d":"Mortero cementicio para construcción en seco (EIFS) y para nivelar revoques en interior y exterior.","wa":1,"g":["g-p125-1.jpg","g-p125-2.jpg","g-p125-3.jpg"]},
+{"id":"p126","c":"obra","n":"Rollo wall panel adhesivo","marca":"","med":"3 × 122 cm","f":"c-p126.jpg","t":"#c9c4bb","p":"$ 48.000","u":"c/u","caja":"","stock":1,"unidad":"unidades","d":"Revestimiento autoadhesivo impermeable y lavable. No necesita pintura.","wa":1},
+{"id":"p127","c":"obra","n":"Bolsa para escombro negra","marca":"","med":"50 × 70 cm","f":"c-p127.jpg","t":"#c9c4bb","p":"$ 490","u":"c/u","caja":"","stock":1,"unidad":"unidades","d":"Bolsa reforzada para escombros y materiales de obra.","wa":1},
+{"id":"p128","c":"bano","n":"Espejo LED touch 80 cm","marca":"","med":"80 cm","f":"c-p128.jpg","t":"#c9c4bb","p":"$ 240.000","u":"c/u","caja":"","stock":1,"unidad":"unidades","d":"Encendido táctil sobre el vidrio y luz regulable.","wa":1,"g":["g-p128-1.jpg","g-p128-2.jpg","g-p128-3.jpg"]},
+{"id":"p129","c":"bano","n":"Pileta de lavadero reforzada revestida en cerámica","marca":"","med":"100 × 50 cm","f":"c-p129.jpg","t":"#c9c4bb","p":"$ 145.000","u":"c/u","caja":"","stock":1,"unidad":"unidades","d":"De hormigón revestido en cerámica, con borde de acero.","wa":1,"g":["g-p129-1.jpg","g-p129-2.jpg","g-p129-3.jpg","g-p129-4.jpg","g-p129-5.jpg","g-p129-6.jpg","g-p129-7.jpg"]},
 {"id":"p91","c":"pegamento","n":"Mapeset x 25 Kg","marca":"Mapei","med":"","f":"c-p91.jpg","t":"#c9c4bb","p":"$ 10.800","u":"c/u","caja":"","stock":0,"unidad":"unidades"},
 {"id":"p93","c":"pegamento","n":"Adesilex P9 x 25 Kg","marca":"Mapei","med":"","f":"c-p93.jpg","t":"#c9c4bb","p":"$ 33.900","u":"c/u","caja":"","stock":0,"unidad":"unidades"},
 {"id":"p94","c":"pegamento","n":"Keraflex x 25 Kg","marca":"Mapei","med":"","f":"c-p94.jpg","t":"#c9c4bb","p":"$ 44.500","u":"c/u","caja":"","stock":0,"unidad":"unidades"},
@@ -867,13 +879,16 @@ const PRODS=[
 {"id":"p103","c":"pegamento","n":"Base Plástica 4 Lts - Arenas","marca":"Vadex","med":"","f":"c-p103.jpg","t":"#d6c6a8","p":"$ 55.000","u":"c/u","caja":"","stock":0,"unidad":"unidades"},
 {"id":"p104","c":"pegamento","n":"Base Plástica 20 Lts - Arenas","marca":"Vadex","med":"","f":"c-p104.jpg","t":"#d6c6a8","p":"$ 204.300","u":"c/u","caja":"","stock":0,"unidad":"unidades"},
 {"id":"p90","c":"pegamento","n":"Keracolor Arena x 1 Kg - 133","marca":"Mapei","med":"","f":"c-p90.jpg","t":"#d6c6a8","p":"$ 3.800","u":"c/u","caja":"","stock":0,"unidad":"unidades"},
-{"id":"p92","c":"pegamento","n":"Kerabond x 25 Kg","marca":"Mapei","med":"","f":"c-p92.jpg","t":"#c9c4bb","p":"$ 21.200","u":"c/u","caja":"","stock":0,"unidad":"unidades"}];
+{"id":"p92","c":"pegamento","n":"Kerabond x 25 Kg","marca":"Mapei","med":"","f":"c-p92.jpg","t":"#c9c4bb","p":"$ 21.200","u":"c/u","caja":"","stock":0,"unidad":"unidades"},
+{"id":"p130","c":"pegamento","n":"Weber Standard cerámicos x 25 kg","marca":"Weber","med":"","f":"c-p130.jpg","t":"#c9c4bb","p":"$ 9.500","u":"c/u","caja":"","stock":1,"unidad":"unidades","d":"Rinde de 5 a 8 m² por bolsa según la llana.","wa":1},
+{"id":"p131","c":"pegamento","n":"Perfil de acero 12 × 12 mm para porcelanato","marca":"","med":"2,50 m","f":"c-p131.jpg","t":"#c9c4bb","p":"$ 30.000","u":"c/u","caja":"","stock":1,"unidad":"unidades","d":"Listelo terminación cromo que protege y decora los cantos.","wa":1,"g":["g-p131-1.jpg","g-p131-2.jpg"]},
+{"id":"p132","c":"pegamento","n":"Perfil de acero 10 × 10 mm para cerámicos","marca":"","med":"2,50 m","f":"c-p132.jpg","t":"#c9c4bb","p":"$ 28.500","u":"c/u","caja":"","stock":1,"unidad":"unidades","d":"Listelo terminación cromo que protege y decora los cantos.","wa":1,"g":["g-p132-1.jpg","g-p132-2.jpg"]}];
 
 const cant={};
 const cont=document.getElementById('prods');
 cont.innerHTML=PRODS.map(p=>`<article class="prod" data-cat="${p.c}" data-id="${p.id}" data-q="${(p.n+' '+p.marca+' '+p.med).toLowerCase()}">
  ${p.f?`<div class="foto" data-i="0"><button class="ver" data-gal="${p.id}" aria-label="Ver ${p.g?p.g.length+' fotos':'la foto'} de ${p.n} en grande"><img src="img/${p.f}" alt="${p.n}" loading="lazy"></button>${p.g&&p.g.length>1?`<button type="button" class="fl ant" data-paso="-1" aria-label="Foto anterior de ${p.n}">‹</button><button type="button" class="fl sig" data-paso="1" aria-label="Foto siguiente de ${p.n}">›</button><span class="puntos" aria-hidden="true">${p.g.map((_,k)=>`<i${k?'':' class="on"'}></i>`).join('')}</span>`:''}</div>`:`<div class="sw" style="--t:${p.t}" aria-hidden="true"><span>${p.med?p.med.split(' · ')[0]:p.marca}</span></div>`}
- <div class="prod-txt">${p.stock?'<span class="stock">En stock</span>':''}<h3>${p.n}</h3><p>${[p.marca,p.med].filter(Boolean).join(' · ')}</p><b class="p">${p.p?p.p+(p.u?' <small>'+p.u+'</small>':''):'Consultar precio'}</b>${p.caja?`<p class="caja">${p.caja}</p>`:''}</div>
+ <div class="prod-txt">${p.stock?'<span class="stock">En stock</span>':''}<h3>${p.n}</h3><p>${[p.marca,p.med].filter(Boolean).join(' · ')}</p><b class="p">${p.p?p.p+(p.u?' <small>'+p.u+'</small>':''):'Consultar precio'}</b>${p.caja?`<p class="caja">${p.caja}</p>`:''}${p.d?`<p class="desc">${p.d}</p>`:''}</div>
  <div class="prod-pie"><div class="cant"><button aria-label="Restar ${p.n}" data-d="-1">−</button><output aria-live="polite">0</output><button aria-label="Sumar ${p.n}" data-d="1">+</button></div></div></article>`).join('');
 function poner(id,v){cant[id]=Math.max(0,v);const a=cont.querySelector(`[data-id="${id}"]`);a.querySelector('output').textContent=cant[id];a.classList.toggle('con',cant[id]>0);
 actualizar();}
