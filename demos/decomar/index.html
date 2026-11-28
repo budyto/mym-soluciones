@@ -4,16 +4,18 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- Web de muestra de MyM Soluciones para Decomar Revestimientos (Mariela), 24/11/2026.
-     Productos y precios: los que Decomar publicó en Instagram (@decomar_revestimientos) entre septiembre y octubre de 2026.
-     Fotos: ilustrativas, libres de Unsplash (créditos en img/creditos-unsplash.json). En la web final van las de sus productos.
+     26/11/2026 (pedido de Budy): sólo va lo que mandó la clienta. Productos y fotos: las 22 fotos de su stock que mandó
+     por WhatsApp el 26/11 (img/r-*.jpg, mejoradas con Topaz). Fondos (portada en video, ambientes y cierre): fotos de
+     stock de Unsplash en alta, a pedido de Budy (img/f-*.jpg y portada*.mp4; créditos en img/creditos-unsplash.json).
+     Se sacaron las fotos de Unsplash, las ofertas de Instagram, el antes y después, el mail y los horarios de ejemplo.
      Logo: redibujado en SVG a partir del de Instagram (que mide 150 px), para que se vea nítido a cualquier tamaño.
      WhatsApp y teléfono: el número de sus publicaciones (11 6822-3789). Los botones abren el chat con el mensaje escrito.
-     DE EJEMPLO, a confirmar con la clienta: el mail, el Facebook, el TikTok, los horarios y el punto del mapa (Mataderos).
+     A confirmar con la clienta: la dirección del local (el mapa marca Mataderos), precios y medidas.
      El teléfono de la sección «Consultas» es el mismo «celular que contesta solo» de mymsoluciones.online (main.js, 17/11/2026).
      Sin indexar hasta que tenga dominio propio. -->
 <meta name="robots" content="noindex">
-<title>Decomar Revestimientos · Renová tus espacios sin obra</title>
-<meta name="description" content="Placas antihumedad, placas símil mármol, cerámicas, wall panel, vanitorys y espejos LED. Mataderos y Parque Avellaneda. Envíos en CABA y alrededores.">
+<title>Decomar Revestimientos · Pisos y revestimientos en Mataderos</title>
+<meta name="description" content="Cerámicas, porcelanatos, calcáreos, piedra para frentes, pisos para pileta y piso vinílico autoadhesivo. Mataderos y Parque Avellaneda, CABA.">
 <meta name="theme-color" content="#121212">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='31' fill='%23121212'/%3E%3Cpath d='M14 34 32 18l18 16' fill='none' stroke='%23e2231a' stroke-width='5'/%3E%3Ctext x='32' y='48' text-anchor='middle' font-family='Arial Black' font-size='15' fill='%238cc63f'%3ED%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -67,14 +69,58 @@ nav a:hover{color:var(--verde)}
 .btn.chico{min-height:42px;padding:9px 16px;font-size:15px}
 @media(max-width:420px){header .btn.chico span{display:none}header .btn.chico{padding:0;width:46px}}
 
-/* PORTADA */
-.portada{position:relative;min-height:92vh;min-height:92svh;color:#fff;display:flex;align-items:flex-end;padding:130px 0 56px;overflow:hidden}
-.portada>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 40%}
-.portada:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(18,18,18,.62) 0%,rgba(18,18,18,.15) 40%,rgba(18,18,18,.9) 100%)}
+/* PORTADA: video del local a pantalla completa (como sbg.com.ar) */
+.portada{position:relative;height:100vh;height:100svh;min-height:560px;color:#fff;display:flex;align-items:flex-end;padding:0 0 112px;overflow:hidden}
+.portada-fotos{position:absolute;inset:0;background:#d9d4cc;overflow:hidden}
+/* Portada: ambientes reales de los productos que vende Decomar, los más luminosos, con fundido y acercamiento lento */
+.portada-fotos img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.02);transition:opacity 1.6s ease,transform 7s linear}
+.portada-fotos img.on{opacity:1;transform:scale(1.09)}
+.portada:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(18,18,18,.5) 0%,rgba(18,18,18,0) 20%,rgba(18,18,18,.05) 42%,rgba(18,18,18,.78) 100%)}
 .portada .wrap{position:relative;z-index:1;width:100%}
-.portada h1{font-size:clamp(50px,11vw,112px);max-width:900px;text-wrap:balance}
-.portada p{max-width:560px;margin:18px 0 26px;font-size:clamp(17px,2.2vw,20px);color:#ececec}
+.portada h1{font-size:clamp(46px,8vw,92px);max-width:760px;text-wrap:balance}
+.portada p{max-width:500px;margin:14px 0 24px;font-size:clamp(16px,2vw,19px);color:#ececec}
 .portada .acc{display:flex;flex-wrap:wrap;gap:10px}
+.btn.blanco{background:#fff;color:var(--carbon);border-radius:4px;font-weight:800;letter-spacing:.02em}
+.btn.blanco:hover{background:var(--verde)}
+.bajar{position:absolute;z-index:1;left:50%;bottom:26px;transform:translateX(-50%);color:#fff;width:44px;height:30px;display:grid;place-items:center;animation:bajar 2.4s ease-in-out infinite}
+.bajar svg{width:40px;height:20px}
+@keyframes bajar{50%{transform:translate(-50%,7px)}}
+
+/* RUBROS: tarjetas altas con foto del producto colocado (como sbg.com.ar) */
+.rubros-tit{font:800 clamp(28px,4vw,40px)/1.05 var(--tit);font-stretch:88%;margin-bottom:24px}
+.rubros{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+@media(min-width:860px){.rubros{grid-template-columns:repeat(3,1fr);gap:16px}}
+.rubro{position:relative;aspect-ratio:4/5;overflow:hidden;color:#fff;text-decoration:none;background:#2a2622}
+.rubro img{width:100%;height:100%;object-fit:cover;transition:transform .7s cubic-bezier(.2,.7,.2,1)}
+.rubro:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 35%,rgba(0,0,0,.62) 100%)}
+.rubro span{position:absolute;z-index:1;left:clamp(14px,2.4vw,26px);right:12px;bottom:clamp(64px,7vw,84px);font:800 clamp(22px,3vw,34px)/1.02 var(--tit);font-stretch:88%}
+.rubro small{display:block;font:600 clamp(12px,1.3vw,14px)/1.2 var(--txt);margin-bottom:6px;color:#f1f1f1}
+.rubro i{position:absolute;z-index:1;left:clamp(14px,2.4vw,26px);bottom:clamp(14px,2.4vw,26px);width:42px;height:42px;background:#fff;color:var(--carbon);display:grid;place-items:center;font:400 30px/1 var(--txt);font-style:normal;transition:background .25s}
+.rubro:hover img{transform:scale(1.05)}
+.rubro:hover i{background:var(--verde)}
+.rubro.claro{background:#f6f5f1}
+.rubro.claro img{object-fit:contain;padding:8% 18% 34%}
+.rubro.claro:after{background:linear-gradient(180deg,transparent 50%,rgba(0,0,0,.5))}
+
+/* DESTACADOS: fila que se desliza */
+.destacados-sec{padding-bottom:40px}
+.dest-cab{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.dest-flechas{display:flex;gap:8px}
+.dest-flechas button{width:44px;height:44px;border:1.5px solid var(--carbon);background:transparent;font-size:26px;line-height:1;display:grid;place-items:center}
+.dest-flechas button:hover{background:var(--carbon);color:#fff}
+.destacados{display:grid;grid-auto-flow:column;grid-auto-columns:min(72vw,300px);gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:16px;padding:0 16px 18px;scrollbar-width:thin}
+@media(min-width:760px){.destacados{padding-inline:max(28px,calc((100vw - 1144px)/2));scroll-padding-inline:max(28px,calc((100vw - 1144px)/2))}}
+.dest{scroll-snap-align:start;text-decoration:none;color:inherit;background:none;border:0;padding:0;text-align:left;cursor:pointer}
+.dest .foto2{display:block;position:relative;aspect-ratio:1;overflow:hidden;background:var(--linea)}
+.dest .foto2 img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.dest small{display:block;margin-top:12px;font-size:12.5px;font-weight:700;color:var(--gris)}
+.dest b{display:block;font:800 19px/1.1 var(--tit);font-stretch:88%;margin-top:2px}
+.dest em{display:block;font-style:normal;font-weight:800;margin-top:6px}
+.dest em small{display:inline;margin:0;font-weight:600}
+
+/* Segunda foto al pasar el mouse (como dsforma.com.ar) */
+.alt{opacity:0;transition:opacity .45s ease}
+@media(hover:hover){.dest:hover .alt{opacity:1}}
 .datos{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px}
 .datos span{background:rgba(18,18,18,.6);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.18);padding:7px 13px;border-radius:999px;font-size:14px;font-weight:600}
 .datos b{color:var(--verde)}
@@ -144,14 +190,43 @@ nav a:hover{color:var(--verde)}
 @media(min-width:860px){.ambientes{grid-template-columns:repeat(4,1fr);grid-auto-rows:240px}.amb.grande{grid-column:span 2;grid-row:span 2}.amb.alta{grid-row:span 2}}
 
 /* CATÁLOGO */
-.filtros{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
-.filtro{border:1.5px solid var(--linea);background:var(--blanco);font-weight:700;font-size:15px;padding:9px 16px;border-radius:999px}
-.filtro[aria-pressed="true"]{background:var(--carbon);border-color:var(--carbon);color:#fff}
+.filtros{display:flex;gap:26px;border-bottom:1px solid var(--linea);margin-bottom:24px;overflow-x:auto;scrollbar-width:none}.filtros::-webkit-scrollbar{display:none}
+.filtro{flex:none;border:0;background:none;font-weight:600;font-size:15px;color:var(--gris);padding:12px 0 13px;border-bottom:2px solid transparent;margin-bottom:-1px}.filtro:hover{color:var(--carbon)}
+.filtro[aria-pressed="true"]{color:var(--carbon);font-weight:800;border-bottom-color:var(--carbon)}
+@media(max-width:700px){.filtros{margin-inline:-16px;padding-inline:16px;gap:20px}}
 .prods{display:grid;gap:12px;grid-template-columns:1fr 1fr}
 @media(min-width:760px){.prods{grid-template-columns:repeat(3,1fr)}}
 @media(min-width:1080px){.prods{grid-template-columns:repeat(4,1fr)}}
 .prod{background:var(--blanco);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;border:1px solid var(--linea)}
-.prod img{aspect-ratio:1;width:100%;object-fit:cover}
+.prod img{aspect-ratio:1;width:100%;object-fit:cover;display:block}
+.prod .foto{position:relative;overflow:hidden;aspect-ratio:1;background:var(--linea)}
+.prod .foto .ver{display:block;width:100%;height:100%;padding:0;border:0;background:none;cursor:zoom-in}
+.prod .foto .ver img{width:100%;height:100%;object-fit:cover}
+.prod .foto .alt{position:absolute;inset:0;height:100%}
+.prod .foto .ver:focus-visible{outline:3px solid var(--verde);outline-offset:-3px}
+.prod .foto.movida .alt{display:none}
+.prod .fl{position:absolute;top:50%;transform:translateY(-50%);width:34px;height:34px;border:0;border-radius:50%;background:rgba(255,255,255,.92);color:var(--carbon);font:400 24px/1 var(--txt);display:grid;place-items:center;box-shadow:0 2px 8px rgba(0,0,0,.18);opacity:0;transition:opacity .25s}
+.prod .fl.ant{left:8px}.prod .fl.sig{right:8px}
+.prod .foto:hover .fl,.prod .fl:focus-visible{opacity:1}
+@media(hover:none){.prod .fl{opacity:.95;width:30px;height:30px;font-size:21px}}
+.prod .puntos{position:absolute;left:0;right:0;bottom:10px;display:flex;justify-content:center;gap:5px;pointer-events:none}
+.prod .puntos i{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.6);box-shadow:0 0 2px rgba(0,0,0,.4)}
+.prod .puntos i.on{background:#fff;width:16px;border-radius:3px}
+.gal{border:0;padding:0;margin:auto;width:min(1100px,100vw);height:min(860px,100dvh);max-width:100vw;max-height:100dvh;background:var(--carbon);color:#fff;overflow:hidden}
+.gal[open]{display:grid;grid-template-rows:1fr auto}
+.gal::backdrop{background:rgba(10,10,10,.82)}
+.gal-foto{min-height:0;position:relative;touch-action:pan-y}
+.gal-foto img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.gal-pie{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 18px;font-size:14px}
+.gal-pie b{display:block;font:800 19px/1.1 var(--tit);font-stretch:88%}
+.gal-pie span{color:#bdbbb4}
+.gal button{position:absolute;border:0;background:rgba(255,255,255,.92);color:var(--carbon);width:46px;height:46px;border-radius:50%;font-size:26px;line-height:1;display:grid;place-items:center}
+.gal button:focus-visible{outline:3px solid var(--verde);outline-offset:2px}
+.gal-cerrar{top:12px;right:12px;font-size:18px!important}
+.gal-ant,.gal-sig{top:calc(50% - 46px)}
+.gal-ant{left:12px}.gal-sig{right:12px}
+.gal button[hidden]{display:none}
+.prod[hidden]{display:none}
 .prod-txt{padding:12px 12px 0}
 .prod h3{font:800 18px/1.1 var(--tit);font-stretch:88%}
 .prod p{font-size:13.5px;color:var(--gris);margin-top:3px;line-height:1.4}
@@ -162,6 +237,29 @@ nav a:hover{color:var(--verde)}
 .prod .cant output{font-weight:800}
 .prod.con{outline:2.5px solid var(--verde)}
 .prod-pie{margin-top:auto;padding-top:4px}
+.prod .sw{aspect-ratio:1;background:var(--t);display:grid;place-items:center;position:relative;
+  background-image:linear-gradient(90deg,rgba(255,255,255,.28) 1px,transparent 1px),linear-gradient(rgba(255,255,255,.28) 1px,transparent 1px);background-size:50% 50%}
+.prod .sw span{font:800 clamp(15px,2.4vw,20px)/1 var(--tit);font-stretch:88%;background:rgba(255,255,255,.9);color:var(--carbon);padding:7px 11px;border-radius:999px}
+.prod b.p small{font-weight:600;font-size:13px;color:var(--gris)}
+.prod p.caja{font-size:12.5px;margin-top:2px}
+.prod .stock{display:inline-block;font-size:11.5px;font-weight:800;color:var(--verde-osc);background:#eef6e2;border-radius:999px;padding:2px 8px;margin-bottom:6px}
+#catalogo{padding-top:56px}
+.cat-cab{display:grid;gap:6px;margin-bottom:22px}.cat-cab .rubros-tit{margin:0}.cat-cab p{color:var(--gris);max-width:560px}
+.barra-cat{display:grid;grid-template-columns:1fr auto;align-items:center;gap:12px 20px;padding:14px 0;border-top:1px solid var(--linea)}
+@media(min-width:860px){.barra-cat{grid-template-columns:minmax(260px,380px) 1fr auto}}
+.buscar{position:relative;display:block;grid-column:1/-1}
+@media(min-width:860px){.buscar{grid-column:auto}}
+.buscar svg{position:absolute;left:14px;top:50%;width:18px;height:18px;transform:translateY(-50%);color:var(--gris)}
+.buscar input{width:100%;font:inherit;font-size:16px;padding:11px 14px 11px 42px;border:1px solid var(--linea);border-radius:4px;background:var(--blanco)}
+.buscar input:focus-visible{outline:2.5px solid var(--verde);outline-offset:1px}
+.cuenta{font-size:14px;color:var(--gris)}
+@media(min-width:860px){.cuenta{text-align:center}}
+.ordenar{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--gris);justify-self:end}
+.ordenar select{font:inherit;font-weight:800;color:var(--carbon);border:0;background:transparent;padding:6px 2px;cursor:pointer}
+@media(max-width:480px){.ordenar span{display:none}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.sin-res{padding:24px 0;color:var(--gris)}
+#catalogo .aviso{font-size:13px;color:var(--gris);margin-top:16px}
 
 /* CONSULTAS: el celular que contesta solo (copiado de mymsoluciones.online, colores de Decomar en el marco) */
 .asis{display:grid;gap:44px;align-items:center}
@@ -283,6 +381,65 @@ body.con-pedido .flota{display:none}
 .carrito b{font:900 22px var(--tit);font-stretch:85%;color:var(--verde)}
 .carrito span{display:block;font-size:13px;color:#bdbdbd}
 @media(min-width:700px){.carrito{left:auto;right:24px;bottom:24px;width:430px}}
+
+/* TIENDA: carrito, cuenta con Google, pedidos y favoritos (27/11/2026, pedido de Matías, como shoesport.com.ar) */
+.hacc{display:flex;align-items:center;gap:8px}
+.hbtn{position:relative;width:46px;height:46px;border-radius:50%;border:1.5px solid rgba(255,255,255,.55);background:rgba(18,18,18,.35);backdrop-filter:blur(6px);color:#fff;display:grid;place-items:center;padding:0}
+.hbtn svg{width:21px;height:21px}
+.hbtn img{width:100%;height:100%;border-radius:50%;object-fit:cover}
+.hbtn .num{position:absolute;top:-4px;right:-4px;min-width:20px;height:20px;border-radius:10px;background:var(--verde);color:var(--carbon);font:800 12px/20px var(--txt);padding:0 5px}
+.hbtn .num:empty{display:none}
+.velo{position:fixed;inset:0;background:rgba(10,10,10,.5);z-index:60;opacity:0;pointer-events:none;transition:opacity .3s}
+.velo.ver{opacity:1;pointer-events:auto}
+.panel{position:fixed;top:0;right:0;bottom:0;z-index:61;width:min(440px,100vw);background:var(--blanco);display:flex;flex-direction:column;transform:translateX(102%);transition:transform .35s cubic-bezier(.2,.7,.2,1);box-shadow:-12px 0 40px rgba(0,0,0,.2)}
+.panel.abierto{transform:none}
+.panel-cab{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--linea)}
+.panel-cab h2{font:800 24px/1 var(--tit);font-stretch:88%}
+.cerrar{width:40px;height:40px;border:0;background:var(--hueso);border-radius:50%;font-size:18px}
+.panel-cuerpo{flex:1;overflow:auto;padding:16px 20px}
+.panel-pie{border-top:1px solid var(--linea);padding:16px 20px 20px;display:grid;gap:10px;background:var(--hueso)}
+.item{display:grid;grid-template-columns:72px 1fr auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--linea)}
+.item img,.item .mini{width:72px;height:72px;object-fit:cover;border-radius:8px;background:var(--t,#ddd)}
+.item b{display:block;font:800 16px/1.15 var(--tit);font-stretch:88%}
+.item small{display:block;color:var(--gris);font-size:13px;line-height:1.35}
+.item .sub{font-weight:800;font-size:14px;text-align:right;white-space:nowrap}
+.item .cant{display:inline-flex;align-items:center;gap:0;margin-top:6px;border:1.5px solid var(--carbon);border-radius:999px}
+.item .cant button{width:30px;height:28px;border:0;background:none;font-size:17px;font-weight:700}
+.item .cant output{min-width:22px;text-align:center;font-weight:800;font-size:14px}
+.quitar{border:0;background:none;color:var(--gris);font-size:12.5px;text-decoration:underline;padding:4px 0 0;display:block;margin-left:auto}
+.total{display:flex;justify-content:space-between;align-items:baseline;font-weight:700}
+.total b{font:900 28px var(--tit);font-stretch:85%}
+.nota{font-size:12.5px;color:var(--gris);line-height:1.4}
+.vacio{text-align:center;color:var(--gris);padding:40px 10px}
+.vacio .btn{margin-top:14px}
+.btn.google{background:#fff;color:var(--carbon);border:1.5px solid var(--linea);width:100%}
+.btn.google svg{width:20px;height:20px}
+.btn.ancho{width:100%}
+.aviso-login{display:flex;gap:10px;align-items:center;font-size:13.5px;background:#eef6e2;border-radius:10px;padding:10px 12px}
+.aviso-login button{border:0;background:none;font-weight:800;text-decoration:underline;color:var(--verde-osc);padding:0;white-space:nowrap}
+.perfil{display:flex;gap:12px;align-items:center;margin-bottom:14px}
+.perfil img{width:52px;height:52px;border-radius:50%}
+.perfil b{display:block;font:800 19px/1.1 var(--tit);font-stretch:88%}
+.perfil small{color:var(--gris);font-size:13px}
+.tabs{display:flex;gap:22px;border-bottom:1px solid var(--linea);margin:0 -20px 12px;padding:0 20px}
+.tabs button{border:0;background:none;padding:10px 0 11px;font-weight:600;color:var(--gris);border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs button[aria-selected="true"]{color:var(--carbon);font-weight:800;border-bottom-color:var(--carbon)}
+.pedido{border:1px solid var(--linea);border-radius:12px;padding:14px;margin-bottom:12px}
+.pedido-cab{display:flex;justify-content:space-between;gap:10px;font-size:13.5px;color:var(--gris)}
+.pedido-cab b{color:var(--carbon)}
+.pedido ul{list-style:none;margin:8px 0 10px;font-size:14px;line-height:1.5}
+.pedido .btn{min-height:40px;padding:8px 14px;font-size:14px}
+.form-datos{display:grid;gap:12px}
+.form-datos label{display:grid;gap:4px;font-size:13.5px;font-weight:700}
+.form-datos input,.form-datos textarea{font:inherit;font-size:16px;padding:10px 12px;border:1px solid var(--linea);border-radius:6px;background:#fff}
+.guardado{font-size:13.5px;color:var(--verde-osc);font-weight:700}
+.salir{border:0;background:none;color:var(--gris);text-decoration:underline;font-size:14px;margin-top:18px}
+.fav{position:absolute;z-index:2;top:8px;right:8px;width:36px;height:36px;border-radius:50%;border:0;background:rgba(255,255,255,.92);display:grid;place-items:center;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.fav svg{width:19px;height:19px;fill:none;stroke:var(--carbon);stroke-width:2}
+.fav[aria-pressed="true"] svg{fill:var(--rojo);stroke:var(--rojo)}
+.prod .sw{position:relative}
+.carrito .btn{border:0;cursor:pointer}
+@media(max-width:420px){.hacc .btn.chico{display:none}}
 </style>
 </head>
 <body>
@@ -316,91 +473,93 @@ body.con-pedido .flota{display:none}
 <header>
   <div class="wrap">
     <a class="marca" href="#inicio" aria-label="Decomar Revestimientos, inicio"><svg class="logo-dm" aria-hidden="true"><use href="#logo-dm"/></svg><span class="marca-txt"><b>Deco<span>mar</span></b><small>REVESTIMIENTOS</small></span></a>
-    <nav aria-label="Secciones"><a href="#ofertas">Ofertas</a><a href="#antes-despues">Antes y después</a><a href="#catalogo">Catálogo</a><a href="#consultas">Consultas</a><a href="#zona">Dónde estamos</a></nav>
-    <a class="btn wa chico" data-wa="Hola Decomar, quisiera hacer una consulta." href="#" aria-label="Consultar por WhatsApp"><svg aria-hidden="true"><use href="#i-wa"/></svg><span>Consultar</span></a>
+    <nav aria-label="Secciones"><a href="#rubros">Productos</a><a href="#catalogo">Arme su pedido</a><a href="#consultas">Consultas</a><a href="#zona">Dónde estamos</a></nav>
+    <div class="hacc">
+      <button type="button" class="hbtn" id="cuentaBtn" aria-label="Ingresar con Google"></button>
+      <button type="button" class="hbtn" id="carroBtn" aria-label="Ver su pedido"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 8H6.2"/><circle cx="10" cy="20" r="1.3"/><circle cx="17" cy="20" r="1.3"/></svg><span class="num" id="carroNum"></span></button>
+      <a class="btn wa chico" data-wa="Hola Decomar, quisiera hacer una consulta." href="#" aria-label="Consultar por WhatsApp"><svg aria-hidden="true"><use href="#i-wa"/></svg><span>Consultar</span></a>
+    </div>
   </div>
 </header>
 
 <main id="inicio">
 <section class="portada">
-  <img src="img/hero-bano-marmol.jpg" alt="Baño revestido con placas símil mármol" fetchpriority="high">
+  <div class="portada-fotos" aria-hidden="true">
+    <img src="img/portada-1.jpg" alt="" class="on" fetchpriority="high">
+    <img src="img/portada-2.jpg" alt="" loading="lazy">
+    <img src="img/portada-3.jpg" alt="" loading="lazy">
+    <img src="img/portada-4.jpg" alt="" loading="lazy">
+    <img src="img/portada-5.jpg" alt="" loading="lazy">
+  </div>
   <div class="wrap">
-    <h1 class="tit">Renueve sus espacios sin obra</h1>
-    <p>Placas antihumedad, símil mármol, wall panel y cerámicas para transformar paredes, baños y cocinas en un día, sin polvo ni escombros.</p>
+    <h1 class="tit">Pisos y revestimientos</h1>
+    <p>Cerámicas, porcelanatos, calcáreos, piedra para frentes y pisos para exterior, con stock en Mataderos y Parque Avellaneda.</p>
     <div class="acc">
-      <a class="btn verde" href="#ofertas">Ver ofertas</a>
+      <a class="btn blanco" href="#rubros">Ver productos</a>
       <a class="btn claro" data-wa="Hola Decomar, quisiera asesoramiento para renovar un ambiente." href="#"><svg aria-hidden="true"><use href="#i-wa"/></svg>Pedir asesoramiento</a>
     </div>
-    <div class="datos">
-      <span><b>Envío sin cargo</b> en CABA en productos seleccionados</span>
-      <span>Mataderos y Parque Avellaneda</span>
-      <span>CABA y alrededores</span>
-    </div>
   </div>
+  <a class="bajar" href="#rubros" aria-label="Bajar a los productos"><svg viewBox="0 0 40 20" aria-hidden="true"><path d="M2 2l18 16L38 2" fill="none" stroke="currentColor" stroke-width="2"/></svg></a>
 </section>
 
-<div class="cinta" aria-hidden="true"><div class="cinta-in">
-  <span>Placas antihumedad</span><span>Símil mármol</span><span>Wall panel</span><span>Cerámicas</span><span>Vanitorys</span><span>Espejos LED</span>
-  <span>Placas antihumedad</span><span>Símil mármol</span><span>Wall panel</span><span>Cerámicas</span><span>Vanitorys</span><span>Espejos LED</span>
-</div></div>
-
-<section class="sec" id="ofertas">
+<section class="sec blanca" id="rubros">
   <div class="wrap">
-    <div class="cab"><h2 class="tit">Ofertas de la semana</h2><p>Consulte stock, colores disponibles y costo de envío a su zona.</p></div>
-    <div class="ofertas" id="ofertasLista"></div>
-    <p class="aviso">Precios en pesos publicados por Decomar en octubre de 2026, sujetos a cambios y a disponibilidad de stock. Imágenes ilustrativas.</p>
-  </div>
-</section>
-
-<section class="sec oscura" id="antes-despues">
-  <div class="wrap ad">
-    <div>
-      <div class="comparar" id="comparar" style="--corte:50%">
-        <img src="img/antes.jpg" alt="Pared con manchas de humedad y moho">
-        <img class="despues" src="img/despues.jpg" alt="Pared revestida con placas símil piedra">
-        <span class="etq a">Antes</span><span class="etq d">Después</span>
-        <div class="barra-ad"></div>
-        <div class="tirador" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M9 6l-6 6 6 6M15 6l6 6-6 6" fill="none" stroke="#121212" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-        <input type="range" min="0" max="100" value="50" aria-label="Deslice para comparar el antes y el después">
-      </div>
-      <p class="ilus">Deslice para comparar. Imagen ilustrativa.</p>
-    </div>
-    <div class="ad-txt">
-      <h2 class="tit">Chau humedad, en una tarde</h2>
-      <p>Las placas antihumedad cubren la pared dañada sin picar ni revocar. Se pegan, se sellan y el ambiente queda listo para usar.</p>
-      <ul>
-        <li>Resisten la humedad y el moho</li>
-        <li>Se limpian con un paño húmedo</li>
-        <li>Variedad de colores y texturas símil piedra</li>
-      </ul>
-      <a class="btn verde" data-wa="Hola Decomar, tengo humedad en una pared. ¿Me pueden asesorar con las placas antihumedad?" href="#"><svg aria-hidden="true"><use href="#i-wa"/></svg>Consultar por mi pared</a>
+    <h2 class="rubros-tit">Pisos y revestimientos</h2>
+    <div class="rubros">
+      <a class="rubro" href="#catalogo" data-ir="piso"><img src="img/g-p1-1.jpg" alt="Living con piso cerámico gris Portland" loading="lazy"><span><small>Cerámica</small>Pisos</span><i aria-hidden="true">›</i></a>
+      <a class="rubro" href="#catalogo" data-ir="porcelanato"><img src="img/g-p116-1.jpg" alt="Baño revestido en porcelanato travertino" loading="lazy"><span><small>Porcelanato</small>Grandes formatos</span><i aria-hidden="true">›</i></a>
+      <a class="rubro" href="#catalogo" data-ir="madera"><img src="img/g-p109-1.jpg" alt="Cocina con piso porcelanato símil madera" loading="lazy"><span><small>Cerámica y porcelanato</small>Símil madera</span><i aria-hidden="true">›</i></a>
+      <a class="rubro" href="#catalogo" data-ir="exterior"><img src="img/g-p23-1.jpg" alt="Patio con piso Adoquinado Granada gris" loading="lazy"><span><small>Patios y piletas</small>Exterior</span><i aria-hidden="true">›</i></a>
+      <a class="rubro" href="#catalogo" data-ir="calcareo"><img src="img/g-p50-1.jpg" alt="Cocina con pared de calcáreos" loading="lazy"><span><small>Baños y cocinas</small>Calcáreos</span><i aria-hidden="true">›</i></a>
+      <a class="rubro" href="#catalogo" data-ir="pared"><img src="img/g-p67-1.jpg" alt="Cocina con revestimiento Subway negro" loading="lazy"><span><small>Revestimientos</small>Paredes</span><i aria-hidden="true">›</i></a>
+      <a class="rubro" href="#catalogo" data-ir="piedra"><img src="img/g-p20-1.jpg" alt="Pared exterior revestida en piedra pizarra" loading="lazy"><span><small>Frentes y muros</small>Piedra</span><i aria-hidden="true">›</i></a>
+      <a class="rubro" href="#catalogo" data-ir="vinilico"><img src="img/r-vinilico.jpg" alt="Colocación de piso vinílico símil madera" loading="lazy"><span><small>Autoadhesivo</small>Piso vinílico</span><i aria-hidden="true">›</i></a>
+      <a class="rubro" href="#catalogo" data-ir="pegamento"><img src="img/rubro-pegamentos.jpg" alt="Envases de Mapeset, Keraflex, Weber Pro y Vadex Románica" loading="lazy"><span><small>Mapei, Weber y Vadex</small>Pegamentos y accesorios</span><i aria-hidden="true">›</i></a>
     </div>
   </div>
 </section>
 
-<section class="sec blanca">
+<section class="sec destacados-sec" id="destacados">
   <div class="wrap">
-    <div class="cab"><h2 class="tit">Un material para cada ambiente</h2><p>Toque un ambiente para ver los productos que mejor le quedan.</p></div>
-    <div class="ambientes">
-      <a class="amb grande" href="#catalogo" data-ir="marmol"><img src="img/living-marmol.jpg" alt="Living con pared símil mármol detrás del televisor" loading="lazy"><span>Living<small>Placas símil mármol de pared completa</small></span></a>
-      <a class="amb alta" href="#catalogo" data-ir="bano"><img src="img/bano-led.jpg" alt="Baño con espejo LED y revestimiento de piedra" loading="lazy"><span>Baños<small>Vanitorys, espejos y revestimientos</small></span></a>
-      <a class="amb" href="#catalogo" data-ir="madera"><img src="img/living-listones.jpg" alt="Pared con wall panel de listones de madera" loading="lazy"><span>Wall panel<small>Calidez de madera</small></span></a>
-      <a class="amb" href="#catalogo" data-ir="piedra"><img src="img/despues.jpg" alt="Pared con revestimiento símil piedra" loading="lazy"><span>Símil piedra<small>Placas antihumedad</small></span></a>
-    </div>
+    <div class="dest-cab"><h2 class="rubros-tit">Productos destacados</h2>
+      <div class="dest-flechas"><button type="button" id="destAnt" aria-label="Ver productos anteriores">‹</button><button type="button" id="destSig" aria-label="Ver más productos">›</button></div></div>
   </div>
+  <div class="destacados" id="destacados-fila"></div>
 </section>
 
 <section class="sec" id="catalogo">
   <div class="wrap">
-    <div class="cab"><h2 class="tit">Arme su pedido</h2><p>Elija productos y cantidades. Le llega la lista ordenada por WhatsApp y le respondemos con precio y envío.</p></div>
+    <div class="cat-cab">
+      <h2 class="rubros-tit">Arme su pedido</h2>
+      <p>Elija productos y cantidades de cajas. Le llega la lista ordenada por WhatsApp y le confirmamos el total con el envío.</p>
+    </div>
+    <div class="barra-cat">
+      <label class="buscar"><span class="sr">Buscar en el catálogo</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.5 15.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input id="buscar" type="search" placeholder="Buscar modelo, color o medida" autocomplete="off"></label>
+      <span class="cuenta" id="cuenta" aria-live="polite"></span>
+      <label class="ordenar"><span>Ordenar por</span><select id="orden"><option value="">Destacados</option><option value="menor">Precio: menor a mayor</option><option value="mayor">Precio: mayor a menor</option><option value="nombre">Nombre</option></select></label>
+    </div>
     <div class="filtros" role="group" aria-label="Filtrar el catálogo">
       <button class="filtro" aria-pressed="true" data-f="todo">Todo</button>
-      <button class="filtro" aria-pressed="false" data-f="piedra">Antihumedad</button>
-      <button class="filtro" aria-pressed="false" data-f="marmol">Símil mármol</button>
-      <button class="filtro" aria-pressed="false" data-f="madera">Madera</button>
-      <button class="filtro" aria-pressed="false" data-f="bano">Baño</button>
+      <button class="filtro" aria-pressed="false" data-f="piso">Cerámicas</button>
+      <button class="filtro" aria-pressed="false" data-f="porcelanato">Porcelanatos</button>
+      <button class="filtro" aria-pressed="false" data-f="madera">Símil madera</button>
+      <button class="filtro" aria-pressed="false" data-f="exterior">Exterior y pileta</button>
+      <button class="filtro" aria-pressed="false" data-f="calcareo">Calcáreos</button>
+      <button class="filtro" aria-pressed="false" data-f="pared">Paredes</button>
+      <button class="filtro" aria-pressed="false" data-f="piedra">Piedra para frentes</button>
+      <button class="filtro" aria-pressed="false" data-f="vinilico">Vinílico</button>
+      <button class="filtro" aria-pressed="false" data-f="pegamento">Pegamentos y accesorios</button>
     </div>
     <div class="prods" id="prods"></div>
+    <p class="sin-res" id="sinRes" hidden>No encontramos ese modelo. Pruebe con otra palabra o consúltenos por WhatsApp.</p>
+    <dialog class="gal" id="galeria" aria-label="Fotos del producto">
+      <div class="gal-foto"><img id="galImg" alt=""></div>
+      <button class="gal-ant" id="galAnt" aria-label="Foto anterior">‹</button>
+      <button class="gal-sig" id="galSig" aria-label="Foto siguiente">›</button>
+      <div class="gal-pie"><div><b id="galNom"></b><span id="galDet"></span></div><span id="galNum" aria-live="polite"></span></div>
+      <button class="gal-cerrar" id="galCerrar" aria-label="Cerrar fotos">✕</button>
+    </dialog>
+    <p class="aviso">Precios por m² en pesos, de noviembre de 2026. Se venden por caja completa. Sujetos a cambios y a disponibilidad de stock.</p>
   </div>
 </section>
 
@@ -410,14 +569,14 @@ body.con-pedido .flota{display:none}
       <h2 class="tit">Le responde al instante, también de noche</h2>
       <p>El asistente de WhatsApp de Decomar atiende cada consulta en segundos, a toda hora.</p>
       <ul>
-        <li>Calcula cuántas placas necesita con la medida de su pared</li>
-        <li>Le pasa precios, colores y costo de envío</li>
+        <li>Calcula cuántos metros necesita con la medida del ambiente</li>
+        <li>Le pasa precios, colores y stock</li>
         <li>Arma el pedido y le pasa la charla a Mariela para cerrar la venta</li>
       </ul>
       <a class="btn wa" data-wa="Hola Decomar, quisiera hacer una consulta." href="#"><svg aria-hidden="true"><use href="#i-wa"/></svg>Escribir a Decomar</a>
     </div>
     <div>
-      <div class="tel" id="tel" role="img" aria-label="Charla de ejemplo: una clienta pregunta por placas antihumedad para una pared de 3 por 2,5 metros, el asistente le calcula la cantidad y el precio, toma su dirección y le pasa la charla a Mariela.">
+      <div class="tel" id="tel" role="img" aria-label="Charla de ejemplo: una clienta pregunta por piso para el borde de la pileta, el asistente le calcula los metros, toma su nombre y dirección y le pasa la charla a Mariela">
         <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="tel-i-tilde" viewBox="0 0 18 12"><path d="M1 6.6l3.3 3.3L11.2 2M7.6 9.2l.8.7L15.3 2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol></svg>
         <div class="tel-pant">
           <div class="tel-est">
@@ -436,15 +595,15 @@ body.con-pedido .flota{display:none}
           </div>
           <div class="tel-chat" id="tel-chat">
             <div class="tel-sis tel-hoy">Hoy</div>
-            <div class="tel-m tel-sale"><span class="tel-tx">Hola! Tengo humedad en una pared, ¿qué me recomiendan?</span><span class="tel-h">21:41<svg class="tel-tilde leido" viewBox="0 0 18 12" aria-hidden="true"><use href="#tel-i-tilde"/></svg></span></div>
-            <div class="tel-m tel-entra"><span class="tel-tx">¡Hola! Para eso van las placas antihumedad: se colocan sin picar y quedan como piedra. ¿Qué medida tiene la pared?</span><span class="tel-h">21:41</span></div>
-            <div class="tel-m tel-sale tel-luego"><span class="tel-tx">3 metros de ancho por 2,5 de alto</span><span class="tel-h">21:42<svg class="tel-tilde leido" viewBox="0 0 18 12" aria-hidden="true"><use href="#tel-i-tilde"/></svg></span></div>
-            <div class="tel-m tel-entra tel-luego"><span class="tel-tx">Son 7,5 m²: le recomiendo 8 m² por los cortes. A $ 25.000 el m², son $ 200.000, con pegamento, sellajuntas y envío sin cargo en CABA. ¿Me pasa su nombre y dirección?</span><span class="tel-h">21:42</span></div>
+            <div class="tel-m tel-sale"><span class="tel-tx">Hola! ¿Tienen piso para el borde de la pileta?</span><span class="tel-h">21:41<svg class="tel-tilde leido" viewBox="0 0 18 12" aria-hidden="true"><use href="#tel-i-tilde"/></svg></span></div>
+            <div class="tel-m tel-entra"><span class="tel-tx">¡Hola! Sí, tenemos en terracota y en gris. ¿Cuántos metros cuadrados necesita?</span><span class="tel-h">21:41</span></div>
+            <div class="tel-m tel-sale tel-luego"><span class="tel-tx">Unos 20 m²</span><span class="tel-h">21:42<svg class="tel-tilde leido" viewBox="0 0 18 12" aria-hidden="true"><use href="#tel-i-tilde"/></svg></span></div>
+            <div class="tel-m tel-entra tel-luego"><span class="tel-tx">Le recomiendo 22 m², por los cortes. ¿Me pasa su nombre y dirección así le cotizo con el envío?</span><span class="tel-h">21:42</span></div>
             <div class="tel-m tel-sale tel-luego"><span class="tel-tx">Laura, Av. Eva Perón 5800, Mataderos</span><span class="tel-h">21:43<svg class="tel-tilde leido" viewBox="0 0 18 12" aria-hidden="true"><use href="#tel-i-tilde"/></svg></span></div>
             <div class="tel-sis tel-nota tel-luego">Datos guardados · pedido armado</div>
             <div class="tel-m tel-entra tel-luego"><span class="tel-tx">¡Gracias, Laura! Ya quedó su pedido. Para elegir el color y coordinar la entrega le paso con Mariela.</span><span class="tel-h">21:43</span></div>
             <div class="tel-sis tel-nota tel-luego">Mariela se sumó a la charla</div>
-            <div class="tel-m tel-entra tel-luego"><b class="tel-quien">Mariela · Decomar</b><span class="tel-tx">Hola, Laura. Ya vi su pedido: mañana le paso los colores disponibles.</span><span class="tel-h">21:44</span></div>
+            <div class="tel-m tel-entra tel-luego"><b class="tel-quien">Mariela · Decomar</b><span class="tel-tx">Hola, Laura. Ya vi su pedido: le paso las fotos de los dos colores y el precio con envío.</span><span class="tel-h">21:44</span></div>
           </div>
           <div class="tel-barra">
             <div class="tel-caja">
@@ -468,10 +627,10 @@ body.con-pedido .flota{display:none}
   <div class="wrap">
     <div class="cab"><h2 class="tit">Así de simple</h2></div>
     <div class="pasos">
-      <div class="paso"><h3>Elija o consulte</h3><p>Desde la web o con una foto de la pared que quiere renovar.</p></div>
+      <div class="paso"><h3>Elija o consulte</h3><p>Desde la web o con una foto del ambiente que quiere renovar.</p></div>
       <div class="paso"><h3>Le cotizamos</h3><p>Le decimos cuánto material necesita y el precio total.</p></div>
       <div class="paso"><h3>Confirma</h3><p>Acordamos la forma de pago y el día de entrega.</p></div>
-      <div class="paso"><h3>Lo recibe</h3><p>En CABA y alrededores, con envío sin cargo en productos seleccionados.</p></div>
+      <div class="paso"><h3>Lo recibe</h3><p>En CABA y alrededores. El envío se cotiza según la zona.</p></div>
     </div>
     <div class="zona">
       <div class="mapa"><iframe title="Mapa de la zona de Decomar: Mataderos, Ciudad de Buenos Aires" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.google.com/maps?q=Mataderos,+Ciudad+Aut%C3%B3noma+de+Buenos+Aires&z=14&output=embed"></iframe></div>
@@ -481,16 +640,14 @@ body.con-pedido .flota{display:none}
           <p>Entregamos en toda la Ciudad de Buenos Aires y alrededores. El costo de envío a su zona se informa con la cotización.</p>
           <a class="btn verde chico" data-wa="Hola Decomar, ¿cuánto sale el envío a mi zona?" href="#"><svg aria-hidden="true"><use href="#i-wa"/></svg>Consultar envío</a>
         </div>
-        <details><summary>¿Las placas se colocan sobre la humedad?</summary><p>Sí: cubren la pared dañada sin picar. Le recomendamos el adhesivo y el sellador según el estado de la pared.</p></details>
-        <details><summary>¿Cuántas placas necesito?</summary><p>Envíenos el ancho y el alto de la pared y le calculamos la cantidad exacta, con un pequeño margen para cortes.</p></details>
-        <details><summary>¿Qué incluye el envío sin cargo?</summary><p>Aplica a los productos que lo indican y a entregas en CABA. Para otras zonas se cotiza aparte.</p></details>
+        <details><summary>¿Cuánto material necesito?</summary><p>Envíenos las medidas del ambiente y le calculamos la cantidad exacta, con un pequeño margen para cortes.</p></details>
       </div>
     </div>
   </div>
 </section>
 
 <section class="cierre">
-  <img src="img/bano-piedra.jpg" alt="" loading="lazy">
+  <img src="img/f-cierre.jpg" alt="" loading="lazy">
   <div class="wrap">
     <h2 class="tit">¿Qué ambiente renovamos primero?</h2>
     <p>Envíenos una foto y le decimos qué material le conviene y cuánto le sale.</p>
@@ -504,21 +661,22 @@ body.con-pedido .flota{display:none}
     <div class="pie-grid">
       <div class="pie-marca">
         <svg class="logo-dm" role="img" aria-label="Decomar"><use href="#logo-dm"/></svg>
-        <p>Materiales de construcción y decoración para su hogar. Revestimientos que renuevan sin obra.</p>
+        <p>Pisos, revestimientos y materiales para su casa, en Mataderos y Parque Avellaneda.</p>
         <div class="redes">
           <a href="https://www.instagram.com/decomar_revestimientos/" target="_blank" rel="noopener" aria-label="Instagram de Decomar"><svg aria-hidden="true"><use href="#i-ig"/></svg></a>
-          <a href="#" aria-label="Facebook de Decomar"><svg aria-hidden="true"><use href="#i-fb"/></svg></a>
-          <a href="#" aria-label="TikTok de Decomar"><svg aria-hidden="true"><use href="#i-tt"/></svg></a>
           <a data-wa="Hola Decomar, quisiera hacer una consulta." href="#" aria-label="WhatsApp de Decomar"><svg aria-hidden="true"><use href="#i-wa"/></svg></a>
         </div>
       </div>
       <div>
         <h4>Productos</h4>
         <ul>
-          <li><a href="#catalogo" data-ir="piedra">Placas antihumedad</a></li>
-          <li><a href="#catalogo" data-ir="marmol">Placas símil mármol</a></li>
-          <li><a href="#catalogo" data-ir="madera">Wall panel y cerámicas</a></li>
-          <li><a href="#catalogo" data-ir="bano">Vanitorys y espejos LED</a></li>
+          <li><a href="#catalogo" data-ir="piso">Cerámicas</a></li>
+          <li><a href="#catalogo" data-ir="porcelanato">Porcelanatos</a></li>
+          <li><a href="#catalogo" data-ir="exterior">Pisos para pileta y patio</a></li>
+          <li><a href="#catalogo" data-ir="calcareo">Calcáreos</a></li>
+          <li><a href="#catalogo" data-ir="vinilico">Piso vinílico autoadhesivo</a></li>
+          <li><a href="#catalogo" data-ir="madera">Porcelanato y cerámica símil madera</a></li>
+          <li><a href="#catalogo" data-ir="piedra">Piedra para frentes</a></li>
         </ul>
       </div>
       <div>
@@ -526,74 +684,392 @@ body.con-pedido .flota{display:none}
         <ul class="contacto">
           <li><svg aria-hidden="true"><use href="#i-wa"/></svg><a data-wa="Hola Decomar, quisiera hacer una consulta." href="#">11 6822-3789</a></li>
           <li><svg aria-hidden="true"><use href="#i-tel"/></svg><a href="tel:+5491168223789">Llamar</a></li>
-          <li><svg aria-hidden="true"><use href="#i-mail"/></svg><a href="mailto:ventas@decomar.com.ar">ventas@decomar.com.ar</a></li>
           <li><svg aria-hidden="true"><use href="#i-pin"/></svg><span>Mataderos y Parque Avellaneda, CABA</span></li>
         </ul>
       </div>
       <div>
-        <h4>Horarios</h4>
+        <h4>Atención</h4>
         <ul class="contacto">
-          <li><svg aria-hidden="true"><use href="#i-reloj"/></svg><span>Lunes a viernes<br>9 a 18 h</span></li>
-          <li><svg aria-hidden="true"><use href="#i-reloj"/></svg><span>Sábados<br>9 a 13 h</span></li>
           <li><svg aria-hidden="true"><use href="#i-wa"/></svg><span>WhatsApp: el asistente responde las 24 h</span></li>
         </ul>
       </div>
     </div>
     <div class="pie-baja">
-      <span>© 2026 <b>Decomar Revestimientos</b> · Precios sujetos a cambios · Imágenes ilustrativas</span>
+      <span>© 2026 <b>Decomar Revestimientos</b> · Precios sujetos a cambios · Fotos de ambientes ilustrativas</span>
       <span>Sitio hecho por <b>MyM Soluciones</b></span>
     </div>
   </div>
 </footer>
 
 <a class="flota" data-wa="Hola Decomar, quisiera hacer una consulta." href="#" aria-label="Escribir a Decomar por WhatsApp"><svg aria-hidden="true"><use href="#i-wa"/></svg></a>
-<div class="carrito" id="carrito" role="region" aria-label="Su pedido"><div><b id="carritoCant">0 productos</b><span>en su pedido</span></div><a class="btn wa chico" id="enviar" href="#" target="_blank" rel="noopener">Enviar pedido</a></div>
+<div class="carrito" id="carrito" role="region" aria-label="Su pedido"><div><b id="carritoCant">0 productos</b><span>en su pedido</span></div><button type="button" class="btn verde chico" id="verPedido">Ver pedido</button><a id="enviar" hidden></a></div>
+<div class="velo" id="velo"></div>
+<aside class="panel" id="panelCarrito" aria-label="Su pedido" aria-hidden="true">
+  <div class="panel-cab"><h2>Su pedido</h2><button class="cerrar" data-cerrar aria-label="Cerrar el pedido">✕</button></div>
+  <div class="panel-cuerpo" id="carritoLista"></div>
+  <div class="panel-pie" id="carritoPie">
+    <div class="total"><span>Total estimado</span><b id="carritoTotal">$ 0</b></div>
+    <p class="nota">Precios por caja completa, de noviembre de 2026. El envío y el total final se los confirmamos por WhatsApp.</p>
+    <div class="aviso-login" id="avisoLogin"><span>Ingrese con Google y le guardamos el pedido en su cuenta.</span><button type="button" data-login>Ingresar</button></div>
+    <button type="button" class="btn wa ancho" id="enviarPedido"><svg aria-hidden="true"><use href="#i-wa"/></svg>Enviar pedido por WhatsApp</button>
+  </div>
+</aside>
+<aside class="panel" id="panelCuenta" aria-label="Mi cuenta" aria-hidden="true">
+  <div class="panel-cab"><h2>Mi cuenta</h2><button class="cerrar" data-cerrar aria-label="Cerrar mi cuenta">✕</button></div>
+  <div class="panel-cuerpo" id="cuentaCuerpo"></div>
+</aside>
+
 
 <script>
 const WA='5491168223789';
+/* Video de la portada: quieto si la persona pidió menos movimiento */
+(function(){const f=[...document.querySelectorAll('.portada-fotos img')];if(f.length<2||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+ let i=0;setInterval(()=>{if(document.hidden)return;f[i].classList.remove('on');i=(i+1)%f.length;f[i].classList.add('on');},6000);})();
 const link=t=>'https://wa.me/'+WA+'?text='+encodeURIComponent(t);
 document.querySelectorAll('[data-wa]').forEach(a=>{a.href=link(a.dataset.wa);a.target='_blank';a.rel='noopener';});
 
-/* Productos y precios: los de sus publicaciones de Instagram (sep. y oct. de 2026). Fotos ilustrativas. */
+/* Productos y precios: los de sus publicaciones de Instagram (sep. y oct. de 2026). Fotos ilustrativas.
+   26/11/2026: se suman los productos de las fotos que mandó Mariela de su stock (img/r-*.jpg), todavía sin precio. */
 const PRODS=[
- {id:'ah',c:'piedra',n:'Placas antihumedad',d:'Símil piedra, varios colores y texturas',p:'$ 25.000',u:'el m²',f:'despues.jpg',inc:['Sellajuntas','Pegamento','Envío sin cargo en CABA']},
- {id:'pm',c:'marmol',n:'Placa símil mármol',d:'Placa grande de 1,28 × 2,44 m para pared completa',p:'$ 80.000',u:'c/u',f:'living-marmol.jpg',inc:['Sellador','Envío sin cargo']},
- {id:'am',c:'marmol',n:'Placas autoadhesivas símil mármol',d:'60 × 60 cm, se pegan sin adhesivo',p:'$ 6.000',u:'c/u',f:'marmol-textura.jpg',inc:['Colocación rápida']},
- {id:'cm',c:'madera',n:'Cerámica tipo madera',d:'36 × 36 cm, española, porcelánico HD',p:'$ 15.500',u:'',f:'madera-veta.jpg',inc:['Resistente al uso diario']},
- {id:'va',c:'bano',n:'Vanitory laqueado 80 cm',d:'Con mesada símil mármol travertino y patas antihumedad',p:'$ 480.000',u:'',f:'vanitory.jpg',inc:['Sellajuntas','Pegamento','Envío sin cargo en CABA']},
- {id:'wp',c:'madera',n:'Wall panel símil madera',d:'Listones para paredes y respaldos',p:'',u:'',f:'living-listones.jpg'},
- {id:'el',c:'bano',n:'Espejos con luz LED',d:'Redondos y rectangulares, para baños',p:'',u:'',f:'espejo-led.jpg'},
- {id:'mb',c:'bano',n:'Revestimiento para baño',d:'Placas resistentes a la humedad',p:'',u:'',f:'bano-led.jpg'},
- {id:'mc',c:'marmol',n:'Revestimiento para cocina',d:'Placas símil mármol para la pared de la mesada',p:'',u:'',f:'cocina-marmol.jpg'},
- {id:'pp',c:'piedra',n:'Revestimiento símil piedra',d:'Para frentes, livings y galerías',p:'',u:'',f:'pared-piedra.jpg'}
-];
-document.getElementById('ofertasLista').innerHTML=PRODS.filter(p=>p.p).map(p=>`<article class="oferta">
- <div class="oferta-foto"><img src="img/${p.f}" alt="${p.n}" loading="lazy"><div class="precio">${p.p}<small>${p.u}</small></div></div>
- <div class="oferta-txt"><h3>${p.n}</h3><p>${p.d}</p><div class="incluye">${p.inc.map(i=>`<span>${i}</span>`).join('')}</div></div>
- <div class="oferta-acc"><a class="btn wa chico" target="_blank" rel="noopener" href="${link('Hola Decomar, me interesa: '+p.n+' ('+p.p+(p.u?' '+p.u:'')+'). ¿Tienen stock?')}"><svg aria-hidden="true"><use href="#i-wa"/></svg>Lo quiero</a><button class="sumar" data-id="${p.id}" aria-pressed="false">Sumar al pedido</button></div>
-</article>`).join('');
+{"id":"p1","c":"piso","n":"Portland Grey","marca":"Cortines","med":"60 × 60 cm","f":"c-p1.jpg","t":"#9a9894","p":"$ 20.200","u":"el m²","caja":"Caja de 2,16 m²: $ 43.600","stock":1,"unidad":"cajas","g":["g-p1-1.jpg","g-p1-2.jpg"]},
+{"id":"p2","c":"piso","n":"Portland Sand","marca":"Cortines","med":"60 × 60 cm","f":"c-p2.jpg","t":"#d6c6a8","p":"$ 20.200","u":"el m²","caja":"Caja de 2,16 m²: $ 43.600","stock":1,"unidad":"cajas","g":["g-p2-1.jpg","g-p2-2.jpg","g-p2-3.jpg"]},
+{"id":"p3","c":"piso","n":"Portland Steel","marca":"Cortines","med":"60 × 60 cm","f":"c-p3.jpg","t":"#6d7073","p":"$ 20.300","u":"el m²","caja":"Caja de 1,44 m²: $ 29.100","stock":1,"unidad":"cajas","g":["g-p3-1.jpg","g-p3-2.jpg"]},
+{"id":"p4","c":"piso","n":"Basalto Acero HD","marca":"Cortines","med":"60 × 60 cm","f":"c-p4.jpg","t":"#6d7073","p":"$ 21.400","u":"el m²","caja":"Caja de 2,16 m²: $ 46.200","stock":1,"unidad":"cajas","g":["g-p4-1.jpg","g-p4-2.jpg","g-p4-3.jpg","g-p4-4.jpg"]},
+{"id":"p5","c":"piso","n":"Basalto Gris HD","marca":"Cortines","med":"60 × 60 cm","f":"c-p5.jpg","t":"#9a9894","p":"$ 21.400","u":"el m²","caja":"Caja de 2,16 m²: $ 46.200","stock":1,"unidad":"cajas","g":["g-p5-1.jpg","g-p5-2.jpg","g-p5-3.jpg","g-p5-4.jpg"]},
+{"id":"p6","c":"piso","n":"Aspen Beige","marca":"Cortines","med":"60 × 60 cm","f":"c-p6.jpg","t":"#d4c3a6","p":"$ 17.600","u":"el m²","caja":"Caja de 2,16 m²: $ 38.000","stock":1,"unidad":"cajas","g":["g-p6-1.jpg","g-p6-2.jpg","g-p6-3.jpg"]},
+{"id":"p7","c":"piso","n":"Aspen Gris","marca":"Cortines","med":"60 × 60 cm","f":"c-p7.jpg","t":"#9a9894","p":"$ 17.600","u":"el m²","caja":"Caja de 2,16 m²: $ 38.000","stock":1,"unidad":"cajas","g":["g-p7-1.jpg","g-p7-2.jpg","g-p7-3.jpg"]},
+{"id":"p8","c":"piso","n":"Lumina Gold","marca":"Cortines","med":"60 × 60 cm","f":"c-p8.jpg","t":"#cdb88e","p":"$ 20.200","u":"el m²","caja":"Caja de 2,16 m²: $ 43.600","stock":1,"unidad":"cajas","g":["g-p8-1.jpg","g-p8-2.jpg"]},
+{"id":"p9","c":"piso","n":"Roma Grigio","marca":"Cortines","med":"60 × 60 cm","f":"c-p9.jpg","t":"#9a9894","p":"$ 18.800","u":"el m²","caja":"Caja de 2,16 m²: $ 40.400","stock":1,"unidad":"cajas","g":["g-p9-1.jpg","g-p9-2.jpg","g-p9-3.jpg"]},
+{"id":"p10","c":"piso","n":"Pavimenti Palladio HD","marca":"Cortines","med":"35 × 60 cm","f":"c-p10.jpg","t":"#c9c4bb","p":"$ 20.200","u":"el m²","caja":"Caja de 1,68 m²: $ 33.900","stock":1,"unidad":"cajas","g":["g-p10-1.jpg","g-p10-2.jpg"]},
+{"id":"p14","c":"piso","n":"Basalto Acero HD","marca":"Cortines","med":"35 × 60 cm","f":"c-p14.jpg","t":"#6d7073","p":"$ 21.500","u":"el m²","caja":"Caja de 1,68 m²: $ 36.000","stock":1,"unidad":"cajas","g":["g-p14-1.jpg","g-p14-2.jpg","g-p14-3.jpg"]},
+{"id":"p15","c":"piso","n":"Basalto Grafito HD","marca":"Cortines","med":"35 × 60 cm","f":"c-p15.jpg","t":"#47484a","p":"$ 21.500","u":"el m²","caja":"Caja de 1,68 m²: $ 36.000","stock":1,"unidad":"cajas","g":["g-p15-1.jpg","g-p15-2.jpg","g-p15-3.jpg"]},
+{"id":"p16","c":"piso","n":"Basalto Gris HD","marca":"Cortines","med":"35 × 60 cm","f":"c-p16.jpg","t":"#9a9894","p":"$ 21.500","u":"el m²","caja":"Caja de 1,68 m²: $ 36.000","stock":1,"unidad":"cajas","g":["g-p16-1.jpg","g-p16-2.jpg","g-p16-3.jpg"]},
+{"id":"p29","c":"piso","n":"Blanco Plus","marca":"Lourdes","med":"35 × 35 cm","f":"c-p29.jpg","t":"#f1f0ec","p":"$ 13.100","u":"el m²","caja":"Caja de 2,2 m²: $ 28.700","stock":1,"unidad":"cajas","g":["g-p29-1.jpg","g-p29-2.jpg","g-p29-3.jpg"]},
+{"id":"p30","c":"piso","n":"Negro Plus","marca":"Lourdes","med":"35 × 35 cm","f":"c-p30.jpg","t":"#2b2a28","p":"$ 13.100","u":"el m²","caja":"Caja de 2,2 m²: $ 28.700","stock":1,"unidad":"cajas","g":["g-p30-1.jpg","g-p30-2.jpg","g-p30-3.jpg"]},
+{"id":"p31","c":"piso","n":"Cotto HD Plus Azul","marca":"Lourdes","med":"35 × 35 cm","f":"c-p31.jpg","t":"#5a7390","p":"$ 12.200","u":"el m²","caja":"Caja de 2,2 m²: $ 26.700","stock":1,"unidad":"cajas","g":["g-p31-1.jpg","g-p31-2.jpg","g-p31-3.jpg"]},
+{"id":"p32","c":"piso","n":"Cotto HD Plus Gris","marca":"Lourdes","med":"35 × 35 cm","f":"c-p32.jpg","t":"#9a9894","p":"$ 12.200","u":"el m²","caja":"Caja de 2,2 m²: $ 26.700","stock":1,"unidad":"cajas","g":["g-p32-1.jpg","g-p32-2.jpg","g-p32-3.jpg"]},
+{"id":"p33","c":"piso","n":"Cotto HD Plus Terra","marca":"Lourdes","med":"35 × 35 cm","f":"c-p33.jpg","t":"#a5603f","p":"$ 12.200","u":"el m²","caja":"Caja de 2,2 m²: $ 26.700","stock":1,"unidad":"cajas","g":["g-p33-1.jpg","g-p33-2.jpg","g-p33-3.jpg"]},
+{"id":"p34","c":"piso","n":"Cotto HD Plus Marfil","marca":"Lourdes","med":"35 × 35 cm","f":"c-p34.jpg","t":"#e3d8c3","p":"$ 12.200","u":"el m²","caja":"Caja de 2,2 m²: $ 26.700","stock":1,"unidad":"cajas","g":["g-p34-1.jpg","g-p34-2.jpg","g-p34-3.jpg"]},
+{"id":"p35","c":"piso","n":"Oslo Brillante","marca":"Lourdes","med":"35 × 35 cm","f":"c-p35.jpg","t":"#c9c4bb","p":"$ 12.400","u":"el m²","caja":"Caja de 2,2 m²: $ 27.200","stock":1,"unidad":"cajas","g":["g-p35-1.jpg","g-p35-2.jpg","g-p35-3.jpg"]},
+{"id":"p36","c":"piso","n":"Grafiato HD Marfil","marca":"Lourdes","med":"35 × 35 cm","f":"c-p36.jpg","t":"#e3d8c3","p":"$ 12.000","u":"el m²","caja":"Caja de 2,2 m²: $ 26.300","stock":1,"unidad":"cajas","g":["g-p36-1.jpg","g-p36-2.jpg","g-p36-3.jpg"]},
+{"id":"p37","c":"piso","n":"Grafiato HD Marrón","marca":"Lourdes","med":"35 × 35 cm","f":"c-p37.jpg","t":"#7c5a43","p":"$ 12.000","u":"el m²","caja":"Caja de 2,2 m²: $ 26.300","stock":1,"unidad":"cajas","g":["g-p37-1.jpg","g-p37-2.jpg","g-p37-3.jpg"]},
+{"id":"p43","c":"piso","n":"San Telmo HD Gris","marca":"Lourdes","med":"35 × 35 cm","f":"c-p43.jpg","t":"#9a9894","p":"$ 13.800","u":"el m²","caja":"Caja de 2,2 m²: $ 30.200","stock":1,"unidad":"cajas","g":["g-p43-1.jpg","g-p43-2.jpg","g-p43-3.jpg"]},
+{"id":"p44","c":"piso","n":"San Telmo HD Terra","marca":"Lourdes","med":"35 × 35 cm","f":"c-p44.jpg","t":"#a5603f","p":"$ 13.800","u":"el m²","caja":"Caja de 2,2 m²: $ 30.200","stock":1,"unidad":"cajas","g":["g-p44-1.jpg","g-p44-2.jpg","g-p44-3.jpg"]},
+{"id":"p45","c":"piso","n":"Travertino HD Plus Gris","marca":"Lourdes","med":"35 × 35 cm","f":"c-p45.jpg","t":"#9a9894","p":"$ 12.000","u":"el m²","caja":"Caja de 2,2 m²: $ 26.300","stock":1,"unidad":"cajas","g":["g-p45-1.jpg","g-p45-2.jpg","g-p45-3.jpg"]},
+{"id":"p46","c":"piso","n":"Travertino HD Plus Marrón","marca":"Lourdes","med":"35 × 35 cm","f":"c-p46.jpg","t":"#7c5a43","p":"$ 12.000","u":"el m²","caja":"Caja de 2,2 m²: $ 26.300","stock":1,"unidad":"cajas","g":["g-p46-1.jpg","g-p46-2.jpg","g-p46-3.jpg"]},
+{"id":"p47","c":"piso","n":"Victoria Beige","marca":"Lourdes","med":"35 × 35 cm","f":"c-p47.jpg","t":"#d4c3a6","p":"$ 12.000","u":"el m²","caja":"Caja de 2,2 m²: $ 26.300","stock":1,"unidad":"cajas","g":["g-p47-1.jpg","g-p47-2.jpg","g-p47-3.jpg"]},
+{"id":"p48","c":"piso","n":"Victoria Gris","marca":"Lourdes","med":"35 × 35 cm","f":"c-p48.jpg","t":"#9a9894","p":"$ 12.000","u":"el m²","caja":"Caja de 2,2 m²: $ 26.300","stock":1,"unidad":"cajas","g":["g-p48-1.jpg","g-p48-2.jpg","g-p48-3.jpg"]},
+{"id":"p51","c":"piso","n":"Cotto Marfil","marca":"Lourdes","med":"56 × 56 cm","f":"c-p51.jpg","t":"#e3d8c3","p":"$ 14.300","u":"el m²","caja":"Caja de 2,17 m²: $ 30.900","stock":1,"unidad":"cajas","g":["g-p51-1.jpg","g-p51-2.jpg","g-p51-3.jpg"]},
+{"id":"p52","c":"piso","n":"Cotto Gris","marca":"Lourdes","med":"56 × 56 cm","f":"c-p52.jpg","t":"#9a9894","p":"$ 14.300","u":"el m²","caja":"Caja de 2,17 m²: $ 30.900","stock":1,"unidad":"cajas","g":["g-p52-1.jpg","g-p52-2.jpg","g-p52-3.jpg"]},
+{"id":"p53","c":"piso","n":"Carrara Brillante","marca":"Lourdes","med":"56 × 56 cm","f":"c-p53.jpg","t":"#ecebe8","p":"$ 15.700","u":"el m²","caja":"Caja de 2,17 m²: $ 33.900","stock":1,"unidad":"cajas","g":["g-p53-1.jpg","g-p53-2.jpg","g-p53-3.jpg"]},
+{"id":"p54","c":"piso","n":"Nantes Negro","marca":"Lourdes","med":"56 × 56 cm","f":"c-p54.jpg","t":"#2b2a28","p":"$ 15.700","u":"el m²","caja":"Caja de 2,17 m²: $ 33.900","stock":1,"unidad":"cajas","g":["g-p54-1.jpg","g-p54-2.jpg","g-p54-3.jpg"]},
+{"id":"p59","c":"piso","n":"Piedra Gris","marca":"Lourdes","med":"56 × 56 cm","f":"c-p59.jpg","t":"#9a9894","p":"$ 14.600","u":"el m²","caja":"Caja de 2,17 m²: $ 31.600","stock":1,"unidad":"cajas","g":["g-p59-1.jpg","g-p59-2.jpg","g-p59-3.jpg"]},
+{"id":"p60","c":"piso","n":"Castor Gris","marca":"Lourdes","med":"31 × 53 cm","f":"c-p60.jpg","t":"#9a9894","p":"$ 15.700","u":"el m²","caja":"Caja de 1,65 m²: $ 25.800","stock":1,"unidad":"cajas","g":["g-p60-1.jpg","g-p60-2.jpg","g-p60-3.jpg"]},
+{"id":"p61","c":"piso","n":"Castor Marrón","marca":"Lourdes","med":"31 × 53 cm","f":"c-p61.jpg","t":"#7c5a43","p":"$ 15.700","u":"el m²","caja":"Caja de 1,65 m²: $ 25.800","stock":1,"unidad":"cajas","g":["g-p61-1.jpg","g-p61-2.jpg","g-p61-3.jpg"]},
+{"id":"p77","c":"piso","n":"Brest Pulido","marca":"Cañuelas","med":"60 × 60 cm","f":"c-p77.jpg","t":"#c9c4bb","p":"$ 39.000","u":"el m²","caja":"Caja de 1,8 m²: $ 70.100","stock":1,"unidad":"cajas","g":["g-p77-1.jpg","g-p77-2.jpg"]},
+{"id":"p78","c":"piso","n":"Cannes Pulido","marca":"Cañuelas","med":"60 × 60 cm","f":"c-p78.jpg","t":"#c9c4bb","p":"$ 39.000","u":"el m²","caja":"Caja de 1,8 m²: $ 70.100","stock":1,"unidad":"cajas","g":["g-p78-1.jpg","g-p78-2.jpg","g-p78-3.jpg"]},
+{"id":"p79","c":"piso","n":"Lille Pulido","marca":"Cañuelas","med":"60 × 60 cm","f":"c-p79.jpg","t":"#c9c4bb","p":"$ 39.000","u":"el m²","caja":"Caja de 1,8 m²: $ 70.100","stock":1,"unidad":"cajas","g":["g-p79-1.jpg","g-p79-2.jpg","g-p79-3.jpg"]},
+{"id":"p80","c":"piso","n":"Lyon","marca":"Cañuelas","med":"60 × 60 cm","f":"c-p80.jpg","t":"#c9c4bb","p":"$ 46.800","u":"el m²","caja":"Caja de 1,5 m²: $ 70.100","stock":1,"unidad":"cajas","g":["g-p80-1.jpg","g-p80-2.jpg","g-p80-3.jpg"]},
+{"id":"p81","c":"piso","n":"Montpellier Pulido","marca":"Cañuelas","med":"60 × 60 cm","f":"c-p81.jpg","t":"#c9c4bb","p":"$ 41.700","u":"el m²","caja":"Caja de 1,8 m²: $ 75.000","stock":1,"unidad":"cajas","g":["g-p81-1.jpg","g-p81-2.jpg"]},
+{"id":"p82","c":"piso","n":"Cannes","marca":"Cañuelas","med":"61,3 × 123 cm","f":"c-p82.jpg","t":"#c9c4bb","p":"$ 43.500","u":"el m²","caja":"Caja de 1,5 m²: $ 65.200","stock":1,"unidad":"cajas","g":["g-p82-1.jpg","g-p82-2.jpg"]},
+{"id":"p83","c":"piso","n":"Lille","marca":"Cañuelas","med":"61,3 × 123 cm","f":"c-p83.jpg","t":"#c9c4bb","p":"$ 43.500","u":"el m²","caja":"Caja de 1,5 m²: $ 65.200","stock":1,"unidad":"cajas","g":["g-p83-1.jpg","g-p83-2.jpg","g-p83-3.jpg"]},
+{"id":"p84","c":"piso","n":"Montpellier Pulido","marca":"Cañuelas","med":"61,3 × 123 cm","f":"c-p84.jpg","t":"#c9c4bb","p":"$ 46.600","u":"el m²","caja":"Caja de 1,5 m²: $ 69.800","stock":1,"unidad":"cajas","g":["g-p84-1.jpg","g-p84-2.jpg"]},
+{"id":"p105","c":"piso","n":"Forte Blanco","marca":"San Lorenzo","med":"33 × 33 cm","f":"c-p105.jpg","t":"#f1f0ec","p":"$ 16.300","u":"el m²","caja":"Caja de 2,09 m²: $ 33.900","stock":1,"unidad":"cajas","g":["g-p105-1.jpg","g-p105-2.jpg"]},
+{"id":"p106","c":"piso","n":"Veneciano Aguamarina","marca":"San Lorenzo","med":"33 × 33 cm","f":"c-p106.jpg","t":"#7fa7a3","p":"$ 20.000","u":"el m²","caja":"Caja de 2,07 m²: $ 41.200","stock":1,"unidad":"cajas","g":["g-p106-1.jpg","g-p106-2.jpg"]},
+{"id":"p107","c":"piso","n":"Flower Base","marca":"San Lorenzo","med":"45,3 × 45,3 cm","f":"c-p107.jpg","t":"#c9c4bb","p":"$ 17.800","u":"el m²","caja":"Caja de 2,25 m²: $ 40.000","stock":1,"unidad":"cajas","g":["g-p107-1.jpg","g-p107-2.jpg"]},
+{"id":"p55","c":"piso","n":"Milano Satinado","marca":"Lourdes","med":"56 × 56 cm","f":"c-p55.jpg","t":"#c9c4bb","p":"$ 14.300","u":"el m²","caja":"Caja de 2,17 m²: $ 30.900","stock":1,"unidad":"cajas","g":["g-p55-1.jpg","g-p55-2.jpg","g-p55-3.jpg"]},
+{"id":"p58","c":"piso","n":"Piedra Arena","marca":"Lourdes","med":"56 × 56 cm","f":"c-p58.jpg","t":"#d6c6a8","p":"$ 14.600","u":"el m²","caja":"Caja de 2,17 m²: $ 31.600","stock":1,"unidad":"cajas","g":["g-p58-1.jpg","g-p58-2.jpg","g-p58-3.jpg"]},
+{"id":"p27","c":"porcelanato","n":"Denver Home","marca":"Cortines","med":"59,5 × 59,5 cm","f":"c-p27.jpg","t":"#c9c4bb","p":"$ 25.800","u":"el m²","caja":"Caja de 2,12 m²: $ 54.600","stock":1,"unidad":"cajas","g":["g-p27-1.jpg","g-p27-2.jpg"]},
+{"id":"p28","c":"porcelanato","n":"Denver Loft","marca":"Cortines","med":"59,5 × 59,5 cm","f":"c-p28.jpg","t":"#c9c4bb","p":"$ 25.800","u":"el m²","caja":"Caja de 2,12 m²: $ 54.600","stock":1,"unidad":"cajas","g":["g-p28-1.jpg","g-p28-2.jpg"]},
+{"id":"p108","c":"porcelanato","n":"Calacata Blanco Pulido","marca":"San Lorenzo","med":"60 × 60 cm","f":"c-p108.jpg","t":"#efece6","p":"$ 46.600","u":"el m²","caja":"Caja de 1,8 m²: $ 83.800","stock":1,"unidad":"cajas","g":["g-p108-1.jpg","g-p108-2.jpg"]},
+{"id":"p113","c":"porcelanato","n":"Cemento Beige Satinado","marca":"San Pietro","med":"80 × 80 cm","f":"c-p113.jpg","t":"#a29e97","p":"$ 36.200","u":"el m²","caja":"Caja de 2,33 m²: $ 84.200","stock":1,"unidad":"cajas","g":["g-p113-1.jpg","g-p113-2.jpg","g-p113-3.jpg"]},
+{"id":"p115","c":"porcelanato","n":"Concreto Hueso Satinado","marca":"San Pietro","med":"80 × 80 cm","f":"c-p115.jpg","t":"#b9b2a6","p":"$ 36.200","u":"el m²","caja":"Caja de 2,33 m²: $ 84.200","stock":1,"unidad":"cajas","g":["g-p115-1.jpg","g-p115-2.jpg","g-p115-3.jpg"]},
+{"id":"p116","c":"porcelanato","n":"Travertino Original Satinado","marca":"San Pietro","med":"80 × 80 cm","f":"c-p116.jpg","t":"#d2c2a5","p":"$ 36.200","u":"el m²","caja":"Caja de 2,33 m²: $ 84.200","stock":1,"unidad":"cajas","g":["g-p116-1.jpg","g-p116-2.jpg"]},
+{"id":"p117","c":"porcelanato","n":"Cemento Natural Satinado","marca":"San Pietro","med":"60 × 120 cm","f":"c-p117.jpg","t":"#a29e97","p":"$ 36.200","u":"el m²","caja":"Caja de 2,16 m²: $ 78.100","stock":1,"unidad":"cajas","g":["g-p117-1.jpg","g-p117-2.jpg","g-p117-3.jpg"]},
+{"id":"p118","c":"porcelanato","n":"Concreto Beige Satinado","marca":"San Pietro","med":"60 × 120 cm","f":"c-p118.jpg","t":"#b9b2a6","p":"$ 36.200","u":"el m²","caja":"Caja de 2,16 m²: $ 78.100","stock":1,"unidad":"cajas","g":["g-p118-1.jpg","g-p118-2.jpg","g-p118-3.jpg"]},
+{"id":"p119","c":"porcelanato","n":"Imola Gris Satinado","marca":"Alberdi","med":"60 × 120 cm","f":"c-p119.jpg","t":"#9a9894","p":"$ 37.300","u":"el m²","caja":"Caja de 2,16 m²: $ 80.400","stock":1,"unidad":"cajas","g":["g-p119-1.jpg","g-p119-2.jpg"]},
+{"id":"p120","c":"porcelanato","n":"Imola Marfil Satinado","marca":"Alberdi","med":"60 × 120 cm","f":"c-p120.jpg","t":"#e3d8c3","p":"$ 37.300","u":"el m²","caja":"Caja de 2,16 m²: $ 80.400","stock":1,"unidad":"cajas","g":["g-p120-1.jpg","g-p120-2.jpg","g-p120-3.jpg"]},
+{"id":"p112","c":"porcelanato","n":"Calcetto Bianco Satinado","marca":"San Lorenzo","med":"60 × 60 cm · segunda calidad","f":"c-p112.jpg","t":"#f1efe9","p":"$ 21.500","u":"el m²","caja":"Caja de 1,8 m²: $ 38.600","stock":1,"unidad":"cajas","g":["g-p112-1.jpg","g-p112-2.jpg"]},
+{"id":"p114","c":"porcelanato","n":"Cemento Gris Satinado","marca":"San Pietro","med":"80 × 80 cm","f":"c-p114.jpg","t":"#9a9894","p":"$ 32.200","u":"el m²","caja":"Caja de 2,33 m²: $ 74.800","stock":1,"unidad":"cajas","g":["g-p114-1.jpg","g-p114-2.jpg","g-p114-3.jpg"]},
+{"id":"p38","c":"madera","n":"Madera Entramada Gris","marca":"Lourdes","med":"35 × 35 cm","f":"c-p38.jpg","t":"#9a9894","p":"$ 12.400","u":"el m²","caja":"Caja de 2,2 m²: $ 27.200","stock":1,"unidad":"cajas","g":["g-p38-1.jpg","g-p38-2.jpg","r-diagonal-gris.jpg"]},
+{"id":"p39","c":"madera","n":"Madera Entramada Marrón","marca":"Lourdes","med":"35 × 35 cm","f":"c-p39.jpg","t":"#7c5a43","p":"$ 12.400","u":"el m²","caja":"Caja de 2,2 m²: $ 27.200","stock":1,"unidad":"cajas","g":["g-p39-1.jpg","g-p39-2.jpg","r-diagonal.jpg"]},
+{"id":"p11","c":"madera","n":"Scandinavian Cloud","marca":"Cortines","med":"35 × 60 cm","f":"c-p11.jpg","t":"#d9d6d0","p":"$ 20.300","u":"el m²","caja":"Caja de 1,47 m²: $ 29.700","stock":1,"unidad":"cajas","g":["g-p11-1.jpg","g-p11-2.jpg"]},
+{"id":"p12","c":"madera","n":"Scandinavian Dark","marca":"Cortines","med":"35 × 60 cm","f":"c-p12.jpg","t":"#4a4642","p":"$ 20.300","u":"el m²","caja":"Caja de 1,47 m²: $ 29.700","stock":1,"unidad":"cajas","g":["g-p12-1.jpg","g-p12-2.jpg"]},
+{"id":"p13","c":"madera","n":"Scandinavian Desert","marca":"Cortines","med":"35 × 60 cm","f":"c-p13.jpg","t":"#cdb796","p":"$ 20.300","u":"el m²","caja":"Caja de 1,47 m²: $ 29.700","stock":1,"unidad":"cajas","g":["g-p13-1.jpg","g-p13-2.jpg"]},
+{"id":"p17","c":"madera","n":"Parquet Fresno","marca":"Cortines","med":"35 × 60 cm","f":"c-p17.jpg","t":"#c9a984","p":"$ 15.900","u":"el m²","caja":"Caja de 1,68 m²: $ 26.700","stock":1,"unidad":"cajas","g":["g-p17-1.jpg","g-p17-2.jpg"]},
+{"id":"p24","c":"madera","n":"Wood Classic","marca":"Cortines","med":"19,5 × 59,5 cm","f":"c-p24.jpg","t":"#a77e57","p":"$ 25.800","u":"el m²","caja":"Caja de 1,85 m²: $ 47.600","stock":1,"unidad":"cajas","g":["g-p24-1.jpg","g-p24-2.jpg"]},
+{"id":"p25","c":"madera","n":"Wood Smoke","marca":"Cortines","med":"19,5 × 59,5 cm","f":"c-p25.jpg","t":"#8c8780","p":"$ 25.800","u":"el m²","caja":"Caja de 1,85 m²: $ 47.600","stock":1,"unidad":"cajas","g":["g-p25-1.jpg","g-p25-2.jpg"]},
+{"id":"p40","c":"madera","n":"Madera HD Parquet","marca":"Lourdes","med":"35 × 35 cm","f":"c-p40.jpg","t":"#a77e57","p":"$ 12.400","u":"el m²","caja":"Caja de 2,2 m²: $ 27.200","stock":1,"unidad":"cajas","g":["g-p40-1.jpg","g-p40-2.jpg","g-p40-3.jpg"]},
+{"id":"p56","c":"madera","n":"Eucalipto Gris","marca":"Lourdes","med":"56 × 56 cm","f":"c-p56.jpg","t":"#9a9894","p":"$ 14.300","u":"el m²","caja":"Caja de 2,17 m²: $ 30.900","stock":1,"unidad":"cajas","g":["g-p56-1.jpg","g-p56-2.jpg","g-p56-3.jpg"]},
+{"id":"p57","c":"madera","n":"Eucalipto Marrón","marca":"Lourdes","med":"56 × 56 cm","f":"c-p57.jpg","t":"#7c5a43","p":"$ 14.300","u":"el m²","caja":"Caja de 2,17 m²: $ 30.900","stock":1,"unidad":"cajas","g":["g-p57-1.jpg","g-p57-2.jpg","g-p57-3.jpg"]},
+{"id":"p62","c":"madera","n":"Madera Lenga","marca":"Lourdes","med":"31 × 53 cm","f":"c-p62.jpg","t":"#b08a63","p":"$ 15.700","u":"el m²","caja":"Caja de 1,65 m²: $ 25.800","stock":1,"unidad":"cajas","g":["g-p62-1.jpg","g-p62-2.jpg","g-p62-3.jpg"]},
+{"id":"p63","c":"madera","n":"Madera Lenga Bianca","marca":"Lourdes","med":"31 × 53 cm","f":"c-p63.jpg","t":"#b08a63","p":"$ 15.700","u":"el m²","caja":"Caja de 1,65 m²: $ 25.800","stock":1,"unidad":"cajas","g":["g-p63-1.jpg","g-p63-2.jpg","g-p63-3.jpg"]},
+{"id":"p64","c":"madera","n":"Madera Lenga Gris","marca":"Lourdes","med":"31 × 53 cm","f":"c-p64.jpg","t":"#9a9894","p":"$ 15.700","u":"el m²","caja":"Caja de 1,65 m²: $ 25.800","stock":1,"unidad":"cajas","g":["g-p64-1.jpg","g-p64-2.jpg","g-p64-3.jpg"]},
+{"id":"p75","c":"madera","n":"Madera Vintage","marca":"Lourdes","med":"18 × 56 cm","f":"c-p75.jpg","t":"#a77e57","p":"$ 16.500","u":"el m²","caja":"Caja de 2,0 m²: $ 33.000","stock":1,"unidad":"cajas","g":["g-p75-1.jpg","g-p75-2.jpg","g-p75-3.jpg"]},
+{"id":"p76","c":"madera","n":"Yunga Beige","marca":"Lourdes","med":"18 × 56 cm","f":"c-p76.jpg","t":"#cdb08c","p":"$ 16.500","u":"el m²","caja":"Caja de 2,0 m²: $ 33.000","stock":1,"unidad":"cajas","g":["g-p76-1.jpg","g-p76-2.jpg","g-p76-3.jpg"]},
+{"id":"p85","c":"madera","n":"Agrinio","marca":"Cañuelas","med":"20 × 120 cm","f":"c-p85.jpg","t":"#c9c4bb","p":"$ 38.700","u":"el m²","caja":"Caja de 1,46 m²: $ 56.500","stock":1,"unidad":"cajas","g":["g-p85-1.jpg","g-p85-2.jpg","g-p85-3.jpg"]},
+{"id":"p86","c":"madera","n":"Kastoria","marca":"Cañuelas","med":"20 × 120 cm","f":"c-p86.jpg","t":"#c9c4bb","p":"$ 38.700","u":"el m²","caja":"Caja de 1,46 m²: $ 56.500","stock":1,"unidad":"cajas","g":["g-p86-1.jpg","g-p86-2.jpg"]},
+{"id":"p87","c":"madera","n":"Tebas","marca":"Cañuelas","med":"20 × 120 cm","f":"c-p87.jpg","t":"#c9c4bb","p":"$ 38.700","u":"el m²","caja":"Caja de 1,46 m²: $ 56.500","stock":1,"unidad":"cajas","g":["g-p87-1.jpg","g-p87-2.jpg"]},
+{"id":"p109","c":"madera","n":"Olmo Cerezo","marca":"San Lorenzo","med":"20 × 120 cm","f":"c-p109.jpg","t":"#8a4b33","p":"$ 47.500","u":"el m²","caja":"Caja de 2,16 m²: $ 102.400","stock":1,"unidad":"cajas","g":["g-p109-1.jpg","g-p109-2.jpg"]},
+{"id":"p110","c":"madera","n":"Boscos Natural","marca":"San Lorenzo","med":"20 × 120 cm","f":"c-p110.jpg","t":"#b48c62","p":"$ 52.500","u":"el m²","caja":"Caja de 2,16 m²: $ 113.400","stock":1,"unidad":"cajas","g":["g-p110-1.jpg","g-p110-2.jpg","g-p110-3.jpg","g-p110-4.jpg"]},
+{"id":"p111","c":"madera","n":"Legno Deco Almendra","marca":"San Lorenzo","med":"20 × 120 cm · segunda calidad","f":"c-p111.jpg","t":"#c4a27c","p":"$ 22.400","u":"el m²","caja":"Caja de 2,16 m²: $ 48.300","stock":1,"unidad":"cajas","g":["g-p111-1.jpg","g-p111-2.jpg","g-p111-3.jpg"]},
+{"id":"p22","c":"exterior","n":"Adoquinado Granada Beige","marca":"Cortines","med":"50 × 50 cm","f":"c-p22.jpg","t":"#d4c3a6","p":"$ 13.900","u":"el m²","caja":"Caja de 1,75 m²: $ 24.300","stock":1,"unidad":"cajas","g":["g-p22-1.jpg","g-p22-2.jpg"]},
+{"id":"p23","c":"exterior","n":"Adoquinado Granada Gris","marca":"Cortines","med":"50 × 50 cm","f":"c-p23.jpg","t":"#9a9894","p":"$ 17.400","u":"el m²","caja":"Caja de 1,75 m²: $ 30.300","stock":1,"unidad":"cajas","g":["g-p23-1.jpg","g-p23-2.jpg"]},
+{"id":"p21","c":"exterior","n":"Cotto Ferrite HD","marca":"Cortines","med":"50 × 50 cm","f":"c-p21.jpg","t":"#9a5a3c","p":"$ 18.400","u":"el m²","caja":"Caja de 1,75 m²: $ 32.100","stock":1,"unidad":"cajas","g":["g-p21-1.jpg","g-p21-2.jpg","g-p21-3.jpg"]},
+{"id":"p41","c":"exterior","n":"Pórfido HD Marrón","marca":"Lourdes","med":"35 × 35 cm","f":"c-p41.jpg","t":"#7c5a43","p":"$ 12.900","u":"el m²","caja":"Caja de 2,2 m²: $ 28.300","stock":1,"unidad":"cajas","g":["g-p41-1.jpg","g-p41-2.jpg","g-p41-3.jpg"]},
+{"id":"p42","c":"exterior","n":"Pórfido HD Verde","marca":"Lourdes","med":"35 × 35 cm","f":"c-p42.jpg","t":"#6d7a5c","p":"$ 12.900","u":"el m²","caja":"Caja de 2,2 m²: $ 28.300","stock":1,"unidad":"cajas","g":["g-p42-1.jpg","g-p42-2.jpg","g-p42-3.jpg"]},
+{"id":"p50","c":"calcareo","n":"Calcáreo Gris","marca":"Lourdes","med":"56 × 56 cm","f":"c-p50.jpg","t":"#9a9894","p":"$ 14.300","u":"el m²","caja":"Caja de 2,17 m²: $ 30.900","stock":1,"unidad":"cajas","g":["g-p50-1.jpg","r-calcareo-bano.jpg"]},
+{"id":"p49","c":"calcareo","n":"Calcáreo Color","marca":"Lourdes","med":"56 × 56 cm","f":"c-p49.jpg","t":"#b88a6a","p":"$ 14.300","u":"el m²","caja":"Caja de 2,17 m²: $ 30.900","stock":1,"unidad":"cajas","g":["g-p49-1.jpg","g-p49-2.jpg","g-p49-3.jpg"]},
+{"id":"p18","c":"pared","n":"Murete Crayon","marca":"Cortines","med":"35 × 60 cm","f":"c-p18.jpg","t":"#8d8a84","p":"$ 16.200","u":"el m²","caja":"Caja de 1,68 m²: $ 27.100","stock":1,"unidad":"cajas","g":["g-p18-1.jpg","g-p18-2.jpg","g-p18-3.jpg"]},
+{"id":"p19","c":"pared","n":"Murete Tiza","marca":"Cortines","med":"35 × 60 cm","f":"c-p19.jpg","t":"#e7e3dc","p":"$ 16.200","u":"el m²","caja":"Caja de 1,68 m²: $ 27.100","stock":1,"unidad":"cajas","g":["g-p19-1.jpg","g-p19-2.jpg"]},
+{"id":"p20","c":"pared","n":"Listel Pizarra","marca":"Cortines","med":"35 × 60 cm","f":"c-p20.jpg","t":"#585a5c","p":"$ 16.200","u":"el m²","caja":"Caja de 1,68 m²: $ 27.100","stock":1,"unidad":"cajas","g":["g-p20-1.jpg","g-p20-2.jpg"]},
+{"id":"p26","c":"pared","n":"Blanco Satinado","marca":"Cortines","med":"29,5 × 59,5 cm","f":"c-p26.jpg","t":"#f1f0ec","p":"$ 25.800","u":"el m²","caja":"Caja de 1,39 m²: $ 35.800","stock":1,"unidad":"cajas","g":["g-p26-1.jpg","g-p26-2.jpg"]},
+{"id":"p65","c":"pared","n":"Subway Blanco","marca":"Lourdes","med":"31 × 53 cm","f":"c-p65.jpg","t":"#f1f0ec","p":"$ 19.600","u":"el m²","caja":"Caja de 1,65 m²: $ 32.200","stock":1,"unidad":"cajas","g":["g-p65-1.jpg","g-p65-2.jpg"]},
+{"id":"p66","c":"pared","n":"Subway Carrara","marca":"Lourdes","med":"31 × 53 cm","f":"c-p66.jpg","t":"#ecebe8","p":"$ 19.600","u":"el m²","caja":"Caja de 1,65 m²: $ 32.200","stock":1,"unidad":"cajas","g":["g-p66-1.jpg","g-p66-2.jpg"]},
+{"id":"p67","c":"pared","n":"Subway Negro","marca":"Lourdes","med":"31 × 53 cm","f":"c-p67.jpg","t":"#2b2a28","p":"$ 22.000","u":"el m²","caja":"Caja de 1,65 m²: $ 36.200","stock":1,"unidad":"cajas","g":["g-p67-1.jpg","g-p67-2.jpg"]},
+{"id":"p68","c":"pared","n":"Carrara","marca":"Lourdes","med":"31 × 53 cm","f":"c-p68.jpg","t":"#ecebe8","p":"$ 13.400","u":"el m²","caja":"Caja de 1,65 m²: $ 22.100","stock":1,"unidad":"cajas","g":["g-p68-1.jpg","g-p68-2.jpg"]},
+{"id":"p69","c":"pared","n":"Calipso Gris","marca":"Lourdes","med":"31 × 53 cm","f":"c-p69.jpg","t":"#9a9894","p":"$ 13.400","u":"el m²","caja":"Caja de 1,65 m²: $ 22.100","stock":1,"unidad":"cajas","g":["g-p69-1.jpg","g-p69-2.jpg"]},
+{"id":"p70","c":"pared","n":"Nieve Blanco Brillante","marca":"Lourdes","med":"31 × 53 cm","f":"c-p70.jpg","t":"#f1f0ec","p":"$ 17.800","u":"el m²","caja":"Caja de 1,65 m²: $ 29.300","stock":1,"unidad":"cajas","g":["g-p70-1.jpg","g-p70-2.jpg"]},
+{"id":"p71","c":"pared","n":"Nieve Blanco Satinado","marca":"Lourdes","med":"31 × 53 cm","f":"c-p71.jpg","t":"#f1f0ec","p":"$ 15.400","u":"el m²","caja":"Caja de 1,65 m²: $ 25.300","stock":1,"unidad":"cajas","g":["g-p71-1.jpg","g-p71-2.jpg"]},
+{"id":"p88","c":"pared","n":"Frozen Brillante","marca":"Tendenza","med":"30 × 62 cm","f":"c-p88.jpg","t":"#eef0f1","p":"$ 28.500","u":"el m²","caja":"Caja de 1,66 m²: $ 47.300","stock":1,"unidad":"cajas","g":["g-p88-1.jpg","g-p88-2.jpg"]},
+{"id":"p89","c":"pared","n":"Snow Satinado","marca":"Tendenza","med":"30 × 62 cm","f":"c-p89.jpg","t":"#f1f0ec","p":"$ 28.500","u":"el m²","caja":"Caja de 1,66 m²: $ 47.300","stock":1,"unidad":"cajas","g":["g-p89-1.jpg","g-p89-2.jpg"]},
+{"id":"p73","c":"piedra","n":"Muro Piedra HD Natural","marca":"Lourdes","med":"31 × 53 cm","f":"c-p73.jpg","t":"#c9c4bb","p":"$ 16.700","u":"el m²","caja":"Caja de 1,48 m²: $ 24.700","stock":1,"unidad":"cajas","g":["g-p73-1.jpg","r-piedra-frente.jpg"]},
+{"id":"p72","c":"piedra","n":"Muro Piedra HD Brick","marca":"Lourdes","med":"31 × 53 cm","f":"c-p72.jpg","t":"#9b5a43","p":"$ 16.700","u":"el m²","caja":"Caja de 1,48 m²: $ 24.700","stock":1,"unidad":"cajas","g":["g-p72-1.jpg","g-p72-2.jpg"]},
+{"id":"p74","c":"piedra","n":"Muro Piedra HD Petroleo","marca":"Lourdes","med":"31 × 53 cm","f":"c-p74.jpg","t":"#3f5459","p":"$ 16.700","u":"el m²","caja":"Caja de 1,48 m²: $ 24.700","stock":1,"unidad":"cajas","g":["g-p74-1.jpg","g-p74-2.jpg"]},
+{"id":"vin","c":"vinilico","n":"Piso vinílico autoadhesivo","marca":"","med":"Símil madera","f":"r-vinilico.jpg","t":"#b48c62","p":"","u":"","caja":"","stock":0,"unidad":"cajas"},
+{"id":"p91","c":"pegamento","n":"Mapeset x 25 Kg","marca":"Mapei","med":"","f":"c-p91.jpg","t":"#c9c4bb","p":"$ 10.800","u":"c/u","caja":"","stock":0,"unidad":"unidades"},
+{"id":"p93","c":"pegamento","n":"Adesilex P9 x 25 Kg","marca":"Mapei","med":"","f":"c-p93.jpg","t":"#c9c4bb","p":"$ 33.900","u":"c/u","caja":"","stock":0,"unidad":"unidades"},
+{"id":"p94","c":"pegamento","n":"Keraflex x 25 Kg","marca":"Mapei","med":"","f":"c-p94.jpg","t":"#c9c4bb","p":"$ 44.500","u":"c/u","caja":"","stock":0,"unidad":"unidades"},
+{"id":"p95","c":"pegamento","n":"Weber Gris Basic x 25 Kg","marca":"Weber","med":"","f":"c-p95.jpg","t":"#9a9894","p":"$ 13.700","u":"c/u","caja":"","stock":0,"unidad":"unidades"},
+{"id":"p96","c":"pegamento","n":"Weber Pro x 25 Kg","marca":"Weber","med":"","f":"c-p96.jpg","t":"#c9c4bb","p":"$ 26.300","u":"c/u","caja":"","stock":0,"unidad":"unidades"},
+{"id":"p97","c":"pegamento","n":"Bolsa de Arcos 1.5 Mm (150 Unidades)","marca":"","med":"","f":"c-p97.jpg","t":"#c9c4bb","p":"$ 4.600","u":"c/u","caja":"","stock":0,"unidad":"unidades"},
+{"id":"p98","c":"pegamento","n":"Bolsa de Arcos 3 Mm (150 Unidades)","marca":"","med":"","f":"c-p98.jpg","t":"#c9c4bb","p":"$ 4.600","u":"c/u","caja":"","stock":0,"unidad":"unidades"},
+{"id":"p99","c":"pegamento","n":"Bolsa de Cuñas (150 Unidades)","marca":"","med":"","f":"c-p99.jpg","t":"#c9c4bb","p":"$ 4.900","u":"c/u","caja":"","stock":0,"unidad":"unidades"},
+{"id":"p100","c":"pegamento","n":"Románica Poliuretano Fino 25 Kg - Atenas","marca":"Vadex","med":"","f":"c-p100.jpg","t":"#c9c4bb","p":"$ 136.100","u":"c/u","caja":"","stock":0,"unidad":"unidades"},
+{"id":"p101","c":"pegamento","n":"Piedra Antica con Poliuretano Fino 25 Kg - Arenas","marca":"Vadex","med":"","f":"c-p101.jpg","t":"#d6c6a8","p":"$ 160.400","u":"c/u","caja":"","stock":0,"unidad":"unidades"},
+{"id":"p102","c":"pegamento","n":"Texturable Profesional Fino 25 Kg - Atenas","marca":"Vadex","med":"","f":"c-p102.jpg","t":"#c9c4bb","p":"$ 130.900","u":"c/u","caja":"","stock":0,"unidad":"unidades"},
+{"id":"p103","c":"pegamento","n":"Base Plástica 4 Lts - Arenas","marca":"Vadex","med":"","f":"c-p103.jpg","t":"#d6c6a8","p":"$ 55.000","u":"c/u","caja":"","stock":0,"unidad":"unidades"},
+{"id":"p104","c":"pegamento","n":"Base Plástica 20 Lts - Arenas","marca":"Vadex","med":"","f":"c-p104.jpg","t":"#d6c6a8","p":"$ 204.300","u":"c/u","caja":"","stock":0,"unidad":"unidades"},
+{"id":"p90","c":"pegamento","n":"Keracolor Arena x 1 Kg - 133","marca":"Mapei","med":"","f":"c-p90.jpg","t":"#d6c6a8","p":"$ 3.800","u":"c/u","caja":"","stock":0,"unidad":"unidades"},
+{"id":"p92","c":"pegamento","n":"Kerabond x 25 Kg","marca":"Mapei","med":"","f":"c-p92.jpg","t":"#c9c4bb","p":"$ 21.200","u":"c/u","caja":"","stock":0,"unidad":"unidades"}];
 
 const cant={};
 const cont=document.getElementById('prods');
-cont.innerHTML=PRODS.map(p=>`<article class="prod" data-cat="${p.c}" data-id="${p.id}">
- <img src="img/${p.f}" alt="${p.n}" loading="lazy">
- <div class="prod-txt"><h3>${p.n}</h3><p>${p.d}</p><b class="p">${p.p?p.p+(p.u?' '+p.u:''):'Consultar precio'}</b></div>
+cont.innerHTML=PRODS.map(p=>`<article class="prod" data-cat="${p.c}" data-id="${p.id}" data-q="${(p.n+' '+p.marca+' '+p.med).toLowerCase()}">
+ ${p.f?`<div class="foto" data-i="0"><button class="ver" data-gal="${p.id}" aria-label="Ver ${p.g?p.g.length+' fotos':'la foto'} de ${p.n} en grande"><img src="img/${p.f}" alt="${p.n}" loading="lazy"></button>${p.g&&p.g.length>1?`<button type="button" class="fl ant" data-paso="-1" aria-label="Foto anterior de ${p.n}">‹</button><button type="button" class="fl sig" data-paso="1" aria-label="Foto siguiente de ${p.n}">›</button><span class="puntos" aria-hidden="true">${p.g.map((_,k)=>`<i${k?'':' class="on"'}></i>`).join('')}</span>`:''}</div>`:`<div class="sw" style="--t:${p.t}" aria-hidden="true"><span>${p.med?p.med.split(' · ')[0]:p.marca}</span></div>`}
+ <div class="prod-txt">${p.stock?'<span class="stock">En stock</span>':''}<h3>${p.n}</h3><p>${[p.marca,p.med].filter(Boolean).join(' · ')}</p><b class="p">${p.p?p.p+(p.u?' <small>'+p.u+'</small>':''):'Consultar precio'}</b>${p.caja?`<p class="caja">${p.caja}</p>`:''}</div>
  <div class="prod-pie"><div class="cant"><button aria-label="Restar ${p.n}" data-d="-1">−</button><output aria-live="polite">0</output><button aria-label="Sumar ${p.n}" data-d="1">+</button></div></div></article>`).join('');
 function poner(id,v){cant[id]=Math.max(0,v);const a=cont.querySelector(`[data-id="${id}"]`);a.querySelector('output').textContent=cant[id];a.classList.toggle('con',cant[id]>0);
- document.querySelectorAll(`.sumar[data-id="${id}"]`).forEach(b=>b.setAttribute('aria-pressed',cant[id]>0));actualizar();}
+actualizar();}
 cont.addEventListener('click',e=>{const b=e.target.closest('button[data-d]');if(!b)return;const id=b.closest('.prod').dataset.id;poner(id,(cant[id]||0)+Number(b.dataset.d));});
-document.getElementById('ofertasLista').addEventListener('click',e=>{const b=e.target.closest('.sumar');if(!b)return;const id=b.dataset.id;poner(id,(cant[id]||0)>0?0:1);});
 function actualizar(){const l=PRODS.filter(p=>cant[p.id]>0);const n=l.length;
  document.getElementById('carritoCant').textContent=n+(n===1?' producto':' productos');
  document.getElementById('carrito').classList.toggle('ver',n>0);document.body.classList.toggle('con-pedido',n>0);
- document.getElementById('enviar').href=link('Hola Decomar, quisiera cotizar este pedido:\n\n'+l.map(p=>`• ${p.n}: ${cant[p.id]}`).join('\n')+'\n\nZona de entrega: ');}
-function filtrar(c){document.querySelectorAll('.filtro').forEach(x=>x.setAttribute('aria-pressed',x.dataset.f===c));cont.querySelectorAll('.prod').forEach(p=>p.hidden=!(c==='todo'||p.dataset.cat===c));}
+ document.getElementById('enviar').href=link('Hola Decomar, quisiera cotizar este pedido:\n\n'+l.map(p=>`• ${p.n}${p.med?' '+p.med.split(' · ')[0]:''}${p.marca?' ('+p.marca+')':''}: ${cant[p.id]} ${cant[p.id]===1?p.unidad.replace(/es$|s$/,''):p.unidad}`).join('\n')+'\n\nZona de entrega: ');}
+let catAct='todo';
+function filtrar(c){catAct=c||catAct;document.querySelectorAll('.filtro').forEach(x=>x.setAttribute('aria-pressed',x.dataset.f===catAct));
+ const q=(document.getElementById('buscar').value||'').toLowerCase().trim();let n=0;
+ cont.querySelectorAll('.prod').forEach(p=>{p.hidden=!((catAct==='todo'||p.dataset.cat===catAct)&&(!q||p.dataset.q.includes(q)));if(!p.hidden)n++;});
+ document.getElementById('sinRes').hidden=n>0;document.getElementById('cuenta').textContent=n+(n===1?' producto':' productos');}
+document.getElementById('buscar').addEventListener('input',()=>filtrar());
+const ordenBase=[...cont.children];
+const valor=a=>{const p=PRODS.find(x=>x.id===a.dataset.id);return p&&p.p?Number(p.p.replace(/\D/g,'')):Infinity};
+document.getElementById('orden').addEventListener('change',e=>{const v=e.target.value;let l=[...ordenBase];
+ if(v==='menor')l.sort((a,b)=>valor(a)-valor(b));if(v==='mayor')l.sort((a,b)=>(valor(b)===Infinity?-1:valor(b))-(valor(a)===Infinity?-1:valor(a)));
+ if(v==='nombre')l.sort((a,b)=>a.querySelector('h3').textContent.localeCompare(b.querySelector('h3').textContent,'es'));
+ l.forEach(x=>cont.appendChild(x));});
+filtrar();
 document.querySelectorAll('.filtro').forEach(f=>f.addEventListener('click',()=>filtrar(f.dataset.f)));
 document.querySelectorAll('[data-ir]').forEach(a=>a.addEventListener('click',()=>filtrar(a.dataset.ir)));
 
-/* Antes y después */
-const comp=document.getElementById('comparar');
-comp.querySelector('input').addEventListener('input',e=>comp.style.setProperty('--corte',e.target.value+'%'));
+/* Productos destacados: los que tienen ambiente y foto de la placa, con stock */
+(function(){
+ const ids=['p1','p116','p109','p23','p50','p67','p87','p6','p108','p21','p12','p27'];
+ const fila=document.getElementById('destacados-fila');
+ fila.innerHTML=ids.map(id=>PRODS.find(p=>p.id===id)).filter(Boolean).map(p=>`<button type="button" class="dest" data-gal="${p.id}" aria-label="Ver las fotos de ${p.n}">
+  <span class="foto2"><img src="img/${p.g?p.g[0]:p.f}" alt="${p.n}" loading="lazy">${p.g&&p.g.length>1?`<img class="alt" src="img/${p.g[p.g.length-1]}" alt="" loading="lazy">`:''}</span>
+  <small>${p.marca}${p.med?' · '+p.med.split(' · ')[0]:''}</small><b>${p.n}</b><em>${p.p} <small>${p.u}</small></em></button>`).join('');
+ const paso=()=>fila.querySelector('.dest').offsetWidth+14;
+ document.getElementById('destAnt').onclick=()=>fila.scrollBy({left:-paso()*2,behavior:'smooth'});
+ document.getElementById('destSig').onclick=()=>fila.scrollBy({left:paso()*2,behavior:'smooth'});
+})();
+
+/* Pasar las fotos dentro de la tarjeta: flechas, puntitos y deslizar el dedo */
+function mover(f,paso){const p=PRODS.find(x=>x.id===f.closest('.prod').dataset.id);if(!p||!p.g)return;
+ const i=((+f.dataset.i||0)+paso+p.g.length)%p.g.length;f.dataset.i=i;f.classList.add('movida');
+ f.querySelector('.ver img').src='img/'+(i===0?p.f:p.g[i]);f.querySelectorAll('.puntos i').forEach((d,k)=>d.classList.toggle('on',k===i));}
+cont.addEventListener('click',e=>{const b=e.target.closest('.fl');if(!b)return;e.stopPropagation();mover(b.closest('.foto'),+b.dataset.paso);},true);
+let tx=null;cont.addEventListener('touchstart',e=>{const f=e.target.closest('.foto');tx=f?[f,e.touches[0].clientX,e.touches[0].clientY]:null;},{passive:true});
+cont.addEventListener('touchend',e=>{if(!tx)return;const dx=e.changedTouches[0].clientX-tx[1],dy=e.changedTouches[0].clientY-tx[2];if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy))mover(tx[0],dx<0?1:-1);tx=null;});
+
+/* Galería: todas las fotos del producto, con flechas, teclado y deslizando el dedo */
+(function(){
+ const dlg=document.getElementById('galeria'),img=document.getElementById('galImg'),ant=document.getElementById('galAnt'),sig=document.getElementById('galSig');
+ let fotos=[],i=0,prod=null,x0=null;
+ function ver(n){i=(n+fotos.length)%fotos.length;img.src='img/'+fotos[i];img.alt=prod.n+(fotos.length>1?', foto '+(i+1):'');
+  document.getElementById('galNum').textContent=fotos.length>1?(i+1)+' de '+fotos.length:'';}
+ document.addEventListener('click',e=>{const b=e.target.closest('[data-gal]');if(!b)return;prod=PRODS.find(p=>p.id===b.dataset.gal);
+  fotos=prod.g||[prod.f];ant.hidden=sig.hidden=fotos.length<2;
+  document.getElementById('galNom').textContent=prod.n;document.getElementById('galDet').textContent=[prod.marca,prod.med].filter(Boolean).join(', ');
+  ver(+(b.closest('.foto')?.dataset.i||0));dlg.showModal();});
+ ant.onclick=()=>ver(i-1);sig.onclick=()=>ver(i+1);document.getElementById('galCerrar').onclick=()=>dlg.close();
+ dlg.addEventListener('click',e=>{if(e.target===dlg)dlg.close();});
+ dlg.addEventListener('keydown',e=>{if(fotos.length<2)return;if(e.key==='ArrowLeft')ver(i-1);if(e.key==='ArrowRight')ver(i+1);});
+ const zona=dlg.querySelector('.gal-foto');
+ zona.addEventListener('touchstart',e=>{x0=e.touches[0].clientX;},{passive:true});
+ zona.addEventListener('touchend',e=>{if(x0===null||fotos.length<2)return;const d=e.changedTouches[0].clientX-x0;if(Math.abs(d)>45)ver(i+(d<0?1:-1));x0=null;});
+})();
+
+
+
+/* TIENDA (27/11/2026, pedido de Matías, como shoesport.com.ar): carrito que no se pierde, ingreso con Google,
+   datos de entrega, historial de pedidos con «Repetir pedido» y favoritos.
+   Se guarda en la nube, en el Firebase propio de Decomar (proyecto decomar-tienda, base Firestore en San Pablo):
+   clientes/{uid} con perfil y favoritos, y clientes/{uid}/pedidos/{nro} con cada pedido. Las reglas sólo dejan que
+   cada cliente vea lo suyo. El navegador guarda una copia para que funcione aunque se corte internet.
+   Configuración pública de cliente (no es secreta). */
+const FB_CONFIG={apiKey:"AIzaSyDvbDCbf4lp6qgrVXu3j252gHHZHcqvPUY",authDomain:"decomar-tienda.firebaseapp.com",projectId:"decomar-tienda",storageBucket:"decomar-tienda.firebasestorage.app",messagingSenderId:"117031458060",appId:"1:117031458060:web:c6e5302ecc7dc2a7a12529"};
+let db=null;
+const LS={get(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const $id=x=>document.getElementById(x);
+const pesos=n=>'$ '+Math.round(n).toLocaleString('es-AR');
+const prodDe=id=>PRODS.find(p=>p.id===id);
+const esc=t=>String(t||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function precioUnidad(p){const t=p.caja||p.p||'';const m=t.match(/\$\s*([\d.]+)/);return m?Number(m[1].replace(/\./g,'')):null}
+function unidadTxt(p,n){return n===1?p.unidad.replace(/es$|s$/,''):p.unidad}
+let usuario=null;
+const claveCuenta=()=>'decomar_cuenta_'+(usuario?usuario.uid:'invitado');
+const cuenta=()=>{const c=LS.get(claveCuenta(),{});return {perfil:c.perfil||{},pedidos:c.pedidos||[],favoritos:c.favoritos||[]}};
+function guardarCuenta(c){LS.set(claveCuenta(),c);
+ if(usuario&&db)db.collection('clientes').doc(usuario.uid).set({perfil:c.perfil,favoritos:c.favoritos,email:usuario.email||'',nombre:usuario.displayName||'',actualizado:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(e=>console.warn('No se pudo guardar en la nube',e.code));}
+async function traerDeLaNube(){ // junta lo de la nube con lo de este navegador
+ if(!usuario||!db)return;
+ try{const ref=db.collection('clientes').doc(usuario.uid);
+  const [d,ps]=await Promise.all([ref.get(),ref.collection('pedidos').orderBy('fecha','desc').limit(100).get()]);
+  const c=cuenta(),r=d.exists?d.data():{};
+  c.perfil=Object.assign({},r.perfil||{},Object.fromEntries(Object.entries(c.perfil).filter(([k,v])=>v)));
+  c.favoritos=[...new Set([...(r.favoritos||[]),...c.favoritos])];
+  const vistos=new Set(c.pedidos.map(o=>o.nro));ps.forEach(x=>{const o=x.data();if(!vistos.has(o.nro))c.pedidos.push(o);});
+  c.pedidos.sort((a,b)=>b.fecha.localeCompare(a.fecha));
+  // los pedidos hechos sin conexión se suben ahora
+  const enNube=new Set(ps.docs.map(x=>x.id));c.pedidos.filter(o=>!enNube.has(o.nro)).forEach(subirPedido);
+  guardarCuenta(c);pintarFavs();pintarCarrito();if($id('panelCuenta').classList.contains('abierto'))pintarCuenta();
+ }catch(e){console.warn('No se pudo leer la nube',e.code);}}
+function subirPedido(o){if(usuario&&db)db.collection('clientes').doc(usuario.uid).collection('pedidos').doc(o.nro).set({nro:o.nro,fecha:o.fecha,items:o.items,total:o.total,estado:'enviado',entrega:cuenta().perfil.direccion||''}).catch(e=>console.warn('No se pudo guardar el pedido en la nube',e.code));}
+
+/* Carrito: se guarda solo y se restaura al volver */
+Object.assign(cant,LS.get('decomar_carrito',{}));
+const actualizarBase=actualizar;
+actualizar=function(){actualizarBase();LS.set('decomar_carrito',cant);pintarCarrito();};
+function sincronizarTarjetas(){cont.querySelectorAll('.prod').forEach(a=>{const n=cant[a.dataset.id]||0;a.querySelector('output').textContent=n;a.classList.toggle('con',n>0);});}
+function pintarCarrito(){
+ const l=PRODS.filter(p=>cant[p.id]>0);
+ $id('carroNum').textContent=l.length||'';
+ let total=0,sinPrecio=0;
+ $id('carritoLista').innerHTML=l.length?l.map(p=>{const u=precioUnidad(p);const sub=u?u*cant[p.id]:null;if(sub)total+=sub;else sinPrecio++;
+  return `<div class="item" data-id="${p.id}">${p.f?`<img src="img/${p.f}" alt="">`:`<span class="mini" style="--t:${p.t}"></span>`}
+  <div><b>${p.n}</b><small>${[p.marca,p.med].filter(Boolean).join(' · ')}</small><small>${u?pesos(u)+(p.caja?' la caja':' c/u'):'Precio a consultar'}</small>
+  <span class="cant"><button data-it="-1" aria-label="Restar ${p.n}">−</button><output>${cant[p.id]}</output><button data-it="1" aria-label="Sumar ${p.n}">+</button></span></div>
+  <div><span class="sub">${sub?pesos(sub):'A cotizar'}</span><button class="quitar" data-quitar>Quitar</button></div></div>`}).join('')
+  :`<div class="vacio"><p>Todavía no sumó productos.</p><a class="btn verde" href="#catalogo" data-cerrar>Ver el catálogo</a></div>`;
+ $id('carritoPie').hidden=!l.length;
+ $id('carritoTotal').textContent=pesos(total)+(sinPrecio?' + a cotizar':'');
+ $id('avisoLogin').hidden=!!usuario;
+}
+$id('carritoLista').addEventListener('click',e=>{const it=e.target.closest('.item');if(!it)return;const id=it.dataset.id;
+ if(e.target.closest('[data-quitar]'))poner(id,0);else{const b=e.target.closest('[data-it]');if(b)poner(id,(cant[id]||0)+Number(b.dataset.it));}});
+
+/* Paneles laterales */
+function abrir(id){cerrarTodo();const p=$id(id);p.classList.add('abierto');p.setAttribute('aria-hidden','false');$id('velo').classList.add('ver');document.body.style.overflow='hidden';
+ if(id==='panelCuenta')pintarCuenta();else pintarCarrito();setTimeout(()=>p.querySelector('.cerrar').focus(),60);}
+function cerrarTodo(){document.querySelectorAll('.panel.abierto').forEach(p=>{p.classList.remove('abierto');p.setAttribute('aria-hidden','true');});$id('velo').classList.remove('ver');document.body.style.overflow='';}
+$id('velo').onclick=cerrarTodo;document.addEventListener('keydown',e=>{if(e.key==='Escape')cerrarTodo();});
+document.addEventListener('click',e=>{if(e.target.closest('[data-cerrar]'))cerrarTodo();if(e.target.closest('[data-login]'))ingresar();});
+$id('carroBtn').onclick=()=>abrir('panelCarrito');$id('verPedido').onclick=()=>abrir('panelCarrito');
+$id('cuentaBtn').onclick=()=>abrir('panelCuenta');
+
+/* Enviar el pedido: arma el mensaje de WhatsApp y, si ingresó, lo guarda en su historial */
+$id('enviarPedido').onclick=()=>{
+ const l=PRODS.filter(p=>cant[p.id]>0);if(!l.length)return;
+ const c=cuenta(),pf=c.perfil;let total=0;
+ const items=l.map(p=>{const u=precioUnidad(p);const sub=u?u*cant[p.id]:null;if(sub)total+=sub;return {id:p.id,n:p.n,med:p.med?p.med.split(' · ')[0]:'',marca:p.marca,cant:cant[p.id],unidad:unidadTxt(p,cant[p.id]),sub}});
+ const nro='D'+Date.now().toString(36).toUpperCase().slice(-6);
+ let txt=`Hola Decomar, quisiera cotizar este pedido (${nro}):\n\n`+items.map(i=>`• ${i.n}${i.med?' '+i.med:''}${i.marca?' ('+i.marca+')':''}: ${i.cant} ${i.unidad}${i.sub?' ('+pesos(i.sub)+')':''}`).join('\n')+`\n\nTotal estimado: ${pesos(total)}`;
+ txt+=`\n\nNombre: ${pf.nombre||(usuario&&usuario.displayName)||''}\nZona o dirección de entrega: ${pf.direccion||''}`;
+ window.open(link(txt),'_blank','noopener');
+ if(usuario){const o={nro,fecha:new Date().toISOString(),items,total};c.pedidos.unshift(o);guardarCuenta(c);subirPedido(o);}
+ Object.keys(cant).forEach(k=>delete cant[k]);sincronizarTarjetas();actualizar();
+ $id('carritoLista').innerHTML=`<div class="vacio"><p><b>Pedido enviado.</b><br>Le respondemos por WhatsApp con el total y el envío.${usuario?'<br>Quedó guardado en «Mi cuenta».':''}</p><a class="btn verde" href="#catalogo" data-cerrar>Seguir mirando</a></div>`;
+};
+
+/* Ingreso con Google (Firebase Auth; los scripts se cargan recién cuando hacen falta) */
+let fbListo=null;
+function cargarFirebase(){if(fbListo)return fbListo;
+ const s=u=>new Promise((ok,mal)=>{const e=document.createElement('script');e.src=u;e.onload=ok;e.onerror=mal;document.head.appendChild(e);});
+ fbListo=s('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js').then(()=>Promise.all([s('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js'),s('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js')])).then(()=>{
+  if(!firebase.apps.length)firebase.initializeApp(FB_CONFIG);db=firebase.firestore();firebase.auth().onAuthStateChanged(alCambiarUsuario);return firebase.auth();});
+ return fbListo;}
+function ingresar(){cargarFirebase().then(a=>a.signInWithPopup(new firebase.auth.GoogleAuthProvider())).catch(e=>{
+ if(e&&(e.code==='auth/popup-closed-by-user'||e.code==='auth/cancelled-popup-request'))return;
+ alert('No se pudo ingresar con Google. '+(e&&e.code==='auth/unauthorized-domain'?'Falta habilitar este dominio en Firebase.':'Pruebe de nuevo en un momento.'));});}
+const ICONO_USUARIO='<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>';
+const G_ICONO='<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2c-2 1.5-4.5 2.4-7.2 2.4-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>';
+function alCambiarUsuario(u){
+ const antes=usuario;usuario=u?{uid:u.uid,displayName:u.displayName,email:u.email,photoURL:u.photoURL}:null;
+ if(usuario&&!antes){ // suma los favoritos que marcó sin ingresar
+  const inv=LS.get('decomar_cuenta_invitado',{}),c=cuenta();
+  c.favoritos=[...new Set([...c.favoritos,...(inv.favoritos||[])])];if(!c.perfil.nombre)c.perfil.nombre=usuario.displayName||'';guardarCuenta(c);}
+ $id('cuentaBtn').innerHTML=usuario&&usuario.photoURL?`<img src="${esc(usuario.photoURL)}" alt="" referrerpolicy="no-referrer">`:ICONO_USUARIO;
+ $id('cuentaBtn').setAttribute('aria-label',usuario?'Mi cuenta ('+(usuario.displayName||'')+')':'Ingresar con Google');
+ pintarFavs();pintarCarrito();if($id('panelCuenta').classList.contains('abierto'))pintarCuenta();
+ if(usuario&&!antes)traerDeLaNube();
+}
+
+/* Mi cuenta: pedidos, favoritos y datos de entrega */
+let tabCuenta='pedidos';
+function pintarCuenta(){
+ const cc=$id('cuentaCuerpo');
+ if(!usuario){cc.innerHTML=`<div class="vacio"><p><b>Ingrese con su cuenta de Google</b><br>Guardamos sus pedidos, sus favoritos y sus datos de entrega para la próxima compra.</p><button type="button" class="btn google" data-login>${G_ICONO}Ingresar con Google</button></div>`;return;}
+ const c=cuenta();
+ const tab=(k,t)=>`<button role="tab" aria-selected="${tabCuenta===k}" data-tab="${k}">${t}</button>`;
+ let cuerpo='';
+ if(tabCuenta==='pedidos')cuerpo=c.pedidos.length?c.pedidos.map((o,i)=>`<div class="pedido"><div class="pedido-cab"><span>Pedido <b>${o.nro}</b></span><span>${new Date(o.fecha).toLocaleDateString('es-AR',{day:'numeric',month:'short',year:'numeric'})}</span></div>
+   <ul>${o.items.map(x=>`<li>${x.cant} ${x.unidad} · ${esc(x.n)}${x.med?' '+x.med:''}</li>`).join('')}</ul>
+   <div class="total"><span>Total estimado</span><b style="font-size:22px">${pesos(o.total)}</b></div>
+   <button type="button" class="btn verde" data-repetir="${i}" style="margin-top:10px">Repetir pedido</button></div>`).join(''):`<div class="vacio"><p>Todavía no hizo pedidos. Cuando envíe uno, queda guardado acá.</p></div>`;
+ if(tabCuenta==='favoritos'){const fs=c.favoritos.map(prodDe).filter(Boolean);
+  cuerpo=fs.length?fs.map(p=>`<div class="item" data-id="${p.id}">${p.f?`<img src="img/${p.f}" alt="">`:`<span class="mini" style="--t:${p.t}"></span>`}<div><b>${p.n}</b><small>${[p.marca,p.med].filter(Boolean).join(' · ')}</small><small>${p.p||'Consultar precio'} ${p.u||''}</small></div>
+   <div><button type="button" class="btn verde chico" data-sumarfav="${p.id}">Sumar</button></div></div>`).join(''):`<div class="vacio"><p>Toque el corazón de un producto para guardarlo acá.</p></div>`;}
+ if(tabCuenta==='datos'){const p=c.perfil;cuerpo=`<form class="form-datos" id="formDatos">
+   <label>Nombre y apellido<input name="nombre" autocomplete="name" value="${esc(p.nombre)}"></label>
+   <label>WhatsApp<input name="tel" inputmode="tel" autocomplete="tel" value="${esc(p.tel)}"></label>
+   <label>Dirección o zona de entrega<textarea name="direccion" rows="2" autocomplete="street-address">${esc(p.direccion)}</textarea></label>
+   <button class="btn verde ancho">Guardar mis datos</button><span class="guardado" id="guardado" hidden>Datos guardados. Se suman solos a sus próximos pedidos.</span></form>`;}
+ cc.innerHTML=`<div class="perfil">${usuario.photoURL?`<img src="${esc(usuario.photoURL)}" alt="" referrerpolicy="no-referrer">`:''}<div><b>${esc(usuario.displayName||'Mi cuenta')}</b><small>${esc(usuario.email)}</small></div></div>
+  <div class="tabs" role="tablist">${tab('pedidos','Mis pedidos')}${tab('favoritos','Favoritos')}${tab('datos','Mis datos')}</div>${cuerpo}
+  <button type="button" class="salir" id="salir">Salir de la cuenta</button>`;
+}
+$id('cuentaCuerpo').addEventListener('click',e=>{
+ const t=e.target.closest('[data-tab]');if(t){tabCuenta=t.dataset.tab;pintarCuenta();return;}
+ const r=e.target.closest('[data-repetir]');if(r){const o=cuenta().pedidos[+r.dataset.repetir];o.items.forEach(x=>{if(prodDe(x.id))cant[x.id]=(cant[x.id]||0)+x.cant});sincronizarTarjetas();actualizar();abrir('panelCarrito');return;}
+ const f=e.target.closest('[data-sumarfav]');if(f){poner(f.dataset.sumarfav,(cant[f.dataset.sumarfav]||0)+1);abrir('panelCarrito');return;}
+ if(e.target.id==='salir'){cargarFirebase().then(a=>a.signOut());}
+});
+$id('cuentaCuerpo').addEventListener('submit',e=>{e.preventDefault();const d=new FormData(e.target),c=cuenta();
+ c.perfil={nombre:d.get('nombre').trim(),tel:d.get('tel').trim(),direccion:d.get('direccion').trim()};guardarCuenta(c);$id('guardado').hidden=false;});
+
+/* Favoritos: corazón en cada tarjeta */
+cont.querySelectorAll('.prod').forEach(a=>{const zona=a.querySelector('.foto')||a.querySelector('.sw');if(!zona)return;
+ zona.insertAdjacentHTML('beforeend',`<button type="button" class="fav" aria-pressed="false" aria-label="Guardar ${esc(a.querySelector('h3').textContent)} en favoritos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-9.3-9.2C1.5 8.1 3.6 4.5 7.1 4.5c2 0 3.6 1.1 4.9 2.8 1.3-1.7 2.9-2.8 4.9-2.8 3.5 0 5.6 3.6 4.4 6.8-1.8 4.6-9.3 9.2-9.3 9.2z"/></svg></button>`);});
+function pintarFavs(){const f=new Set(cuenta().favoritos);cont.querySelectorAll('.prod').forEach(a=>{const b=a.querySelector('.fav');if(b)b.setAttribute('aria-pressed',f.has(a.dataset.id));});}
+cont.addEventListener('click',e=>{const b=e.target.closest('.fav');if(!b)return;e.stopPropagation();const id=b.closest('.prod').dataset.id,c=cuenta();
+ const i=c.favoritos.indexOf(id);if(i>=0)c.favoritos.splice(i,1);else c.favoritos.push(id);guardarCuenta(c);pintarFavs();},true);
+
+$id('cuentaBtn').innerHTML=ICONO_USUARIO;
+sincronizarTarjetas();actualizar();pintarFavs();
+// si ya había ingresado antes, se restaura la sesión sin pedir nada
+try{if(Object.keys(localStorage).some(k=>k.startsWith('firebase:authUser')))cargarFirebase();}catch(e){}
+
 
 /* Celular que contesta solo: el mismo de mymsoluciones.online (main.js, 17/11/2026) */
 (function(){

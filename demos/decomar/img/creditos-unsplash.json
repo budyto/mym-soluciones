@@ -1,16 +1,7 @@
 {
- "hero-bano-marmol.jpg": "https://images.unsplash.com/photo-1564540579594-0930edb6de43",
- "living-listones.jpg": "https://images.unsplash.com/photo-1633604712918-6ab1173d0ecd",
- "pared-piedra.jpg": "https://images.unsplash.com/photo-1784528780206-6a0545dec6fd",
- "bano-madera.jpg": "https://images.unsplash.com/photo-1661107259637-4e1c55462428",
- "bano-piedra.jpg": "https://images.unsplash.com/photo-1756079664354-34944e001f6d",
- "antes.jpg": "https://images.unsplash.com/photo-1708895240122-418c6902685e",
- "despues.jpg": "https://images.unsplash.com/photo-1550379469-5a14b2ae1244",
- "living-marmol.jpg": "https://images.unsplash.com/photo-1773867567704-6e39f26a5655",
- "marmol-textura.jpg": "https://images.unsplash.com/photo-1558346648-9757f2fa4474",
- "madera-veta.jpg": "https://images.unsplash.com/photo-1644931551533-02906718127f",
- "vanitory.jpg": "https://images.unsplash.com/photo-1596182689348-9242f4c265ba",
- "espejo-led.jpg": "https://images.unsplash.com/photo-1642755623069-eb720c326553",
- "cocina-marmol.jpg": "https://images.unsplash.com/photo-1772567733035-edbd44fb56b1",
- "bano-led.jpg": "https://images.unsplash.com/photo-1742134131017-44d377a611b1"
+  "nota": "Fotos de Unsplash (licencia libre) usadas como base de los ambientes simulados: el piso o la pared se reemplaza por la textura real de cada placa. Las demás fotos de producto y ambiente son de los fabricantes (Cortines, Lourdes, Cañuelas, San Lorenzo, San Pietro, Alberdi, Tendenza, Mapei, Weber, Vadex) o de Decomar.",
+  "fotos": [
+    {"uso": "cocina (pisos simulados)", "url": "https://unsplash.com/photos/1721395283507-1b17e527a922"},
+    {"uso": "baño (pisos y paredes simulados)", "url": "https://unsplash.com/photos/1595515106969-1ce29566ff1c"}
+  ]
 }
