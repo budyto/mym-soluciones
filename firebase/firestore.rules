@@ -1,0 +1,138 @@
+rules_version = '2';
+// MyM Distribuidoras (proyecto mym-distribuidoras): quién puede leer y escribir qué.
+// - Sólo entran personas con el mail confirmado que sean miembros activos de la empresa.
+// - Los movimientos (acciones) se numeran de a uno, no se editan ni se borran, y el servidor controla
+//   que el usuario tenga permiso para ese tipo de movimiento (los mismos grupos que js/nube.js).
+// - Las empresas, su contador y la invitación del dueño los crea MyM con firebase/alta-empresa.mjs
+//   (con la cuenta de administrador, que no pasa por estas reglas).
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function conMail() {
+      return request.auth != null && request.auth.token.email_verified == true;
+    }
+    function rutaMiembro(eid, uid) {
+      return /databases/$(database)/documents/empresas/$(eid)/miembros/$(uid);
+    }
+    function miembro(eid) {
+      return get(rutaMiembro(eid, request.auth.uid)).data;
+    }
+    function esMiembro(eid) {
+      return conMail() && exists(rutaMiembro(eid, request.auth.uid)) && miembro(eid).activo == true;
+    }
+    function esDueno(eid) {
+      return esMiembro(eid) && miembro(eid).rol == 'dueno';
+    }
+    function grupoDe(a) {
+      return {
+        'crearPedido': 'ventas', 'modificarPedido': 'ventas', 'cancelarPedido': 'ventas', 'registrarVisita': 'ventas',
+        'facturarPedido': 'facturar', 'modificarPedidoFacturado': 'facturar', 'notaCredito': 'facturar',
+        'armarHojaRuta': 'entregas', 'marcarEntrega': 'entregas',
+        'registrarCobranza': 'cobranzas', 'depositarCheque': 'cobranzas',
+        'crearOrdenCompra': 'compras', 'recibirCompra': 'compras', 'marcarOrdenEnviada': 'compras', 'cancelarOrdenCompra': 'compras',
+        'registrarPago': 'compras', 'debitarChequesPropios': 'compras', 'liquidarComisiones': 'compras',
+        'ajustarStock': 'stock', 'transferirStock': 'stock', 'asignarCodigoPropio': 'stock', 'asignarFoto': 'stock',
+        'guardarReceta': 'produccion', 'producir': 'produccion',
+        'crearListaPrecio': 'precios', 'actualizarPrecios': 'precios',
+        'guardarMaestro': 'datos', 'guardarConfig': 'datos',
+        'asientoManual': 'contabilidad'
+      }.get(a, 'ninguno');
+    }
+    function puede(eid, a) {
+      return miembro(eid).rol == 'dueno' || grupoDe(a) in miembro(eid).acciones;
+    }
+    function rutaMeta(eid) {
+      return /databases/$(database)/documents/empresas/$(eid)/meta/registro;
+    }
+    function rutaInvitacion() {
+      return /databases/$(database)/documents/invitaciones/$(request.auth.token.email.lower());
+    }
+
+    // a qué empresa pertenece cada cuenta
+    match /usuarios/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow create: if conMail() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['empresaId'])
+        && existsAfter(rutaMiembro(request.resource.data.empresaId, uid));
+    }
+
+    // invitaciones: el id es el mail en minúsculas
+    match /invitaciones/{email} {
+      allow get: if conMail() && request.auth.token.email.lower() == email;
+      allow list: if esDueno(resource.data.empresaId);
+      allow create: if esDueno(request.resource.data.empresaId)
+        && request.resource.data.rol == 'empleado'
+        && request.resource.data.invitadoPor == request.auth.uid
+        && request.resource.data.nombre is string && request.resource.data.nombre.size() > 0
+        && request.resource.data.modulos is list && request.resource.data.acciones is list
+        && request.resource.data.keys().hasOnly(['empresaId', 'empresa', 'rol', 'nombre', 'puesto', 'modulos', 'acciones', 'invitadoPor', 'creada']);
+      allow update: if false;
+      allow delete: if (conMail() && request.auth.token.email.lower() == email) || esDueno(resource.data.empresaId);
+    }
+
+    match /empresas/{eid} {
+      allow read: if esMiembro(eid);
+      allow update: if esDueno(eid) && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['config']);
+
+      match /miembros/{uid} {
+        allow read: if esMiembro(eid) || (request.auth != null && request.auth.uid == uid);
+        // la persona invitada se da de alta con lo que dice su invitación, y la invitación se borra en el mismo paso
+        allow create: if conMail() && request.auth.uid == uid
+          && exists(rutaInvitacion())
+          && !existsAfter(rutaInvitacion())
+          && get(rutaInvitacion()).data.empresaId == eid
+          && request.resource.data.uid == uid
+          && request.resource.data.email == request.auth.token.email.lower()
+          && request.resource.data.rol == get(rutaInvitacion()).data.rol
+          && request.resource.data.nombre == get(rutaInvitacion()).data.nombre
+          && request.resource.data.puesto == get(rutaInvitacion()).data.puesto
+          && request.resource.data.modulos == get(rutaInvitacion()).data.modulos
+          && request.resource.data.acciones == get(rutaInvitacion()).data.acciones
+          && request.resource.data.activo == true
+          && request.resource.data.keys().hasOnly(['uid', 'nombre', 'email', 'rol', 'puesto', 'modulos', 'acciones', 'activo', 'alta']);
+        // el dueño cambia nombre, puesto, permisos y si está activo; no puede tocarse a sí mismo ni nombrar otro dueño
+        allow update: if esDueno(eid) && uid != request.auth.uid
+          && resource.data.rol == 'empleado'
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nombre', 'puesto', 'modulos', 'acciones', 'activo']);
+        allow delete: if false;
+      }
+
+      match /meta/registro {
+        allow read: if esMiembro(eid);
+        // sólo sube de a uno, y junto con el movimiento de ese número
+        allow update: if esMiembro(eid)
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['ultimo'])
+          && request.resource.data.ultimo == resource.data.ultimo + 1
+          && existsAfter(/databases/$(database)/documents/empresas/$(eid)/acciones/$(string(request.resource.data.ultimo)));
+      }
+
+      match /acciones/{n} {
+        allow read: if esMiembro(eid);
+        allow create: if esMiembro(eid)
+          && getAfter(rutaMeta(eid)).data.ultimo == get(rutaMeta(eid)).data.ultimo + 1
+          && n == string(getAfter(rutaMeta(eid)).data.ultimo)
+          && request.resource.data.n == getAfter(rutaMeta(eid)).data.ultimo
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.usuario == miembro(eid).nombre
+          && request.resource.data.creado == request.time
+          && request.resource.data.a is string
+          && request.resource.data.argsJson is string && request.resource.data.argsJson.size() < 950000
+          && request.resource.data.f is string
+          && request.resource.data.k is string
+          && puede(eid, request.resource.data.a)
+          && request.resource.data.keys().hasOnly(['n', 'a', 'argsJson', 'f', 'k', 'uid', 'usuario', 'detalle', 'creado']);
+        allow update, delete: if false;
+      }
+
+      // invitaciones y cambios de permisos: los anota el dueño y no se editan
+      match /auditoria/{id} {
+        allow read: if esDueno(eid);
+        allow create: if esDueno(eid)
+          && request.resource.data.uid == request.auth.uid
+          && request.resource.data.creado == request.time
+          && request.resource.data.keys().hasOnly(['uid', 'usuario', 'detalle', 'creado', 'email']);
+        allow update, delete: if false;
+      }
+    }
+  }
+}
