@@ -19,6 +19,7 @@
     { g: 'Vender', items: [
       { href: 'mails.html', ic: '✉️', t: 'Prospección por mail', d: 'Comercios y simulaciones' },
       { href: 'campana.html', ic: '📣', t: 'Campaña a clientes de Créditos', d: 'Envíos y respuestas' },
+      { href: 'demos.html', ic: '🧩', t: 'Demos web', d: 'Todas las demos hechas' },
       { href: '../propuesta/', ext: true, ic: '📄', t: 'Propuesta comercial', d: 'Planes y precios' },
     ] },
     { g: 'Clientes', items: [
