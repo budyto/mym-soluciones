@@ -59,7 +59,6 @@ a.vista:hover img{ opacity:.92; }
 .acc{ display:flex; gap:6px; flex-wrap:wrap; margin-top:auto; padding-top:6px; }
 .acc .btn{ flex:1 1 auto; }
 .caja{ background:#fff; border:1px solid var(--line); border-radius:16px; padding:16px; }
-details.caja{ margin-top:14px; } details.caja>summary{ cursor:pointer; font-weight:800; }
 .aviso{ background:#fff7d6; border-radius:12px; padding:8px 12px; font-size:13px; margin:0 0 12px; }
 dialog{ border:0; border-radius:18px; padding:0; max-width:560px; width:94%; box-shadow:0 20px 60px rgba(0,0,0,.3); }
 dialog form{ padding:18px; display:grid; grid-template-columns:1fr 1fr; gap:10px; }
@@ -140,11 +139,7 @@ dialog .err{ grid-column:1/-1; color:var(--bad); font-weight:600; margin:0; min-
       + '<div class="barra"><input type="search" id="q" placeholder="Buscar negocio, rubro o nota" aria-label="Buscar" value="' + esc(filtro.q) + '">'
       + chip('', 'Todas') + ESTADOS.map(function (e) { return chip(e[0], e[1]); }).join('') + '</div>'
       + (vis.length ? '<div class="demos">' + vis.map(tarjeta).join('') + '</div>'
-        : '<div class="caja muted">' + (lista.length ? 'No hay demos con ese filtro.' : 'Todavía no hay demos cargadas. Tocá «+ Demo» para sumar la primera.') + '</div>')
-      + '<details class="caja"><summary>Qué es esta pantalla</summary>'
-      + '<p>Son las páginas de muestra que armamos para cada negocio. Cada tarjeta muestra cómo se ve arriba de todo: tocala o tocá «Abrir» para verla entera, y «Copiar link» para mandársela al cliente. Las demos nuevas aparecen con la inicial hasta que alguien les saque la captura.</p>'
-      + '<p><b>Esta lista no es pública:</b> sólo la ven las cuentas del panel que además tienen acceso a Ventas en la base del grupo. Las demos sí tienen su link propio, porque se les mandan a los clientes.</p>'
-      + '<p>Cuando se publica una demo nueva, sumala con «+ Demo». Para que deje de aparecer sin borrarla, ponela en «Archivada».</p></details>';
+        : '<div class="caja muted">' + (lista.length ? 'No hay demos con ese filtro.' : 'Todavía no hay demos cargadas. Tocá «+ Demo» para sumar la primera.') + '</div>');
     $('#q').oninput = function () { var pos = this.selectionStart; filtro.q = this.value; pintar(); var e = $('#q'); e.focus(); e.setSelectionRange(pos, pos); };
     document.querySelectorAll('[data-f]').forEach(function (b) { b.onclick = function () { filtro.estado = b.dataset.f; pintar(); }; });
     document.querySelectorAll('[data-copiar]').forEach(function (b) { b.onclick = function () {
