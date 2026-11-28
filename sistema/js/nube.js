@@ -20,7 +20,7 @@
     messagingSenderId: '331369292256',
     appId: '1:331369292256:web:9a320ab2df903ecd420b85'
   };
-  const VERSION = '202611280100';
+  const VERSION = '202611281530';
   const SCRIPTS = ['nucleo', 'modulos/inicio', 'modulos/resultados', 'modulos/contabilidad', 'modulos/preventa', 'modulos/ventas',
     'modulos/facturacion', 'modulos/entregas', 'modulos/cobranzas', 'modulos/clientes', 'modulos/compras', 'modulos/produccion',
     'modulos/proveedores', 'modulos/stock', 'modulos/etiquetas', 'modulos/catalogo', 'modulos/listas', 'modulos/usuarios', 'modulos/registro'];
@@ -350,6 +350,7 @@
     App.verModulo = id => esDueno() || (!SOLO_DUENO.includes(id) && (sesion.miembro.modulos || []).includes(id));
     App.persistencia = {
       leer: () => sesion.confirmados.concat(sesion.pendientes),
+      describir,
       agregar(r, resultado) {
         r.detalle = describir(r, resultado);
         r.uid = sesion.user.uid; r.usuario = sesion.miembro.nombre; r.pendiente = true; r.creado = Date.now();

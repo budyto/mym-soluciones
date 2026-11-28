@@ -1258,9 +1258,9 @@
     if (t.length < 2) return [];
     const lim = limite || 8, res = [];
     const coincide = (...campos) => campos.some(c => c && App.ui.normalizar(String(c)).includes(t));
-    db.productos.forEach(p => { if (coincide(p.descripcion, p.codigo, p.ean, p.marca, p.codigoPropio, p.plu)) res.push({ tipo: 'Producto', titulo: p.descripcion, detalle: p.codigo + ' · ' + p.marca, ruta: '#/stock/producto/' + p.id }); });
-    db.clientes.forEach(c => { if (coincide(c.fantasia, c.razonSocial, c.cuit, c.codigo, c.localidad)) res.push({ tipo: 'Cliente', titulo: c.fantasia, detalle: c.razonSocial + ' · ' + c.localidad, ruta: '#/clientes/' + c.id }); });
-    db.proveedores.forEach(p => { if (coincide(p.razonSocial, p.cuit, p.codigo)) res.push({ tipo: 'Proveedor', titulo: p.razonSocial, detalle: p.cuit, ruta: '#/proveedores/' + p.id }); });
+    db.productos.forEach(p => { if (coincide(p.descripcion, p.codigo, p.ean, p.marca, p.codigoPropio, p.plu)) res.push({ tipo: 'Producto', titulo: p.descripcion, detalle: [p.codigo, p.marca].filter(Boolean).join(' · '), ruta: '#/stock/producto/' + p.id }); });
+    db.clientes.forEach(c => { if (coincide(c.fantasia, c.razonSocial, c.cuit, c.codigo, c.localidad)) res.push({ tipo: 'Cliente', titulo: c.fantasia || c.razonSocial, detalle: [c.razonSocial, c.localidad].filter(Boolean).join(' · '), ruta: '#/clientes/' + c.id }); });
+    db.proveedores.forEach(p => { if (coincide(p.razonSocial, p.cuit, p.codigo)) res.push({ tipo: 'Proveedor', titulo: p.razonSocial, detalle: p.cuit || '', ruta: '#/proveedores/' + p.id }); });
     const tn = t.replace(/[^0-9]/g, '');
     if (tn.length >= 3) {
       for (let i = db.comprobantes.length - 1; i >= 0 && res.length < 60; i--) {
@@ -1375,7 +1375,11 @@
       registro.forEach(r => {
         hoyActual = r.f || CONFIG.hoy;
         claveAccion = r.k || null; subId = 0;
-        try { App.acciones[r.a].apply(null, JSON.parse(JSON.stringify(r.args))); validos.push(r); } catch (e) { r.error = e.message; rechazados.push(r); console.warn('No se pudo volver a aplicar «' + r.a + '»: ' + e.message); }
+        try {
+          const res = App.acciones[r.a].apply(null, JSON.parse(JSON.stringify(r.args))); validos.push(r);
+          // el detalle se vuelve a escribir con el resultado final (si dos cargaron a la vez, el número de pedido puede haber cambiado)
+          if (App.persistencia && App.persistencia.describir) { const d = App.persistencia.describir(r, res); if (d) r.detalle = d; }
+        } catch (e) { r.error = e.message; rechazados.push(r); console.warn('No se pudo volver a aplicar «' + r.a + '»: ' + e.message); }
         finally { claveAccion = null; }
       });
       registro = validos;
@@ -1988,7 +1992,9 @@
       caja.hidden = false; input.setAttribute('aria-expanded', 'true');
       if (sel >= 0) input.setAttribute('aria-activedescendant', 'res-' + sel); else input.removeAttribute('aria-activedescendant');
     };
-    ui.buscador(input, () => { res = q.buscar(input.value, 10); sel = -1; pintar(); }, 80);
+    // sólo resultados de las pantallas que el usuario puede ver (un vendedor no encuentra proveedores ni compras)
+    const permitido = r => !App.verModulo || App.verModulo(String(r.ruta || '').replace(/^#\/?/, '').split(/[/?]/)[0]);
+    ui.buscador(input, () => { res = q.buscar(input.value, 30).filter(permitido).slice(0, 10); sel = -1; pintar(); }, 80);
     input.addEventListener('keydown', e => {
       if (e.key === 'ArrowDown' && res.length) { e.preventDefault(); sel = (sel + 1) % res.length; pintar(); }
       else if (e.key === 'ArrowUp' && res.length) { e.preventDefault(); sel = (sel - 1 + res.length) % res.length; pintar(); }

@@ -4,3 +4,6 @@ resenas/data/
 resenas/fotos/*
 !resenas/fotos/.htaccess
 resenas/config.local.php
+
+# registros de los emuladores de Firebase
+*-debug.log

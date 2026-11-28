@@ -338,6 +338,35 @@
     return bloque('Venta del mes por preventista', 'sin IVA', panel);
   }
 
+  // saludo con el nombre de quien entró y según la hora de Argentina
+  function saludoTexto() {
+    const miembro = App.nube && App.nube.sesion && App.nube.sesion.miembro;
+    const nombre = miembro && miembro.nombre ? String(miembro.nombre).trim().split(/\s+/)[0] : '';
+    const horaAR = new Date(Date.now() - 3 * 3600000).getUTCHours();
+    return (horaAR >= 5 && horaAR < 13 ? 'Buen día' : horaAR >= 13 && horaAR < 20 ? 'Buenas tardes' : 'Buenas noches') + (nombre ? ', ' + nombre : '');
+  }
+
+  // Inicio para quien no ve las finanzas: saludo y accesos directos a sus pantallas
+  function inicioSimple(el) {
+    const fechaTexto = ui.fechaLarga(App.hoy()).replace(/^./, c => c.toUpperCase());
+    const mods = App.modulos.filter(m => m.id !== 'inicio' && !m.oculto && App.verModulo(m.id)).sort((a, b) => (a.orden || 0) - (b.orden || 0));
+    el.innerHTML = String(h`
+      <div class="encabezado-vista">
+        <div><h1 class="ini-saludo">${saludoTexto()}</h1>
+        <p class="bajada">${fechaTexto}. Elegí con qué querés trabajar.</p></div>
+      </div>
+      <div class="ini-accesos">${mods.map(m => h`<a class="panel ini-acceso" href="#/${m.id}"><span class="ini-acceso-ico">${ui.seguro(m.icono || '')}</span><b>${m.titulo}</b></a>`)}</div>`);
+    if (!document.getElementById('ini-accesos-css')) {
+      const st = document.createElement('style');
+      st.id = 'ini-accesos-css';
+      st.textContent = '.ini-accesos{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-top:8px}'
+        + '.ini-acceso{display:flex;align-items:center;gap:12px;margin:0;padding:18px 16px;text-decoration:none;color:inherit;font-size:1.02rem}'
+        + '.ini-acceso:hover{border-color:currentColor}.ini-acceso:focus-visible{outline:2px solid currentColor;outline-offset:2px}'
+        + '.ini-acceso-ico svg{width:24px;height:24px;display:block}';
+      document.head.appendChild(st);
+    }
+  }
+
   App.modulo({
     id: 'inicio',
     titulo: 'Inicio',
@@ -346,13 +375,17 @@
     icono: ICONO,
     render(el) {
       estilos();
+      // quien no ve el estado de resultados (vendedor, depósito, chofer) no ve la plata de la empresa:
+      // le mostramos el saludo y los accesos a sus pantallas
+      if (App.verModulo && !App.verModulo('resultados')) { inicioSimple(el); return; }
       const d = calcular();
       const nombreAnt = mesSolo(d.antIni);
       const vsAnt = d.ventasAntCompleto ? variacion(d.proyeccion, d.ventasAntCompleto) : null;
       const fechaTexto = ui.fechaLarga(d.hoy).replace(/^./, c => c.toUpperCase());
+      const saludo = saludoTexto();
       el.innerHTML = String(h`
         <div class="encabezado-vista">
-          <div><h1 class="ini-saludo">Buen día, Leandro</h1>
+          <div><h1 class="ini-saludo">${saludo}</h1>
           <p class="bajada">${fechaTexto}. Resumen financiero del día, pendientes y evolución de ventas de ${mesSolo(d.hoy)}.</p></div>
           <div class="acciones"><a class="btn" href="#/preventa">Cargar pedido</a><a class="btn btn-primario" href="#/resultados">Ver estado de resultados</a></div>
         </div>
